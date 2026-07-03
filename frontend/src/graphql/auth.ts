@@ -34,6 +34,30 @@ export const REGISTER_MUTATION = `
   }
 ` as const;
 
+export const REFRESH_TOKEN_MUTATION = `
+  mutation RefreshToken($refreshToken: String!) {
+    refreshToken(refreshToken: $refreshToken) {
+      accessToken
+      refreshToken
+      user {
+        id
+        email
+        fullName
+        role
+        grade
+        preferredLanguage
+        totalXp
+      }
+    }
+  }
+` as const;
+
+export const LOGOUT_MUTATION = `
+  mutation Logout {
+    logout
+  }
+` as const;
+
 export const ME_QUERY = `
   query Me {
     me {

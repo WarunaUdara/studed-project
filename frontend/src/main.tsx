@@ -3,6 +3,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider as UrqlProvider } from "urql";
+import { AuthInitializer } from "./components/auth/AuthInitializer";
 import { graphqlClient } from "./lib/graphql";
 import { routeTree } from "./routeTree.gen";
 import "./styles/index.css";
@@ -20,7 +21,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <UrqlProvider value={graphqlClient}>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <AuthInitializer>
+          <RouterProvider router={router} />
+        </AuthInitializer>
       </QueryClientProvider>
     </UrqlProvider>
   </React.StrictMode>,
