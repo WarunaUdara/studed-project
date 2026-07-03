@@ -4,19 +4,58 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"time"
 
 	"github.com/studed/api-gateway/graph/model"
 	"github.com/studed/api-gateway/internal/middleware"
 )
 
+func setAuthCookies(ctx context.Context, accessToken, refreshToken string) {
+	w, ok := middleware.ResponseWriterFromContext(ctx)
+	if !ok {
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    accessToken,
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/",
+		MaxAge:   int(15 * time.Minute / time.Second),
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    refreshToken,
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/",
+		MaxAge:   int(7 * 24 * time.Hour / time.Second),
+	})
+}
+
 // Register is the resolver for the register field.
 func (r *mutationResolver) Register(ctx context.Context, input model.RegisterInput) (*model.AuthPayload, error) {
-	return r.AuthClient.Register(ctx, input)
+	payload, err := r.AuthClient.Register(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	setAuthCookies(ctx, payload.AccessToken, payload.RefreshToken)
+	return payload, nil
 }
 
 // Login is the resolver for the login field.
 func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*model.AuthPayload, error) {
-	return r.AuthClient.Login(ctx, input)
+	payload, err := r.AuthClient.Login(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	setAuthCookies(ctx, payload.AccessToken, payload.RefreshToken)
+	return payload, nil
 }
 
 // RefreshToken is the resolver for the refreshToken field.
@@ -26,6 +65,31 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken string
 
 // Logout is the resolver for the logout field.
 func (r *mutationResolver) Logout(ctx context.Context) (bool, error) {
+	w, ok := middleware.ResponseWriterFromContext(ctx)
+	if !ok {
+		return true, nil
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    "",
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/",
+		MaxAge:   -1,
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    "",
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/",
+		MaxAge:   -1,
+	})
+
 	return true, nil
 }
 
@@ -102,10 +166,11 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 	}
 
 	return &model.User{
-		ID:       userCtx.UserID,
-		Email:    userCtx.Email,
-		FullName: "",
-		Role:     model.Role(userCtx.Role),
+		ID:                userCtx.UserID,
+		Email:             userCtx.Email,
+		FullName:          userCtx.FullName,
+		Role:              model.Role(userCtx.Role),
+		PreferredLanguage: userCtx.PreferredLanguage,
 	}, nil
 }
 

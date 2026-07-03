@@ -44,6 +44,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(authmiddleware.WithResponseWriter)
 	r.Use(authmiddleware.Auth(cfg.AccessSecret))
 
 	r.Handle("/health", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

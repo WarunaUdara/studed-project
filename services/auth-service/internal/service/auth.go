@@ -71,7 +71,7 @@ func (s *authService) Register(ctx context.Context, email, password, fullName st
 		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
 
-	tokens, err := s.jwtMgr.Generate(user.ID, user.Email, string(user.Role))
+	tokens, err := s.jwtMgr.Generate(user.ID, user.Email, user.FullName, string(user.Role), user.PreferredLanguage)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate tokens: %w", err)
 	}
@@ -98,7 +98,7 @@ func (s *authService) Login(ctx context.Context, email, password string) (*authp
 		return nil, fmt.Errorf("invalid credentials")
 	}
 
-	tokens, err := s.jwtMgr.Generate(user.ID, user.Email, string(user.Role))
+	tokens, err := s.jwtMgr.Generate(user.ID, user.Email, user.FullName, string(user.Role), user.PreferredLanguage)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate tokens: %w", err)
 	}
@@ -117,10 +117,12 @@ func (s *authService) ValidateToken(ctx context.Context, accessToken string) (*a
 	}
 
 	return &authpb.ValidateTokenResponse{
-		Valid:  true,
-		UserId: claims.UserID,
-		Email:  claims.Email,
-		Role:   toProtoRole(claims.Role),
+		Valid:             true,
+		UserId:            claims.UserID,
+		Email:             claims.Email,
+		Role:              toProtoRole(claims.Role),
+		FullName:          claims.FullName,
+		PreferredLanguage: claims.PreferredLanguage,
 	}, nil
 }
 

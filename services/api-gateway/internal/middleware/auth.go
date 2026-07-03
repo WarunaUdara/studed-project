@@ -13,22 +13,30 @@ type contextKey string
 const UserContextKey contextKey = "user"
 
 type UserContext struct {
-	UserID string
-	Email  string
-	Role   string
+	UserID            string
+	Email             string
+	FullName          string
+	Role              string
+	PreferredLanguage string
 }
 
 func Auth(accessSecret string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			tokenString := ""
+
 			authHeader := r.Header.Get("Authorization")
-			if authHeader == "" {
-				next.ServeHTTP(w, r)
-				return
+			if authHeader != "" {
+				tokenString = strings.TrimPrefix(authHeader, "Bearer ")
 			}
 
-			tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-			if tokenString == authHeader {
+			if tokenString == "" {
+				if cookie, err := r.Cookie("access_token"); err == nil {
+					tokenString = cookie.Value
+				}
+			}
+
+			if tokenString == "" {
 				next.ServeHTTP(w, r)
 				return
 			}
@@ -51,9 +59,11 @@ func Auth(accessSecret string) func(http.Handler) http.Handler {
 			}
 
 			userCtx := UserContext{
-				UserID: stringValue(claims["user_id"]),
-				Email:  stringValue(claims["email"]),
-				Role:   stringValue(claims["role"]),
+				UserID:            stringValue(claims["user_id"]),
+				Email:             stringValue(claims["email"]),
+				FullName:          stringValue(claims["full_name"]),
+				Role:              stringValue(claims["role"]),
+				PreferredLanguage: stringValue(claims["preferred_language"]),
 			}
 
 			ctx := context.WithValue(r.Context(), UserContextKey, userCtx)

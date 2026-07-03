@@ -9,10 +9,12 @@ import (
 )
 
 type Claims struct {
-	UserID string `json:"user_id"`
-	Email  string `json:"email"`
-	Role   string `json:"role"`
-	Type   string `json:"type"`
+	UserID            string `json:"user_id"`
+	Email             string `json:"email"`
+	FullName          string `json:"full_name"`
+	Role              string `json:"role"`
+	PreferredLanguage string `json:"preferred_language"`
+	Type              string `json:"type"`
 	jwt.RegisteredClaims
 }
 
@@ -39,14 +41,16 @@ func NewManager(accessSecret, refreshSecret string, accessTTL, refreshTTL time.D
 	}
 }
 
-func (m *Manager) Generate(userID, email, role string) (*TokenPair, error) {
+func (m *Manager) Generate(userID, email, fullName, role, preferredLanguage string) (*TokenPair, error) {
 	now := time.Now().UTC()
 
 	accessClaims := Claims{
-		UserID: userID,
-		Email:  email,
-		Role:   role,
-		Type:   "access",
+		UserID:            userID,
+		Email:             email,
+		FullName:          fullName,
+		Role:              role,
+		PreferredLanguage: preferredLanguage,
+		Type:              "access",
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   userID,
 			IssuedAt:  jwt.NewNumericDate(now),
@@ -55,10 +59,12 @@ func (m *Manager) Generate(userID, email, role string) (*TokenPair, error) {
 	}
 
 	refreshClaims := Claims{
-		UserID: userID,
-		Email:  email,
-		Role:   role,
-		Type:   "refresh",
+		UserID:            userID,
+		Email:             email,
+		FullName:          fullName,
+		Role:              role,
+		PreferredLanguage: preferredLanguage,
+		Type:              "refresh",
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   userID,
 			IssuedAt:  jwt.NewNumericDate(now),

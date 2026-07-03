@@ -499,14 +499,16 @@ func (x *ValidateTokenRequest) GetAccessToken() string {
 }
 
 type ValidateTokenResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Valid         bool                   `protobuf:"varint,1,opt,name=valid,proto3" json:"valid,omitempty"`
-	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
-	Role          Role                   `protobuf:"varint,4,opt,name=role,proto3,enum=auth.Role" json:"role,omitempty"`
-	Error         string                 `protobuf:"bytes,5,opt,name=error,proto3" json:"error,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Valid             bool                   `protobuf:"varint,1,opt,name=valid,proto3" json:"valid,omitempty"`
+	UserId            string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Email             string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	Role              Role                   `protobuf:"varint,4,opt,name=role,proto3,enum=auth.Role" json:"role,omitempty"`
+	FullName          string                 `protobuf:"bytes,5,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	PreferredLanguage string                 `protobuf:"bytes,6,opt,name=preferred_language,json=preferredLanguage,proto3" json:"preferred_language,omitempty"`
+	Error             string                 `protobuf:"bytes,7,opt,name=error,proto3" json:"error,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *ValidateTokenResponse) Reset() {
@@ -567,6 +569,20 @@ func (x *ValidateTokenResponse) GetRole() Role {
 	return Role_ROLE_UNSPECIFIED
 }
 
+func (x *ValidateTokenResponse) GetFullName() string {
+	if x != nil {
+		return x.FullName
+	}
+	return ""
+}
+
+func (x *ValidateTokenResponse) GetPreferredLanguage() string {
+	if x != nil {
+		return x.PreferredLanguage
+	}
+	return ""
+}
+
 func (x *ValidateTokenResponse) GetError() string {
 	if x != nil {
 		return x.Error
@@ -607,14 +623,16 @@ const file_auth_proto_rawDesc = "" +
 	".auth.UserR\x04user\x12\x14\n" +
 	"\x05error\x18\x04 \x01(\tR\x05error\"9\n" +
 	"\x14ValidateTokenRequest\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\"\x92\x01\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\"\xde\x01\n" +
 	"\x15ValidateTokenResponse\x12\x14\n" +
 	"\x05valid\x18\x01 \x01(\bR\x05valid\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x14\n" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12\x1e\n" +
 	"\x04role\x18\x04 \x01(\x0e2\n" +
-	".auth.RoleR\x04role\x12\x14\n" +
-	"\x05error\x18\x05 \x01(\tR\x05error*i\n" +
+	".auth.RoleR\x04role\x12\x1b\n" +
+	"\tfull_name\x18\x05 \x01(\tR\bfullName\x12-\n" +
+	"\x12preferred_language\x18\x06 \x01(\tR\x11preferredLanguage\x12\x14\n" +
+	"\x05error\x18\a \x01(\tR\x05error*i\n" +
 	"\x04Role\x12\x14\n" +
 	"\x10ROLE_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fROLE_STUDENT\x10\x01\x12\x11\n" +
