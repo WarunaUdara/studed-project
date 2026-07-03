@@ -7,6 +7,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
+import { Select } from "@/components/ui/Select";
 import { REGISTER_MUTATION } from "@/graphql/auth";
 import { type Grade, type UserRole, useAuthStore } from "@/stores/auth";
 
@@ -82,41 +83,41 @@ export function RegisterForm() {
 
       <div className="space-y-2">
         <Label htmlFor="role">Role</Label>
-        <select
+        <Select
           id="role"
+          options={[
+            { value: "STUDENT", label: "Student" },
+            { value: "EDUCATOR", label: "Educator" },
+            { value: "HEAD_EDUCATOR", label: "Head Educator" },
+            { value: "ADMIN", label: "Admin" },
+          ]}
           {...register("role")}
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-        >
-          <option value="STUDENT">Student</option>
-          <option value="EDUCATOR">Educator</option>
-          <option value="HEAD_EDUCATOR">Head Educator</option>
-          <option value="ADMIN">Admin</option>
-        </select>
+        />
         {errors.role && <p className="text-sm text-destructive">{errors.role.message}</p>}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="grade">Grade</Label>
-        <select
+        <Select
           id="grade"
+          placeholder="Select grade"
+          options={[
+            { value: "G1", label: "Grade 1" },
+            { value: "G2", label: "Grade 2" },
+            { value: "G3", label: "Grade 3" },
+            { value: "G4", label: "Grade 4" },
+            { value: "G5", label: "Grade 5" },
+            { value: "G6", label: "Grade 6" },
+            { value: "G7", label: "Grade 7" },
+            { value: "G8", label: "Grade 8" },
+            { value: "G9", label: "Grade 9" },
+            { value: "G10", label: "Grade 10" },
+            { value: "G11", label: "Grade 11" },
+            { value: "OL", label: "O/L" },
+            { value: "AL", label: "A/L" },
+          ]}
           {...register("grade")}
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-        >
-          <option value="">Select grade</option>
-          <option value="G1">Grade 1</option>
-          <option value="G2">Grade 2</option>
-          <option value="G3">Grade 3</option>
-          <option value="G4">Grade 4</option>
-          <option value="G5">Grade 5</option>
-          <option value="G6">Grade 6</option>
-          <option value="G7">Grade 7</option>
-          <option value="G8">Grade 8</option>
-          <option value="G9">Grade 9</option>
-          <option value="G10">Grade 10</option>
-          <option value="G11">Grade 11</option>
-          <option value="OL">O/L</option>
-          <option value="AL">A/L</option>
-        </select>
+        />
       </div>
 
       <div className="space-y-2">
