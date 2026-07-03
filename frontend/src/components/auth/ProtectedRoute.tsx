@@ -1,5 +1,5 @@
 import { Navigate } from "@tanstack/react-router";
-import { useAuthStore, type UserRole } from "@/stores/auth";
+import { type UserRole, useAuthStore } from "@/stores/auth";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

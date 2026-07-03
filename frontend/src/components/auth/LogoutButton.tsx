@@ -1,5 +1,5 @@
-import { useMutation } from "urql";
 import { useNavigate } from "@tanstack/react-router";
+import { useMutation } from "urql";
 import { Button } from "@/components/ui/Button";
 import { LOGOUT_MUTATION } from "@/graphql/auth";
 import { useAuthStore } from "@/stores/auth";
