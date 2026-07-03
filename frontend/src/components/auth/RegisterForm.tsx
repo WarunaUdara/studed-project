@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useMutation } from "urql";
-import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { REGISTER_MUTATION } from "@/graphql/auth";
-import { useAuthStore, type Grade, type UserRole } from "@/stores/auth";
+import { type Grade, type UserRole, useAuthStore } from "@/stores/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useMutation } from "urql";
+import { z } from "zod";
 
 const registerSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -64,40 +64,20 @@ export function RegisterForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="fullName">Full name</Label>
-        <Input
-          id="fullName"
-          placeholder="John Doe"
-          {...register("fullName")}
-        />
-        {errors.fullName && (
-          <p className="text-sm text-destructive">{errors.fullName.message}</p>
-        )}
+        <Input id="fullName" placeholder="John Doe" {...register("fullName")} />
+        {errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          placeholder="you@example.com"
-          {...register("email")}
-        />
-        {errors.email && (
-          <p className="text-sm text-destructive">{errors.email.message}</p>
-        )}
+        <Input id="email" type="email" placeholder="you@example.com" {...register("email")} />
+        {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          type="password"
-          placeholder="••••••••"
-          {...register("password")}
-        />
-        {errors.password && (
-          <p className="text-sm text-destructive">{errors.password.message}</p>
-        )}
+        <Input id="password" type="password" placeholder="••••••••" {...register("password")} />
+        {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
       </div>
 
       <div className="space-y-2">
@@ -112,9 +92,7 @@ export function RegisterForm() {
           <option value="HEAD_EDUCATOR">Head Educator</option>
           <option value="ADMIN">Admin</option>
         </select>
-        {errors.role && (
-          <p className="text-sm text-destructive">{errors.role.message}</p>
-        )}
+        {errors.role && <p className="text-sm text-destructive">{errors.role.message}</p>}
       </div>
 
       <div className="space-y-2">
@@ -143,11 +121,7 @@ export function RegisterForm() {
 
       <div className="space-y-2">
         <Label htmlFor="preferredLanguage">Preferred language</Label>
-        <Input
-          id="preferredLanguage"
-          placeholder="en"
-          {...register("preferredLanguage")}
-        />
+        <Input id="preferredLanguage" placeholder="en" {...register("preferredLanguage")} />
       </div>
 
       {error && <p className="text-sm text-destructive">{error}</p>}

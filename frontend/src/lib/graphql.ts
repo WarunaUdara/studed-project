@@ -1,4 +1,4 @@
-import { createClient, cacheExchange, fetchExchange } from "urql";
+import { cacheExchange, createClient, fetchExchange } from "urql";
 
 export const graphqlClient = createClient({
   url: "/graphql",
