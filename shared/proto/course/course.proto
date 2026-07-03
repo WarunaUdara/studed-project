@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package course;
+option go_package = "github.com/studed/shared/proto/gen/go/course;coursepb";
+
+import "auth/auth.proto";
+
+enum CourseStatus {
+  COURSE_STATUS_UNSPECIFIED = 0;
+  COURSE_STATUS_DRAFT = 1;
+  COURSE_STATUS_PUBLISHED = 2;
+}
+
+message Course {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string slug = 4;
+  auth.Grade grade_level = 5;
+  string educator_id = 6;
+  double price = 7;
+  CourseStatus status = 8;
+  int64 created_at_unix = 9;
+  int64 updated_at_unix = 10;
+}
+
+message Lesson {
+  string id = 1;
+  string course_id = 2;
+  string title = 3;
+  int32 sequence_order = 4;
+  bool is_published = 5;
+  int64 created_at_unix = 6;
+}
+
+message Wave {
+  string id = 1;
+  string lesson_id = 2;
+  string title = 3;
+  int32 sequence_order = 4;
+  int32 xp_reward = 5;
+  int32 max_reattempts = 6;
+  int32 passing_threshold = 7;
+  int32 estimated_duration = 8;
+  string difficulty = 9;
+  bool is_published = 10;
+  int64 created_at_unix = 11;
+}
+
+message CreateCourseRequest {
+  string title = 1;
+  string description = 2;
+  string slug = 3;
+  auth.Grade grade_level = 4;
+  double price = 5;
+  string educator_id = 6;
+}
+
+message GetCourseRequest {
+  string id = 1;
+}
+
+message ListCoursesRequest {
+  auth.Grade grade_level = 1;
+  bool published_only = 2;
+  string educator_id = 3;
+}
+
+message PublishCourseRequest {
+  string id = 1;
+  string educator_id = 2;
+}
+
+message CourseResponse {
+  Course course = 1;
+  string error = 2;
+}
+
+message CourseListResponse {
+  repeated Course courses = 1;
+}
+
+service CourseService {
+  rpc CreateCourse(CreateCourseRequest) returns (CourseResponse);
+  rpc GetCourse(GetCourseRequest) returns (CourseResponse);
+  rpc ListCourses(ListCoursesRequest) returns (CourseListResponse);
+  rpc PublishCourse(PublishCourseRequest) returns (CourseResponse);
+}

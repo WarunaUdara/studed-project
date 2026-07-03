@@ -13,7 +13,7 @@ import (
 	"github.com/studed/auth-service/internal/repository"
 	"github.com/studed/auth-service/internal/service"
 	"github.com/studed/shared/go/logger"
-	authpb "github.com/studed/shared/proto/gen/go"
+	authpb "github.com/studed/shared/proto/gen/go/auth"
 	"google.golang.org/grpc"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/studed/api-gateway/graph/model"
-	authpb "github.com/studed/shared/proto/gen/go"
+	authpb "github.com/studed/shared/proto/gen/go/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

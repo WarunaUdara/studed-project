@@ -8,7 +8,7 @@ import (
 
 	"github.com/studed/auth-service/internal/jwt"
 	"github.com/studed/auth-service/internal/model"
-	authpb "github.com/studed/shared/proto/gen/go"
+	authpb "github.com/studed/shared/proto/gen/go/auth"
 )
 
 type inMemoryUserRepo struct {

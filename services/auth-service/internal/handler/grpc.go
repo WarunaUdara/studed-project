@@ -5,7 +5,7 @@ import (
 
 	"github.com/studed/auth-service/internal/model"
 	"github.com/studed/auth-service/internal/service"
-	authpb "github.com/studed/shared/proto/gen/go"
+	authpb "github.com/studed/shared/proto/gen/go/auth"
 )
 
 type AuthGRPCHandler struct {

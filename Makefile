@@ -49,7 +49,7 @@
 	protoc --proto_path=shared/proto \
 		--go_out=shared/proto/gen/go --go_opt=paths=source_relative \
 		--go-grpc_out=shared/proto/gen/go --go-grpc_opt=paths=source_relative \
-		shared/proto/auth.proto
+		shared/proto/auth/auth.proto shared/proto/course/course.proto
 	cd shared/proto/gen/go && go mod tidy
 
 # Combined
