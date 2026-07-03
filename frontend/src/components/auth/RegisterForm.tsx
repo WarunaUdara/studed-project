@@ -1,14 +1,14 @@
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import { REGISTER_MUTATION } from "@/graphql/auth";
-import { type Grade, type UserRole, useAuthStore } from "@/stores/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "urql";
 import { z } from "zod";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { REGISTER_MUTATION } from "@/graphql/auth";
+import { type Grade, type UserRole, useAuthStore } from "@/stores/auth";
 
 const registerSchema = z.object({
   email: z.string().email("Invalid email address"),
