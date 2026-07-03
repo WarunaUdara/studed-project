@@ -34,7 +34,14 @@ func main() {
 	}
 	defer authClient.Close()
 
-	resolver := &graph.Resolver{AuthClient: authClient}
+	courseClient, err := client.NewCourseClient(cfg.CourseServiceAddr)
+	if err != nil {
+		log.Error("failed to connect to course service", slog.Any("error", err))
+		os.Exit(1)
+	}
+	defer courseClient.Close()
+
+	resolver := &graph.Resolver{AuthClient: authClient, CourseClient: courseClient}
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.GET{})

@@ -11,6 +11,23 @@ import (
 	"github.com/studed/api-gateway/internal/middleware"
 )
 
+func requireUser(ctx context.Context) (middleware.UserContext, error) {
+	userCtx, ok := middleware.UserFromContext(ctx)
+	if !ok || userCtx.UserID == "" {
+		return middleware.UserContext{}, errors.New("unauthorized")
+	}
+	return userCtx, nil
+}
+
+func requireEducator(userCtx middleware.UserContext) error {
+	switch userCtx.Role {
+	case "EDUCATOR", "HEAD_EDUCATOR", "ADMIN":
+		return nil
+	default:
+		return errors.New("forbidden: educator role required")
+	}
+}
+
 func setAuthCookies(ctx context.Context, accessToken, refreshToken string) {
 	w, ok := middleware.ResponseWriterFromContext(ctx)
 	if !ok {
@@ -100,7 +117,15 @@ func (r *mutationResolver) Logout(ctx context.Context) (bool, error) {
 
 // CreateCourse is the resolver for the createCourse field.
 func (r *mutationResolver) CreateCourse(ctx context.Context, input model.CreateCourseInput) (*model.Course, error) {
-	return nil, errors.New("not implemented")
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return nil, err
+	}
+
+	return r.CourseClient.CreateCourse(ctx, userCtx.UserID, input)
 }
 
 // UpdateCourse is the resolver for the updateCourse field.
@@ -110,7 +135,15 @@ func (r *mutationResolver) UpdateCourse(ctx context.Context, id string, input mo
 
 // PublishCourse is the resolver for the publishCourse field.
 func (r *mutationResolver) PublishCourse(ctx context.Context, id string) (*model.Course, error) {
-	return nil, errors.New("not implemented")
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return nil, err
+	}
+
+	return r.CourseClient.PublishCourse(ctx, userCtx.UserID, id)
 }
 
 // CreateLesson is the resolver for the createLesson field.
@@ -181,12 +214,23 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 
 // Courses is the resolver for the courses field.
 func (r *queryResolver) Courses(ctx context.Context, filter *model.CourseFilter, pagination *model.PaginationInput) (*model.CourseConnection, error) {
-	return nil, errors.New("not implemented")
+	if filter == nil {
+		filter = &model.CourseFilter{}
+	}
+
+	userCtx, ok := middleware.UserFromContext(ctx)
+	isEducator := ok && (userCtx.Role == "EDUCATOR" || userCtx.Role == "HEAD_EDUCATOR" || userCtx.Role == "ADMIN")
+	if filter.IsPublished == nil && !isEducator {
+		published := true
+		filter.IsPublished = &published
+	}
+
+	return r.CourseClient.ListCourses(ctx, filter)
 }
 
 // Course is the resolver for the course field.
 func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, error) {
-	return nil, errors.New("not implemented")
+	return r.CourseClient.GetCourse(ctx, id)
 }
 
 // Lesson is the resolver for the lesson field.

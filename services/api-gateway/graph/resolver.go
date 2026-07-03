@@ -6,5 +6,6 @@ import (
 
 // Resolver serves as dependency injection for the GraphQL server.
 type Resolver struct {
-	AuthClient *client.AuthClient
+	AuthClient   *client.AuthClient
+	CourseClient *client.CourseClient
 }
