@@ -1,4 +1,4 @@
-.PHONY: dev-up dev-down test lint build frontend-install frontend-dev frontend-build go-build go-test
+.PHONY: dev-up dev-down test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint go-build go-test shared-test proto-gen
 
 # Development
  dev-up:
@@ -19,6 +19,9 @@
 
  frontend-typecheck:
 	cd frontend && bun run typecheck
+
+ frontend-lint:
+	cd frontend && bun run lint
 
 # Go services
  go-build:
@@ -41,11 +44,18 @@
  shared-test:
 	cd shared/go && go test ./...
 
+ proto-gen:
+	mkdir -p shared/proto/gen/go
+	protoc --proto_path=shared/proto \
+		--go_out=shared/proto/gen/go --go_opt=paths=source_relative \
+		--go-grpc_out=shared/proto/gen/go --go-grpc_opt=paths=source_relative \
+		shared/proto/auth.proto
+	cd shared/proto/gen/go && go mod tidy
+
 # Combined
  test: go-test shared-test
 	cd frontend && bun run test
 
- lint:
-	cd frontend && bun run lint
+ lint: frontend-lint
 
  build: frontend-build go-build
