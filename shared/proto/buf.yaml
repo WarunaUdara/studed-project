@@ -1,0 +1,8 @@
+version: v1
+name: github.com/WarunaUdara/studed-project
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - DEFAULT

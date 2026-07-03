@@ -1,0 +1,337 @@
+scalar DateTime
+
+enum Role {
+  STUDENT
+  EDUCATOR
+  HEAD_EDUCATOR
+  ADMIN
+}
+
+enum Grade {
+  G1
+  G2
+  G3
+  G4
+  G5
+  G6
+  G7
+  G8
+  G9
+  G10
+  G11
+  OL
+  AL
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum ProgressStatus {
+  LOCKED
+  AVAILABLE
+  STARTED
+  COMPLETED
+}
+
+enum Tier {
+  BASIC
+  STANDARD
+  PREMIUM
+  SCHOOL
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  EXPIRED
+}
+
+type User {
+  id: ID!
+  email: String!
+  fullName: String!
+  role: Role!
+  grade: Grade
+  preferredLanguage: String!
+  subscription: Subscription
+  totalXp: Int!
+  createdAt: DateTime!
+}
+
+type Course {
+  id: ID!
+  title: String!
+  description: String!
+  slug: String!
+  gradeLevel: Grade!
+  educator: User!
+  price: Float
+  isPublished: Boolean!
+  lessons: [Lesson!]!
+  myProgress: CourseProgress
+  createdAt: DateTime!
+}
+
+type Lesson {
+  id: ID!
+  course: Course!
+  title: String!
+  sequenceOrder: Int!
+  waves: [Wave!]!
+  isPublished: Boolean!
+}
+
+type Wave {
+  id: ID!
+  lesson: Lesson!
+  title: String!
+  sequenceOrder: Int!
+  xpReward: Int!
+  maxReattempts: Int!
+  passingThreshold: Int!
+  estimatedDuration: Int!
+  difficulty: Difficulty!
+  learnBlocks: [LearnBlock!]!
+  evaluateBlocks: [EvaluateBlock!]!
+  myProgress: WaveProgress
+  isPublished: Boolean!
+}
+
+type LearnBlock {
+  id: ID!
+  type: String!
+  content: String!
+  metadata: String
+}
+
+type EvaluateBlock {
+  id: ID!
+  type: String!
+  question: String!
+  options: [String!]
+  correctAnswer: String
+  explanation: String
+  metadata: String
+}
+
+type WaveProgress {
+  status: ProgressStatus!
+  attemptsCount: Int!
+  highestScore: Int
+  completedAt: DateTime
+  lastAttemptedAt: DateTime
+}
+
+type CourseProgress {
+  completedWaves: Int!
+  totalWaves: Int!
+  startedAt: DateTime
+  completedAt: DateTime
+}
+
+type LessonProgress {
+  lesson: Lesson!
+  completedWaves: Int!
+  totalWaves: Int!
+}
+
+type LeaderboardEntry {
+  rank: Int!
+  user: User!
+  totalXp: Int!
+  course: Course
+}
+
+type Subscription {
+  id: ID!
+  tier: Tier!
+  status: SubscriptionStatus!
+  startDate: DateTime!
+  endDate: DateTime!
+}
+
+type Achievement {
+  id: ID!
+  name: String!
+  description: String!
+  iconUrl: String
+  unlockedAt: DateTime!
+}
+
+input CourseFilter {
+  grade: Grade
+  subject: String
+  search: String
+  isPublished: Boolean
+}
+
+input PaginationInput {
+  first: Int = 20
+  after: String
+}
+
+type CourseEdge {
+  node: Course!
+  cursor: String!
+}
+
+type CourseConnection {
+  edges: [CourseEdge!]!
+  pageInfo: PageInfo!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  endCursor: String
+}
+
+input RegisterInput {
+  email: String!
+  password: String!
+  fullName: String!
+  role: Role!
+  grade: Grade
+  preferredLanguage: String
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type AuthPayload {
+  accessToken: String!
+  refreshToken: String!
+  user: User!
+}
+
+input CreateCourseInput {
+  title: String!
+  description: String!
+  slug: String!
+  gradeLevel: Grade!
+  price: Float
+}
+
+input UpdateCourseInput {
+  title: String
+  description: String
+  slug: String
+  gradeLevel: Grade
+  price: Float
+}
+
+input CreateLessonInput {
+  title: String!
+  sequenceOrder: Int!
+}
+
+input CreateWaveInput {
+  title: String!
+  sequenceOrder: Int!
+  xpReward: Int!
+  maxReattempts: Int!
+  passingThreshold: Int!
+  estimatedDuration: Int!
+  difficulty: Difficulty!
+}
+
+input UpdateWaveInput {
+  title: String
+  sequenceOrder: Int
+  xpReward: Int
+  maxReattempts: Int
+  passingThreshold: Int
+  estimatedDuration: Int
+  difficulty: Difficulty
+}
+
+input AnswerInput {
+  evaluateBlockId: ID!
+  answer: String!
+}
+
+type QuestionFeedback {
+  evaluateBlockId: ID!
+  correct: Boolean!
+  correctAnswer: String
+  explanation: String
+}
+
+type WaveResult {
+  score: Int!
+  xpEarned: Int!
+  totalXp: Int!
+  passed: Boolean!
+  remainingAttempts: Int
+  feedback: [QuestionFeedback!]!
+}
+
+input CreateSubscriptionInput {
+  tier: Tier!
+}
+
+enum LeaderboardScope {
+  GLOBAL
+  COURSE
+  GRADE
+}
+
+type XpEvent {
+  waveId: ID!
+  amount: Int!
+  totalXp: Int!
+  reason: String!
+}
+
+type Query {
+  me: User!
+
+  courses(filter: CourseFilter, pagination: PaginationInput): CourseConnection!
+  course(id: ID!): Course
+
+  lesson(id: ID!): Lesson
+  wave(id: ID!): Wave
+
+  progress(courseId: ID): [LessonProgress!]!
+  waveProgress(waveId: ID!): WaveProgress
+
+  leaderboard(scope: LeaderboardScope!, courseId: ID, grade: Grade): [LeaderboardEntry!]!
+  myRank(scope: LeaderboardScope!, courseId: ID): Int
+
+  achievements: [Achievement!]!
+}
+
+type Mutation {
+  register(input: RegisterInput!): AuthPayload!
+  login(input: LoginInput!): AuthPayload!
+  refreshToken(refreshToken: String!): AuthPayload!
+  logout: Boolean!
+
+  createCourse(input: CreateCourseInput!): Course!
+  updateCourse(id: ID!, input: UpdateCourseInput!): Course!
+  publishCourse(id: ID!): Course!
+  createLesson(courseId: ID!, input: CreateLessonInput!): Lesson!
+  createWave(lessonId: ID!, input: CreateWaveInput!): Wave!
+  updateWave(id: ID!, input: UpdateWaveInput!): Wave!
+
+  submitWaveAnswers(waveId: ID!, answers: [AnswerInput!]!): WaveResult!
+  enrollInCourse(courseId: ID!): Course!
+
+  generateLearnBlocks(prompt: String!, language: String, grade: Grade): [LearnBlock!]!
+  generateEvaluateBlocks(content: String!, count: Int = 3): [EvaluateBlock!]!
+  translateContent(content: String!, targetLanguage: String!): String!
+
+  createSubscription(input: CreateSubscriptionInput!): Subscription!
+  cancelSubscription: Subscription!
+}
+
+type Subscription {
+  leaderboardUpdated(scope: LeaderboardScope!, courseId: ID): LeaderboardEntry!
+  xpGained: XpEvent!
+  achievementUnlocked: Achievement!
+  waveCompleted: WaveProgress!
+}

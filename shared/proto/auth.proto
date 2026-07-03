@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package auth;
+option go_package = "github.com/studed/shared/proto/gen/go;authpb";
+
+enum Role {
+  ROLE_UNSPECIFIED = 0;
+  ROLE_STUDENT = 1;
+  ROLE_EDUCATOR = 2;
+  ROLE_HEAD_EDUCATOR = 3;
+  ROLE_ADMIN = 4;
+}
+
+enum Grade {
+  GRADE_UNSPECIFIED = 0;
+  GRADE_G1 = 1;
+  GRADE_G2 = 2;
+  GRADE_G3 = 3;
+  GRADE_G4 = 4;
+  GRADE_G5 = 5;
+  GRADE_G6 = 6;
+  GRADE_G7 = 7;
+  GRADE_G8 = 8;
+  GRADE_G9 = 9;
+  GRADE_G10 = 10;
+  GRADE_G11 = 11;
+  GRADE_OL = 12;
+  GRADE_AL = 13;
+}
+
+message User {
+  string id = 1;
+  string email = 2;
+  string full_name = 3;
+  Role role = 4;
+  Grade grade = 5;
+  string preferred_language = 6;
+  int64 created_at_unix = 7;
+}
+
+message RegisterRequest {
+  string email = 1;
+  string password = 2;
+  string full_name = 3;
+  Role role = 4;
+  Grade grade = 5;
+  string preferred_language = 6;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message AuthResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  User user = 3;
+  string error = 4;
+}
+
+message ValidateTokenRequest {
+  string access_token = 1;
+}
+
+message ValidateTokenResponse {
+  bool valid = 1;
+  string user_id = 2;
+  string email = 3;
+  Role role = 4;
+  string error = 5;
+}
+
+service AuthService {
+  rpc Register(RegisterRequest) returns (AuthResponse);
+  rpc Login(LoginRequest) returns (AuthResponse);
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+}
