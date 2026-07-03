@@ -18,7 +18,7 @@ const registerSchema = z.object({
   grade: z
     .enum(["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "OL", "AL"])
     .optional(),
-  preferredLanguage: z.string().default("en"),
+  preferredLanguage: z.string(),
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
