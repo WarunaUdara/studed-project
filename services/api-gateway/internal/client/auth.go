@@ -84,6 +84,18 @@ func (c *AuthClient) ValidateToken(ctx context.Context, accessToken string) (*au
 	return c.client.ValidateToken(ctx, &authpb.ValidateTokenRequest{AccessToken: accessToken})
 }
 
+func (c *AuthClient) RefreshToken(ctx context.Context, refreshToken string) (*model.AuthPayload, error) {
+	resp, err := c.client.RefreshToken(ctx, &authpb.RefreshTokenRequest{RefreshToken: refreshToken})
+	if err != nil {
+		return nil, fmt.Errorf("refresh token failed: %w", err)
+	}
+	if resp.Error != "" {
+		return nil, fmt.Errorf("refresh token failed: %s", resp.Error)
+	}
+
+	return protoAuthResponseToModel(resp), nil
+}
+
 func protoAuthResponseToModel(resp *authpb.AuthResponse) *model.AuthPayload {
 	return &model.AuthPayload{
 		AccessToken:  resp.AccessToken,

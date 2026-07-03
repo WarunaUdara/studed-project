@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 
-	"github.com/studed/auth-service/internal/jwt"
 	"github.com/studed/auth-service/internal/model"
 	"github.com/studed/auth-service/internal/service"
 	authpb "github.com/studed/shared/proto/gen/go"
@@ -54,6 +53,10 @@ func (h *AuthGRPCHandler) ValidateToken(ctx context.Context, req *authpb.Validat
 	return h.svc.ValidateToken(ctx, req.AccessToken)
 }
 
-func EnsureJWTManagerInContext(ctx context.Context, mgr *jwt.Manager) context.Context {
-	return jwt.ContextWithUserID(ctx, "")
+func (h *AuthGRPCHandler) RefreshToken(ctx context.Context, req *authpb.RefreshTokenRequest) (*authpb.AuthResponse, error) {
+	resp, err := h.svc.RefreshToken(ctx, req.RefreshToken)
+	if err != nil {
+		return &authpb.AuthResponse{Error: err.Error()}, nil
+	}
+	return resp, nil
 }

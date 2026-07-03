@@ -60,7 +60,12 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*
 
 // RefreshToken is the resolver for the refreshToken field.
 func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken string) (*model.AuthPayload, error) {
-	return nil, errors.New("refresh token not implemented")
+	payload, err := r.AuthClient.RefreshToken(ctx, refreshToken)
+	if err != nil {
+		return nil, err
+	}
+	setAuthCookies(ctx, payload.AccessToken, payload.RefreshToken)
+	return payload, nil
 }
 
 // Logout is the resolver for the logout field.

@@ -15,6 +15,7 @@ import (
 type AuthService interface {
 	Register(ctx context.Context, email, password, fullName string, role model.Role, grade *model.Grade, preferredLanguage string) (*authpb.AuthResponse, error)
 	Login(ctx context.Context, email, password string) (*authpb.AuthResponse, error)
+	RefreshToken(ctx context.Context, refreshToken string) (*authpb.AuthResponse, error)
 	ValidateToken(ctx context.Context, accessToken string) (*authpb.ValidateTokenResponse, error)
 }
 
@@ -107,6 +108,30 @@ func (s *authService) Login(ctx context.Context, email, password string) (*authp
 		AccessToken:  tokens.AccessToken,
 		RefreshToken: tokens.RefreshToken,
 		User:         toProtoUser(user),
+	}, nil
+}
+
+func (s *authService) RefreshToken(ctx context.Context, refreshToken string) (*authpb.AuthResponse, error) {
+	claims, err := s.jwtMgr.ValidateRefresh(refreshToken)
+	if err != nil {
+		return nil, fmt.Errorf("invalid refresh token: %w", err)
+	}
+
+	tokens, err := s.jwtMgr.Generate(claims.UserID, claims.Email, claims.FullName, claims.Role, claims.PreferredLanguage)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate tokens: %w", err)
+	}
+
+	return &authpb.AuthResponse{
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+		User: &authpb.User{
+			Id:                claims.UserID,
+			Email:             claims.Email,
+			FullName:          claims.FullName,
+			Role:              toProtoRole(claims.Role),
+			PreferredLanguage: claims.PreferredLanguage,
+		},
 	}, nil
 }
 
