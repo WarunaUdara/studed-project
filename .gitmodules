@@ -1,0 +1,19 @@
+[submodule "submodules/math-to-manim"]
+	path = submodules/math-to-manim
+	url = https://github.com/HarleyCoops/Math-To-Manim.git
+	branch = main
+
+[submodule "submodules/3dmol-js"]
+	path = submodules/3dmol-js
+	url = https://github.com/3dmol/3Dmol.js.git
+	branch = master
+
+[submodule "submodules/tscircuit"]
+	path = submodules/tscircuit
+	url = https://github.com/tscircuit/tscircuit.git
+	branch = main
+
+[submodule "submodules/matter-js"]
+	path = submodules/matter-js
+	url = https://github.com/liabru/matter-js.git
+	branch = master

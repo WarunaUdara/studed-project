@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+frontend/dist/
+frontend/src/routeTree.gen.ts
+services/*/bin/
+services/*/tmp/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Test coverage
+coverage/
+*.out
+
+# Temporary files
+tmp/
+temp/

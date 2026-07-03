@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: studed-postgres
+    environment:
+      POSTGRES_USER: studed
+      POSTGRES_PASSWORD: studed
+      POSTGRES_DB: studed
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: studed-redis
+    ports:
+      - "6379:6379"
+
+  elasticsearch:
+    image: elasticsearch:8.14.0
+    container_name: studed-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+volumes:
+  postgres_data:
+  elasticsearch_data:
