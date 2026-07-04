@@ -1,4 +1,4 @@
-.PHONY: dev-up dev-down test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint go-build go-test shared-test proto-gen
+.PHONY: dev-up dev-down dev dev-stop test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint go-build go-test shared-test proto-gen
 
 # Development
  dev-up:
@@ -6,6 +6,12 @@
 
  dev-down:
 	docker-compose -f docker-compose.yml down
+
+ dev:
+	./scripts/dev.sh
+
+ dev-stop:
+	./scripts/dev-stop.sh
 
 # Frontend
  frontend-install:
