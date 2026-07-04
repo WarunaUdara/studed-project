@@ -16,6 +16,12 @@ function IndexPage() {
         Premium e-learning for Sri Lankan schools.
       </p>
 
+      <div className="flex gap-3">
+        <Link to="/courses">
+          <Button variant="outline">Browse Courses</Button>
+        </Link>
+      </div>
+
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Loading...</p>
       ) : isAuthenticated && user ? (
