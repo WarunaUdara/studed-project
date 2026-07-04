@@ -35,30 +35,40 @@ StudEd organizes learning content into a strict hierarchy:
 
 1. Read `AGENTS.md` for the full development workflow.
 2. Ensure Docker Desktop is running.
-3. Start the full local backend (infrastructure + auth/course/api-gateway services):
+3. Start the full local backend (infrastructure + core services) in Docker:
    ```bash
-   make dev
+   make dev-up
    ```
-   Services will log to `.dev-logs/`. Press `Ctrl+C` to stop, or run `make dev-stop`.
-4. In another terminal, install frontend dependencies:
+   This builds and runs PostgreSQL, Redis, Elasticsearch, auth-service, course-service, and api-gateway.
+4. Seed a demo educator and course:
+   ```bash
+   make seed
+   ```
+   Credentials: `educator@studed.lk` / `password123`.
+5. In another terminal, install frontend dependencies:
    ```bash
    make frontend-install
    ```
-5. Run the frontend dev server:
+6. Run the frontend dev server:
    ```bash
    make frontend-dev
    ```
-6. Open http://localhost:5173 and register as an educator to create courses.
+7. Open http://localhost:5173, log in as the demo educator, and open http://localhost:5173/educator/courses.
+
+Stop the stack with:
+
+```bash
+make dev-down
+```
 
 ### Manual infrastructure
 
-If you prefer to run services yourself:
+If you prefer to run services locally instead of Docker:
 
 ```bash
-make dev-up                    # postgres, redis, elasticsearch
-cd services/auth-service && go run .  # requires services/auth-service/.env
+cd services/auth-service && go run .   # requires services/auth-service/.env
 cd services/course-service && go run . # requires services/course-service/.env
-cd services/api-gateway && go run .   # requires services/api-gateway/.env
+cd services/api-gateway && go run .    # requires services/api-gateway/.env
 ```
 
 ## Documentation

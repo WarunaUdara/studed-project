@@ -277,7 +277,7 @@ frontend/
 
 ```bash
 # 1. Start your day
-make dev-up                    # Spins up PostgreSQL, Redis, Elasticsearch via Docker Compose
+make dev-up                    # Builds and runs PostgreSQL, Redis, Elasticsearch, auth-service, course-service, and api-gateway in Docker Compose
 
 # 2. Pick up a task
 gh issue develop 42            # Creates branch feature/auth-jwt from issue #42
@@ -307,14 +307,20 @@ git branch -d feature/auth-jwt
 ### Makefile Targets
 
 ```makefile
-.PHONY: dev-up dev-down test lint build deploy
+.PHONY: dev-up dev-down dev-logs seed test lint build deploy
 
 # Development
  dev-up:
-  docker-compose -f docker-compose.dev.yml up -d postgres redis elasticsearch
+  docker compose -f docker-compose.yml up --build -d
 
  dev-down:
-  docker-compose -f docker-compose.dev.yml down
+  docker compose -f docker-compose.yml down
+
+ dev-logs:
+  docker compose logs -f
+
+ seed:
+  ./scripts/seed.sh
 
 # Testing
  test:

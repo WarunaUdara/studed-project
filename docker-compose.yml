@@ -10,6 +10,11 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "studed", "-d", "studed"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   redis:
     image: redis:7-alpine
@@ -27,6 +32,77 @@ services:
       - "9200:9200"
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+    container_name: studed-auth-service
+    environment:
+      AUTH_SERVICE_ADDR: :8081
+      DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
+      JWT_ACCESS_SECRET: change-me-access-secret-min-32-bytes-long
+      JWT_REFRESH_SECRET: change-me-refresh-secret-min-32-bytes-long
+      JWT_ACCESS_TTL: 15m
+      JWT_REFRESH_TTL: 168h
+    ports:
+      - "8081:8081"
+      - "8085:8085"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8085/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  course-service:
+    build:
+      context: .
+      dockerfile: services/course-service/Dockerfile
+    container_name: studed-course-service
+    environment:
+      COURSE_SERVICE_ADDR: :8083
+      DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
+      AUTH_SERVICE_ADDR: auth-service:8081
+    ports:
+      - "8083:8083"
+      - "8084:8084"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8084/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    container_name: studed-api-gateway
+    environment:
+      API_GATEWAY_ADDR: :8080
+      AUTH_SERVICE_ADDR: auth-service:8081
+      COURSE_SERVICE_ADDR: course-service:8083
+      JWT_ACCESS_SECRET: change-me-access-secret-min-32-bytes-long
+      GRAPHQL_PLAYGROUND: "true"
+    ports:
+      - "8080:8080"
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      course-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
 volumes:
   postgres_data:

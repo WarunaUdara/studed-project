@@ -2,10 +2,16 @@
 
 # Development
  dev-up:
-	docker-compose -f docker-compose.yml up -d postgres redis elasticsearch
+	docker compose -f docker-compose.yml up --build -d
 
  dev-down:
-	docker-compose -f docker-compose.yml down
+	docker compose -f docker-compose.yml down
+
+ dev-logs:
+	docker compose logs -f
+
+ seed:
+	./scripts/seed.sh
 
  dev:
 	./scripts/dev.sh

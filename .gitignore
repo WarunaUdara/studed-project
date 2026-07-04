@@ -27,6 +27,9 @@ Thumbs.db
 # Logs
 *.log
 logs/
+.dev-logs/
+.dev-pids
+.seed-cookies
 
 # Test coverage
 coverage/

@@ -61,7 +61,7 @@ if ! docker info >/dev/null 2>&1; then
 fi
 
 echo "[dev] starting infrastructure..."
-docker-compose -f "${REPO_ROOT}/docker-compose.yml" up -d postgres redis elasticsearch
+docker compose -f "${REPO_ROOT}/docker-compose.yml" up -d postgres redis elasticsearch
 
 echo "[dev] waiting for postgres..."
 for _ in {1..30}; do
