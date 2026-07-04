@@ -166,7 +166,6 @@ input CourseFilter {
   subject: String
   search: String
   isPublished: Boolean
-  educatorId: ID
 }
 
 input PaginationInput {

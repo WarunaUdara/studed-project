@@ -7194,7 +7194,7 @@ func (ec *executionContext) unmarshalInputCourseFilter(ctx context.Context, obj 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"grade", "subject", "search", "isPublished", "educatorId"}
+	fieldsInOrder := [...]string{"grade", "subject", "search", "isPublished"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7229,13 +7229,6 @@ func (ec *executionContext) unmarshalInputCourseFilter(ctx context.Context, obj 
 				return it, err
 			}
 			it.IsPublished = data
-		case "educatorId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("educatorId"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.EducatorID = data
 		}
 	}
 	return it, nil

@@ -94,8 +94,11 @@ func (c *CourseClient) GetCourseWithLessons(ctx context.Context, id string) (*mo
 	return course, nil
 }
 
-func (c *CourseClient) ListCourses(ctx context.Context, filter *model.CourseFilter) (*model.CourseConnection, error) {
+func (c *CourseClient) ListCourses(ctx context.Context, filter *model.CourseFilter, educatorID string) (*model.CourseConnection, error) {
 	req := &coursepb.ListCoursesRequest{}
+	if educatorID != "" {
+		req.EducatorId = educatorID
+	}
 	if filter != nil {
 		if filter.Grade != nil {
 			req.GradeLevel = modelGradeToProto(*filter.Grade)

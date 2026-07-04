@@ -204,12 +204,16 @@ func (r *queryResolver) Courses(ctx context.Context, filter *model.CourseFilter,
 
 	userCtx, ok := middleware.UserFromContext(ctx)
 	isEducator := ok && (userCtx.Role == "EDUCATOR" || userCtx.Role == "HEAD_EDUCATOR" || userCtx.Role == "ADMIN")
-	if filter.IsPublished == nil && !isEducator {
+
+	var educatorID string
+	if ok && isEducator {
+		educatorID = userCtx.UserID
+	} else if filter.IsPublished == nil {
 		published := true
 		filter.IsPublished = &published
 	}
 
-	return r.CourseClient.ListCourses(ctx, filter)
+	return r.CourseClient.ListCourses(ctx, filter, educatorID)
 }
 
 // Course is the resolver for the course field.
