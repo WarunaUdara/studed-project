@@ -13,7 +13,8 @@ tags:
 
 > [!info] How to use this file
 > This is the shared, authoritative backlog for the StudEd MVP. Each agent should:
-> - Mark completed work under **Done**.
+> - Mark work as **IN_PROGRESS** while developing and **DONE** after pushing.
+> - Update the owner column before starting a task to avoid duplicate work.
 > - Add newly discovered tasks to **Newly Discovered**.
 > - Move accepted tasks to **Priority Queue** with an owner recommendation.
 > - Keep entries concrete and small enough for a single focused commit.
