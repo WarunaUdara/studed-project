@@ -82,6 +82,16 @@ message PublishCourseRequest {
   string educator_id = 2;
 }
 
+message UpdateCourseRequest {
+  string id = 1;
+  string educator_id = 2;
+  string title = 3;
+  string description = 4;
+  string slug = 5;
+  auth.Grade grade_level = 6;
+  double price = 7;
+}
+
 message CourseResponse {
   Course course = 1;
   string error = 2;
@@ -176,6 +186,7 @@ service CourseService {
   rpc CreateCourse(CreateCourseRequest) returns (CourseResponse);
   rpc GetCourse(GetCourseRequest) returns (CourseResponse);
   rpc ListCourses(ListCoursesRequest) returns (CourseListResponse);
+  rpc UpdateCourse(UpdateCourseRequest) returns (CourseResponse);
   rpc PublishCourse(PublishCourseRequest) returns (CourseResponse);
 
   rpc CreateLesson(CreateLessonRequest) returns (LessonResponse);

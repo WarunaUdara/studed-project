@@ -16,6 +16,7 @@ type CourseService interface {
 	CreateCourse(ctx context.Context, req *coursepb.CreateCourseRequest) (*coursepb.CourseResponse, error)
 	GetCourse(ctx context.Context, req *coursepb.GetCourseRequest) (*coursepb.CourseResponse, error)
 	ListCourses(ctx context.Context, req *coursepb.ListCoursesRequest) (*coursepb.CourseListResponse, error)
+	UpdateCourse(ctx context.Context, req *coursepb.UpdateCourseRequest) (*coursepb.CourseResponse, error)
 	PublishCourse(ctx context.Context, req *coursepb.PublishCourseRequest) (*coursepb.CourseResponse, error)
 
 	CreateLesson(ctx context.Context, req *coursepb.CreateLessonRequest) (*coursepb.LessonResponse, error)
@@ -118,6 +119,46 @@ func (s *courseService) ListCourses(ctx context.Context, req *coursepb.ListCours
 	}
 
 	return &coursepb.CourseListResponse{Courses: protoCourses}, nil
+}
+
+func (s *courseService) UpdateCourse(ctx context.Context, req *coursepb.UpdateCourseRequest) (*coursepb.CourseResponse, error) {
+	if req.Id == "" {
+		return nil, fmt.Errorf("course id is required")
+	}
+	if req.EducatorId == "" {
+		return nil, fmt.Errorf("educator id is required")
+	}
+
+	course, err := s.courseRepo.GetByID(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if course.EducatorID != req.EducatorId {
+		return nil, fmt.Errorf("unauthorized to update this course")
+	}
+
+	if title := strings.TrimSpace(req.Title); title != "" {
+		course.Title = title
+	}
+	if description := strings.TrimSpace(req.Description); description != "" {
+		course.Description = description
+	}
+	if slug := strings.TrimSpace(req.Slug); slug != "" {
+		course.Slug = slug
+	}
+	if req.GradeLevel != 0 {
+		course.GradeLevel = model.FromAuthProtoGrade(req.GradeLevel)
+	}
+	if req.Price != 0 {
+		p := req.Price
+		course.Price = &p
+	}
+
+	if err := s.courseRepo.Update(ctx, course); err != nil {
+		return nil, fmt.Errorf("failed to update course: %w", err)
+	}
+
+	return &coursepb.CourseResponse{Course: course.ToProto()}, nil
 }
 
 func (s *courseService) PublishCourse(ctx context.Context, req *coursepb.PublishCourseRequest) (*coursepb.CourseResponse, error) {

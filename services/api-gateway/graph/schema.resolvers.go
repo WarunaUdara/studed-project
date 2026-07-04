@@ -90,7 +90,15 @@ func (r *mutationResolver) CreateCourse(ctx context.Context, input model.CreateC
 
 // UpdateCourse is the resolver for the updateCourse field.
 func (r *mutationResolver) UpdateCourse(ctx context.Context, id string, input model.UpdateCourseInput) (*model.Course, error) {
-	return nil, errors.New("not implemented")
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return nil, err
+	}
+
+	return r.CourseClient.UpdateCourse(ctx, userCtx.UserID, id, input)
 }
 
 // PublishCourse is the resolver for the publishCourse field.

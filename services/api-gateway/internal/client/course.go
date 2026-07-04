@@ -63,6 +63,38 @@ func (c *CourseClient) GetCourse(ctx context.Context, id string) (*model.Course,
 	return protoCourseToModel(resp.Course), nil
 }
 
+func (c *CourseClient) UpdateCourse(ctx context.Context, educatorID string, id string, input model.UpdateCourseInput) (*model.Course, error) {
+	req := &coursepb.UpdateCourseRequest{
+		Id:         id,
+		EducatorId: educatorID,
+	}
+	if input.Title != nil {
+		req.Title = *input.Title
+	}
+	if input.Description != nil {
+		req.Description = *input.Description
+	}
+	if input.Slug != nil {
+		req.Slug = *input.Slug
+	}
+	if input.GradeLevel != nil {
+		req.GradeLevel = modelGradeToProto(*input.GradeLevel)
+	}
+	if input.Price != nil {
+		req.Price = *input.Price
+	}
+
+	resp, err := c.client.UpdateCourse(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("update course failed: %w", err)
+	}
+	if resp.Error != "" {
+		return nil, fmt.Errorf("update course failed: %s", resp.Error)
+	}
+
+	return protoCourseToModel(resp.Course), nil
+}
+
 func (c *CourseClient) GetCourseWithLessons(ctx context.Context, id string) (*model.Course, error) {
 	course, err := c.GetCourse(ctx, id)
 	if err != nil {
