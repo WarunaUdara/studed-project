@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BookOpen, Plus } from "lucide-react";
+import { ArrowLeft, BookOpen, Pencil, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { Button } from "@/components/ui/Button";
@@ -103,9 +103,17 @@ function CourseDetailPage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Course Details</CardTitle>
-            <span className={course.isPublished ? "text-green-600" : "text-amber-600"}>
-              {course.isPublished ? "Published" : "Draft"}
-            </span>
+            <div className="flex items-center gap-3">
+              <Link to="/educator/courses/$courseId/edit" params={{ courseId }}>
+                <Button variant="outline" size="sm">
+                  <Pencil className="mr-1 h-4 w-4" />
+                  Edit
+                </Button>
+              </Link>
+              <span className={course.isPublished ? "text-green-600" : "text-amber-600"}>
+                {course.isPublished ? "Published" : "Draft"}
+              </span>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
