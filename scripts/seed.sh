@@ -56,10 +56,25 @@ register_or_login() {
   echo "${response}" | jq -r '.data.register.user.id // .data.login.user.id'
 }
 
+course_exists() {
+  local slug="$1"
+  local response
+  response=$(call_graphql \
+    '"query Courses($filter: CourseFilter) { courses(filter: $filter) { edges { node { slug } } } }"' \
+    "{\"filter\":{\"search\":\"${slug}\"}}")
+
+  echo "${response}" | jq -e --arg slug "${slug}" '.data.courses.edges[] | select(.node.slug == $slug)' >/dev/null 2>&1
+}
+
 create_course() {
   local title="$1"
   local slug="$2"
   local grade="$3"
+
+  if course_exists "${slug}"; then
+    echo "[seed] course '${title}' already exists, skipping"
+    return 0
+  fi
 
   echo "[seed] creating course '${title}'..."
   local response
