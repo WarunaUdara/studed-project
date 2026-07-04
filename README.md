@@ -34,18 +34,32 @@ StudEd organizes learning content into a strict hierarchy:
 ## Getting Started
 
 1. Read `AGENTS.md` for the full development workflow.
-2. Start local infrastructure:
+2. Ensure Docker Desktop is running.
+3. Start the full local backend (infrastructure + auth/course/api-gateway services):
    ```bash
-   make dev-up
+   make dev
    ```
-3. Install frontend dependencies:
+   Services will log to `.dev-logs/`. Press `Ctrl+C` to stop, or run `make dev-stop`.
+4. In another terminal, install frontend dependencies:
    ```bash
    make frontend-install
    ```
-4. Run the frontend dev server:
+5. Run the frontend dev server:
    ```bash
    make frontend-dev
    ```
+6. Open http://localhost:5173 and register as an educator to create courses.
+
+### Manual infrastructure
+
+If you prefer to run services yourself:
+
+```bash
+make dev-up                    # postgres, redis, elasticsearch
+cd services/auth-service && go run .  # requires services/auth-service/.env
+cd services/course-service && go run . # requires services/course-service/.env
+cd services/api-gateway && go run .   # requires services/api-gateway/.env
+```
 
 ## Documentation
 
