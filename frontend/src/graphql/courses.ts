@@ -111,6 +111,21 @@ export const CREATE_COURSE_MUTATION = `
   }
 ` as const;
 
+export const UPDATE_COURSE_MUTATION = `
+  mutation UpdateCourse($id: ID!, $input: UpdateCourseInput!) {
+    updateCourse(id: $id, input: $input) {
+      id
+      title
+      description
+      slug
+      gradeLevel
+      price
+      isPublished
+      createdAt
+    }
+  }
+` as const;
+
 export const PUBLISH_COURSE_MUTATION = `
   mutation PublishCourse($id: ID!) {
     publishCourse(id: $id) {
