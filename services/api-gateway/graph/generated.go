@@ -1233,6 +1233,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateLessonInput,
 		ec.unmarshalInputCreateSubscriptionInput,
 		ec.unmarshalInputCreateWaveInput,
+		ec.unmarshalInputEvaluateBlockInput,
+		ec.unmarshalInputLearnBlockInput,
 		ec.unmarshalInputLoginInput,
 		ec.unmarshalInputPaginationInput,
 		ec.unmarshalInputRegisterInput,
@@ -7368,7 +7370,7 @@ func (ec *executionContext) unmarshalInputCreateWaveInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "sequenceOrder", "xpReward", "maxReattempts", "passingThreshold", "estimatedDuration", "difficulty"}
+	fieldsInOrder := [...]string{"title", "sequenceOrder", "xpReward", "maxReattempts", "passingThreshold", "estimatedDuration", "difficulty", "learnBlocks", "evaluateBlocks"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7424,6 +7426,143 @@ func (ec *executionContext) unmarshalInputCreateWaveInput(ctx context.Context, o
 				return it, err
 			}
 			it.Difficulty = data
+		case "learnBlocks":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("learnBlocks"))
+			data, err := ec.unmarshalOLearnBlockInput2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLearnBlockInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LearnBlocks = data
+		case "evaluateBlocks":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("evaluateBlocks"))
+			data, err := ec.unmarshalOEvaluateBlockInput2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐEvaluateBlockInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EvaluateBlocks = data
+		}
+	}
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEvaluateBlockInput(ctx context.Context, obj any) (model.EvaluateBlockInput, error) {
+	var it model.EvaluateBlockInput
+	if obj == nil {
+		return it, nil
+	}
+
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "type", "question", "options", "correctAnswer", "explanation", "metadata"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
+		case "question":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("question"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Question = data
+		case "options":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("options"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Options = data
+		case "correctAnswer":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("correctAnswer"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CorrectAnswer = data
+		case "explanation":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("explanation"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Explanation = data
+		case "metadata":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metadata"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Metadata = data
+		}
+	}
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputLearnBlockInput(ctx context.Context, obj any) (model.LearnBlockInput, error) {
+	var it model.LearnBlockInput
+	if obj == nil {
+		return it, nil
+	}
+
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "type", "content", "metadata"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
+		case "content":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("content"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Content = data
+		case "metadata":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metadata"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Metadata = data
 		}
 	}
 	return it, nil
@@ -7641,7 +7780,7 @@ func (ec *executionContext) unmarshalInputUpdateWaveInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "sequenceOrder", "xpReward", "maxReattempts", "passingThreshold", "estimatedDuration", "difficulty"}
+	fieldsInOrder := [...]string{"title", "sequenceOrder", "xpReward", "maxReattempts", "passingThreshold", "estimatedDuration", "difficulty", "learnBlocks", "evaluateBlocks"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7697,6 +7836,20 @@ func (ec *executionContext) unmarshalInputUpdateWaveInput(ctx context.Context, o
 				return it, err
 			}
 			it.Difficulty = data
+		case "learnBlocks":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("learnBlocks"))
+			data, err := ec.unmarshalOLearnBlockInput2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLearnBlockInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LearnBlocks = data
+		case "evaluateBlocks":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("evaluateBlocks"))
+			data, err := ec.unmarshalOEvaluateBlockInput2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐEvaluateBlockInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EvaluateBlocks = data
 		}
 	}
 	return it, nil
@@ -9891,6 +10044,11 @@ func (ec *executionContext) marshalNEvaluateBlock2ᚖgithubᚗcomᚋstudedᚋapi
 	return ec._EvaluateBlock(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNEvaluateBlockInput2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐEvaluateBlockInput(ctx context.Context, v any) (*model.EvaluateBlockInput, error) {
+	res, err := ec.unmarshalInputEvaluateBlockInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNGrade2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐGrade(ctx context.Context, v any) (model.Grade, error) {
 	var res model.Grade
 	err := res.UnmarshalGQL(v)
@@ -9997,6 +10155,11 @@ func (ec *executionContext) marshalNLearnBlock2ᚖgithubᚗcomᚋstudedᚋapiᚑ
 		return graphql.Null
 	}
 	return ec._LearnBlock(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNLearnBlockInput2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLearnBlockInput(ctx context.Context, v any) (*model.LearnBlockInput, error) {
+	res, err := ec.unmarshalInputLearnBlockInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNLesson2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLesson(ctx context.Context, sel ast.SelectionSet, v model.Lesson) graphql.Marshaler {
@@ -10494,6 +10657,24 @@ func (ec *executionContext) marshalODifficulty2ᚖgithubᚗcomᚋstudedᚋapiᚑ
 	return v
 }
 
+func (ec *executionContext) unmarshalOEvaluateBlockInput2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐEvaluateBlockInputᚄ(ctx context.Context, v any) ([]*model.EvaluateBlockInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*model.EvaluateBlockInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNEvaluateBlockInput2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐEvaluateBlockInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v any) (*float64, error) {
 	if v == nil {
 		return nil, nil
@@ -10561,6 +10742,24 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	_ = ctx
 	res := graphql.MarshalInt(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOLearnBlockInput2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLearnBlockInputᚄ(ctx context.Context, v any) ([]*model.LearnBlockInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*model.LearnBlockInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNLearnBlockInput2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLearnBlockInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) marshalOLesson2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLesson(ctx context.Context, sel ast.SelectionSet, v *model.Lesson) graphql.Marshaler {

@@ -85,16 +85,28 @@ type CreateSubscriptionInput struct {
 }
 
 type CreateWaveInput struct {
-	Title             string     `json:"title"`
-	SequenceOrder     int        `json:"sequenceOrder"`
-	XpReward          int        `json:"xpReward"`
-	MaxReattempts     int        `json:"maxReattempts"`
-	PassingThreshold  int        `json:"passingThreshold"`
-	EstimatedDuration int        `json:"estimatedDuration"`
-	Difficulty        Difficulty `json:"difficulty"`
+	Title             string                `json:"title"`
+	SequenceOrder     int                   `json:"sequenceOrder"`
+	XpReward          int                   `json:"xpReward"`
+	MaxReattempts     int                   `json:"maxReattempts"`
+	PassingThreshold  int                   `json:"passingThreshold"`
+	EstimatedDuration int                   `json:"estimatedDuration"`
+	Difficulty        Difficulty            `json:"difficulty"`
+	LearnBlocks       []*LearnBlockInput    `json:"learnBlocks,omitempty"`
+	EvaluateBlocks    []*EvaluateBlockInput `json:"evaluateBlocks,omitempty"`
 }
 
 type EvaluateBlock struct {
+	ID            string   `json:"id"`
+	Type          string   `json:"type"`
+	Question      string   `json:"question"`
+	Options       []string `json:"options,omitempty"`
+	CorrectAnswer *string  `json:"correctAnswer,omitempty"`
+	Explanation   *string  `json:"explanation,omitempty"`
+	Metadata      *string  `json:"metadata,omitempty"`
+}
+
+type EvaluateBlockInput struct {
 	ID            string   `json:"id"`
 	Type          string   `json:"type"`
 	Question      string   `json:"question"`
@@ -112,6 +124,13 @@ type LeaderboardEntry struct {
 }
 
 type LearnBlock struct {
+	ID       string  `json:"id"`
+	Type     string  `json:"type"`
+	Content  string  `json:"content"`
+	Metadata *string `json:"metadata,omitempty"`
+}
+
+type LearnBlockInput struct {
 	ID       string  `json:"id"`
 	Type     string  `json:"type"`
 	Content  string  `json:"content"`
@@ -182,13 +201,15 @@ type UpdateCourseInput struct {
 }
 
 type UpdateWaveInput struct {
-	Title             *string     `json:"title,omitempty"`
-	SequenceOrder     *int        `json:"sequenceOrder,omitempty"`
-	XpReward          *int        `json:"xpReward,omitempty"`
-	MaxReattempts     *int        `json:"maxReattempts,omitempty"`
-	PassingThreshold  *int        `json:"passingThreshold,omitempty"`
-	EstimatedDuration *int        `json:"estimatedDuration,omitempty"`
-	Difficulty        *Difficulty `json:"difficulty,omitempty"`
+	Title             *string               `json:"title,omitempty"`
+	SequenceOrder     *int                  `json:"sequenceOrder,omitempty"`
+	XpReward          *int                  `json:"xpReward,omitempty"`
+	MaxReattempts     *int                  `json:"maxReattempts,omitempty"`
+	PassingThreshold  *int                  `json:"passingThreshold,omitempty"`
+	EstimatedDuration *int                  `json:"estimatedDuration,omitempty"`
+	Difficulty        *Difficulty           `json:"difficulty,omitempty"`
+	LearnBlocks       []*LearnBlockInput    `json:"learnBlocks,omitempty"`
+	EvaluateBlocks    []*EvaluateBlockInput `json:"evaluateBlocks,omitempty"`
 }
 
 type User struct {

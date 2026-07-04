@@ -40,8 +40,13 @@ export function LoginForm() {
       return;
     }
     if (result.data?.login?.user) {
-      setUser(result.data.login.user);
-      navigate({ to: "/" });
+      const user = result.data.login.user;
+      setUser(user);
+      if (user.role === "EDUCATOR" || user.role === "HEAD_EDUCATOR" || user.role === "ADMIN") {
+        navigate({ to: "/educator/courses" });
+      } else {
+        navigate({ to: "/" });
+      }
     }
   };
 

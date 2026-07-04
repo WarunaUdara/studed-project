@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/studed/auth-service/internal/config"
 	"github.com/studed/auth-service/internal/handler"
 	"github.com/studed/auth-service/internal/jwt"
@@ -20,6 +21,8 @@ import (
 )
 
 func main() {
+	_ = godotenv.Load()
+
 	log := logger.New("auth-service")
 
 	cfg, err := config.Load()
@@ -72,7 +75,7 @@ func main() {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte("ready"))
 		})
-		httpAddr := ":8082"
+		httpAddr := ":8085"
 		log.Info("http health server listening", slog.String("addr", httpAddr))
 		if err := http.ListenAndServe(httpAddr, mux); err != nil {
 			log.Error("http server failed", slog.Any("error", err))

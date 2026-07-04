@@ -11,6 +11,13 @@ enum CourseStatus {
   COURSE_STATUS_PUBLISHED = 2;
 }
 
+enum Difficulty {
+  DIFFICULTY_UNSPECIFIED = 0;
+  DIFFICULTY_EASY = 1;
+  DIFFICULTY_MEDIUM = 2;
+  DIFFICULTY_HARD = 3;
+}
+
 message Course {
   string id = 1;
   string title = 2;
@@ -31,6 +38,7 @@ message Lesson {
   int32 sequence_order = 4;
   bool is_published = 5;
   int64 created_at_unix = 6;
+  int64 updated_at_unix = 7;
 }
 
 message Wave {
@@ -42,9 +50,12 @@ message Wave {
   int32 max_reattempts = 6;
   int32 passing_threshold = 7;
   int32 estimated_duration = 8;
-  string difficulty = 9;
-  bool is_published = 10;
-  int64 created_at_unix = 11;
+  Difficulty difficulty = 9;
+  string learn_blocks_json = 10;
+  string evaluate_blocks_json = 11;
+  bool is_published = 12;
+  int64 created_at_unix = 13;
+  int64 updated_at_unix = 14;
 }
 
 message CreateCourseRequest {
@@ -80,9 +91,101 @@ message CourseListResponse {
   repeated Course courses = 1;
 }
 
+message CreateLessonRequest {
+  string course_id = 1;
+  string title = 2;
+  int32 sequence_order = 3;
+  string educator_id = 4;
+}
+
+message GetLessonRequest {
+  string id = 1;
+}
+
+message ListLessonsRequest {
+  string course_id = 1;
+  bool published_only = 2;
+}
+
+message PublishLessonRequest {
+  string id = 1;
+  string educator_id = 2;
+}
+
+message LessonResponse {
+  Lesson lesson = 1;
+  string error = 2;
+}
+
+message LessonListResponse {
+  repeated Lesson lessons = 1;
+}
+
+message CreateWaveRequest {
+  string lesson_id = 1;
+  string title = 2;
+  int32 sequence_order = 3;
+  int32 xp_reward = 4;
+  int32 max_reattempts = 5;
+  int32 passing_threshold = 6;
+  int32 estimated_duration = 7;
+  Difficulty difficulty = 8;
+  string learn_blocks_json = 9;
+  string evaluate_blocks_json = 10;
+  string educator_id = 11;
+}
+
+message GetWaveRequest {
+  string id = 1;
+}
+
+message ListWavesRequest {
+  string lesson_id = 1;
+  bool published_only = 2;
+}
+
+message UpdateWaveRequest {
+  string id = 1;
+  string title = 2;
+  int32 sequence_order = 3;
+  int32 xp_reward = 4;
+  int32 max_reattempts = 5;
+  int32 passing_threshold = 6;
+  int32 estimated_duration = 7;
+  Difficulty difficulty = 8;
+  string learn_blocks_json = 9;
+  string evaluate_blocks_json = 10;
+  string educator_id = 11;
+}
+
+message PublishWaveRequest {
+  string id = 1;
+  string educator_id = 2;
+}
+
+message WaveResponse {
+  Wave wave = 1;
+  string error = 2;
+}
+
+message WaveListResponse {
+  repeated Wave waves = 1;
+}
+
 service CourseService {
   rpc CreateCourse(CreateCourseRequest) returns (CourseResponse);
   rpc GetCourse(GetCourseRequest) returns (CourseResponse);
   rpc ListCourses(ListCoursesRequest) returns (CourseListResponse);
   rpc PublishCourse(PublishCourseRequest) returns (CourseResponse);
+
+  rpc CreateLesson(CreateLessonRequest) returns (LessonResponse);
+  rpc GetLesson(GetLessonRequest) returns (LessonResponse);
+  rpc ListLessons(ListLessonsRequest) returns (LessonListResponse);
+  rpc PublishLesson(PublishLessonRequest) returns (LessonResponse);
+
+  rpc CreateWave(CreateWaveRequest) returns (WaveResponse);
+  rpc GetWave(GetWaveRequest) returns (WaveResponse);
+  rpc ListWaves(ListWavesRequest) returns (WaveListResponse);
+  rpc UpdateWave(UpdateWaveRequest) returns (WaveResponse);
+  rpc PublishWave(PublishWaveRequest) returns (WaveResponse);
 }

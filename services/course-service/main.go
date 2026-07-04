@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/studed/course-service/internal/config"
 	"github.com/studed/course-service/internal/handler"
 	"github.com/studed/course-service/internal/model"
@@ -19,6 +20,8 @@ import (
 )
 
 func main() {
+	_ = godotenv.Load()
+
 	log := logger.New("course-service")
 
 	cfg, err := config.Load()
@@ -33,13 +36,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := db.AutoMigrate(&model.Course{}); err != nil {
+	if err := db.AutoMigrate(&model.Course{}, &model.Lesson{}, &model.Wave{}); err != nil {
 		log.Error("failed to run migrations", slog.Any("error", err))
 		os.Exit(1)
 	}
 
 	courseRepo := repository.NewCourseRepository(db)
-	courseSvc := service.NewCourseService(courseRepo)
+	lessonRepo := repository.NewLessonRepository(db)
+	waveRepo := repository.NewWaveRepository(db)
+	courseSvc := service.NewCourseService(courseRepo, lessonRepo, waveRepo)
 	grpcHandler := handler.NewCourseGRPCHandler(courseSvc)
 
 	grpcListener, err := net.Listen("tcp", cfg.ServiceAddr)

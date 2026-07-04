@@ -38,7 +38,7 @@ func Load() (*Config, error) {
 
 	return &Config{
 		ServiceAddr:     getEnv("AUTH_SERVICE_ADDR", ":8081"),
-		DatabaseURL:     getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5432/studed"),
+		DatabaseURL:     getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable"),
 		AccessSecret:    accessSecret,
 		RefreshSecret:   refreshSecret,
 		AccessTokenTTL:  accessTTL,

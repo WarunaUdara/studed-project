@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/joho/godotenv"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -19,6 +20,8 @@ import (
 )
 
 func main() {
+	_ = godotenv.Load()
+
 	log := logger.New("api-gateway")
 
 	cfg, err := config.Load()

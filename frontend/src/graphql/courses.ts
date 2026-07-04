@@ -33,6 +33,65 @@ export const COURSE_QUERY = `
       price
       isPublished
       createdAt
+      lessons {
+        id
+        title
+        sequenceOrder
+        isPublished
+      }
+    }
+  }
+` as const;
+
+export const LESSON_QUERY = `
+  query Lesson($id: ID!) {
+    lesson(id: $id) {
+      id
+      title
+      sequenceOrder
+      isPublished
+      waves {
+        id
+        title
+        sequenceOrder
+        xpReward
+        maxReattempts
+        passingThreshold
+        estimatedDuration
+        difficulty
+        isPublished
+      }
+    }
+  }
+` as const;
+
+export const WAVE_QUERY = `
+  query Wave($id: ID!) {
+    wave(id: $id) {
+      id
+      title
+      sequenceOrder
+      xpReward
+      maxReattempts
+      passingThreshold
+      estimatedDuration
+      difficulty
+      isPublished
+      learnBlocks {
+        id
+        type
+        content
+        metadata
+      }
+      evaluateBlocks {
+        id
+        type
+        question
+        options
+        correctAnswer
+        explanation
+        metadata
+      }
     }
   }
 ` as const;
@@ -57,6 +116,33 @@ export const PUBLISH_COURSE_MUTATION = `
     publishCourse(id: $id) {
       id
       title
+      isPublished
+    }
+  }
+` as const;
+
+export const CREATE_LESSON_MUTATION = `
+  mutation CreateLesson($courseId: ID!, $input: CreateLessonInput!) {
+    createLesson(courseId: $courseId, input: $input) {
+      id
+      title
+      sequenceOrder
+      isPublished
+    }
+  }
+` as const;
+
+export const CREATE_WAVE_MUTATION = `
+  mutation CreateWave($lessonId: ID!, $input: CreateWaveInput!) {
+    createWave(lessonId: $lessonId, input: $input) {
+      id
+      title
+      sequenceOrder
+      xpReward
+      maxReattempts
+      passingThreshold
+      estimatedDuration
+      difficulty
       isPublished
     }
   }
