@@ -26,6 +26,7 @@ tags:
 | Add local Docker Compose orchestration for auth/course/api-gateway | Agent A/C | `d2a636b` + uncommitted Dockerfiles / `docker-compose.yml` changes |
 | Implement `updateCourse` GraphQL mutation end-to-end | Agent B | Added `UpdateCourse` proto RPC, course-service handler/service/repository, API gateway client, resolver |
 | Add frontend edit course flow | Agent A | `120fdcc`, `e8e2d51`, `a3ac658` — update mutation, edit page, edit button |
+| Add public course catalog routes | Agent A | `b2649f1`, `88c5158`, `d8902a8` — courses list, course detail, homepage link |
 | Verify local infrastructure (`postgres`, `redis`, `elasticsearch`) starts via `make dev-up` | Agent B | Docker Desktop must be running first |
 | Verify educator happy-path: register, login, create course, update course, create lesson, create wave, publish course | Agent B | Tested end-to-end via GraphQL against Dockerized services |
 | Verify frontend dev server and production build | Agent B | `bun run dev`, `bun run build`, `bun run lint`, `bun run typecheck` all pass |
@@ -35,7 +36,7 @@ tags:
 
 | Task | Owner | Note |
 |------|-------|------|
-| Local dev orchestration polish (seed script, service `.env` files, README instructions) | Agent A/C | `scripts/dev.sh`, `scripts/dev-stop.sh`, service `.env.example` files, README updates committed; `scripts/seed.sh` and Docker Compose changes remain in working tree |
+| Public course catalog + enrollment UI | Agent A | Catalog list/detail routes committed; enrollment mutation still blocked by backend |
 
 ## Priority Queue (highest first)
 
