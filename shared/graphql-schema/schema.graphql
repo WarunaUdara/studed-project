@@ -166,6 +166,7 @@ input CourseFilter {
   subject: String
   search: String
   isPublished: Boolean
+  educatorId: ID
 }
 
 input PaginationInput {
@@ -229,6 +230,23 @@ input CreateLessonInput {
   sequenceOrder: Int!
 }
 
+input LearnBlockInput {
+  id: ID!
+  type: String!
+  content: String!
+  metadata: String
+}
+
+input EvaluateBlockInput {
+  id: ID!
+  type: String!
+  question: String!
+  options: [String!]
+  correctAnswer: String
+  explanation: String
+  metadata: String
+}
+
 input CreateWaveInput {
   title: String!
   sequenceOrder: Int!
@@ -237,6 +255,8 @@ input CreateWaveInput {
   passingThreshold: Int!
   estimatedDuration: Int!
   difficulty: Difficulty!
+  learnBlocks: [LearnBlockInput!]
+  evaluateBlocks: [EvaluateBlockInput!]
 }
 
 input UpdateWaveInput {
@@ -247,6 +267,8 @@ input UpdateWaveInput {
   passingThreshold: Int
   estimatedDuration: Int
   difficulty: Difficulty
+  learnBlocks: [LearnBlockInput!]
+  evaluateBlocks: [EvaluateBlockInput!]
 }
 
 input AnswerInput {

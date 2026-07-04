@@ -58,6 +58,7 @@ type CourseFilter struct {
 	Subject     *string `json:"subject,omitempty"`
 	Search      *string `json:"search,omitempty"`
 	IsPublished *bool   `json:"isPublished,omitempty"`
+	EducatorID  *string `json:"educatorId,omitempty"`
 }
 
 type CourseProgress struct {
