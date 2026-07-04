@@ -25,6 +25,7 @@ tags:
 | Fix educator course list scoping in API gateway | Agent A/C | `02d4c38` + `f72a0e9` — pass authenticated educator ID to `course-service` instead of exposing `educatorId` in public filter |
 | Add local Docker Compose orchestration for auth/course/api-gateway | Agent A/C | `d2a636b` + uncommitted Dockerfiles / `docker-compose.yml` changes |
 | Implement `updateCourse` GraphQL mutation end-to-end | Agent B | Added `UpdateCourse` proto RPC, course-service handler/service/repository, API gateway client, resolver |
+| Add frontend edit course flow | Agent A | `120fdcc`, `e8e2d51`, `a3ac658` — update mutation, edit page, edit button |
 | Verify local infrastructure (`postgres`, `redis`, `elasticsearch`) starts via `make dev-up` | Agent B | Docker Desktop must be running first |
 | Verify educator happy-path: register, login, create course, update course, create lesson, create wave, publish course | Agent B | Tested end-to-end via GraphQL against Dockerized services |
 | Verify frontend dev server and production build | Agent B | `bun run dev`, `bun run build`, `bun run lint`, `bun run typecheck` all pass |
@@ -34,7 +35,7 @@ tags:
 
 | Task | Owner | Note |
 |------|-------|------|
-| Local dev orchestration polish (seed script, service `.env` files, README instructions) | Agent A/C | `scripts/seed.sh`, `scripts/dev.sh`, service Dockerfiles and `.env.example` files are in working tree but not yet committed |
+| Local dev orchestration polish (seed script, service `.env` files, README instructions) | Agent A/C | `scripts/dev.sh`, `scripts/dev-stop.sh`, service `.env.example` files, README updates committed; `scripts/seed.sh` and Docker Compose changes remain in working tree |
 
 ## Priority Queue (highest first)
 
@@ -61,7 +62,7 @@ tags:
 | High | Running services manually is fragile | Services expect `.env` in their own directory or exported env vars; Docker Compose is the reliable path. | Docker Compose service definitions | Low | Small | Agent A/C | POC |
 | Medium | `course(id)` and `lesson(id)` queries do not verify ownership or enrollment | Educators can read any course; students can read unpublished content. | RBAC middleware already extracts user context. | Medium | Small | Agent A or C | MVP |
 | Medium | Frontend `Select` component uses native `<select>` but spreads `register` from react-hook-form | This may produce type/controlled warnings; verify on all forms. | None | Low | Small | Agent B or any | MVP |
-| Low | `shared/graphql-schema/schema.graphql` is out of sync with the gateway schema | The gateway schema has `LearnBlockInput`/`EvaluateBlockInput` and additional fields; the shared copy does not. | None | Low | Tiny | Agent B or any | Documentation |
+| Low | ~~`shared/graphql-schema/schema.graphql` is out of sync with the gateway schema~~ | Fixed by Agent A in `f72a0e9`. | None | Low | Tiny | Agent A | Documentation |
 | Low | TanStack Router warning about SWC | Vite logs a recommendation to switch from `@vitejs/plugin-react-swc`. | None | Low | Tiny | Any | Nice-to-have |
 
 ## Current Blockers
