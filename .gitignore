@@ -30,6 +30,7 @@ logs/
 .dev-logs/
 .dev-pids
 .seed-cookies
+.integration-test-cookies
 
 # Test coverage
 coverage/
