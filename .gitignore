@@ -42,3 +42,5 @@ temp/
 
 # Binaries
 *.exe
+.mock-educator-cookies
+.mock-student-cookies
