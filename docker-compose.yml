@@ -80,6 +80,55 @@ services:
       timeout: 3s
       retries: 10
 
+  progress-service:
+    build:
+      context: .
+      dockerfile: services/progress-service/Dockerfile
+    container_name: studed-progress-service
+    environment:
+      PROGRESS_SERVICE_ADDR: :8086
+      DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
+      COURSE_SERVICE_ADDR: course-service:8083
+      GAMIFICATION_SERVICE_ADDR: gamification-service:8088
+    ports:
+      - "8086:8086"
+      - "8087:8087"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      course-service:
+        condition: service_healthy
+      gamification-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8087/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  gamification-service:
+    build:
+      context: .
+      dockerfile: services/gamification-service/Dockerfile
+    container_name: studed-gamification-service
+    environment:
+      GAMIFICATION_SERVICE_ADDR: :8088
+      DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
+      REDIS_ADDR: redis:6379
+    ports:
+      - "8088:8088"
+      - "8089:8089"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8089/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   api-gateway:
     build:
       context: .
@@ -89,6 +138,8 @@ services:
       API_GATEWAY_ADDR: :8080
       AUTH_SERVICE_ADDR: auth-service:8081
       COURSE_SERVICE_ADDR: course-service:8083
+      PROGRESS_SERVICE_ADDR: progress-service:8086
+      GAMIFICATION_SERVICE_ADDR: gamification-service:8088
       JWT_ACCESS_SECRET: change-me-access-secret-min-32-bytes-long
       GRAPHQL_PLAYGROUND: "true"
     ports:
@@ -97,6 +148,10 @@ services:
       auth-service:
         condition: service_healthy
       course-service:
+        condition: service_healthy
+      progress-service:
+        condition: service_healthy
+      gamification-service:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
