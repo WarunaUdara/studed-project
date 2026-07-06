@@ -71,15 +71,21 @@ for _ in {1..30}; do
   sleep 1
 done
 
-ensure_env auth-service
-ensure_env course-service
-ensure_env api-gateway
+	ensure_env auth-service
+	ensure_env course-service
+	ensure_env progress-service
+	ensure_env gamification-service
+	ensure_env api-gateway
 
-start_service auth-service
-sleep 1
-start_service course-service
-sleep 1
-start_service api-gateway
+	start_service auth-service
+	sleep 1
+	start_service course-service
+	sleep 1
+	start_service gamification-service
+	sleep 1
+	start_service progress-service
+	sleep 1
+	start_service api-gateway
 
 echo ""
 echo "[dev] core services starting. logs: ${LOG_DIR}"
