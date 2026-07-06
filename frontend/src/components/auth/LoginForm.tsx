@@ -45,7 +45,7 @@ export function LoginForm() {
       if (user.role === "EDUCATOR" || user.role === "HEAD_EDUCATOR" || user.role === "ADMIN") {
         navigate({ to: "/educator/courses" });
       } else {
-        navigate({ to: "/" });
+        navigate({ to: "/dashboard" });
       }
     }
   };

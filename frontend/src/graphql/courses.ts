@@ -11,6 +11,10 @@ export const COURSES_QUERY = `
           price
           isPublished
           createdAt
+          myProgress {
+            completedWaves
+            totalWaves
+          }
         }
         cursor
       }
