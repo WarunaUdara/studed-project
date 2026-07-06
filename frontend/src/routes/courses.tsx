@@ -4,9 +4,9 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { useAuthStore } from "@/stores/auth";
 import { COURSES_QUERY } from "@/graphql/courses";
 import { ENROLL_IN_COURSE_MUTATION } from "@/graphql/student";
+import { useAuthStore } from "@/stores/auth";
 
 interface Course {
   id: string;
@@ -65,7 +65,9 @@ function CoursesCatalogPage() {
             )}
             {!isAuthenticated && (
               <Link to="/login">
-                <Button variant="outline" size="sm">Sign in</Button>
+                <Button variant="outline" size="sm">
+                  Sign in
+                </Button>
               </Link>
             )}
           </div>

@@ -29,6 +29,27 @@ type AuthPayload struct {
 	User         *User  `json:"user"`
 }
 
+type ContentBlock struct {
+	ID          string             `json:"id"`
+	WaveID      string             `json:"waveId"`
+	Title       string             `json:"title"`
+	Type        ContentBlockType   `json:"type"`
+	PayloadJSON string             `json:"payloadJson"`
+	Version     int                `json:"version"`
+	Status      ContentBlockStatus `json:"status"`
+	CreatedBy   string             `json:"createdBy"`
+	CreatedAt   time.Time          `json:"createdAt"`
+	UpdatedAt   time.Time          `json:"updatedAt"`
+}
+
+type ContentVersion struct {
+	ID             string    `json:"id"`
+	ContentBlockID string    `json:"contentBlockId"`
+	VersionNumber  int       `json:"versionNumber"`
+	PayloadJSON    string    `json:"payloadJson"`
+	CreatedAt      time.Time `json:"createdAt"`
+}
+
 type Course struct {
 	ID          string          `json:"id"`
 	Title       string          `json:"title"`
@@ -65,6 +86,13 @@ type CourseProgress struct {
 	TotalWaves     int        `json:"totalWaves"`
 	StartedAt      *time.Time `json:"startedAt,omitempty"`
 	CompletedAt    *time.Time `json:"completedAt,omitempty"`
+}
+
+type CreateContentBlockInput struct {
+	WaveID      string           `json:"waveId"`
+	Title       string           `json:"title"`
+	Type        ContentBlockType `json:"type"`
+	PayloadJSON string           `json:"payloadJson"`
 }
 
 type CreateCourseInput struct {
@@ -157,6 +185,18 @@ type LoginInput struct {
 	Password string `json:"password"`
 }
 
+type MediaAsset struct {
+	ID         string           `json:"id"`
+	UploaderID string           `json:"uploaderId"`
+	Filename   string           `json:"filename"`
+	MimeType   string           `json:"mimeType"`
+	SizeBytes  int              `json:"sizeBytes"`
+	StorageKey string           `json:"storageKey"`
+	CdnURL     *string          `json:"cdnUrl,omitempty"`
+	Status     MediaAssetStatus `json:"status"`
+	CreatedAt  time.Time        `json:"createdAt"`
+}
+
 type Mutation struct {
 }
 
@@ -190,6 +230,11 @@ type RegisterInput struct {
 }
 
 type Subscription struct {
+}
+
+type UpdateContentBlockInput struct {
+	Title       *string `json:"title,omitempty"`
+	PayloadJSON *string `json:"payloadJson,omitempty"`
 }
 
 type UpdateCourseInput struct {
@@ -270,6 +315,116 @@ type XpEvent struct {
 	Amount  int    `json:"amount"`
 	TotalXp int    `json:"totalXp"`
 	Reason  string `json:"reason"`
+}
+
+type ContentBlockStatus string
+
+const (
+	ContentBlockStatusDraft     ContentBlockStatus = "DRAFT"
+	ContentBlockStatusPublished ContentBlockStatus = "PUBLISHED"
+)
+
+var AllContentBlockStatus = []ContentBlockStatus{
+	ContentBlockStatusDraft,
+	ContentBlockStatusPublished,
+}
+
+func (e ContentBlockStatus) IsValid() bool {
+	switch e {
+	case ContentBlockStatusDraft, ContentBlockStatusPublished:
+		return true
+	}
+	return false
+}
+
+func (e ContentBlockStatus) String() string {
+	return string(e)
+}
+
+func (e *ContentBlockStatus) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ContentBlockStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ContentBlockStatus", str)
+	}
+	return nil
+}
+
+func (e ContentBlockStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ContentBlockStatus) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ContentBlockStatus) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type ContentBlockType string
+
+const (
+	ContentBlockTypeLearn    ContentBlockType = "LEARN"
+	ContentBlockTypeEvaluate ContentBlockType = "EVALUATE"
+)
+
+var AllContentBlockType = []ContentBlockType{
+	ContentBlockTypeLearn,
+	ContentBlockTypeEvaluate,
+}
+
+func (e ContentBlockType) IsValid() bool {
+	switch e {
+	case ContentBlockTypeLearn, ContentBlockTypeEvaluate:
+		return true
+	}
+	return false
+}
+
+func (e ContentBlockType) String() string {
+	return string(e)
+}
+
+func (e *ContentBlockType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ContentBlockType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ContentBlockType", str)
+	}
+	return nil
+}
+
+func (e ContentBlockType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ContentBlockType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ContentBlockType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type Difficulty string
@@ -458,6 +613,63 @@ func (e *LeaderboardScope) UnmarshalJSON(b []byte) error {
 }
 
 func (e LeaderboardScope) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type MediaAssetStatus string
+
+const (
+	MediaAssetStatusPending MediaAssetStatus = "PENDING"
+	MediaAssetStatusReady   MediaAssetStatus = "READY"
+	MediaAssetStatusFailed  MediaAssetStatus = "FAILED"
+)
+
+var AllMediaAssetStatus = []MediaAssetStatus{
+	MediaAssetStatusPending,
+	MediaAssetStatusReady,
+	MediaAssetStatusFailed,
+}
+
+func (e MediaAssetStatus) IsValid() bool {
+	switch e {
+	case MediaAssetStatusPending, MediaAssetStatusReady, MediaAssetStatusFailed:
+		return true
+	}
+	return false
+}
+
+func (e MediaAssetStatus) String() string {
+	return string(e)
+}
+
+func (e *MediaAssetStatus) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MediaAssetStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MediaAssetStatus", str)
+	}
+	return nil
+}
+
+func (e MediaAssetStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *MediaAssetStatus) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e MediaAssetStatus) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	e.MarshalGQL(&buf)
 	return buf.Bytes(), nil

@@ -12,13 +12,9 @@ interface LearnBlockRendererProps {
 export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
   switch (block.type) {
     case "heading":
-      return (
-        <h3 className="text-xl font-semibold text-foreground">{block.content}</h3>
-      );
+      return <h3 className="text-xl font-semibold text-foreground">{block.content}</h3>;
     case "text":
-      return (
-        <p className="whitespace-pre-wrap text-foreground leading-relaxed">{block.content}</p>
-      );
+      return <p className="whitespace-pre-wrap text-foreground leading-relaxed">{block.content}</p>;
     case "image":
       return (
         <div className="rounded-lg border bg-muted p-2">

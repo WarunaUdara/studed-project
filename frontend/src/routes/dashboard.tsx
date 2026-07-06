@@ -2,9 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { BookOpen, Trophy, Zap } from "lucide-react";
 import { useMemo } from "react";
 import { useQuery } from "urql";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { LEADERBOARD_QUERY, MY_ENROLLMENTS_QUERY } from "@/graphql/student";
 import { useAuthStore } from "@/stores/auth";
 
@@ -36,9 +36,10 @@ export const Route = createFileRoute("/dashboard")({
 
 function DashboardPage() {
   const { user } = useAuthStore();
-  const [{ data: enrollmentsData, fetching: enrollmentsFetching, error: enrollmentsError }] = useQuery({
-    query: MY_ENROLLMENTS_QUERY,
-  });
+  const [{ data: enrollmentsData, fetching: enrollmentsFetching, error: enrollmentsError }] =
+    useQuery({
+      query: MY_ENROLLMENTS_QUERY,
+    });
   const [{ data: leaderboardData }] = useQuery({
     query: LEADERBOARD_QUERY,
     variables: { scope: "GLOBAL" },
@@ -94,12 +95,16 @@ function DashboardPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {enrollmentsFetching && <p className="text-muted-foreground">Loading courses...</p>}
+                  {enrollmentsFetching && (
+                    <p className="text-muted-foreground">Loading courses...</p>
+                  )}
                   {enrollmentsError && <p className="text-destructive">Failed to load courses.</p>}
 
                   {!enrollmentsFetching && courses.length === 0 && (
                     <div className="rounded-lg border border-dashed p-8 text-center">
-                      <p className="text-muted-foreground">You are not enrolled in any courses yet.</p>
+                      <p className="text-muted-foreground">
+                        You are not enrolled in any courses yet.
+                      </p>
                       <Link to="/courses" className="mt-4 inline-block">
                         <Button>Browse Courses</Button>
                       </Link>
@@ -112,7 +117,11 @@ function DashboardPage() {
                     const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
 
                     return (
-                      <Link key={course.id} to="/courses/$courseId" params={{ courseId: course.id }}>
+                      <Link
+                        key={course.id}
+                        to="/courses/$courseId"
+                        params={{ courseId: course.id }}
+                      >
                         <div className="rounded-lg border p-4 transition-colors hover:bg-muted">
                           <div className="flex items-start justify-between gap-4">
                             <div>

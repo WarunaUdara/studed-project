@@ -153,6 +153,77 @@ func (r *mutationResolver) UpdateWave(ctx context.Context, id string, input mode
 	return r.CourseClient.UpdateWave(ctx, userCtx.UserID, id, input)
 }
 
+// CreateContentBlock is the resolver for the createContentBlock field.
+func (r *mutationResolver) CreateContentBlock(ctx context.Context, input model.CreateContentBlockInput) (*model.ContentBlock, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return nil, err
+	}
+
+	return r.ContentClient.CreateContentBlock(ctx, userCtx.UserID, input)
+}
+
+// UpdateContentBlock is the resolver for the updateContentBlock field.
+func (r *mutationResolver) UpdateContentBlock(ctx context.Context, id string, input model.UpdateContentBlockInput) (*model.ContentBlock, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return nil, err
+	}
+
+	return r.ContentClient.UpdateContentBlock(ctx, id, input)
+}
+
+// DeleteContentBlock is the resolver for the deleteContentBlock field.
+func (r *mutationResolver) DeleteContentBlock(ctx context.Context, id string) (bool, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return false, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return false, err
+	}
+
+	if err := r.ContentClient.DeleteContentBlock(ctx, id); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// PublishContentBlock is the resolver for the publishContentBlock field.
+func (r *mutationResolver) PublishContentBlock(ctx context.Context, id string) (*model.ContentBlock, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return nil, err
+	}
+
+	return r.ContentClient.PublishContentBlock(ctx, id)
+}
+
+// DeleteMediaAsset is the resolver for the deleteMediaAsset field.
+func (r *mutationResolver) DeleteMediaAsset(ctx context.Context, id string) (bool, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return false, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return false, err
+	}
+
+	if err := r.UploadClient.DeleteMediaAsset(ctx, id); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // SubmitWaveAnswers is the resolver for the submitWaveAnswers field.
 func (r *mutationResolver) SubmitWaveAnswers(ctx context.Context, waveID string, answers []*model.AnswerInput) (*model.WaveResult, error) {
 	userCtx, err := requireUser(ctx)
@@ -324,6 +395,41 @@ func (r *queryResolver) Wave(ctx context.Context, id string) (*model.Wave, error
 	}
 
 	return wave, nil
+}
+
+// ContentBlocks is the resolver for the contentBlocks field.
+func (r *queryResolver) ContentBlocks(ctx context.Context, waveID *string, typeArg *model.ContentBlockType) ([]*model.ContentBlock, error) {
+	return r.ContentClient.ListContentBlocks(ctx, waveID, typeArg)
+}
+
+// ContentBlock is the resolver for the contentBlock field.
+func (r *queryResolver) ContentBlock(ctx context.Context, id string) (*model.ContentBlock, error) {
+	return r.ContentClient.GetContentBlock(ctx, id)
+}
+
+// ContentVersionHistory is the resolver for the contentVersionHistory field.
+func (r *queryResolver) ContentVersionHistory(ctx context.Context, contentBlockID string) ([]*model.ContentVersion, error) {
+	return r.ContentClient.GetContentVersionHistory(ctx, contentBlockID)
+}
+
+// MediaAssets is the resolver for the mediaAssets field.
+func (r *queryResolver) MediaAssets(ctx context.Context, mimeTypePrefix *string) ([]*model.MediaAsset, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	prefix := ""
+	if mimeTypePrefix != nil {
+		prefix = *mimeTypePrefix
+	}
+
+	return r.UploadClient.ListMediaAssets(ctx, userCtx.UserID, prefix)
+}
+
+// MediaAsset is the resolver for the mediaAsset field.
+func (r *queryResolver) MediaAsset(ctx context.Context, id string) (*model.MediaAsset, error) {
+	return r.UploadClient.GetMediaAsset(ctx, id)
 }
 
 // Progress is the resolver for the progress field.

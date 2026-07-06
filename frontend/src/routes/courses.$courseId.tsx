@@ -100,7 +100,9 @@ function CoursePlayerPage() {
         <div className="mb-8 space-y-4">
           <div className="flex flex-wrap items-center gap-3">
             <span className="rounded-full bg-secondary px-3 py-1 text-sm">{course.gradeLevel}</span>
-            <span className="text-sm text-muted-foreground">{course.isPublished ? "Published" : "Draft"}</span>
+            <span className="text-sm text-muted-foreground">
+              {course.isPublished ? "Published" : "Draft"}
+            </span>
           </div>
           <h1 className="text-3xl font-bold">{course.title}</h1>
           <p className="max-w-2xl text-muted-foreground">{course.description}</p>
@@ -134,11 +136,7 @@ function CoursePlayerPage() {
                   lesson.waves.map((wave) => {
                     const isCompleted = wave.myProgress?.status === "COMPLETED";
                     return (
-                      <Link
-                        key={wave.id}
-                        to="/waves/$waveId"
-                        params={{ waveId: wave.id }}
-                      >
+                      <Link key={wave.id} to="/waves/$waveId" params={{ waveId: wave.id }}>
                         <div className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted">
                           <div className="flex items-center gap-3">
                             {isCompleted ? (

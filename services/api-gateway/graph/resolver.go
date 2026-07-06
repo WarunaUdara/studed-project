@@ -10,4 +10,6 @@ type Resolver struct {
 	CourseClient       *client.CourseClient
 	ProgressClient     *client.ProgressClient
 	GamificationClient *client.GamificationClient
+	ContentClient      *client.ContentClient
+	UploadClient       *client.UploadClient
 }

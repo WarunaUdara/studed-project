@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package upload;
+option go_package = "github.com/studed/shared/proto/gen/go/upload;uploadpb";
+
+enum MediaAssetStatus {
+  MEDIA_ASSET_STATUS_UNSPECIFIED = 0;
+  MEDIA_ASSET_STATUS_PENDING = 1;
+  MEDIA_ASSET_STATUS_READY = 2;
+  MEDIA_ASSET_STATUS_FAILED = 3;
+}
+
+message MediaAsset {
+  string id = 1;
+  string uploader_id = 2;
+  string filename = 3;
+  string mime_type = 4;
+  int64 size_bytes = 5;
+  string storage_key = 6;
+  string cdn_url = 7;
+  MediaAssetStatus status = 8;
+  int64 created_at_unix = 9;
+}
+
+message CreateUploadSessionRequest {
+  string uploader_id = 1;
+  string filename = 2;
+  string mime_type = 3;
+  int64 size_bytes = 4;
+}
+
+message CreateUploadSessionResponse {
+  string session_id = 1;
+  string upload_url = 2;
+  string storage_key = 3;
+  int64 expires_at_unix = 4;
+  string error = 5;
+}
+
+message ConfirmUploadRequest {
+  string session_id = 1;
+  string storage_key = 2;
+  int64 size_bytes = 3;
+}
+
+message ConfirmUploadResponse {
+  MediaAsset asset = 1;
+  string error = 2;
+}
+
+message GetMediaAssetRequest {
+  string id = 1;
+}
+
+message GetMediaAssetResponse {
+  MediaAsset asset = 1;
+  string error = 2;
+}
+
+message ListMediaAssetsRequest {
+  string uploader_id = 1;
+  string mime_type_prefix = 2;
+}
+
+message ListMediaAssetsResponse {
+  repeated MediaAsset assets = 1;
+  string error = 2;
+}
+
+message DeleteMediaAssetRequest {
+  string id = 1;
+  string deleted_by = 2;
+}
+
+message DeleteMediaAssetResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+service UploadService {
+  rpc CreateUploadSession(CreateUploadSessionRequest) returns (CreateUploadSessionResponse);
+  rpc ConfirmUpload(ConfirmUploadRequest) returns (ConfirmUploadResponse);
+  rpc GetMediaAsset(GetMediaAssetRequest) returns (GetMediaAssetResponse);
+  rpc ListMediaAssets(ListMediaAssetsRequest) returns (ListMediaAssetsResponse);
+  rpc DeleteMediaAsset(DeleteMediaAssetRequest) returns (DeleteMediaAssetResponse);
+}

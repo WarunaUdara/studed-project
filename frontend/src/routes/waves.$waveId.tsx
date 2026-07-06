@@ -2,11 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle, Zap } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { QuizBlock } from "@/components/evaluate/QuizBlock";
 import { LearnBlockRenderer } from "@/components/learn/LearnBlockRenderer";
+import { Button } from "@/components/ui/Button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { SUBMIT_WAVE_ANSWERS_MUTATION, WAVE_PLAYER_QUERY } from "@/graphql/student";
 
 interface LearnBlock {
@@ -115,7 +115,8 @@ function WavePlayerPage() {
               params={{ courseId: wave.lesson?.course?.id ?? "" }}
               className="text-sm font-medium hover:text-primary"
             >
-              <ArrowLeft className="inline h-4 w-4" /> Back to {wave.lesson?.course?.title ?? "Course"}
+              <ArrowLeft className="inline h-4 w-4" /> Back to{" "}
+              {wave.lesson?.course?.title ?? "Course"}
             </Link>
             <div className="flex items-center gap-3">
               {isCompleted && <CheckCircle className="h-5 w-5 text-green-600" />}
@@ -164,9 +165,7 @@ function WavePlayerPage() {
               {learnBlocks.length === 0 ? (
                 <p className="text-muted-foreground">No learning content yet.</p>
               ) : (
-                learnBlocks.map((block) => (
-                  <LearnBlockRenderer key={block.id} block={block} />
-                ))
+                learnBlocks.map((block) => <LearnBlockRenderer key={block.id} block={block} />)
               )}
               <Button onClick={() => setActiveTab("evaluate")} className="w-full">
                 Start Evaluation
@@ -191,8 +190,8 @@ function WavePlayerPage() {
                         result
                           ? {
                               correct:
-                                result.feedback.find((f) => f.evaluateBlockId === block.id)?.correct ??
-                                false,
+                                result.feedback.find((f) => f.evaluateBlockId === block.id)
+                                  ?.correct ?? false,
                               correctAnswer: result.feedback.find(
                                 (f) => f.evaluateBlockId === block.id,
                               )?.correctAnswer,
@@ -206,16 +205,18 @@ function WavePlayerPage() {
                   ))}
 
                   {result && (
-                    <Card className={result.passed ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}>
+                    <Card
+                      className={
+                        result.passed ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"
+                      }
+                    >
                       <CardHeader>
                         <CardTitle className={result.passed ? "text-green-800" : "text-red-800"}>
                           {result.passed ? "Wave Completed!" : "Try Again"}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2">
-                        <p className="text-lg font-medium">
-                          Score: {result.score}%
-                        </p>
+                        <p className="text-lg font-medium">Score: {result.score}%</p>
                         {result.passed && (
                           <p className="text-green-700">
                             +{result.xpEarned} XP earned! Total XP: {result.totalXp}
@@ -223,7 +224,8 @@ function WavePlayerPage() {
                         )}
                         {!result.passed && (
                           <p className="text-red-700">
-                            You need {wave.passingThreshold}% to pass. Remaining attempts: {result.remainingAttempts}
+                            You need {wave.passingThreshold}% to pass. Remaining attempts:{" "}
+                            {result.remainingAttempts}
                           </p>
                         )}
                       </CardContent>

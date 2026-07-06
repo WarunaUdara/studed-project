@@ -53,6 +53,27 @@ type ComplexityRoot struct {
 		User         func(childComplexity int) int
 	}
 
+	ContentBlock struct {
+		CreatedAt   func(childComplexity int) int
+		CreatedBy   func(childComplexity int) int
+		ID          func(childComplexity int) int
+		PayloadJSON func(childComplexity int) int
+		Status      func(childComplexity int) int
+		Title       func(childComplexity int) int
+		Type        func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		Version     func(childComplexity int) int
+		WaveID      func(childComplexity int) int
+	}
+
+	ContentVersion struct {
+		ContentBlockID func(childComplexity int) int
+		CreatedAt      func(childComplexity int) int
+		ID             func(childComplexity int) int
+		PayloadJSON    func(childComplexity int) int
+		VersionNumber  func(childComplexity int) int
+	}
+
 	Course struct {
 		CreatedAt   func(childComplexity int) int
 		Description func(childComplexity int) int
@@ -123,22 +144,39 @@ type ComplexityRoot struct {
 		TotalWaves     func(childComplexity int) int
 	}
 
+	MediaAsset struct {
+		CdnURL     func(childComplexity int) int
+		CreatedAt  func(childComplexity int) int
+		Filename   func(childComplexity int) int
+		ID         func(childComplexity int) int
+		MimeType   func(childComplexity int) int
+		SizeBytes  func(childComplexity int) int
+		Status     func(childComplexity int) int
+		StorageKey func(childComplexity int) int
+		UploaderID func(childComplexity int) int
+	}
+
 	Mutation struct {
 		CancelSubscription     func(childComplexity int) int
+		CreateContentBlock     func(childComplexity int, input model.CreateContentBlockInput) int
 		CreateCourse           func(childComplexity int, input model.CreateCourseInput) int
 		CreateLesson           func(childComplexity int, courseID string, input model.CreateLessonInput) int
 		CreateSubscription     func(childComplexity int, input model.CreateSubscriptionInput) int
 		CreateWave             func(childComplexity int, lessonID string, input model.CreateWaveInput) int
+		DeleteContentBlock     func(childComplexity int, id string) int
+		DeleteMediaAsset       func(childComplexity int, id string) int
 		EnrollInCourse         func(childComplexity int, courseID string) int
 		GenerateEvaluateBlocks func(childComplexity int, content string, count *int) int
 		GenerateLearnBlocks    func(childComplexity int, prompt string, language *string, grade *model.Grade) int
 		Login                  func(childComplexity int, input model.LoginInput) int
 		Logout                 func(childComplexity int) int
+		PublishContentBlock    func(childComplexity int, id string) int
 		PublishCourse          func(childComplexity int, id string) int
 		RefreshToken           func(childComplexity int, refreshToken string) int
 		Register               func(childComplexity int, input model.RegisterInput) int
 		SubmitWaveAnswers      func(childComplexity int, waveID string, answers []*model.AnswerInput) int
 		TranslateContent       func(childComplexity int, content string, targetLanguage string) int
+		UpdateContentBlock     func(childComplexity int, id string, input model.UpdateContentBlockInput) int
 		UpdateCourse           func(childComplexity int, id string, input model.UpdateCourseInput) int
 		UpdateWave             func(childComplexity int, id string, input model.UpdateWaveInput) int
 	}
@@ -149,17 +187,22 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Achievements  func(childComplexity int) int
-		Course        func(childComplexity int, id string) int
-		Courses       func(childComplexity int, filter *model.CourseFilter, pagination *model.PaginationInput) int
-		Leaderboard   func(childComplexity int, scope model.LeaderboardScope, courseID *string, grade *model.Grade) int
-		Lesson        func(childComplexity int, id string) int
-		Me            func(childComplexity int) int
-		MyEnrollments func(childComplexity int) int
-		MyRank        func(childComplexity int, scope model.LeaderboardScope, courseID *string) int
-		Progress      func(childComplexity int, courseID *string) int
-		Wave          func(childComplexity int, id string) int
-		WaveProgress  func(childComplexity int, waveID string) int
+		Achievements          func(childComplexity int) int
+		ContentBlock          func(childComplexity int, id string) int
+		ContentBlocks         func(childComplexity int, waveID *string, typeArg *model.ContentBlockType) int
+		ContentVersionHistory func(childComplexity int, contentBlockID string) int
+		Course                func(childComplexity int, id string) int
+		Courses               func(childComplexity int, filter *model.CourseFilter, pagination *model.PaginationInput) int
+		Leaderboard           func(childComplexity int, scope model.LeaderboardScope, courseID *string, grade *model.Grade) int
+		Lesson                func(childComplexity int, id string) int
+		Me                    func(childComplexity int) int
+		MediaAsset            func(childComplexity int, id string) int
+		MediaAssets           func(childComplexity int, mimeTypePrefix *string) int
+		MyEnrollments         func(childComplexity int) int
+		MyRank                func(childComplexity int, scope model.LeaderboardScope, courseID *string) int
+		Progress              func(childComplexity int, courseID *string) int
+		Wave                  func(childComplexity int, id string) int
+		WaveProgress          func(childComplexity int, waveID string) int
 	}
 
 	QuestionFeedback struct {
@@ -252,6 +295,11 @@ type MutationResolver interface {
 	CreateLesson(ctx context.Context, courseID string, input model.CreateLessonInput) (*model.Lesson, error)
 	CreateWave(ctx context.Context, lessonID string, input model.CreateWaveInput) (*model.Wave, error)
 	UpdateWave(ctx context.Context, id string, input model.UpdateWaveInput) (*model.Wave, error)
+	CreateContentBlock(ctx context.Context, input model.CreateContentBlockInput) (*model.ContentBlock, error)
+	UpdateContentBlock(ctx context.Context, id string, input model.UpdateContentBlockInput) (*model.ContentBlock, error)
+	DeleteContentBlock(ctx context.Context, id string) (bool, error)
+	PublishContentBlock(ctx context.Context, id string) (*model.ContentBlock, error)
+	DeleteMediaAsset(ctx context.Context, id string) (bool, error)
 	SubmitWaveAnswers(ctx context.Context, waveID string, answers []*model.AnswerInput) (*model.WaveResult, error)
 	EnrollInCourse(ctx context.Context, courseID string) (*model.Course, error)
 	GenerateLearnBlocks(ctx context.Context, prompt string, language *string, grade *model.Grade) ([]*model.LearnBlock, error)
@@ -267,6 +315,11 @@ type QueryResolver interface {
 	Course(ctx context.Context, id string) (*model.Course, error)
 	Lesson(ctx context.Context, id string) (*model.Lesson, error)
 	Wave(ctx context.Context, id string) (*model.Wave, error)
+	ContentBlocks(ctx context.Context, waveID *string, typeArg *model.ContentBlockType) ([]*model.ContentBlock, error)
+	ContentBlock(ctx context.Context, id string) (*model.ContentBlock, error)
+	ContentVersionHistory(ctx context.Context, contentBlockID string) ([]*model.ContentVersion, error)
+	MediaAssets(ctx context.Context, mimeTypePrefix *string) ([]*model.MediaAsset, error)
+	MediaAsset(ctx context.Context, id string) (*model.MediaAsset, error)
 	Progress(ctx context.Context, courseID *string) ([]*model.LessonProgress, error)
 	WaveProgress(ctx context.Context, waveID string) (*model.WaveProgress, error)
 	Leaderboard(ctx context.Context, scope model.LeaderboardScope, courseID *string, grade *model.Grade) ([]*model.LeaderboardEntry, error)
@@ -347,6 +400,98 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.AuthPayload.User(childComplexity), true
+
+	case "ContentBlock.createdAt":
+		if e.ComplexityRoot.ContentBlock.CreatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentBlock.CreatedAt(childComplexity), true
+	case "ContentBlock.createdBy":
+		if e.ComplexityRoot.ContentBlock.CreatedBy == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentBlock.CreatedBy(childComplexity), true
+	case "ContentBlock.id":
+		if e.ComplexityRoot.ContentBlock.ID == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentBlock.ID(childComplexity), true
+	case "ContentBlock.payloadJson":
+		if e.ComplexityRoot.ContentBlock.PayloadJSON == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentBlock.PayloadJSON(childComplexity), true
+	case "ContentBlock.status":
+		if e.ComplexityRoot.ContentBlock.Status == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentBlock.Status(childComplexity), true
+	case "ContentBlock.title":
+		if e.ComplexityRoot.ContentBlock.Title == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentBlock.Title(childComplexity), true
+	case "ContentBlock.type":
+		if e.ComplexityRoot.ContentBlock.Type == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentBlock.Type(childComplexity), true
+	case "ContentBlock.updatedAt":
+		if e.ComplexityRoot.ContentBlock.UpdatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentBlock.UpdatedAt(childComplexity), true
+	case "ContentBlock.version":
+		if e.ComplexityRoot.ContentBlock.Version == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentBlock.Version(childComplexity), true
+	case "ContentBlock.waveId":
+		if e.ComplexityRoot.ContentBlock.WaveID == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentBlock.WaveID(childComplexity), true
+
+	case "ContentVersion.contentBlockId":
+		if e.ComplexityRoot.ContentVersion.ContentBlockID == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentVersion.ContentBlockID(childComplexity), true
+	case "ContentVersion.createdAt":
+		if e.ComplexityRoot.ContentVersion.CreatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentVersion.CreatedAt(childComplexity), true
+	case "ContentVersion.id":
+		if e.ComplexityRoot.ContentVersion.ID == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentVersion.ID(childComplexity), true
+	case "ContentVersion.payloadJson":
+		if e.ComplexityRoot.ContentVersion.PayloadJSON == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentVersion.PayloadJSON(childComplexity), true
+	case "ContentVersion.versionNumber":
+		if e.ComplexityRoot.ContentVersion.VersionNumber == nil {
+			break
+		}
+
+		return e.ComplexityRoot.ContentVersion.VersionNumber(childComplexity), true
 
 	case "Course.createdAt":
 		if e.ComplexityRoot.Course.CreatedAt == nil {
@@ -615,12 +760,78 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.ComplexityRoot.LessonProgress.TotalWaves(childComplexity), true
 
+	case "MediaAsset.cdnUrl":
+		if e.ComplexityRoot.MediaAsset.CdnURL == nil {
+			break
+		}
+
+		return e.ComplexityRoot.MediaAsset.CdnURL(childComplexity), true
+	case "MediaAsset.createdAt":
+		if e.ComplexityRoot.MediaAsset.CreatedAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.MediaAsset.CreatedAt(childComplexity), true
+	case "MediaAsset.filename":
+		if e.ComplexityRoot.MediaAsset.Filename == nil {
+			break
+		}
+
+		return e.ComplexityRoot.MediaAsset.Filename(childComplexity), true
+	case "MediaAsset.id":
+		if e.ComplexityRoot.MediaAsset.ID == nil {
+			break
+		}
+
+		return e.ComplexityRoot.MediaAsset.ID(childComplexity), true
+	case "MediaAsset.mimeType":
+		if e.ComplexityRoot.MediaAsset.MimeType == nil {
+			break
+		}
+
+		return e.ComplexityRoot.MediaAsset.MimeType(childComplexity), true
+	case "MediaAsset.sizeBytes":
+		if e.ComplexityRoot.MediaAsset.SizeBytes == nil {
+			break
+		}
+
+		return e.ComplexityRoot.MediaAsset.SizeBytes(childComplexity), true
+	case "MediaAsset.status":
+		if e.ComplexityRoot.MediaAsset.Status == nil {
+			break
+		}
+
+		return e.ComplexityRoot.MediaAsset.Status(childComplexity), true
+	case "MediaAsset.storageKey":
+		if e.ComplexityRoot.MediaAsset.StorageKey == nil {
+			break
+		}
+
+		return e.ComplexityRoot.MediaAsset.StorageKey(childComplexity), true
+	case "MediaAsset.uploaderId":
+		if e.ComplexityRoot.MediaAsset.UploaderID == nil {
+			break
+		}
+
+		return e.ComplexityRoot.MediaAsset.UploaderID(childComplexity), true
+
 	case "Mutation.cancelSubscription":
 		if e.ComplexityRoot.Mutation.CancelSubscription == nil {
 			break
 		}
 
 		return e.ComplexityRoot.Mutation.CancelSubscription(childComplexity), true
+	case "Mutation.createContentBlock":
+		if e.ComplexityRoot.Mutation.CreateContentBlock == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createContentBlock_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.CreateContentBlock(childComplexity, args["input"].(model.CreateContentBlockInput)), true
 	case "Mutation.createCourse":
 		if e.ComplexityRoot.Mutation.CreateCourse == nil {
 			break
@@ -665,6 +876,28 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Mutation.CreateWave(childComplexity, args["lessonId"].(string), args["input"].(model.CreateWaveInput)), true
+	case "Mutation.deleteContentBlock":
+		if e.ComplexityRoot.Mutation.DeleteContentBlock == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteContentBlock_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.DeleteContentBlock(childComplexity, args["id"].(string)), true
+	case "Mutation.deleteMediaAsset":
+		if e.ComplexityRoot.Mutation.DeleteMediaAsset == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteMediaAsset_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.DeleteMediaAsset(childComplexity, args["id"].(string)), true
 	case "Mutation.enrollInCourse":
 		if e.ComplexityRoot.Mutation.EnrollInCourse == nil {
 			break
@@ -715,6 +948,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Mutation.Logout(childComplexity), true
+	case "Mutation.publishContentBlock":
+		if e.ComplexityRoot.Mutation.PublishContentBlock == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_publishContentBlock_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.PublishContentBlock(childComplexity, args["id"].(string)), true
 	case "Mutation.publishCourse":
 		if e.ComplexityRoot.Mutation.PublishCourse == nil {
 			break
@@ -770,6 +1014,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Mutation.TranslateContent(childComplexity, args["content"].(string), args["targetLanguage"].(string)), true
+	case "Mutation.updateContentBlock":
+		if e.ComplexityRoot.Mutation.UpdateContentBlock == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateContentBlock_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.UpdateContentBlock(childComplexity, args["id"].(string), args["input"].(model.UpdateContentBlockInput)), true
 	case "Mutation.updateCourse":
 		if e.ComplexityRoot.Mutation.UpdateCourse == nil {
 			break
@@ -812,6 +1067,39 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Query.Achievements(childComplexity), true
+	case "Query.contentBlock":
+		if e.ComplexityRoot.Query.ContentBlock == nil {
+			break
+		}
+
+		args, err := ec.field_Query_contentBlock_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Query.ContentBlock(childComplexity, args["id"].(string)), true
+	case "Query.contentBlocks":
+		if e.ComplexityRoot.Query.ContentBlocks == nil {
+			break
+		}
+
+		args, err := ec.field_Query_contentBlocks_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Query.ContentBlocks(childComplexity, args["waveId"].(*string), args["type"].(*model.ContentBlockType)), true
+	case "Query.contentVersionHistory":
+		if e.ComplexityRoot.Query.ContentVersionHistory == nil {
+			break
+		}
+
+		args, err := ec.field_Query_contentVersionHistory_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Query.ContentVersionHistory(childComplexity, args["contentBlockId"].(string)), true
 	case "Query.course":
 		if e.ComplexityRoot.Query.Course == nil {
 			break
@@ -863,6 +1151,28 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Query.Me(childComplexity), true
+	case "Query.mediaAsset":
+		if e.ComplexityRoot.Query.MediaAsset == nil {
+			break
+		}
+
+		args, err := ec.field_Query_mediaAsset_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Query.MediaAsset(childComplexity, args["id"].(string)), true
+	case "Query.mediaAssets":
+		if e.ComplexityRoot.Query.MediaAssets == nil {
+			break
+		}
+
+		args, err := ec.field_Query_mediaAssets_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Query.MediaAssets(childComplexity, args["mimeTypePrefix"].(*string)), true
 	case "Query.myEnrollments":
 		if e.ComplexityRoot.Query.MyEnrollments == nil {
 			break
@@ -1237,6 +1547,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputAnswerInput,
 		ec.unmarshalInputCourseFilter,
+		ec.unmarshalInputCreateContentBlockInput,
 		ec.unmarshalInputCreateCourseInput,
 		ec.unmarshalInputCreateLessonInput,
 		ec.unmarshalInputCreateSubscriptionInput,
@@ -1246,6 +1557,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputLoginInput,
 		ec.unmarshalInputPaginationInput,
 		ec.unmarshalInputRegisterInput,
+		ec.unmarshalInputUpdateContentBlockInput,
 		ec.unmarshalInputUpdateCourseInput,
 		ec.unmarshalInputUpdateWaveInput,
 	)
@@ -1387,6 +1699,48 @@ func (ec *executionContext) childFields_AuthPayload(ctx context.Context, field g
 	return nil, fmt.Errorf("no field named %q was found under type AuthPayload", field.Name)
 }
 
+func (ec *executionContext) childFields_ContentBlock(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_ContentBlock_id(ctx, field)
+	case "waveId":
+		return ec.fieldContext_ContentBlock_waveId(ctx, field)
+	case "title":
+		return ec.fieldContext_ContentBlock_title(ctx, field)
+	case "type":
+		return ec.fieldContext_ContentBlock_type(ctx, field)
+	case "payloadJson":
+		return ec.fieldContext_ContentBlock_payloadJson(ctx, field)
+	case "version":
+		return ec.fieldContext_ContentBlock_version(ctx, field)
+	case "status":
+		return ec.fieldContext_ContentBlock_status(ctx, field)
+	case "createdBy":
+		return ec.fieldContext_ContentBlock_createdBy(ctx, field)
+	case "createdAt":
+		return ec.fieldContext_ContentBlock_createdAt(ctx, field)
+	case "updatedAt":
+		return ec.fieldContext_ContentBlock_updatedAt(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type ContentBlock", field.Name)
+}
+
+func (ec *executionContext) childFields_ContentVersion(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_ContentVersion_id(ctx, field)
+	case "contentBlockId":
+		return ec.fieldContext_ContentVersion_contentBlockId(ctx, field)
+	case "versionNumber":
+		return ec.fieldContext_ContentVersion_versionNumber(ctx, field)
+	case "payloadJson":
+		return ec.fieldContext_ContentVersion_payloadJson(ctx, field)
+	case "createdAt":
+		return ec.fieldContext_ContentVersion_createdAt(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type ContentVersion", field.Name)
+}
+
 func (ec *executionContext) childFields_Course(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 	switch field.Name {
 	case "id":
@@ -1525,6 +1879,30 @@ func (ec *executionContext) childFields_LessonProgress(ctx context.Context, fiel
 		return ec.fieldContext_LessonProgress_totalWaves(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type LessonProgress", field.Name)
+}
+
+func (ec *executionContext) childFields_MediaAsset(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_MediaAsset_id(ctx, field)
+	case "uploaderId":
+		return ec.fieldContext_MediaAsset_uploaderId(ctx, field)
+	case "filename":
+		return ec.fieldContext_MediaAsset_filename(ctx, field)
+	case "mimeType":
+		return ec.fieldContext_MediaAsset_mimeType(ctx, field)
+	case "sizeBytes":
+		return ec.fieldContext_MediaAsset_sizeBytes(ctx, field)
+	case "storageKey":
+		return ec.fieldContext_MediaAsset_storageKey(ctx, field)
+	case "cdnUrl":
+		return ec.fieldContext_MediaAsset_cdnUrl(ctx, field)
+	case "status":
+		return ec.fieldContext_MediaAsset_status(ctx, field)
+	case "createdAt":
+		return ec.fieldContext_MediaAsset_createdAt(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type MediaAsset", field.Name)
 }
 
 func (ec *executionContext) childFields_PageInfo(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
@@ -1787,6 +2165,20 @@ func (ec *executionContext) childFields___Type(ctx context.Context, field graphq
 
 // region    ***************************** args.gotpl *****************************
 
+func (ec *executionContext) field_Mutation_createContentBlock_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (model.CreateContentBlockInput, error) {
+			return ec.unmarshalNCreateContentBlockInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐCreateContentBlockInput(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createCourse_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -1856,6 +2248,34 @@ func (ec *executionContext) field_Mutation_createWave_args(ctx context.Context, 
 		return nil, err
 	}
 	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteContentBlock_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteMediaAsset_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -1936,6 +2356,20 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 		return nil, err
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_publishContentBlock_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -2025,6 +2459,28 @@ func (ec *executionContext) field_Mutation_translateContent_args(ctx context.Con
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateContentBlock_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (model.UpdateContentBlockInput, error) {
+			return ec.unmarshalNUpdateContentBlockInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐUpdateContentBlockInput(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_updateCourse_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -2080,6 +2536,56 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		return nil, err
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_contentBlock_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_contentBlocks_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "waveId",
+		func(ctx context.Context, v any) (*string, error) {
+			return ec.unmarshalOID2ᚖstring(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["waveId"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "type",
+		func(ctx context.Context, v any) (*model.ContentBlockType, error) {
+			return ec.unmarshalOContentBlockType2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlockType(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["type"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_contentVersionHistory_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "contentBlockId",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["contentBlockId"] = arg0
 	return args, nil
 }
 
@@ -2160,6 +2666,34 @@ func (ec *executionContext) field_Query_lesson_args(ctx context.Context, rawArgs
 		return nil, err
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_mediaAsset_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_mediaAssets_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "mimeTypePrefix",
+		func(ctx context.Context, v any) (*string, error) {
+			return ec.unmarshalOString2ᚖstring(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["mimeTypePrefix"] = arg0
 	return args, nil
 }
 
@@ -2500,6 +3034,351 @@ func (ec *executionContext) fieldContext_AuthPayload_user(_ context.Context, fie
 		},
 	}
 	return fc, nil
+}
+
+func (ec *executionContext) _ContentBlock_id(ctx context.Context, field graphql.CollectedField, obj *model.ContentBlock) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentBlock_id(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentBlock_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentBlock", field, false, false, errors.New("field of type ID does not have child fields"))
+}
+
+func (ec *executionContext) _ContentBlock_waveId(ctx context.Context, field graphql.CollectedField, obj *model.ContentBlock) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentBlock_waveId(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.WaveID, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentBlock_waveId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentBlock", field, false, false, errors.New("field of type ID does not have child fields"))
+}
+
+func (ec *executionContext) _ContentBlock_title(ctx context.Context, field graphql.CollectedField, obj *model.ContentBlock) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentBlock_title(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Title, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentBlock_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentBlock", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _ContentBlock_type(ctx context.Context, field graphql.CollectedField, obj *model.ContentBlock) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentBlock_type(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Type, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v model.ContentBlockType) graphql.Marshaler {
+			return ec.marshalNContentBlockType2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlockType(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentBlock_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentBlock", field, false, false, errors.New("field of type ContentBlockType does not have child fields"))
+}
+
+func (ec *executionContext) _ContentBlock_payloadJson(ctx context.Context, field graphql.CollectedField, obj *model.ContentBlock) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentBlock_payloadJson(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.PayloadJSON, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentBlock_payloadJson(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentBlock", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _ContentBlock_version(ctx context.Context, field graphql.CollectedField, obj *model.ContentBlock) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentBlock_version(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Version, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentBlock_version(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentBlock", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
+func (ec *executionContext) _ContentBlock_status(ctx context.Context, field graphql.CollectedField, obj *model.ContentBlock) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentBlock_status(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Status, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v model.ContentBlockStatus) graphql.Marshaler {
+			return ec.marshalNContentBlockStatus2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlockStatus(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentBlock_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentBlock", field, false, false, errors.New("field of type ContentBlockStatus does not have child fields"))
+}
+
+func (ec *executionContext) _ContentBlock_createdBy(ctx context.Context, field graphql.CollectedField, obj *model.ContentBlock) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentBlock_createdBy(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedBy, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentBlock_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentBlock", field, false, false, errors.New("field of type ID does not have child fields"))
+}
+
+func (ec *executionContext) _ContentBlock_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.ContentBlock) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentBlock_createdAt(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNDateTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentBlock_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentBlock", field, false, false, errors.New("field of type DateTime does not have child fields"))
+}
+
+func (ec *executionContext) _ContentBlock_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.ContentBlock) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentBlock_updatedAt(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNDateTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentBlock_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentBlock", field, false, false, errors.New("field of type DateTime does not have child fields"))
+}
+
+func (ec *executionContext) _ContentVersion_id(ctx context.Context, field graphql.CollectedField, obj *model.ContentVersion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentVersion_id(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentVersion_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentVersion", field, false, false, errors.New("field of type ID does not have child fields"))
+}
+
+func (ec *executionContext) _ContentVersion_contentBlockId(ctx context.Context, field graphql.CollectedField, obj *model.ContentVersion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentVersion_contentBlockId(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.ContentBlockID, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentVersion_contentBlockId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentVersion", field, false, false, errors.New("field of type ID does not have child fields"))
+}
+
+func (ec *executionContext) _ContentVersion_versionNumber(ctx context.Context, field graphql.CollectedField, obj *model.ContentVersion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentVersion_versionNumber(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.VersionNumber, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentVersion_versionNumber(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentVersion", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
+func (ec *executionContext) _ContentVersion_payloadJson(ctx context.Context, field graphql.CollectedField, obj *model.ContentVersion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentVersion_payloadJson(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.PayloadJSON, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentVersion_payloadJson(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentVersion", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _ContentVersion_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.ContentVersion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_ContentVersion_createdAt(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNDateTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_ContentVersion_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("ContentVersion", field, false, false, errors.New("field of type DateTime does not have child fields"))
 }
 
 func (ec *executionContext) _Course_id(ctx context.Context, field graphql.CollectedField, obj *model.Course) (ret graphql.Marshaler) {
@@ -3590,6 +4469,213 @@ func (ec *executionContext) fieldContext_LessonProgress_totalWaves(_ context.Con
 	return graphql.NewScalarFieldContext("LessonProgress", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
+func (ec *executionContext) _MediaAsset_id(ctx context.Context, field graphql.CollectedField, obj *model.MediaAsset) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MediaAsset_id(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_MediaAsset_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("MediaAsset", field, false, false, errors.New("field of type ID does not have child fields"))
+}
+
+func (ec *executionContext) _MediaAsset_uploaderId(ctx context.Context, field graphql.CollectedField, obj *model.MediaAsset) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MediaAsset_uploaderId(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.UploaderID, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_MediaAsset_uploaderId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("MediaAsset", field, false, false, errors.New("field of type ID does not have child fields"))
+}
+
+func (ec *executionContext) _MediaAsset_filename(ctx context.Context, field graphql.CollectedField, obj *model.MediaAsset) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MediaAsset_filename(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Filename, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_MediaAsset_filename(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("MediaAsset", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _MediaAsset_mimeType(ctx context.Context, field graphql.CollectedField, obj *model.MediaAsset) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MediaAsset_mimeType(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.MimeType, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_MediaAsset_mimeType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("MediaAsset", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _MediaAsset_sizeBytes(ctx context.Context, field graphql.CollectedField, obj *model.MediaAsset) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MediaAsset_sizeBytes(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.SizeBytes, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_MediaAsset_sizeBytes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("MediaAsset", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
+func (ec *executionContext) _MediaAsset_storageKey(ctx context.Context, field graphql.CollectedField, obj *model.MediaAsset) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MediaAsset_storageKey(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.StorageKey, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_MediaAsset_storageKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("MediaAsset", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _MediaAsset_cdnUrl(ctx context.Context, field graphql.CollectedField, obj *model.MediaAsset) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MediaAsset_cdnUrl(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.CdnURL, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_MediaAsset_cdnUrl(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("MediaAsset", field, false, false, errors.New("field of type String does not have child fields"))
+}
+
+func (ec *executionContext) _MediaAsset_status(ctx context.Context, field graphql.CollectedField, obj *model.MediaAsset) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MediaAsset_status(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Status, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v model.MediaAssetStatus) graphql.Marshaler {
+			return ec.marshalNMediaAssetStatus2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐMediaAssetStatus(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_MediaAsset_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("MediaAsset", field, false, false, errors.New("field of type MediaAssetStatus does not have child fields"))
+}
+
+func (ec *executionContext) _MediaAsset_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.MediaAsset) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MediaAsset_createdAt(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNDateTime2timeᚐTime(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_MediaAsset_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("MediaAsset", field, false, false, errors.New("field of type DateTime does not have child fields"))
+}
+
 func (ec *executionContext) _Mutation_register(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -4003,6 +5089,226 @@ func (ec *executionContext) fieldContext_Mutation_updateWave(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateWave_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createContentBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_createContentBlock(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().CreateContentBlock(ctx, fc.Args["input"].(model.CreateContentBlockInput))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *model.ContentBlock) graphql.Marshaler {
+			return ec.marshalNContentBlock2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlock(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_createContentBlock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_ContentBlock(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createContentBlock_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateContentBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_updateContentBlock(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().UpdateContentBlock(ctx, fc.Args["id"].(string), fc.Args["input"].(model.UpdateContentBlockInput))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *model.ContentBlock) graphql.Marshaler {
+			return ec.marshalNContentBlock2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlock(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_updateContentBlock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_ContentBlock(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateContentBlock_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteContentBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_deleteContentBlock(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().DeleteContentBlock(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v bool) graphql.Marshaler {
+			return ec.marshalNBoolean2bool(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_deleteContentBlock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteContentBlock_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_publishContentBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_publishContentBlock(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().PublishContentBlock(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *model.ContentBlock) graphql.Marshaler {
+			return ec.marshalNContentBlock2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlock(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_publishContentBlock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_ContentBlock(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_publishContentBlock_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteMediaAsset(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_deleteMediaAsset(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().DeleteMediaAsset(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v bool) graphql.Marshaler {
+			return ec.marshalNBoolean2bool(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_deleteMediaAsset(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteMediaAsset_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -4585,6 +5891,226 @@ func (ec *executionContext) fieldContext_Query_wave(ctx context.Context, field g
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_wave_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_contentBlocks(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query_contentBlocks(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Query().ContentBlocks(ctx, fc.Args["waveId"].(*string), fc.Args["type"].(*model.ContentBlockType))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v []*model.ContentBlock) graphql.Marshaler {
+			return ec.marshalNContentBlock2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlockᚄ(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Query_contentBlocks(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_ContentBlock(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_contentBlocks_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_contentBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query_contentBlock(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Query().ContentBlock(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *model.ContentBlock) graphql.Marshaler {
+			return ec.marshalOContentBlock2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlock(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_Query_contentBlock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_ContentBlock(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_contentBlock_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_contentVersionHistory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query_contentVersionHistory(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Query().ContentVersionHistory(ctx, fc.Args["contentBlockId"].(string))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v []*model.ContentVersion) graphql.Marshaler {
+			return ec.marshalNContentVersion2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentVersionᚄ(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Query_contentVersionHistory(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_ContentVersion(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_contentVersionHistory_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_mediaAssets(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query_mediaAssets(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Query().MediaAssets(ctx, fc.Args["mimeTypePrefix"].(*string))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v []*model.MediaAsset) graphql.Marshaler {
+			return ec.marshalNMediaAsset2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐMediaAssetᚄ(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Query_mediaAssets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_MediaAsset(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_mediaAssets_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_mediaAsset(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query_mediaAsset(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Query().MediaAsset(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *model.MediaAsset) graphql.Marshaler {
+			return ec.marshalOMediaAsset2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐMediaAsset(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_Query_mediaAsset(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_MediaAsset(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_mediaAsset_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -7274,6 +8800,57 @@ func (ec *executionContext) unmarshalInputCourseFilter(ctx context.Context, obj 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCreateContentBlockInput(ctx context.Context, obj any) (model.CreateContentBlockInput, error) {
+	var it model.CreateContentBlockInput
+	if obj == nil {
+		return it, nil
+	}
+
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"waveId", "title", "type", "payloadJson"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "waveId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("waveId"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.WaveID = data
+		case "title":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Title = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNContentBlockType2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlockType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
+		case "payloadJson":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("payloadJson"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PayloadJSON = data
+		}
+	}
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCreateCourseInput(ctx context.Context, obj any) (model.CreateCourseInput, error) {
 	var it model.CreateCourseInput
 	if obj == nil {
@@ -7751,6 +9328,43 @@ func (ec *executionContext) unmarshalInputRegisterInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateContentBlockInput(ctx context.Context, obj any) (model.UpdateContentBlockInput, error) {
+	var it model.UpdateContentBlockInput
+	if obj == nil {
+		return it, nil
+	}
+
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"title", "payloadJson"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "title":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Title = data
+		case "payloadJson":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("payloadJson"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PayloadJSON = data
+		}
+	}
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateCourseInput(ctx context.Context, obj any) (model.UpdateCourseInput, error) {
 	var it model.UpdateCourseInput
 	if obj == nil {
@@ -7985,6 +9599,147 @@ func (ec *executionContext) _AuthPayload(ctx context.Context, sel ast.SelectionS
 			}
 		case "user":
 			out.Values[i] = ec._AuthPayload_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
+
+	ec.ProcessDeferredGroup(graphql.DeferredGroup{
+		Defers:   deferLabelToView,
+		Path:     graphql.GetPath(ctx),
+		FieldSet: deferredFieldSet,
+		Context:  ctx,
+	})
+
+	return out
+}
+
+var contentBlockImplementors = []string{"ContentBlock"}
+
+func (ec *executionContext) _ContentBlock(ctx context.Context, sel ast.SelectionSet, obj *model.ContentBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, contentBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferredFieldSet := graphql.NewFieldSet(nil)
+	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ContentBlock")
+		case "id":
+			out.Values[i] = ec._ContentBlock_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "waveId":
+			out.Values[i] = ec._ContentBlock_waveId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "title":
+			out.Values[i] = ec._ContentBlock_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "type":
+			out.Values[i] = ec._ContentBlock_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "payloadJson":
+			out.Values[i] = ec._ContentBlock_payloadJson(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "version":
+			out.Values[i] = ec._ContentBlock_version(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._ContentBlock_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdBy":
+			out.Values[i] = ec._ContentBlock_createdBy(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._ContentBlock_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._ContentBlock_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
+
+	ec.ProcessDeferredGroup(graphql.DeferredGroup{
+		Defers:   deferLabelToView,
+		Path:     graphql.GetPath(ctx),
+		FieldSet: deferredFieldSet,
+		Context:  ctx,
+	})
+
+	return out
+}
+
+var contentVersionImplementors = []string{"ContentVersion"}
+
+func (ec *executionContext) _ContentVersion(ctx context.Context, sel ast.SelectionSet, obj *model.ContentVersion) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, contentVersionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferredFieldSet := graphql.NewFieldSet(nil)
+	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ContentVersion")
+		case "id":
+			out.Values[i] = ec._ContentVersion_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "contentBlockId":
+			out.Values[i] = ec._ContentVersion_contentBlockId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "versionNumber":
+			out.Values[i] = ec._ContentVersion_versionNumber(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "payloadJson":
+			out.Values[i] = ec._ContentVersion_payloadJson(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._ContentVersion_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -8521,6 +10276,84 @@ func (ec *executionContext) _LessonProgress(ctx context.Context, sel ast.Selecti
 	return out
 }
 
+var mediaAssetImplementors = []string{"MediaAsset"}
+
+func (ec *executionContext) _MediaAsset(ctx context.Context, sel ast.SelectionSet, obj *model.MediaAsset) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, mediaAssetImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferredFieldSet := graphql.NewFieldSet(nil)
+	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MediaAsset")
+		case "id":
+			out.Values[i] = ec._MediaAsset_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "uploaderId":
+			out.Values[i] = ec._MediaAsset_uploaderId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "filename":
+			out.Values[i] = ec._MediaAsset_filename(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "mimeType":
+			out.Values[i] = ec._MediaAsset_mimeType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "sizeBytes":
+			out.Values[i] = ec._MediaAsset_sizeBytes(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "storageKey":
+			out.Values[i] = ec._MediaAsset_storageKey(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "cdnUrl":
+			out.Values[i] = ec._MediaAsset_cdnUrl(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._MediaAsset_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._MediaAsset_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
+
+	ec.ProcessDeferredGroup(graphql.DeferredGroup{
+		Defers:   deferLabelToView,
+		Path:     graphql.GetPath(ctx),
+		FieldSet: deferredFieldSet,
+		Context:  ctx,
+	})
+
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -8607,6 +10440,41 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updateWave":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateWave(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createContentBlock":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createContentBlock(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateContentBlock":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateContentBlock(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteContentBlock":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteContentBlock(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "publishContentBlock":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_publishContentBlock(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteMediaAsset":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteMediaAsset(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -8864,6 +10732,116 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_wave(ctx, field)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "contentBlocks":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_contentBlocks(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "contentBlock":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_contentBlock(ctx, field)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "contentVersionHistory":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_contentVersionHistory(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "mediaAssets":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_mediaAssets(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "mediaAsset":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_mediaAsset(ctx, field)
 				if res == graphql.RequiredNull {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -9980,6 +11958,82 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) marshalNContentBlock2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlock(ctx context.Context, sel ast.SelectionSet, v model.ContentBlock) graphql.Marshaler {
+	return ec._ContentBlock(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNContentBlock2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlockᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ContentBlock) graphql.Marshaler {
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNContentBlock2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlock(ctx, sel, v[i])
+	})
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNContentBlock2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlock(ctx context.Context, sel ast.SelectionSet, v *model.ContentBlock) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ContentBlock(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNContentBlockStatus2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlockStatus(ctx context.Context, v any) (model.ContentBlockStatus, error) {
+	var res model.ContentBlockStatus
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNContentBlockStatus2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlockStatus(ctx context.Context, sel ast.SelectionSet, v model.ContentBlockStatus) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNContentBlockType2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlockType(ctx context.Context, v any) (model.ContentBlockType, error) {
+	var res model.ContentBlockType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNContentBlockType2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlockType(ctx context.Context, sel ast.SelectionSet, v model.ContentBlockType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) marshalNContentVersion2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentVersionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ContentVersion) graphql.Marshaler {
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNContentVersion2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentVersion(ctx, sel, v[i])
+	})
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNContentVersion2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentVersion(ctx context.Context, sel ast.SelectionSet, v *model.ContentVersion) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ContentVersion(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNCourse2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐCourse(ctx context.Context, sel ast.SelectionSet, v model.Course) graphql.Marshaler {
 	return ec._Course(ctx, sel, &v)
 }
@@ -10048,6 +12102,11 @@ func (ec *executionContext) marshalNCourseEdge2ᚖgithubᚗcomᚋstudedᚋapiᚑ
 		return graphql.Null
 	}
 	return ec._CourseEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNCreateContentBlockInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐCreateContentBlockInput(ctx context.Context, v any) (model.CreateContentBlockInput, error) {
+	res, err := ec.unmarshalInputCreateContentBlockInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNCreateCourseInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐCreateCourseInput(ctx context.Context, v any) (model.CreateCourseInput, error) {
@@ -10301,6 +12360,42 @@ func (ec *executionContext) unmarshalNLoginInput2githubᚗcomᚋstudedᚋapiᚑg
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNMediaAsset2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐMediaAssetᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MediaAsset) graphql.Marshaler {
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNMediaAsset2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐMediaAsset(ctx, sel, v[i])
+	})
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNMediaAsset2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐMediaAsset(ctx context.Context, sel ast.SelectionSet, v *model.MediaAsset) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MediaAsset(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNMediaAssetStatus2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐMediaAssetStatus(ctx context.Context, v any) (model.MediaAssetStatus, error) {
+	var res model.MediaAssetStatus
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNMediaAssetStatus2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐMediaAssetStatus(ctx context.Context, sel ast.SelectionSet, v model.MediaAssetStatus) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v *model.PageInfo) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -10396,6 +12491,11 @@ func (ec *executionContext) unmarshalNTier2githubᚗcomᚋstudedᚋapiᚑgateway
 
 func (ec *executionContext) marshalNTier2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐTier(ctx context.Context, sel ast.SelectionSet, v model.Tier) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) unmarshalNUpdateContentBlockInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐUpdateContentBlockInput(ctx context.Context, v any) (model.UpdateContentBlockInput, error) {
+	res, err := ec.unmarshalInputUpdateContentBlockInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNUpdateCourseInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐUpdateCourseInput(ctx context.Context, v any) (model.UpdateCourseInput, error) {
@@ -10679,6 +12779,29 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
+func (ec *executionContext) marshalOContentBlock2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlock(ctx context.Context, sel ast.SelectionSet, v *model.ContentBlock) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ContentBlock(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOContentBlockType2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlockType(ctx context.Context, v any) (*model.ContentBlockType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(model.ContentBlockType)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOContentBlockType2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐContentBlockType(ctx context.Context, sel ast.SelectionSet, v *model.ContentBlockType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) marshalOCourse2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐCourse(ctx context.Context, sel ast.SelectionSet, v *model.Course) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -10845,6 +12968,13 @@ func (ec *executionContext) marshalOLesson2ᚖgithubᚗcomᚋstudedᚋapiᚑgate
 		return graphql.Null
 	}
 	return ec._Lesson(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOMediaAsset2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐMediaAsset(ctx context.Context, sel ast.SelectionSet, v *model.MediaAsset) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._MediaAsset(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOPaginationInput2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐPaginationInput(ctx context.Context, v any) (*model.PaginationInput, error) {

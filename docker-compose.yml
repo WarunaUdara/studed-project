@@ -129,6 +129,50 @@ services:
       timeout: 3s
       retries: 10
 
+  content-service:
+    build:
+      context: .
+      dockerfile: services/content-service/Dockerfile
+    container_name: studed-content-service
+    environment:
+      CONTENT_SERVICE_ADDR: :8091
+      DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
+    ports:
+      - "8091:8091"
+      - "8092:8092"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8092/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  upload-service:
+    build:
+      context: .
+      dockerfile: services/upload-service/Dockerfile
+    container_name: studed-upload-service
+    environment:
+      UPLOAD_SERVICE_ADDR: :8093
+      DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
+      UPLOAD_STORAGE_PATH: /data/uploads
+      UPLOAD_BASE_URL: /uploads
+    ports:
+      - "8093:8093"
+      - "8094:8094"
+    volumes:
+      - uploads_data:/data/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8094/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   api-gateway:
     build:
       context: .
@@ -140,6 +184,9 @@ services:
       COURSE_SERVICE_ADDR: course-service:8083
       PROGRESS_SERVICE_ADDR: progress-service:8086
       GAMIFICATION_SERVICE_ADDR: gamification-service:8088
+      CONTENT_SERVICE_ADDR: content-service:8091
+      UPLOAD_SERVICE_ADDR: upload-service:8093
+      UPLOAD_SERVICE_HTTP_ADDR: upload-service:8094
       JWT_ACCESS_SECRET: change-me-access-secret-min-32-bytes-long
       GRAPHQL_PLAYGROUND: "true"
     ports:
@@ -153,6 +200,10 @@ services:
         condition: service_healthy
       gamification-service:
         condition: service_healthy
+      content-service:
+        condition: service_healthy
+      upload-service:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
       interval: 5s
@@ -162,3 +213,4 @@ services:
 volumes:
   postgres_data:
   elasticsearch_data:
+  uploads_data:

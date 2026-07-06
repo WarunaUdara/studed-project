@@ -64,7 +64,9 @@
 		shared/proto/auth/auth.proto \
 		shared/proto/course/course.proto \
 		shared/proto/progress/progress.proto \
-		shared/proto/gamification/gamification.proto
+		shared/proto/gamification/gamification.proto \
+		shared/proto/content/content.proto \
+		shared/proto/upload/upload.proto
 	cd shared/proto/gen/go && go mod tidy
 
 # Combined

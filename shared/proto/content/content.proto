@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package content;
+option go_package = "github.com/studed/shared/proto/gen/go/content;contentpb";
+
+enum ContentBlockType {
+  CONTENT_BLOCK_TYPE_UNSPECIFIED = 0;
+  CONTENT_BLOCK_TYPE_LEARN = 1;
+  CONTENT_BLOCK_TYPE_EVALUATE = 2;
+}
+
+enum ContentBlockStatus {
+  CONTENT_BLOCK_STATUS_UNSPECIFIED = 0;
+  CONTENT_BLOCK_STATUS_DRAFT = 1;
+  CONTENT_BLOCK_STATUS_PUBLISHED = 2;
+}
+
+message ContentBlock {
+  string id = 1;
+  string wave_id = 2;
+  string title = 3;
+  ContentBlockType type = 4;
+  string payload_json = 5;
+  int32 version = 6;
+  ContentBlockStatus status = 7;
+  string created_by = 8;
+  int64 created_at_unix = 9;
+  int64 updated_at_unix = 10;
+}
+
+message ContentVersion {
+  string id = 1;
+  string content_block_id = 2;
+  int32 version_number = 3;
+  string payload_json = 4;
+  int64 created_at_unix = 5;
+}
+
+message CreateContentBlockRequest {
+  string wave_id = 1;
+  string title = 2;
+  ContentBlockType type = 3;
+  string payload_json = 4;
+  string created_by = 5;
+}
+
+message GetContentBlockRequest {
+  string id = 1;
+}
+
+message UpdateContentBlockRequest {
+  string id = 1;
+  string title = 2;
+  string payload_json = 3;
+  string updated_by = 4;
+}
+
+message DeleteContentBlockRequest {
+  string id = 1;
+  string deleted_by = 2;
+}
+
+message ListContentBlocksRequest {
+  string wave_id = 1;
+  ContentBlockType type = 2;
+}
+
+message PublishContentVersionRequest {
+  string content_block_id = 1;
+  string published_by = 2;
+}
+
+message GetContentVersionHistoryRequest {
+  string content_block_id = 1;
+}
+
+message ContentBlockResponse {
+  ContentBlock content_block = 1;
+  string error = 2;
+}
+
+message ContentBlockListResponse {
+  repeated ContentBlock content_blocks = 1;
+  string error = 2;
+}
+
+message ContentVersionListResponse {
+  repeated ContentVersion versions = 1;
+  string error = 2;
+}
+
+message DeleteContentBlockResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+message PublishContentVersionResponse {
+  ContentBlock content_block = 1;
+  string error = 2;
+}
+
+service ContentService {
+  rpc CreateContentBlock(CreateContentBlockRequest) returns (ContentBlockResponse);
+  rpc GetContentBlock(GetContentBlockRequest) returns (ContentBlockResponse);
+  rpc UpdateContentBlock(UpdateContentBlockRequest) returns (ContentBlockResponse);
+  rpc DeleteContentBlock(DeleteContentBlockRequest) returns (DeleteContentBlockResponse);
+  rpc ListContentBlocks(ListContentBlocksRequest) returns (ContentBlockListResponse);
+  rpc PublishContentVersion(PublishContentVersionRequest) returns (PublishContentVersionResponse);
+  rpc GetContentVersionHistory(GetContentVersionHistoryRequest) returns (ContentVersionListResponse);
+}

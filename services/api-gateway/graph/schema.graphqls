@@ -161,6 +161,55 @@ type Achievement {
   unlockedAt: DateTime!
 }
 
+enum ContentBlockType {
+  LEARN
+  EVALUATE
+}
+
+enum ContentBlockStatus {
+  DRAFT
+  PUBLISHED
+}
+
+type ContentBlock {
+  id: ID!
+  waveId: ID!
+  title: String!
+  type: ContentBlockType!
+  payloadJson: String!
+  version: Int!
+  status: ContentBlockStatus!
+  createdBy: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ContentVersion {
+  id: ID!
+  contentBlockId: ID!
+  versionNumber: Int!
+  payloadJson: String!
+  createdAt: DateTime!
+}
+
+enum MediaAssetStatus {
+  PENDING
+  READY
+  FAILED
+}
+
+type MediaAsset {
+  id: ID!
+  uploaderId: ID!
+  filename: String!
+  mimeType: String!
+  sizeBytes: Int!
+  storageKey: String!
+  cdnUrl: String
+  status: MediaAssetStatus!
+  createdAt: DateTime!
+}
+
 input CourseFilter {
   grade: Grade
   subject: String
@@ -295,6 +344,18 @@ input CreateSubscriptionInput {
   tier: Tier!
 }
 
+input CreateContentBlockInput {
+  waveId: ID!
+  title: String!
+  type: ContentBlockType!
+  payloadJson: String!
+}
+
+input UpdateContentBlockInput {
+  title: String
+  payloadJson: String
+}
+
 enum LeaderboardScope {
   GLOBAL
   COURSE
@@ -318,6 +379,13 @@ type Query {
   lesson(id: ID!): Lesson
   wave(id: ID!): Wave
 
+  contentBlocks(waveId: ID, type: ContentBlockType): [ContentBlock!]!
+  contentBlock(id: ID!): ContentBlock
+  contentVersionHistory(contentBlockId: ID!): [ContentVersion!]!
+
+  mediaAssets(mimeTypePrefix: String): [MediaAsset!]!
+  mediaAsset(id: ID!): MediaAsset
+
   progress(courseId: ID): [LessonProgress!]!
   waveProgress(waveId: ID!): WaveProgress
 
@@ -339,6 +407,13 @@ type Mutation {
   createLesson(courseId: ID!, input: CreateLessonInput!): Lesson!
   createWave(lessonId: ID!, input: CreateWaveInput!): Wave!
   updateWave(id: ID!, input: UpdateWaveInput!): Wave!
+
+  createContentBlock(input: CreateContentBlockInput!): ContentBlock!
+  updateContentBlock(id: ID!, input: UpdateContentBlockInput!): ContentBlock!
+  deleteContentBlock(id: ID!): Boolean!
+  publishContentBlock(id: ID!): ContentBlock!
+
+  deleteMediaAsset(id: ID!): Boolean!
 
   submitWaveAnswers(waveId: ID!, answers: [AnswerInput!]!): WaveResult!
   enrollInCourse(courseId: ID!): Course!
