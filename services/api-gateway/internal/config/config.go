@@ -6,11 +6,13 @@ import (
 )
 
 type Config struct {
-	ServiceAddr       string
-	AuthServiceAddr   string
-	CourseServiceAddr string
-	AccessSecret      string
-	GraphQLPlayground bool
+	ServiceAddr             string
+	AuthServiceAddr         string
+	CourseServiceAddr       string
+	ProgressServiceAddr     string
+	GamificationServiceAddr string
+	AccessSecret            string
+	GraphQLPlayground       bool
 }
 
 func Load() (*Config, error) {
@@ -20,11 +22,13 @@ func Load() (*Config, error) {
 	}
 
 	return &Config{
-		ServiceAddr:       getEnv("API_GATEWAY_ADDR", ":8080"),
-		AuthServiceAddr:   getEnv("AUTH_SERVICE_ADDR", "localhost:8081"),
-		CourseServiceAddr: getEnv("COURSE_SERVICE_ADDR", "localhost:8083"),
-		AccessSecret:      accessSecret,
-		GraphQLPlayground: getEnv("GRAPHQL_PLAYGROUND", "true") == "true",
+		ServiceAddr:             getEnv("API_GATEWAY_ADDR", ":8080"),
+		AuthServiceAddr:         getEnv("AUTH_SERVICE_ADDR", "localhost:8081"),
+		CourseServiceAddr:       getEnv("COURSE_SERVICE_ADDR", "localhost:8083"),
+		ProgressServiceAddr:     getEnv("PROGRESS_SERVICE_ADDR", "localhost:8086"),
+		GamificationServiceAddr: getEnv("GAMIFICATION_SERVICE_ADDR", "localhost:8088"),
+		AccessSecret:            accessSecret,
+		GraphQLPlayground:       getEnv("GRAPHQL_PLAYGROUND", "true") == "true",
 	}, nil
 }
 

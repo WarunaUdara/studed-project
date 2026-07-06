@@ -312,6 +312,7 @@ type Query {
   me: User!
 
   courses(filter: CourseFilter, pagination: PaginationInput): CourseConnection!
+  myEnrollments: [Course!]!
   course(id: ID!): Course
 
   lesson(id: ID!): Lesson

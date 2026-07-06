@@ -44,7 +44,26 @@ func main() {
 	}
 	defer courseClient.Close()
 
-	resolver := &graph.Resolver{AuthClient: authClient, CourseClient: courseClient}
+	progressClient, err := client.NewProgressClient(cfg.ProgressServiceAddr, courseClient)
+	if err != nil {
+		log.Error("failed to connect to progress service", slog.Any("error", err))
+		os.Exit(1)
+	}
+	defer progressClient.Close()
+
+	gamificationClient, err := client.NewGamificationClient(cfg.GamificationServiceAddr)
+	if err != nil {
+		log.Error("failed to connect to gamification service", slog.Any("error", err))
+		os.Exit(1)
+	}
+	defer gamificationClient.Close()
+
+	resolver := &graph.Resolver{
+		AuthClient:         authClient,
+		CourseClient:       courseClient,
+		ProgressClient:     progressClient,
+		GamificationClient: gamificationClient,
+	}
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.GET{})
