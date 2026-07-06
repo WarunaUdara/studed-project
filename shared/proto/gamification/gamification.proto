@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package gamification;
+option go_package = "github.com/studed/shared/proto/gen/go/gamification;gamificationpb";
+
+import "auth/auth.proto";
+
+message XpCalculationRequest {
+  string user_id = 1;
+  string wave_id = 2;
+  int32 score = 3;
+  int32 xp_reward = 4;
+  int32 passing_threshold = 5;
+}
+
+message XpCalculationResponse {
+  int32 xp_earned = 1;
+  int32 total_xp = 2;
+  string error = 3;
+}
+
+message AwardXpRequest {
+  string user_id = 1;
+  int32 amount = 2;
+  string reason = 3;
+  string source_id = 4;
+}
+
+message AwardXpResponse {
+  int32 total_xp = 1;
+  string error = 2;
+}
+
+message GetUserXpRequest {
+  string user_id = 1;
+}
+
+message GetUserXpResponse {
+  int32 total_xp = 1;
+  string error = 2;
+}
+
+message LeaderboardEntry {
+  int32 rank = 1;
+  string user_id = 2;
+  string full_name = 3;
+  int32 total_xp = 4;
+}
+
+message GetLeaderboardRequest {
+  string scope = 1;
+  string course_id = 2;
+  auth.Grade grade = 3;
+  int32 limit = 4;
+}
+
+message GetLeaderboardResponse {
+  repeated LeaderboardEntry entries = 1;
+  string error = 2;
+}
+
+message UpdateLeaderboardRequest {
+  string user_id = 1;
+  string full_name = 2;
+  int32 total_xp = 3;
+  string scope = 4;
+  string course_id = 5;
+  auth.Grade grade = 6;
+}
+
+message UpdateLeaderboardResponse {
+  string error = 1;
+}
+
+service GamificationService {
+  rpc CalculateAndAwardXp(XpCalculationRequest) returns (XpCalculationResponse);
+  rpc AwardXp(AwardXpRequest) returns (AwardXpResponse);
+  rpc GetUserXp(GetUserXpRequest) returns (GetUserXpResponse);
+  rpc GetLeaderboard(GetLeaderboardRequest) returns (GetLeaderboardResponse);
+  rpc UpdateLeaderboard(UpdateLeaderboardRequest) returns (UpdateLeaderboardResponse);
+}
