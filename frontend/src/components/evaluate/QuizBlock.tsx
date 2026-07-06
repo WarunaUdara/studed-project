@@ -82,9 +82,7 @@ export function QuizBlock({ block, index, answer, onAnswerChange, feedback }: Qu
           {!feedback.correct && feedback.correctAnswer && (
             <p className="text-sm">Correct answer: {feedback.correctAnswer}</p>
           )}
-          {feedback.explanation && (
-            <p className="text-sm">{feedback.explanation}</p>
-          )}
+          {feedback.explanation && <p className="text-sm">{feedback.explanation}</p>}
         </div>
       )}
     </div>

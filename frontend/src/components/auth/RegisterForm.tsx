@@ -56,8 +56,13 @@ export function RegisterForm() {
       return;
     }
     if (result.data?.register?.user) {
-      setUser(result.data.register.user);
-      navigate({ to: "/" });
+      const user = result.data.register.user;
+      setUser(user);
+      if (user.role === "EDUCATOR" || user.role === "HEAD_EDUCATOR" || user.role === "ADMIN") {
+        navigate({ to: "/educator" });
+      } else {
+        navigate({ to: "/dashboard" });
+      }
     }
   };
 

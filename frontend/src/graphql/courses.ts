@@ -37,11 +37,27 @@ export const COURSE_QUERY = `
       price
       isPublished
       createdAt
+      myProgress {
+        completedWaves
+        totalWaves
+      }
       lessons {
         id
         title
         sequenceOrder
         isPublished
+        waves {
+          id
+          title
+          sequenceOrder
+          xpReward
+          difficulty
+          isPublished
+          myProgress {
+            status
+            attemptsCount
+          }
+        }
       }
     }
   }
@@ -163,6 +179,61 @@ export const CREATE_WAVE_MUTATION = `
       estimatedDuration
       difficulty
       isPublished
+    }
+  }
+` as const;
+
+export const ENROLL_MUTATION = `
+  mutation EnrollInCourse($courseId: ID!) {
+    enrollInCourse(courseId: $courseId) {
+      id
+      title
+      myProgress {
+        completedWaves
+        totalWaves
+      }
+    }
+  }
+` as const;
+
+export const MY_ENROLLMENTS_QUERY = `
+  query MyEnrollments {
+    myEnrollments {
+      id
+      title
+      description
+      slug
+      gradeLevel
+      price
+      isPublished
+      myProgress {
+        completedWaves
+        totalWaves
+      }
+    }
+  }
+` as const;
+
+export const LEADERBOARD_QUERY = `
+  query Leaderboard($scope: LeaderboardScope!, $courseId: ID, $grade: Grade) {
+    leaderboard(scope: $scope, courseId: $courseId, grade: $grade) {
+      rank
+      user {
+        fullName
+      }
+      totalXp
+    }
+  }
+` as const;
+
+export const SUBMIT_WAVE_ANSWERS_MUTATION = `
+  mutation SubmitWaveAnswers($waveId: ID!, $answers: [AnswerInput!]!) {
+    submitWaveAnswers(waveId: $waveId, answers: $answers) {
+      score
+      xpEarned
+      totalXp
+      passed
+      remainingAttempts
     }
   }
 ` as const;
