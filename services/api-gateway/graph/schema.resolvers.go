@@ -155,12 +155,53 @@ func (r *mutationResolver) UpdateWave(ctx context.Context, id string, input mode
 
 // SubmitWaveAnswers is the resolver for the submitWaveAnswers field.
 func (r *mutationResolver) SubmitWaveAnswers(ctx context.Context, waveID string, answers []*model.AnswerInput) (*model.WaveResult, error) {
-	return nil, errors.New("not implemented")
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := r.ProgressClient.SubmitWaveAnswers(ctx, userCtx.UserID, waveID, answers)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Passed {
+		if userCtx.FullName == "" {
+			return nil, fmt.Errorf("full name is empty in user context")
+		}
+		_, err := r.GamificationClient.UpdateLeaderboard(ctx, userCtx.UserID, userCtx.FullName, result.TotalXp, model.LeaderboardScopeGlobal, "", nil)
+		if err != nil {
+			return nil, fmt.Errorf("failed to update leaderboard: %w", err)
+		}
+	}
+
+	return result, nil
 }
 
 // EnrollInCourse is the resolver for the enrollInCourse field.
 func (r *mutationResolver) EnrollInCourse(ctx context.Context, courseID string) (*model.Course, error) {
-	return nil, errors.New("not implemented")
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := r.ProgressClient.EnrollInCourse(ctx, userCtx.UserID, courseID); err != nil {
+		return nil, err
+	}
+
+	course, err := r.CourseClient.GetCourseWithLessons(ctx, courseID)
+	if err != nil {
+		return nil, err
+	}
+
+	progress, err := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, courseID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load progress: %w", err)
+	}
+
+	course.MyProgress = progress
+
+	return course, nil
 }
 
 // GenerateLearnBlocks is the resolver for the generateLearnBlocks field.
@@ -195,12 +236,15 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 		return nil, errors.New("unauthorized")
 	}
 
+	totalXp, _ := r.GamificationClient.GetUserXp(ctx, userCtx.UserID)
+
 	return &model.User{
 		ID:                userCtx.UserID,
 		Email:             userCtx.Email,
 		FullName:          userCtx.FullName,
 		Role:              model.Role(userCtx.Role),
 		PreferredLanguage: userCtx.PreferredLanguage,
+		TotalXp:           totalXp,
 	}, nil
 }
 
@@ -224,9 +268,40 @@ func (r *queryResolver) Courses(ctx context.Context, filter *model.CourseFilter,
 	return r.CourseClient.ListCourses(ctx, filter, educatorID)
 }
 
+// MyEnrollments is the resolver for the myEnrollments field.
+func (r *queryResolver) MyEnrollments(ctx context.Context) ([]*model.Course, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	courses, err := r.ProgressClient.GetEnrolledCourses(ctx, userCtx.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, course := range courses {
+		progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, course.ID)
+		course.MyProgress = progress
+	}
+
+	return courses, nil
+}
+
 // Course is the resolver for the course field.
 func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, error) {
-	return r.CourseClient.GetCourseWithLessons(ctx, id)
+	course, err := r.CourseClient.GetCourseWithLessons(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	userCtx, ok := middleware.UserFromContext(ctx)
+	if ok && userCtx.UserID != "" {
+		progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, id)
+		course.MyProgress = progress
+	}
+
+	return course, nil
 }
 
 // Lesson is the resolver for the lesson field.
@@ -236,32 +311,69 @@ func (r *queryResolver) Lesson(ctx context.Context, id string) (*model.Lesson, e
 
 // Wave is the resolver for the wave field.
 func (r *queryResolver) Wave(ctx context.Context, id string) (*model.Wave, error) {
-	return r.CourseClient.GetWave(ctx, id)
+	userCtx, ok := middleware.UserFromContext(ctx)
+
+	wave, err := r.CourseClient.GetWave(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if ok && userCtx.UserID != "" {
+		progress, _ := r.ProgressClient.GetWaveProgress(ctx, userCtx.UserID, id)
+		wave.MyProgress = progress
+	}
+
+	return wave, nil
 }
 
 // Progress is the resolver for the progress field.
 func (r *queryResolver) Progress(ctx context.Context, courseID *string) ([]*model.LessonProgress, error) {
-	return nil, errors.New("not implemented")
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if courseID == nil || *courseID == "" {
+		return nil, errors.New("course id is required")
+	}
+
+	return r.ProgressClient.GetCourseProgress(ctx, userCtx.UserID, *courseID)
 }
 
 // WaveProgress is the resolver for the waveProgress field.
 func (r *queryResolver) WaveProgress(ctx context.Context, waveID string) (*model.WaveProgress, error) {
-	return nil, errors.New("not implemented")
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.ProgressClient.GetWaveProgress(ctx, userCtx.UserID, waveID)
 }
 
 // Leaderboard is the resolver for the leaderboard field.
 func (r *queryResolver) Leaderboard(ctx context.Context, scope model.LeaderboardScope, courseID *string, grade *model.Grade) ([]*model.LeaderboardEntry, error) {
-	return nil, errors.New("not implemented")
+	return r.GamificationClient.GetLeaderboard(ctx, scope, courseID, grade, 100)
 }
 
 // MyRank is the resolver for the myRank field.
 func (r *queryResolver) MyRank(ctx context.Context, scope model.LeaderboardScope, courseID *string) (*int, error) {
-	return nil, errors.New("not implemented")
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var grade *model.Grade
+	rank, err := r.GamificationClient.GetMyRank(ctx, userCtx.UserID, scope, courseID, grade)
+	if err != nil {
+		return nil, err
+	}
+
+	return &rank, nil
 }
 
 // Achievements is the resolver for the achievements field.
 func (r *queryResolver) Achievements(ctx context.Context) ([]*model.Achievement, error) {
-	return nil, errors.New("not implemented")
+	return []*model.Achievement{}, nil
 }
 
 // LeaderboardUpdated is the resolver for the leaderboardUpdated field.

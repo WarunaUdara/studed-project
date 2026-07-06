@@ -149,16 +149,17 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Achievements func(childComplexity int) int
-		Course       func(childComplexity int, id string) int
-		Courses      func(childComplexity int, filter *model.CourseFilter, pagination *model.PaginationInput) int
-		Leaderboard  func(childComplexity int, scope model.LeaderboardScope, courseID *string, grade *model.Grade) int
-		Lesson       func(childComplexity int, id string) int
-		Me           func(childComplexity int) int
-		MyRank       func(childComplexity int, scope model.LeaderboardScope, courseID *string) int
-		Progress     func(childComplexity int, courseID *string) int
-		Wave         func(childComplexity int, id string) int
-		WaveProgress func(childComplexity int, waveID string) int
+		Achievements  func(childComplexity int) int
+		Course        func(childComplexity int, id string) int
+		Courses       func(childComplexity int, filter *model.CourseFilter, pagination *model.PaginationInput) int
+		Leaderboard   func(childComplexity int, scope model.LeaderboardScope, courseID *string, grade *model.Grade) int
+		Lesson        func(childComplexity int, id string) int
+		Me            func(childComplexity int) int
+		MyEnrollments func(childComplexity int) int
+		MyRank        func(childComplexity int, scope model.LeaderboardScope, courseID *string) int
+		Progress      func(childComplexity int, courseID *string) int
+		Wave          func(childComplexity int, id string) int
+		WaveProgress  func(childComplexity int, waveID string) int
 	}
 
 	QuestionFeedback struct {
@@ -262,6 +263,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Me(ctx context.Context) (*model.User, error)
 	Courses(ctx context.Context, filter *model.CourseFilter, pagination *model.PaginationInput) (*model.CourseConnection, error)
+	MyEnrollments(ctx context.Context) ([]*model.Course, error)
 	Course(ctx context.Context, id string) (*model.Course, error)
 	Lesson(ctx context.Context, id string) (*model.Lesson, error)
 	Wave(ctx context.Context, id string) (*model.Wave, error)
@@ -861,6 +863,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Query.Me(childComplexity), true
+	case "Query.myEnrollments":
+		if e.ComplexityRoot.Query.MyEnrollments == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Query.MyEnrollments(childComplexity), true
 	case "Query.myRank":
 		if e.ComplexityRoot.Query.MyRank == nil {
 			break
@@ -4415,6 +4423,38 @@ func (ec *executionContext) fieldContext_Query_courses(ctx context.Context, fiel
 	if fc.Args, err = ec.field_Query_courses_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_myEnrollments(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query_myEnrollments(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return ec.Resolvers.Query().MyEnrollments(ctx)
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v []*model.Course) graphql.Marshaler {
+			return ec.marshalNCourse2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐCourseᚄ(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Query_myEnrollments(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Course(ctx, field)
+		},
 	}
 	return fc, nil
 }
@@ -8748,6 +8788,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "myEnrollments":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_myEnrollments(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "course":
 			field := field
 
@@ -9920,6 +9982,22 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 
 func (ec *executionContext) marshalNCourse2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐCourse(ctx context.Context, sel ast.SelectionSet, v model.Course) graphql.Marshaler {
 	return ec._Course(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCourse2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐCourseᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Course) graphql.Marshaler {
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNCourse2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐCourse(ctx, sel, v[i])
+	})
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNCourse2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐCourse(ctx context.Context, sel ast.SelectionSet, v *model.Course) graphql.Marshaler {
