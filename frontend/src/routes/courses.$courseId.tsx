@@ -82,95 +82,85 @@ function CoursePlayerPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link to="/courses" className="text-lg font-semibold hover:text-primary">
-            <ArrowLeft className="inline h-5 w-5" /> Back to Courses
-          </Link>
-          <Link to="/dashboard">
-            <Button variant="outline" size="sm">
-              Dashboard
-            </Button>
-          </Link>
+    <div className="mx-auto max-w-6xl p-4 pt-6 sm:p-6 sm:pt-8">
+      <Link to="/courses">
+        <Button variant="outline" size="sm">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Courses
+        </Button>
+      </Link>
+
+      <div className="mt-6 mb-8 space-y-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="rounded-full bg-secondary px-3 py-1 text-sm">{course.gradeLevel}</span>
+          <span className="text-sm text-muted-foreground">
+            {course.isPublished ? "Published" : "Draft"}
+          </span>
         </div>
-      </header>
+        <h1 className="text-3xl font-bold">{course.title}</h1>
+        <p className="max-w-2xl text-muted-foreground">{course.description}</p>
 
-      <section className="mx-auto max-w-6xl py-10">
-        <div className="mb-8 space-y-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded-full bg-secondary px-3 py-1 text-sm">{course.gradeLevel}</span>
-            <span className="text-sm text-muted-foreground">{course.isPublished ? "Published" : "Draft"}</span>
+        <div className="max-w-xl">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">
+              {completedWaves} of {totalWaves} waves completed
+            </span>
+            <span className="font-medium">{progress}%</span>
           </div>
-          <h1 className="text-3xl font-bold">{course.title}</h1>
-          <p className="max-w-2xl text-muted-foreground">{course.description}</p>
-
-          <div className="max-w-xl">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">
-                {completedWaves} of {totalWaves} waves completed
-              </span>
-              <span className="font-medium">{progress}%</span>
-            </div>
-            <div className="mt-2 h-2 w-full rounded-full bg-secondary">
-              <div className="h-2 rounded-full bg-primary" style={{ width: `${progress}%` }} />
-            </div>
+          <div className="mt-2 h-2 w-full rounded-full bg-secondary">
+            <div className="h-2 rounded-full bg-primary" style={{ width: `${progress}%` }} />
           </div>
         </div>
+      </div>
 
-        <div className="space-y-6">
-          {lessons.map((lesson) => (
-            <Card key={lesson.id}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <BookOpen className="h-5 w-5" />
-                  {lesson.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {lesson.waves.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No waves in this lesson yet.</p>
-                ) : (
-                  lesson.waves.map((wave) => {
-                    const isCompleted = wave.myProgress?.status === "COMPLETED";
-                    return (
-                      <Link
-                        key={wave.id}
-                        to="/waves/$waveId"
-                        params={{ waveId: wave.id }}
-                      >
-                        <div className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted">
-                          <div className="flex items-center gap-3">
-                            {isCompleted ? (
-                              <CheckCircle className="h-5 w-5 text-green-600" />
-                            ) : (
-                              <PlayCircle className="h-5 w-5 text-primary" />
-                            )}
-                            <div>
-                              <p className="font-medium">{wave.title}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {wave.difficulty} · {wave.xpReward} XP
-                                {wave.myProgress?.highestScore !== null &&
-                                  wave.myProgress?.highestScore !== undefined &&
-                                  ` · Best: ${wave.myProgress.highestScore}%`}
-                              </p>
-                            </div>
-                          </div>
+      <div className="space-y-6">
+        {lessons.map((lesson) => (
+          <Card key={lesson.id}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <BookOpen className="h-5 w-5" />
+                {lesson.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {lesson.waves.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No waves in this lesson yet.</p>
+              ) : (
+                lesson.waves.map((wave) => {
+                  const isCompleted = wave.myProgress?.status === "COMPLETED";
+                  return (
+                    <Link key={wave.id} to="/waves/$waveId" params={{ waveId: wave.id }}>
+                      <div className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted">
+                        <div className="flex items-center gap-3">
                           {isCompleted ? (
-                            <span className="text-sm font-medium text-green-600">Completed</span>
+                            <CheckCircle className="h-5 w-5 text-green-600" />
                           ) : (
-                            <Button size="sm">Start</Button>
+                            <PlayCircle className="h-5 w-5 text-primary" />
                           )}
+                          <div>
+                            <p className="font-medium">{wave.title}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {wave.difficulty} · {wave.xpReward} XP
+                              {wave.myProgress?.highestScore !== null &&
+                                wave.myProgress?.highestScore !== undefined &&
+                                ` · Best: ${wave.myProgress.highestScore}%`}
+                            </p>
+                          </div>
                         </div>
-                      </Link>
-                    );
-                  })
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-    </main>
+                        {isCompleted ? (
+                          <span className="text-sm font-medium text-green-600">Completed</span>
+                        ) : (
+                          <Button size="sm">Start</Button>
+                        )}
+                      </div>
+                    </Link>
+                  );
+                })
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
   );
 }
