@@ -38,6 +38,9 @@ function IndexPage() {
                 <Button>Educator Portal</Button>
               </Link>
             )}
+            <Link to="/dashboard">
+              <Button>Student Dashboard</Button>
+            </Link>
           </div>
         </div>
       ) : (
