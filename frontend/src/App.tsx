@@ -1,8 +1,18 @@
-import { Outlet } from "@tanstack/react-router";
+import { Outlet, useRouterState } from "@tanstack/react-router";
 import { Navbar } from "@/components/layout/Navbar";
 import { ToastProvider } from "@/components/ui/Toast";
 
+/** Routes that own their full-screen layout (no global Navbar / Footer). */
+const SPLIT_SCREEN_ROUTES = new Set(["/login", "/register"]);
+
+function isSplitScreen(pathname: string): boolean {
+  return SPLIT_SCREEN_ROUTES.has(pathname);
+}
+
 export function App() {
+  const pathname = useRouterState().location.pathname;
+  const hideChrome = isSplitScreen(pathname);
+
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       {/* Ambient gradient background */}
@@ -12,30 +22,11 @@ export function App() {
         <div className="absolute bottom-0 left-1/4 h-[300px] w-[300px] rounded-full bg-gold/5 blur-[80px]" />
       </div>
       <ToastProvider>
-        <Navbar />
+        {!hideChrome && <Navbar />}
         <main>
           <Outlet />
         </main>
-        <Footer />
       </ToastProvider>
     </div>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="mt-16 border-t bg-card/50">
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="text-sm text-muted-foreground">
-            Stud<span className="font-bold text-primary">Ed</span> — Premium learning for Sri Lankan
-            schools
-          </p>
-          <div className="flex gap-6 text-sm text-muted-foreground">
-            <span>Grade 1–11 · O/L · A/L</span>
-          </div>
-        </div>
-      </div>
-    </footer>
   );
 }

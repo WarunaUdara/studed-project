@@ -38,7 +38,14 @@ export function levelLabel(level: number): string {
 }
 
 /* ----- Proficiency ----- */
-
+//
+// Five levels (per 05-Gamification/Proficiency-System.md):
+//   Not Started  ⭕  Gray
+//   In Progress  🟡  Yellow
+//   Completed    ✅  Green
+//   Proficient   🌟  Gold (avg ≥ 80%)
+//   Expert       👑  Purple (avg = 100%)
+// The glyph is part of the spec; we keep it as a stable UI affordance.
 export type ProficiencyLevel =
   | "NOT_STARTED"
   | "IN_PROGRESS"
@@ -50,52 +57,64 @@ export interface ProficiencyMeta {
   level: ProficiencyLevel;
   label: string;
   icon: string;
+  glyph: string;
   color: string;
   textColor: string;
   bgColor: string;
   ringColor: string;
+  borderColor: string;
 }
 
 const PROFICIENCY_MAP: Record<ProficiencyLevel, Omit<ProficiencyMeta, "level">> = {
   NOT_STARTED: {
     label: "Not Started",
     icon: "circle",
-    color: "text-gray-500",
-    textColor: "text-gray-700",
-    bgColor: "bg-gray-100",
-    ringColor: "ring-gray-300",
+    glyph: "⭕",
+    color: "text-muted-foreground",
+    textColor: "text-muted-foreground",
+    bgColor: "bg-muted",
+    ringColor: "ring-border",
+    borderColor: "border-border",
   },
   IN_PROGRESS: {
     label: "In Progress",
     icon: "clock",
-    color: "text-amber-600",
-    textColor: "text-amber-800",
-    bgColor: "bg-amber-100",
-    ringColor: "ring-amber-300",
+    glyph: "🟡",
+    color: "text-warning",
+    textColor: "text-warning-foreground",
+    bgColor: "bg-warning/15",
+    ringColor: "ring-warning/40",
+    borderColor: "border-warning/40",
   },
   COMPLETED: {
     label: "Completed",
     icon: "check",
-    color: "text-green-600",
-    textColor: "text-green-800",
-    bgColor: "bg-green-100",
-    ringColor: "ring-green-300",
+    glyph: "✅",
+    color: "text-success",
+    textColor: "text-success-foreground",
+    bgColor: "bg-success/15",
+    ringColor: "ring-success/40",
+    borderColor: "border-success/40",
   },
   PROFICIENT: {
     label: "Proficient",
     icon: "star",
+    glyph: "🌟",
     color: "text-gold",
-    textColor: "text-gold",
+    textColor: "text-gold-foreground",
     bgColor: "bg-gold/15",
     ringColor: "ring-gold/40",
+    borderColor: "border-gold/40",
   },
   EXPERT: {
     label: "Expert",
     icon: "crown",
+    glyph: "👑",
     color: "text-purple",
-    textColor: "text-purple",
+    textColor: "text-purple-foreground",
     bgColor: "bg-purple/15",
     ringColor: "ring-purple/40",
+    borderColor: "border-purple/40",
   },
 };
 
@@ -243,4 +262,41 @@ export function rankBadge(rank: number, total?: number): string | null {
   if (rank <= Math.ceil(t * 0.01)) return "crown";
   if (rank <= Math.ceil(t * 0.1)) return "gem";
   return null;
+}
+
+/**
+ * Returns the spec-defined leaderboard rank glyph for a given position:
+ *   🥇🥈🥉 for top 3, ⭐ for top 10, 👑 for top 1%, 💎 for top 10%.
+ * The emoji glyphs are part of the design spec (05-Gamification/Leaderboards.md).
+ */
+export function rankBadgeGlyph(rank: number, total?: number): string {
+  if (rank === 1) return "🥇";
+  if (rank === 2) return "🥈";
+  if (rank === 3) return "🥉";
+  const t = total ?? 100;
+  if (rank <= 10) return "⭐";
+  if (rank <= Math.ceil(t * 0.01)) return "👑";
+  if (rank <= Math.ceil(t * 0.1)) return "💎";
+  return "";
+}
+
+/** Display leaderboard names as "First name + initial." for privacy (per spec). */
+export function privateLeaderboardName(fullName: string): string {
+  const parts = fullName.trim().split(/\s+/);
+  if (parts.length < 2) return fullName;
+  const first = parts[0] ?? "";
+  const initial = (parts[parts.length - 1] ?? "").charAt(0);
+  return initial ? `${first} ${initial}.` : first;
+}
+
+/** Per-question XP breakdown categories for the achievements page. */
+export interface XpBreakdown {
+  waves: number;
+  proficiencyBonuses: number;
+  streaks: number;
+  perfectScores: number;
+}
+
+export function emptyXpBreakdown(): XpBreakdown {
+  return { waves: 0, proficiencyBonuses: 0, streaks: 0, perfectScores: 0 };
 }
