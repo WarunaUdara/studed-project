@@ -122,6 +122,13 @@ message PublishLessonRequest {
   string educator_id = 2;
 }
 
+message UpdateLessonRequest {
+  string id = 1;
+  string educator_id = 2;
+  string title = 3;
+  int32 sequence_order = 4;
+}
+
 message LessonResponse {
   Lesson lesson = 1;
   string error = 2;
@@ -192,6 +199,7 @@ service CourseService {
   rpc CreateLesson(CreateLessonRequest) returns (LessonResponse);
   rpc GetLesson(GetLessonRequest) returns (LessonResponse);
   rpc ListLessons(ListLessonsRequest) returns (LessonListResponse);
+  rpc UpdateLesson(UpdateLessonRequest) returns (LessonResponse);
   rpc PublishLesson(PublishLessonRequest) returns (LessonResponse);
 
   rpc CreateWave(CreateWaveRequest) returns (WaveResponse);

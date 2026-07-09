@@ -229,6 +229,11 @@ input CreateLessonInput {
   sequenceOrder: Int!
 }
 
+input UpdateLessonInput {
+  title: String
+  sequenceOrder: Int
+}
+
 input LearnBlockInput {
   id: ID!
   type: String!
@@ -337,8 +342,11 @@ type Mutation {
   updateCourse(id: ID!, input: UpdateCourseInput!): Course!
   publishCourse(id: ID!): Course!
   createLesson(courseId: ID!, input: CreateLessonInput!): Lesson!
+  updateLesson(id: ID!, input: UpdateLessonInput!): Lesson!
+  publishLesson(id: ID!): Lesson!
   createWave(lessonId: ID!, input: CreateWaveInput!): Wave!
   updateWave(id: ID!, input: UpdateWaveInput!): Wave!
+  publishWave(id: ID!): Wave!
 
   submitWaveAnswers(waveId: ID!, answers: [AnswerInput!]!): WaveResult!
   enrollInCourse(courseId: ID!): Course!

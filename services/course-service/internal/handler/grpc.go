@@ -72,6 +72,14 @@ func (h *CourseGRPCHandler) ListLessons(ctx context.Context, req *coursepb.ListL
 	return h.svc.ListLessons(ctx, req)
 }
 
+func (h *CourseGRPCHandler) UpdateLesson(ctx context.Context, req *coursepb.UpdateLessonRequest) (*coursepb.LessonResponse, error) {
+	resp, err := h.svc.UpdateLesson(ctx, req)
+	if err != nil {
+		return &coursepb.LessonResponse{Error: err.Error()}, nil
+	}
+	return resp, nil
+}
+
 func (h *CourseGRPCHandler) PublishLesson(ctx context.Context, req *coursepb.PublishLessonRequest) (*coursepb.LessonResponse, error) {
 	resp, err := h.svc.PublishLesson(ctx, req)
 	if err != nil {

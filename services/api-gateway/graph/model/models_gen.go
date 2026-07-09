@@ -200,6 +200,11 @@ type UpdateCourseInput struct {
 	Price       *float64 `json:"price,omitempty"`
 }
 
+type UpdateLessonInput struct {
+	Title         *string `json:"title,omitempty"`
+	SequenceOrder *int    `json:"sequenceOrder,omitempty"`
+}
+
 type UpdateWaveInput struct {
 	Title             *string               `json:"title,omitempty"`
 	SequenceOrder     *int                  `json:"sequenceOrder,omitempty"`

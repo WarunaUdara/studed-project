@@ -22,6 +22,7 @@ type CourseService interface {
 	CreateLesson(ctx context.Context, req *coursepb.CreateLessonRequest) (*coursepb.LessonResponse, error)
 	GetLesson(ctx context.Context, req *coursepb.GetLessonRequest) (*coursepb.LessonResponse, error)
 	ListLessons(ctx context.Context, req *coursepb.ListLessonsRequest) (*coursepb.LessonListResponse, error)
+	UpdateLesson(ctx context.Context, req *coursepb.UpdateLessonRequest) (*coursepb.LessonResponse, error)
 	PublishLesson(ctx context.Context, req *coursepb.PublishLessonRequest) (*coursepb.LessonResponse, error)
 
 	CreateWave(ctx context.Context, req *coursepb.CreateWaveRequest) (*coursepb.WaveResponse, error)
@@ -258,6 +259,41 @@ func (s *courseService) ListLessons(ctx context.Context, req *coursepb.ListLesso
 	}
 
 	return &coursepb.LessonListResponse{Lessons: protoLessons}, nil
+}
+
+func (s *courseService) UpdateLesson(ctx context.Context, req *coursepb.UpdateLessonRequest) (*coursepb.LessonResponse, error) {
+	if req.Id == "" {
+		return nil, fmt.Errorf("lesson id is required")
+	}
+	if req.EducatorId == "" {
+		return nil, fmt.Errorf("educator id is required")
+	}
+
+	lesson, err := s.lessonRepo.GetByID(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	course, err := s.courseRepo.GetByID(ctx, lesson.CourseID)
+	if err != nil {
+		return nil, err
+	}
+	if course.EducatorID != req.EducatorId {
+		return nil, fmt.Errorf("unauthorized to update this lesson")
+	}
+
+	if title := strings.TrimSpace(req.Title); title != "" {
+		lesson.Title = title
+	}
+	if req.SequenceOrder != 0 {
+		lesson.SequenceOrder = req.SequenceOrder
+	}
+
+	if err := s.lessonRepo.Update(ctx, lesson); err != nil {
+		return nil, fmt.Errorf("failed to update lesson: %w", err)
+	}
+
+	return &coursepb.LessonResponse{Lesson: lesson.ToProto()}, nil
 }
 
 func (s *courseService) PublishLesson(ctx context.Context, req *coursepb.PublishLessonRequest) (*coursepb.LessonResponse, error) {
