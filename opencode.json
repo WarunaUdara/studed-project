@@ -3,10 +3,12 @@
   "mcp": {
     "codegraph": {
       "type": "local",
-      "command": ["python", "-m", "src.mcp", "--transport", "stdio", "--db", "data/projects/codegraph.duckdb"],
-      "environment": {
-        "CODEGRAPH_PROJECT": ""
-      }
+      "command": [
+        "codegraph",
+        "serve",
+        "--mcp"
+      ],
+      "enabled": true
     }
   },
   "lsp": {
