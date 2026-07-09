@@ -7,12 +7,12 @@
 @layer base {
   :root {
     /* Core surface tokens (oklch) */
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
+    --background: oklch(0.995 0.002 250);
+    --foreground: oklch(0.18 0.02 260);
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
+    --card-foreground: oklch(0.18 0.02 260);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
+    --popover-foreground: oklch(0.18 0.02 260);
 
     /* Action tokens */
     --primary: oklch(0.55 0.22 264);
@@ -20,16 +20,16 @@
     --secondary: oklch(0.97 0 0);
     --secondary-foreground: oklch(0.205 0 0);
     --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
+    --muted-foreground: oklch(0.5 0.02 260);
+    --accent: oklch(0.96 0.01 264);
+    --accent-foreground: oklch(0.3 0.05 264);
+    --destructive: oklch(0.58 0.22 25);
     --destructive-foreground: oklch(0.985 0 0);
 
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --radius: 0.625rem;
+    --border: oklch(0.92 0.005 260);
+    --input: oklch(0.92 0.005 260);
+    --ring: oklch(0.55 0.22 264);
+    --radius: 0.75rem;
 
     /* Feedback tokens */
     --success: oklch(0.64 0.18 145);
@@ -54,42 +54,54 @@
     --rank-2-foreground: oklch(0.985 0 0);
     --rank-3: oklch(0.64 0.14 66);
     --rank-3-foreground: oklch(0.985 0 0);
+
+    /* Sidebar / shell surfaces */
+    --sidebar: oklch(0.985 0.004 260);
+    --sidebar-foreground: oklch(0.25 0.02 260);
+    --sidebar-border: oklch(0.92 0.006 260);
+    --sidebar-accent: oklch(0.95 0.02 264);
+
+    /* Chart palette (Recharts) */
+    --chart-xp: oklch(0.55 0.22 264);
+    --chart-xp-soft: oklch(0.7 0.18 264);
+    --chart-streak: oklch(0.7 0.19 50);
+    --chart-proficient: oklch(0.76 0.18 75);
   }
 
   .dark {
-    --background: oklch(0.145 0 0);
+    --background: oklch(0.16 0.015 260);
     --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
+    --card: oklch(0.21 0.02 260);
     --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.269 0 0);
+    --popover: oklch(0.269 0.02 260);
     --popover-foreground: oklch(0.985 0 0);
 
-    --primary: oklch(0.65 0.2 264);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.269 0 0);
+    --primary: oklch(0.7 0.18 264);
+    --primary-foreground: oklch(0.12 0.02 264);
+    --secondary: oklch(0.269 0.02 260);
     --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.371 0 0);
+    --muted: oklch(0.269 0.02 260);
+    --muted-foreground: oklch(0.72 0.02 260);
+    --accent: oklch(0.32 0.05 264);
     --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --destructive-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.704 0.19 22);
+    --destructive-foreground: oklch(0.12 0.02 22);
 
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
+    --ring: oklch(0.7 0.18 264);
 
     --success: oklch(0.72 0.16 145);
-    --success-foreground: oklch(0.2 0.02 145);
+    --success-foreground: oklch(0.12 0.02 145);
     --warning: oklch(0.8 0.16 75);
     --warning-foreground: oklch(0.22 0.02 75);
     --info: oklch(0.75 0.14 250);
-    --info-foreground: oklch(0.2 0.03 250);
+    --info-foreground: oklch(0.12 0.03 250);
 
     --gold: oklch(0.86 0.16 92);
     --gold-foreground: oklch(0.2 0.02 92);
     --purple: oklch(0.72 0.2 290);
-    --purple-foreground: oklch(0.145 0 0);
+    --purple-foreground: oklch(0.12 0 0);
     --orange: oklch(0.78 0.17 50);
     --orange-foreground: oklch(0.2 0.02 50);
     --achievement: oklch(0.72 0.2 290);
@@ -97,9 +109,19 @@
     --rank-1: oklch(0.86 0.16 92);
     --rank-1-foreground: oklch(0.2 0.02 92);
     --rank-2: oklch(0.78 0.02 250);
-    --rank-2-foreground: oklch(0.145 0 0);
+    --rank-2-foreground: oklch(0.12 0 0);
     --rank-3: oklch(0.75 0.12 66);
     --rank-3-foreground: oklch(0.985 0 0);
+
+    --sidebar: oklch(0.19 0.02 260);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 8%);
+    --sidebar-accent: oklch(0.28 0.05 264);
+
+    --chart-xp: oklch(0.7 0.18 264);
+    --chart-xp-soft: oklch(0.55 0.16 264);
+    --chart-streak: oklch(0.78 0.17 50);
+    --chart-proficient: oklch(0.86 0.16 92);
   }
 }
 
@@ -155,6 +177,18 @@
   --color-rank-3: var(--rank-3);
   --color-rank-3-foreground: var(--rank-3-foreground);
 
+  /* Shell surfaces */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent: var(--sidebar-accent);
+
+  /* Chart palette */
+  --color-chart-xp: var(--chart-xp);
+  --color-chart-xp-soft: var(--chart-xp-soft);
+  --color-chart-streak: var(--chart-streak);
+  --color-chart-proficient: var(--chart-proficient);
+
   /* Fonts */
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-sinhala: "Noto Sans Sinhala", "Iskoola Pota", "Iskoola Pota B", sans-serif;
@@ -164,6 +198,21 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Custom keyframes used by gamification components */
+  --animate-flame-pulse: flame-pulse 2.4s ease-in-out infinite;
+  --animate-unlock-glow: unlock-glow 0.6s ease-out;
+}
+
+@keyframes flame-pulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
+  50% { transform: scale(1.12); filter: drop-shadow(0 0 6px var(--orange)); }
+}
+
+@keyframes unlock-glow {
+  0% { box-shadow: 0 0 0 0 var(--primary); opacity: 0; }
+  60% { box-shadow: 0 0 0 8px transparent; opacity: 1; }
+  100% { box-shadow: 0 0 0 0 transparent; opacity: 1; }
 }
 
 @layer base {
@@ -179,5 +228,26 @@
   /* Sinhala text opt-in via .font-sinhala utility (mapped above) */
   :lang(si) {
     font-family: var(--font-sinhala);
+  }
+  /* Honour reduced motion: kill custom animations globally */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  .font-sinhala {
+    font-family: var(--font-sinhala);
+  }
+  /* Subtle elevated card lift on hover */
+  .lift-on-hover {
+    transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+  }
+  .lift-on-hover:hover {
+    transform: translateY(-2px);
   }
 }

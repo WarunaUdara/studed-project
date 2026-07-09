@@ -1,7 +1,14 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-const COLORS = ["#F59E0B", "#3B82F6", "#10B981", "#8B5CF6", "#EF4444", "#F97316"];
+const COLORS = [
+  "oklch(0.76 0.18 75)",
+  "oklch(0.55 0.22 264)",
+  "oklch(0.64 0.18 145)",
+  "oklch(0.58 0.24 290)",
+  "oklch(0.58 0.22 25)",
+  "oklch(0.7 0.19 50)",
+];
 
 export interface ConfettiProps {
   show: boolean;
