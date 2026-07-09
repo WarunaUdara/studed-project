@@ -6,45 +6,100 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+    /* Core surface tokens (oklch) */
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
 
-    /* Gamification palette (from 06-UI-UX/Design-System.md) */
-    --gold: 38 92% 50%;
-    --purple: 258 90% 66%;
-    --orange: 25 95% 53%;
-    --success: 160 84% 39%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 20%;
-    --info: 220 83% 53%;
-    --info-foreground: 0 0% 100%;
-    --achievement: 258 90% 66%;
-    --achievement-foreground: 0 0% 100%;
-    --rank-1: 45 93% 47%;
-    --rank-1-foreground: 0 0% 100%;
-    --rank-2: 220 15% 55%;
-    --rank-2-foreground: 0 0% 100%;
-    --rank-3: 25 65% 45%;
-    --rank-3-foreground: 0 0% 100%;
+    /* Action tokens */
+    --primary: oklch(0.55 0.22 264);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.985 0 0);
+
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --radius: 0.625rem;
+
+    /* Feedback tokens */
+    --success: oklch(0.64 0.18 145);
+    --success-foreground: oklch(0.985 0 0);
+    --warning: oklch(0.73 0.17 65);
+    --warning-foreground: oklch(0.2 0.02 65);
+    --info: oklch(0.63 0.16 250);
+    --info-foreground: oklch(0.985 0 0);
+
+    /* Gamification tokens */
+    --gold: oklch(0.76 0.18 75);
+    --gold-foreground: oklch(0.2 0.02 75);
+    --purple: oklch(0.58 0.24 290);
+    --purple-foreground: oklch(0.985 0 0);
+    --orange: oklch(0.7 0.19 50);
+    --orange-foreground: oklch(0.2 0.02 50);
+    --achievement: oklch(0.58 0.24 290);
+    --achievement-foreground: oklch(0.985 0 0);
+    --rank-1: oklch(0.83 0.17 92);
+    --rank-1-foreground: oklch(0.2 0.02 92);
+    --rank-2: oklch(0.71 0.02 250);
+    --rank-2-foreground: oklch(0.985 0 0);
+    --rank-3: oklch(0.64 0.14 66);
+    --rank-3-foreground: oklch(0.985 0 0);
+  }
+
+  .dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.269 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+
+    --primary: oklch(0.65 0.2 264);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.371 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --destructive-foreground: oklch(0.205 0 0);
+
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+
+    --success: oklch(0.72 0.16 145);
+    --success-foreground: oklch(0.2 0.02 145);
+    --warning: oklch(0.8 0.16 75);
+    --warning-foreground: oklch(0.22 0.02 75);
+    --info: oklch(0.75 0.14 250);
+    --info-foreground: oklch(0.2 0.03 250);
+
+    --gold: oklch(0.86 0.16 92);
+    --gold-foreground: oklch(0.2 0.02 92);
+    --purple: oklch(0.72 0.2 290);
+    --purple-foreground: oklch(0.145 0 0);
+    --orange: oklch(0.78 0.17 50);
+    --orange-foreground: oklch(0.2 0.02 50);
+    --achievement: oklch(0.72 0.2 290);
+    --achievement-foreground: oklch(0.985 0 0);
+    --rank-1: oklch(0.86 0.16 92);
+    --rank-1-foreground: oklch(0.2 0.02 92);
+    --rank-2: oklch(0.78 0.02 250);
+    --rank-2-foreground: oklch(0.145 0 0);
+    --rank-3: oklch(0.75 0.12 66);
+    --rank-3-foreground: oklch(0.985 0 0);
   }
 }
 
@@ -52,46 +107,53 @@
  * Tailwind v4 CSS-first config: register shadcn-style design tokens as theme keys.
  * `inline` makes generated utilities resolve `var(--xxx)` at runtime so dark-mode
  * overrides of the raw --xxx tokens take effect.
+ * All color tokens use OKLCH — the modern color space for perceptual uniformity,
+ * wide gamut (P3), and consistent lightness across hues.
  */
 @theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Feedback colors */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
 
   /* Gamification colors */
-  --color-gold: hsl(var(--gold));
-  --color-purple: hsl(var(--purple));
-  --color-orange: hsl(var(--orange));
-  --color-success: hsl(var(--success));
-  --color-success-foreground: hsl(var(--success-foreground));
-  --color-warning: hsl(var(--warning));
-  --color-warning-foreground: hsl(var(--warning-foreground));
-  --color-info: hsl(var(--info));
-  --color-info-foreground: hsl(var(--info-foreground));
-  --color-achievement: hsl(var(--achievement));
-  --color-achievement-foreground: hsl(var(--achievement-foreground));
-  --color-rank-1: hsl(var(--rank-1));
-  --color-rank-1-foreground: hsl(var(--rank-1-foreground));
-  --color-rank-2: hsl(var(--rank-2));
-  --color-rank-2-foreground: hsl(var(--rank-2-foreground));
-  --color-rank-3: hsl(var(--rank-3));
-  --color-rank-3-foreground: hsl(var(--rank-3-foreground));
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-purple: var(--purple);
+  --color-purple-foreground: var(--purple-foreground);
+  --color-orange: var(--orange);
+  --color-orange-foreground: var(--orange-foreground);
+  --color-achievement: var(--achievement);
+  --color-achievement-foreground: var(--achievement-foreground);
+  --color-rank-1: var(--rank-1);
+  --color-rank-1-foreground: var(--rank-1-foreground);
+  --color-rank-2: var(--rank-2);
+  --color-rank-2-foreground: var(--rank-2-foreground);
+  --color-rank-3: var(--rank-3);
+  --color-rank-3-foreground: var(--rank-3-foreground);
 
   /* Fonts */
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;

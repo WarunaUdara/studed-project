@@ -33,13 +33,15 @@ Reference documentation lives in the Obsidian folders at the repo root:
 - TanStack Router (file-based routing)
 - TanStack Query (server state)
 - Zustand (client state)
-- Tailwind CSS 3.x
-- shadcn/ui + Radix UI
+- Tailwind CSS v4 (CSS-first config, no tailwind.config.js)
+- shadcn/ui + Base UI (@base-ui/react) + Radix UI
+- Trophy UI Kit (gamification components: streaks, achievements, leaderboards, points)
 - urql (GraphQL client)
-- Framer Motion
-- Recharts
+- Framer Motion (animations)
+- Recharts (charts)
 - React Hook Form + Zod
 - Puck editor
+- Web Audio API (synthesized UI sounds — no audio files)
 
 ### Backend
 - Go 1.22+
@@ -214,17 +216,60 @@ services/<name>/
 frontend/src/
 ├── routes/                      # TanStack Router file-based routes
 ├── components/
-│   ├── ui/                      # shadcn/ui primitives
+│   ├── ui/                      # shadcn/ui + Trophy UI primitives
 │   ├── puck-blocks/             # Puck custom blocks
 │   ├── learn/                   # Learn phase renderers
 │   ├── evaluate/                # Evaluate phase renderers
-│   └── gamification/            # XP, badges, leaderboards
+│   └── gamification/            # Custom gamification wrappers (XPBar, XPToast, Confetti, ProficiencyBadge)
 ├── graphql/                     # queries, mutations, subscriptions
 ├── hooks/
 ├── stores/                      # Zustand stores
-├── lib/                         # utilities, constants, types
-└── styles/                      # global CSS, Tailwind config
+├── lib/                         # utilities, constants, types, sounds, errors, gamification
+└── styles/                      # global CSS (Tailwind v4 CSS-first config)
 ```
+
+## Color System — OKLCH
+
+All color tokens in the StudEd frontend use **OKLCH** (`oklch(L C H)`), the modern color space with perceptual uniformity, wide-gamut (P3) support, and consistent lightness across hues. This aligns with Tailwind v4, shadcn/ui v4, and Trophy UI Kit conventions.
+
+### Rules
+1. **Always use OKLCH** for new CSS custom properties. Never use HSL, RGB hex, or named colors for theme tokens.
+2. **Token format**: `oklch(lightness chroma hue)` where lightness is 0-1, chroma is 0-0.4+, hue is 0-360.
+3. **Every foreground token must have a matching `-foreground` variant** for accessibility/contrast control.
+4. **Dark mode** overrides live in `.dark { }` and use the same OKLCH format with adjusted lightness/chroma.
+5. **Tailwind v4 `@theme inline`** maps tokens directly — no `hsl()` wrapper needed (unlike the old HSL system).
+
+### Token groups
+| Group | Tokens | Usage |
+|-------|--------|-------|
+| Core surface | `--background`, `--foreground`, `--card`, `--popover`, `--border`, `--input`, `--ring` | App shell, cards, inputs |
+| Action | `--primary`, `--secondary`, `--accent`, `--destructive` | Buttons, links, focus |
+| Feedback | `--success`, `--warning`, `--info` | Success states, warnings, info badges |
+| Gamification | `--gold`, `--purple`, `--orange`, `--achievement`, `--rank-1/2/3` | XP, badges, leaderboards, streaks |
+
+### Example
+```css
+:root {
+  --primary: oklch(0.55 0.22 264);
+  --primary-foreground: oklch(0.985 0 0);
+  --success: oklch(0.64 0.18 145);
+  --gold: oklch(0.76 0.18 75);
+}
+```
+
+### Adding a new color token
+1. Add the `--name` and `--name-foreground` OKLCH values to `:root` in `src/styles/index.css`.
+2. Add dark-mode overrides in `.dark { }`.
+3. Register the Tailwind utility in `@theme inline` as `--color-name: var(--name)`.
+4. Use in components as `bg-name`, `text-name`, `border-name`, etc.
+
+## UI Sound System
+
+The frontend uses the **Web Audio API** (no audio files) for subtle UI sounds:
+- `lib/sounds.ts` — `playClickSound()`, `playSuccessSound()`, `playErrorSound()`, `playLevelUpSound()`.
+- Button clicks automatically play `playClickSound()` via the shadcn `Button` component.
+- All sounds respect `prefers-reduced-motion` (silenced when reduced motion is preferred).
+- Do NOT add audio file assets — synthesize all sounds via oscillators.
 
 ## Environment Notes
 
