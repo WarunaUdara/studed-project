@@ -263,6 +263,29 @@ func (c *CourseClient) GetWave(ctx context.Context, id string) (*model.Wave, err
 	return protoWaveToModel(resp.Wave), nil
 }
 
+// GetWaveCourseID resolves the course ID for a wave by fetching the wave's
+// lesson and reading the lesson's course_id. Used for course-scoped
+// leaderboard updates without needing to change the GraphQL model.
+func (c *CourseClient) GetWaveCourseID(ctx context.Context, waveID string) (string, error) {
+	waveResp, err := c.client.GetWave(ctx, &coursepb.GetWaveRequest{Id: waveID})
+	if err != nil {
+		return "", fmt.Errorf("get wave failed: %w", err)
+	}
+	if waveResp.Error != "" || waveResp.Wave == nil {
+		return "", fmt.Errorf("get wave failed: %s", waveResp.Error)
+	}
+
+	lessonResp, err := c.client.GetLesson(ctx, &coursepb.GetLessonRequest{Id: waveResp.Wave.LessonId})
+	if err != nil {
+		return "", fmt.Errorf("get lesson failed: %w", err)
+	}
+	if lessonResp.Error != "" || lessonResp.Lesson == nil {
+		return "", fmt.Errorf("get lesson failed: %s", lessonResp.Error)
+	}
+
+	return lessonResp.Lesson.CourseId, nil
+}
+
 func (c *CourseClient) UpdateWave(ctx context.Context, educatorID, id string, input model.UpdateWaveInput) (*model.Wave, error) {
 	learnBlocksJSON, evaluateBlocksJSON := blocksToJSON(input.LearnBlocks, input.EvaluateBlocks)
 

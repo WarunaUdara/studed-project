@@ -129,6 +129,20 @@ export const MY_ENROLLMENTS_QUERY = `
         completedWaves
         totalWaves
       }
+      lessons {
+        id
+        title
+        sequenceOrder
+        isPublished
+        waves {
+          id
+          myProgress {
+            status
+            attemptsCount
+            highestScore
+          }
+        }
+      }
     }
   }
 ` as const;

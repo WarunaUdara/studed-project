@@ -77,9 +77,14 @@ message ValidateTokenResponse {
   string error = 7;
 }
 
+message GetUserRequest {
+  string user_id = 1;
+}
+
 service AuthService {
   rpc Register(RegisterRequest) returns (AuthResponse);
   rpc Login(LoginRequest) returns (AuthResponse);
   rpc RefreshToken(RefreshTokenRequest) returns (AuthResponse);
   rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+  rpc GetUser(GetUserRequest) returns (User);
 }

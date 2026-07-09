@@ -13,11 +13,31 @@ import { LEADERBOARD_QUERY, MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
 import {
   BADGE_DEFS,
   type BadgeEarned,
+  type BadgeInputs,
   computeBadges,
   earnedCount,
   levelFromXp,
 } from "@/lib/gamification";
 import { useAuthStore } from "@/stores/auth";
+
+interface WaveProgress {
+  status: string;
+  attemptsCount: number;
+  highestScore?: number | null;
+}
+
+interface EnrollmentWave {
+  id: string;
+  myProgress?: WaveProgress | null;
+}
+
+interface EnrollmentLesson {
+  id: string;
+  title: string;
+  sequenceOrder: number;
+  isPublished: boolean;
+  waves: EnrollmentWave[];
+}
 
 interface CourseEnrollment {
   id: string;
@@ -26,6 +46,7 @@ interface CourseEnrollment {
   slug: string;
   gradeLevel: string;
   myProgress?: { completedWaves: number; totalWaves: number } | null;
+  lessons?: EnrollmentLesson[] | null;
 }
 
 interface LeaderboardEntry {
@@ -37,6 +58,58 @@ interface LeaderboardEntry {
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
 });
+
+function computeBadgeInputsFromEnrollments(
+  enrollments: CourseEnrollment[],
+  totalXp: number,
+): BadgeInputs {
+  let completedWaves = 0;
+  let hasPerfectScore = false;
+  let completedLessons = 0;
+  let proficientLessons = 0;
+  let completedCourses = 0;
+
+  for (const course of enrollments) {
+    const lessons = course.lessons ?? [];
+    if (lessons.length === 0) continue;
+    let courseAllCompleted = true;
+
+    for (const lesson of lessons) {
+      const waves = lesson.waves ?? [];
+      if (waves.length === 0) continue;
+      const allCompleted = waves.every((w) => w.myProgress?.status === "COMPLETED");
+
+      if (allCompleted) {
+        completedLessons++;
+        const scores = waves
+          .map((w) => w.myProgress?.highestScore)
+          .filter((s): s is number => typeof s === "number" && s >= 0);
+        if (scores.length > 0) {
+          const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+          if (avg >= 80) proficientLessons++;
+        }
+      } else {
+        courseAllCompleted = false;
+      }
+
+      for (const w of waves) {
+        if (w.myProgress?.status === "COMPLETED") completedWaves++;
+        if (w.myProgress?.highestScore === 100) hasPerfectScore = true;
+      }
+    }
+
+    if (courseAllCompleted && lessons.length > 0) completedCourses++;
+  }
+
+  return {
+    totalXp,
+    completedWaves,
+    hasPerfectScore,
+    completedLessons,
+    proficientLessons,
+    completedCourses,
+  };
+}
 
 function DashboardPage() {
   const { user } = useAuthStore();
@@ -53,25 +126,12 @@ function DashboardPage() {
   const totalXp = user?.totalXp ?? 0;
   const { level } = levelFromXp(totalXp);
 
-  const completedWaves = enrollments.reduce(
-    (sum, c) => sum + (c.myProgress?.completedWaves ?? 0),
-    0,
-  );
-  const completedCourses = enrollments.filter(
-    (c) =>
-      (c.myProgress?.totalWaves ?? 0) > 0 &&
-      c.myProgress?.completedWaves === c.myProgress?.totalWaves,
-  ).length;
-
-  const badges: BadgeEarned[] = computeBadges({
-    totalXp,
-    completedWaves,
-    hasPerfectScore: false,
-    completedLessons: 0,
-    proficientLessons: 0,
-    completedCourses,
-  });
+  const badgeInputs = computeBadgeInputsFromEnrollments(enrollments, totalXp);
+  const badges: BadgeEarned[] = computeBadges(badgeInputs);
   const badgesEarned = earnedCount(badges);
+
+  const completedWaves = badgeInputs.completedWaves;
+  const completedCourses = badgeInputs.completedCourses;
 
   const myRankEntry = leaderboard.find((e) => e.user.id === user?.id);
   const continueCourse = enrollments.find(
