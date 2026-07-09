@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Select } from "@/components/ui/Select";
 import { REGISTER_MUTATION } from "@/graphql/auth";
+import { sanitizeError } from "@/lib/errors";
 import { type Grade, type UserRole, useAuthStore } from "@/stores/auth";
 
 const registerSchema = z.object({
@@ -52,7 +53,7 @@ export function RegisterForm() {
     };
     const result = await registerMutation({ input });
     if (result.error) {
-      setError(result.error.message);
+      setError(sanitizeError(result.error).message);
       return;
     }
     if (result.data?.register?.user) {
@@ -130,7 +131,11 @@ export function RegisterForm() {
         <Input id="preferredLanguage" placeholder="en" {...register("preferredLanguage")} />
       </div>
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2">
+          <p className="text-sm text-destructive">{error}</p>
+        </div>
+      )}
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? "Creating account..." : "Create account"}

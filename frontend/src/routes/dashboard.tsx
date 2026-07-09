@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { LEADERBOARD_QUERY, MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
+import { sanitizeGraphQLError } from "@/lib/errors";
 import {
   BADGE_DEFS,
   type BadgeEarned,
@@ -238,7 +239,17 @@ function DashboardPage() {
                     <Skeleton className="h-32" />
                   </div>
                 ) : enrollmentsError ? (
-                  <p className="text-destructive">Failed to load enrollments.</p>
+                  <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed p-6 text-center">
+                    <p className="text-sm font-medium">
+                      {sanitizeGraphQLError(enrollmentsError).title}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {sanitizeGraphQLError(enrollmentsError).message}
+                    </p>
+                    <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
+                      Try again
+                    </Button>
+                  </div>
                 ) : enrollments.length === 0 ? (
                   <div className="flex flex-col items-center gap-3 py-6 text-center">
                     <p className="text-muted-foreground">

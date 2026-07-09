@@ -1,9 +1,12 @@
-.PHONY: dev-up dev-down dev dev-stop test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint go-build go-test shared-test proto-gen
+.PHONY: dev-up dev-down dev dev-stop launch test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint go-build go-test shared-test proto-gen
 
 # Development
  dev-up:
 	@docker info >/dev/null 2>&1 || (echo "Docker Desktop is not running. Please start it and try again." && exit 1)
 	docker compose -f docker-compose.yml up --build -d
+
+ launch:
+	bun run scripts/launch.ts
 
  dev-down:
 	docker compose -f docker-compose.yml down
