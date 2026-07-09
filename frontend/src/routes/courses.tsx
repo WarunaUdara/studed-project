@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { BookOpen, CheckCircle, GraduationCap, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { Skeleton } from "@/components/ui/Skeleton";

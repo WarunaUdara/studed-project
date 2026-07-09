@@ -33,6 +33,18 @@
     --orange: 25 95% 53%;
     --success: 160 84% 39%;
     --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 20%;
+    --info: 220 83% 53%;
+    --info-foreground: 0 0% 100%;
+    --achievement: 258 90% 66%;
+    --achievement-foreground: 0 0% 100%;
+    --rank-1: 45 93% 47%;
+    --rank-1-foreground: 0 0% 100%;
+    --rank-2: 220 15% 55%;
+    --rank-2-foreground: 0 0% 100%;
+    --rank-3: 25 65% 45%;
+    --rank-3-foreground: 0 0% 100%;
   }
 }
 
@@ -68,6 +80,18 @@
   --color-orange: hsl(var(--orange));
   --color-success: hsl(var(--success));
   --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+  --color-achievement: hsl(var(--achievement));
+  --color-achievement-foreground: hsl(var(--achievement-foreground));
+  --color-rank-1: hsl(var(--rank-1));
+  --color-rank-1-foreground: hsl(var(--rank-1-foreground));
+  --color-rank-2: hsl(var(--rank-2));
+  --color-rank-2-foreground: hsl(var(--rank-2-foreground));
+  --color-rank-3: hsl(var(--rank-3));
+  --color-rank-3-foreground: hsl(var(--rank-3-foreground));
 
   /* Fonts */
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;

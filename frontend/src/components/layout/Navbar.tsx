@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
+import { Zap } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { XPBar } from "@/components/gamification/XPBar";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
+import { PointsBadge } from "@/components/ui/points-badge";
 import { useAuthStore } from "@/stores/auth";
 
 export function Navbar() {
@@ -42,8 +44,11 @@ export function Navbar() {
             )}
 
           {isStudent && user && (
-            <div className="hidden min-w-[180px] sm:block">
-              <XPBar totalXp={user.totalXp} compact />
+            <div className="hidden items-center gap-3 sm:flex">
+              <PointsBadge name="XP" total={user.totalXp} size="sm" icon={Zap} />
+              <div className="hidden min-w-[140px] md:block">
+                <XPBar totalXp={user.totalXp} compact />
+              </div>
             </div>
           )}
 

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, BookOpen, CheckCircle, Clock, PlayCircle, Zap } from "lucide-react";
 import { useMemo } from "react";
 import { useQuery } from "urql";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { Skeleton } from "@/components/ui/Skeleton";

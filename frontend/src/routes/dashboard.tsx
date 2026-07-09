@@ -1,21 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, Flame, Sparkles, Trophy, Zap } from "lucide-react";
+import { BookOpen, Sparkles, Trophy as TrophyIcon, Zap } from "lucide-react";
 import { useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { BadgeGrid } from "@/components/gamification/Badge";
-import { LeaderboardTable } from "@/components/gamification/LeaderboardTable";
 import { XPBar } from "@/components/gamification/XPBar";
-import { Button } from "@/components/ui/Button";
+import { AchievementBadge, type UserAchievement } from "@/components/ui/achievement-badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
+import { LeaderboardRankings } from "@/components/ui/leaderboard-rankings";
 import { ProgressRing } from "@/components/ui/ProgressRing";
+import { PointsBadge } from "@/components/ui/points-badge";
+import {
+  PointsLevelsTimeline,
+  type PointsLevelTimeline,
+} from "@/components/ui/points-levels-timeline";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { StreakBadge } from "@/components/ui/streak-badge";
 import { LEADERBOARD_QUERY, MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
 import { sanitizeGraphQLError } from "@/lib/errors";
 import {
   BADGE_DEFS,
-  type BadgeEarned,
   type BadgeInputs,
   computeBadges,
+  cumulativeXpForLevel,
   earnedCount,
   levelFromXp,
 } from "@/lib/gamification";
@@ -59,6 +65,36 @@ interface LeaderboardEntry {
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
 });
+
+const LEVEL_NAMES = [
+  "Rookie",
+  "Novice",
+  "Learner",
+  "Scholar",
+  "Expert",
+  "Master",
+  "Grand Master",
+  "Enlightened",
+];
+
+function levelName(level: number): string {
+  return LEVEL_NAMES[Math.min(level - 1, LEVEL_NAMES.length - 1)] ?? "Enlightened";
+}
+
+function buildLevelTimeline(totalXp: number): PointsLevelTimeline[] {
+  const { level } = levelFromXp(totalXp);
+  const maxLevel = Math.max(level + 3, 8);
+  const levels: PointsLevelTimeline[] = [];
+  for (let l = 1; l <= maxLevel; l++) {
+    levels.push({
+      id: `lvl-${l}`,
+      name: levelName(l),
+      points: cumulativeXpForLevel(l),
+      description: l === 1 ? "Starting your journey" : undefined,
+    });
+  }
+  return levels;
+}
 
 function computeBadgeInputsFromEnrollments(
   enrollments: CourseEnrollment[],
@@ -128,7 +164,7 @@ function DashboardPage() {
   const { level } = levelFromXp(totalXp);
 
   const badgeInputs = computeBadgeInputsFromEnrollments(enrollments, totalXp);
-  const badges: BadgeEarned[] = computeBadges(badgeInputs);
+  const badges = computeBadges(badgeInputs);
   const badgesEarned = earnedCount(badges);
 
   const completedWaves = badgeInputs.completedWaves;
@@ -151,6 +187,23 @@ function DashboardPage() {
         )
       : 0;
 
+  const trophyRankings = leaderboard.map((e) => ({
+    userId: e.user.id,
+    userName: e.user.fullName,
+    rank: e.rank,
+    value: e.totalXp,
+    byline: `${e.totalXp.toLocaleString()} XP`,
+  }));
+
+  const trophyAchievements: UserAchievement[] = badges.map((b) => ({
+    id: b.id,
+    name: b.label,
+    trigger: "metric" as const,
+    achievedAt: b.earned ? new Date().toISOString() : null,
+  }));
+
+  const levelTimeline = buildLevelTimeline(totalXp);
+
   return (
     <ProtectedRoute allowedRoles={["STUDENT"]}>
       <div className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6">
@@ -161,13 +214,17 @@ function DashboardPage() {
               Welcome back, {user?.fullName?.split(" ")[0] ?? "Learner"}!
             </h1>
             <p className="text-muted-foreground">
-              You're on Level {level} with{" "}
+              You're on{" "}
+              <span className="font-semibold text-foreground">
+                Level {level} — {levelName(level)}
+              </span>{" "}
+              with{" "}
               <span className="font-semibold text-foreground">{totalXp.toLocaleString()} XP</span>
-              {" — "}keep the momentum going.
             </p>
           </div>
-          <div className="w-full max-w-xs">
-            <XPBar totalXp={totalXp} />
+          <div className="flex flex-wrap items-center gap-3">
+            <PointsBadge name="XP" total={totalXp} size="lg" icon={Zap} />
+            <XPBar totalXp={totalXp} className="min-w-[180px]" />
           </div>
         </div>
 
@@ -178,7 +235,7 @@ function DashboardPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
-                  <Flame className="h-5 w-5 text-orange" />
+                  <Sparkles className="h-5 w-5 text-orange" />
                   Continue Learning
                 </CardTitle>
                 <CardDescription>Pick up where you left off.</CardDescription>
@@ -298,11 +355,11 @@ function DashboardPage() {
               </CardContent>
             </Card>
 
-            {/* Leaderboard snapshot */}
+            {/* Leaderboard — Trophy UI component */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
-                  <Trophy className="h-5 w-5 text-gold" />
+                  <TrophyIcon className="h-5 w-5 text-gold" />
                   Global Leaderboard
                 </CardTitle>
                 <CardDescription>
@@ -319,13 +376,13 @@ function DashboardPage() {
                     <Skeleton className="h-10 w-full" />
                   </div>
                 ) : (
-                  <LeaderboardTable entries={leaderboard} currentUserId={user?.id} limit={5} />
+                  <LeaderboardRankings rankings={trophyRankings} currentUserId={user?.id} />
                 )}
               </CardContent>
             </Card>
           </div>
 
-          {/* Right column (1/3) — Stats + Badges */}
+          {/* Right column (1/3) — Stats + Achievements + Levels */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -342,7 +399,7 @@ function DashboardPage() {
                 />
                 <StatRow
                   label="Level"
-                  value={String(level)}
+                  value={`${level} — ${levelName(level)}`}
                   icon={<Sparkles className="h-4 w-4 text-purple" />}
                 />
                 <StatRow
@@ -353,16 +410,22 @@ function DashboardPage() {
                 <StatRow
                   label="Courses Done"
                   value={String(completedCourses)}
-                  icon={<Trophy className="h-4 w-4 text-gold" />}
+                  icon={<TrophyIcon className="h-4 w-4 text-gold" />}
                 />
                 <StatRow
                   label="Badges Earned"
                   value={`${badgesEarned}/${BADGE_DEFS.length}`}
-                  icon={<Flame className="h-4 w-4 text-orange" />}
+                  icon={<Sparkles className="h-4 w-4 text-orange" />}
                 />
               </CardContent>
             </Card>
 
+            {/* Streak badge */}
+            <div className="flex justify-center">
+              <StreakBadge length={0} subtitle="Start your streak!" size="sm" />
+            </div>
+
+            {/* Achievements — Trophy UI AchievementBadge grid */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl">Achievements</CardTitle>
@@ -371,7 +434,26 @@ function DashboardPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <BadgeGrid badges={badges} />
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {trophyAchievements.map((a) => (
+                    <AchievementBadge key={a.id} achievement={a} badgeSize="sm" />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Level progression — Trophy UI PointsLevelsTimeline */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">Level Progress</CardTitle>
+                <CardDescription>Your journey through StudEd</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PointsLevelsTimeline
+                  levels={levelTimeline}
+                  currentPoints={totalXp}
+                  currentLevelLabel="You are here"
+                />
               </CardContent>
             </Card>
           </div>

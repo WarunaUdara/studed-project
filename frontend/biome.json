@@ -13,7 +13,12 @@
       "!**/dist",
       "!**/node_modules",
       "!**/src/routeTree.gen.ts",
-      "!**/src/styles/index.css"
+      "!**/src/styles/index.css",
+      "!**/src/components/ui/achievement-badge.tsx",
+      "!**/src/components/ui/leaderboard-rankings.tsx",
+      "!**/src/components/ui/points-badge.tsx",
+      "!**/src/components/ui/points-levels-timeline.tsx",
+      "!**/src/components/ui/streak-badge.tsx"
     ]
   },
   "formatter": {

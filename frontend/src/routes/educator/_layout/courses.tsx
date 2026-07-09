@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Eye, Plus, Upload } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { COURSES_QUERY, PUBLISH_COURSE_MUTATION } from "@/graphql/courses";
 

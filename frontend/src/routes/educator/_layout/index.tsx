@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BookOpen, Plus, TrendingUp, Users } from "lucide-react";
 import { useQuery } from "urql";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { COURSES_QUERY } from "@/graphql/courses";
 
