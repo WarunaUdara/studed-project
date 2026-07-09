@@ -60,3 +60,11 @@ func (h *AuthGRPCHandler) RefreshToken(ctx context.Context, req *authpb.RefreshT
 	}
 	return resp, nil
 }
+
+func (h *AuthGRPCHandler) GetUser(ctx context.Context, req *authpb.GetUserRequest) (*authpb.User, error) {
+	user, err := h.svc.GetUser(ctx, req.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}

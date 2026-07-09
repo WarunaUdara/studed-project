@@ -17,6 +17,7 @@ type AuthService interface {
 	Login(ctx context.Context, email, password string) (*authpb.AuthResponse, error)
 	RefreshToken(ctx context.Context, refreshToken string) (*authpb.AuthResponse, error)
 	ValidateToken(ctx context.Context, accessToken string) (*authpb.ValidateTokenResponse, error)
+	GetUser(ctx context.Context, userID string) (*authpb.User, error)
 }
 
 type authService struct {
@@ -149,6 +150,14 @@ func (s *authService) ValidateToken(ctx context.Context, accessToken string) (*a
 		FullName:          claims.FullName,
 		PreferredLanguage: claims.PreferredLanguage,
 	}, nil
+}
+
+func (s *authService) GetUser(ctx context.Context, userID string) (*authpb.User, error) {
+	user, err := s.repo.GetByID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("user not found: %w", err)
+	}
+	return toProtoUser(user), nil
 }
 
 func toProtoUser(u *model.User) *authpb.User {
