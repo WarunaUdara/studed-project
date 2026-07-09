@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { LOGIN_MUTATION } from "@/graphql/auth";
+import { sanitizeError } from "@/lib/errors";
 import { useAuthStore } from "@/stores/auth";
 
 const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.string().email("Please enter a valid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
@@ -36,7 +37,7 @@ export function LoginForm() {
     setError(null);
     const result = await login({ input: data });
     if (result.error) {
-      setError(result.error.message);
+      setError(sanitizeError(result.error).message);
       return;
     }
     if (result.data?.login?.user) {
@@ -64,7 +65,11 @@ export function LoginForm() {
         {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
       </div>
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2">
+          <p className="text-sm text-destructive">{error}</p>
+        </div>
+      )}
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? "Signing in..." : "Sign in"}
