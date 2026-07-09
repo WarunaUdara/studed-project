@@ -2,6 +2,7 @@
 
 # Development
  dev-up:
+	@docker info >/dev/null 2>&1 || (echo "Docker Desktop is not running. Please start it and try again." && exit 1)
 	docker compose -f docker-compose.yml up --build -d
 
  dev-down:
