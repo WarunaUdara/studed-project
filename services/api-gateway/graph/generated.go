@@ -135,11 +135,14 @@ type ComplexityRoot struct {
 		Login                  func(childComplexity int, input model.LoginInput) int
 		Logout                 func(childComplexity int) int
 		PublishCourse          func(childComplexity int, id string) int
+		PublishLesson          func(childComplexity int, id string) int
+		PublishWave            func(childComplexity int, id string) int
 		RefreshToken           func(childComplexity int, refreshToken string) int
 		Register               func(childComplexity int, input model.RegisterInput) int
 		SubmitWaveAnswers      func(childComplexity int, waveID string, answers []*model.AnswerInput) int
 		TranslateContent       func(childComplexity int, content string, targetLanguage string) int
 		UpdateCourse           func(childComplexity int, id string, input model.UpdateCourseInput) int
+		UpdateLesson           func(childComplexity int, id string, input model.UpdateLessonInput) int
 		UpdateWave             func(childComplexity int, id string, input model.UpdateWaveInput) int
 	}
 
@@ -250,8 +253,11 @@ type MutationResolver interface {
 	UpdateCourse(ctx context.Context, id string, input model.UpdateCourseInput) (*model.Course, error)
 	PublishCourse(ctx context.Context, id string) (*model.Course, error)
 	CreateLesson(ctx context.Context, courseID string, input model.CreateLessonInput) (*model.Lesson, error)
+	UpdateLesson(ctx context.Context, id string, input model.UpdateLessonInput) (*model.Lesson, error)
+	PublishLesson(ctx context.Context, id string) (*model.Lesson, error)
 	CreateWave(ctx context.Context, lessonID string, input model.CreateWaveInput) (*model.Wave, error)
 	UpdateWave(ctx context.Context, id string, input model.UpdateWaveInput) (*model.Wave, error)
+	PublishWave(ctx context.Context, id string) (*model.Wave, error)
 	SubmitWaveAnswers(ctx context.Context, waveID string, answers []*model.AnswerInput) (*model.WaveResult, error)
 	EnrollInCourse(ctx context.Context, courseID string) (*model.Course, error)
 	GenerateLearnBlocks(ctx context.Context, prompt string, language *string, grade *model.Grade) ([]*model.LearnBlock, error)
@@ -726,6 +732,28 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Mutation.PublishCourse(childComplexity, args["id"].(string)), true
+	case "Mutation.publishLesson":
+		if e.ComplexityRoot.Mutation.PublishLesson == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_publishLesson_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.PublishLesson(childComplexity, args["id"].(string)), true
+	case "Mutation.publishWave":
+		if e.ComplexityRoot.Mutation.PublishWave == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_publishWave_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.PublishWave(childComplexity, args["id"].(string)), true
 	case "Mutation.refreshToken":
 		if e.ComplexityRoot.Mutation.RefreshToken == nil {
 			break
@@ -781,6 +809,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Mutation.UpdateCourse(childComplexity, args["id"].(string), args["input"].(model.UpdateCourseInput)), true
+	case "Mutation.updateLesson":
+		if e.ComplexityRoot.Mutation.UpdateLesson == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateLesson_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.UpdateLesson(childComplexity, args["id"].(string), args["input"].(model.UpdateLessonInput)), true
 	case "Mutation.updateWave":
 		if e.ComplexityRoot.Mutation.UpdateWave == nil {
 			break
@@ -1247,6 +1286,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputPaginationInput,
 		ec.unmarshalInputRegisterInput,
 		ec.unmarshalInputUpdateCourseInput,
+		ec.unmarshalInputUpdateLessonInput,
 		ec.unmarshalInputUpdateWaveInput,
 	)
 	first := true
@@ -1953,6 +1993,34 @@ func (ec *executionContext) field_Mutation_publishCourse_args(ctx context.Contex
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_publishLesson_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_publishWave_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_refreshToken_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -2039,6 +2107,28 @@ func (ec *executionContext) field_Mutation_updateCourse_args(ctx context.Context
 	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
 		func(ctx context.Context, v any) (model.UpdateCourseInput, error) {
 			return ec.unmarshalNUpdateCourseInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐUpdateCourseInput(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateLesson_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (model.UpdateLessonInput, error) {
+			return ec.unmarshalNUpdateLessonInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐUpdateLessonInput(ctx, v)
 		})
 	if err != nil {
 		return nil, err
@@ -3921,6 +4011,94 @@ func (ec *executionContext) fieldContext_Mutation_createLesson(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_updateLesson(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_updateLesson(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().UpdateLesson(ctx, fc.Args["id"].(string), fc.Args["input"].(model.UpdateLessonInput))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *model.Lesson) graphql.Marshaler {
+			return ec.marshalNLesson2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLesson(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_updateLesson(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Lesson(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateLesson_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_publishLesson(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_publishLesson(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().PublishLesson(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *model.Lesson) graphql.Marshaler {
+			return ec.marshalNLesson2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLesson(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_publishLesson(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Lesson(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_publishLesson_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createWave(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -4003,6 +4181,50 @@ func (ec *executionContext) fieldContext_Mutation_updateWave(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateWave_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_publishWave(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_publishWave(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().PublishWave(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *model.Wave) graphql.Marshaler {
+			return ec.marshalNWave2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐWave(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_publishWave(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Wave(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_publishWave_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -7809,6 +8031,43 @@ func (ec *executionContext) unmarshalInputUpdateCourseInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateLessonInput(ctx context.Context, obj any) (model.UpdateLessonInput, error) {
+	var it model.UpdateLessonInput
+	if obj == nil {
+		return it, nil
+	}
+
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"title", "sequenceOrder"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "title":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Title = data
+		case "sequenceOrder":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sequenceOrder"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SequenceOrder = data
+		}
+	}
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateWaveInput(ctx context.Context, obj any) (model.UpdateWaveInput, error) {
 	var it model.UpdateWaveInput
 	if obj == nil {
@@ -8597,6 +8856,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "updateLesson":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateLesson(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "publishLesson":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_publishLesson(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createWave":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createWave(ctx, field)
@@ -8607,6 +8880,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updateWave":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateWave(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "publishWave":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_publishWave(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -10400,6 +10680,11 @@ func (ec *executionContext) marshalNTier2githubᚗcomᚋstudedᚋapiᚑgateway�
 
 func (ec *executionContext) unmarshalNUpdateCourseInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐUpdateCourseInput(ctx context.Context, v any) (model.UpdateCourseInput, error) {
 	res, err := ec.unmarshalInputUpdateCourseInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateLessonInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐUpdateLessonInput(ctx context.Context, v any) (model.UpdateLessonInput, error) {
+	res, err := ec.unmarshalInputUpdateLessonInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

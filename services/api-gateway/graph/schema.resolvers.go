@@ -127,6 +127,32 @@ func (r *mutationResolver) CreateLesson(ctx context.Context, courseID string, in
 	return r.CourseClient.CreateLesson(ctx, userCtx.UserID, courseID, input)
 }
 
+// UpdateLesson is the resolver for the updateLesson field.
+func (r *mutationResolver) UpdateLesson(ctx context.Context, id string, input model.UpdateLessonInput) (*model.Lesson, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return nil, err
+	}
+
+	return r.CourseClient.UpdateLesson(ctx, userCtx.UserID, id, input)
+}
+
+// PublishLesson is the resolver for the publishLesson field.
+func (r *mutationResolver) PublishLesson(ctx context.Context, id string) (*model.Lesson, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return nil, err
+	}
+
+	return r.CourseClient.PublishLesson(ctx, userCtx.UserID, id)
+}
+
 // CreateWave is the resolver for the createWave field.
 func (r *mutationResolver) CreateWave(ctx context.Context, lessonID string, input model.CreateWaveInput) (*model.Wave, error) {
 	userCtx, err := requireUser(ctx)
@@ -151,6 +177,19 @@ func (r *mutationResolver) UpdateWave(ctx context.Context, id string, input mode
 	}
 
 	return r.CourseClient.UpdateWave(ctx, userCtx.UserID, id, input)
+}
+
+// PublishWave is the resolver for the publishWave field.
+func (r *mutationResolver) PublishWave(ctx context.Context, id string) (*model.Wave, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return nil, err
+	}
+
+	return r.CourseClient.PublishWave(ctx, userCtx.UserID, id)
 }
 
 // SubmitWaveAnswers is the resolver for the submitWaveAnswers field.

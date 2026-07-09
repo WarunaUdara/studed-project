@@ -206,6 +206,41 @@ func (c *CourseClient) GetLesson(ctx context.Context, id string) (*model.Lesson,
 	return protoLessonToModel(resp.Lesson), nil
 }
 
+func (c *CourseClient) UpdateLesson(ctx context.Context, educatorID, id string, input model.UpdateLessonInput) (*model.Lesson, error) {
+	req := &coursepb.UpdateLessonRequest{
+		Id:        id,
+		EducatorId: educatorID,
+	}
+	if input.Title != nil {
+		req.Title = *input.Title
+	}
+	if input.SequenceOrder != nil {
+		req.SequenceOrder = int32(*input.SequenceOrder)
+	}
+
+	resp, err := c.client.UpdateLesson(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("update lesson failed: %w", err)
+	}
+	if resp.Error != "" {
+		return nil, fmt.Errorf("update lesson failed: %s", resp.Error)
+	}
+
+	return protoLessonToModel(resp.Lesson), nil
+}
+
+func (c *CourseClient) PublishLesson(ctx context.Context, educatorID, id string) (*model.Lesson, error) {
+	resp, err := c.client.PublishLesson(ctx, &coursepb.PublishLessonRequest{Id: id, EducatorId: educatorID})
+	if err != nil {
+		return nil, fmt.Errorf("publish lesson failed: %w", err)
+	}
+	if resp.Error != "" {
+		return nil, fmt.Errorf("publish lesson failed: %s", resp.Error)
+	}
+
+	return protoLessonToModel(resp.Lesson), nil
+}
+
 func (c *CourseClient) GetLessonWithWaves(ctx context.Context, id string) (*model.Lesson, error) {
 	lesson, err := c.GetLesson(ctx, id)
 	if err != nil {
@@ -323,6 +358,18 @@ func (c *CourseClient) UpdateWave(ctx context.Context, educatorID, id string, in
 	}
 	if resp.Error != "" {
 		return nil, fmt.Errorf("update wave failed: %s", resp.Error)
+	}
+
+	return protoWaveToModel(resp.Wave), nil
+}
+
+func (c *CourseClient) PublishWave(ctx context.Context, educatorID, id string) (*model.Wave, error) {
+	resp, err := c.client.PublishWave(ctx, &coursepb.PublishWaveRequest{Id: id, EducatorId: educatorID})
+	if err != nil {
+		return nil, fmt.Errorf("publish wave failed: %w", err)
+	}
+	if resp.Error != "" {
+		return nil, fmt.Errorf("publish wave failed: %s", resp.Error)
 	}
 
 	return protoWaveToModel(resp.Wave), nil

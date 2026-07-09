@@ -27,6 +27,7 @@ const (
 	CourseService_CreateLesson_FullMethodName  = "/course.CourseService/CreateLesson"
 	CourseService_GetLesson_FullMethodName     = "/course.CourseService/GetLesson"
 	CourseService_ListLessons_FullMethodName   = "/course.CourseService/ListLessons"
+	CourseService_UpdateLesson_FullMethodName  = "/course.CourseService/UpdateLesson"
 	CourseService_PublishLesson_FullMethodName = "/course.CourseService/PublishLesson"
 	CourseService_CreateWave_FullMethodName    = "/course.CourseService/CreateWave"
 	CourseService_GetWave_FullMethodName       = "/course.CourseService/GetWave"
@@ -47,6 +48,7 @@ type CourseServiceClient interface {
 	CreateLesson(ctx context.Context, in *CreateLessonRequest, opts ...grpc.CallOption) (*LessonResponse, error)
 	GetLesson(ctx context.Context, in *GetLessonRequest, opts ...grpc.CallOption) (*LessonResponse, error)
 	ListLessons(ctx context.Context, in *ListLessonsRequest, opts ...grpc.CallOption) (*LessonListResponse, error)
+	UpdateLesson(ctx context.Context, in *UpdateLessonRequest, opts ...grpc.CallOption) (*LessonResponse, error)
 	PublishLesson(ctx context.Context, in *PublishLessonRequest, opts ...grpc.CallOption) (*LessonResponse, error)
 	CreateWave(ctx context.Context, in *CreateWaveRequest, opts ...grpc.CallOption) (*WaveResponse, error)
 	GetWave(ctx context.Context, in *GetWaveRequest, opts ...grpc.CallOption) (*WaveResponse, error)
@@ -143,6 +145,16 @@ func (c *courseServiceClient) ListLessons(ctx context.Context, in *ListLessonsRe
 	return out, nil
 }
 
+func (c *courseServiceClient) UpdateLesson(ctx context.Context, in *UpdateLessonRequest, opts ...grpc.CallOption) (*LessonResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LessonResponse)
+	err := c.cc.Invoke(ctx, CourseService_UpdateLesson_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *courseServiceClient) PublishLesson(ctx context.Context, in *PublishLessonRequest, opts ...grpc.CallOption) (*LessonResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LessonResponse)
@@ -215,6 +227,7 @@ type CourseServiceServer interface {
 	CreateLesson(context.Context, *CreateLessonRequest) (*LessonResponse, error)
 	GetLesson(context.Context, *GetLessonRequest) (*LessonResponse, error)
 	ListLessons(context.Context, *ListLessonsRequest) (*LessonListResponse, error)
+	UpdateLesson(context.Context, *UpdateLessonRequest) (*LessonResponse, error)
 	PublishLesson(context.Context, *PublishLessonRequest) (*LessonResponse, error)
 	CreateWave(context.Context, *CreateWaveRequest) (*WaveResponse, error)
 	GetWave(context.Context, *GetWaveRequest) (*WaveResponse, error)
@@ -254,6 +267,9 @@ func (UnimplementedCourseServiceServer) GetLesson(context.Context, *GetLessonReq
 }
 func (UnimplementedCourseServiceServer) ListLessons(context.Context, *ListLessonsRequest) (*LessonListResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListLessons not implemented")
+}
+func (UnimplementedCourseServiceServer) UpdateLesson(context.Context, *UpdateLessonRequest) (*LessonResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateLesson not implemented")
 }
 func (UnimplementedCourseServiceServer) PublishLesson(context.Context, *PublishLessonRequest) (*LessonResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method PublishLesson not implemented")
@@ -438,6 +454,24 @@ func _CourseService_ListLessons_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CourseService_UpdateLesson_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateLessonRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourseServiceServer).UpdateLesson(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CourseService_UpdateLesson_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourseServiceServer).UpdateLesson(ctx, req.(*UpdateLessonRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CourseService_PublishLesson_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PublishLessonRequest)
 	if err := dec(in); err != nil {
@@ -584,6 +618,10 @@ var CourseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListLessons",
 			Handler:    _CourseService_ListLessons_Handler,
+		},
+		{
+			MethodName: "UpdateLesson",
+			Handler:    _CourseService_UpdateLesson_Handler,
 		},
 		{
 			MethodName: "PublishLesson",
