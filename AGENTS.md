@@ -84,7 +84,7 @@ Reference documentation lives in the Obsidian folders at the repo root:
 │   ├── package.json
 │   ├── vite.config.ts
 │   ├── tsconfig.json
-│   ├── tailwind.config.js
+│   ├── components.json           # shadcn/ui config
 │   └── src/
 ├── services/                    # Go microservices
 │   ├── api-gateway/
