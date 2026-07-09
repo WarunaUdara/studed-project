@@ -219,6 +219,7 @@ export const LEADERBOARD_QUERY = `
     leaderboard(scope: $scope, courseId: $courseId, grade: $grade) {
       rank
       user {
+        id
         fullName
       }
       totalXp
