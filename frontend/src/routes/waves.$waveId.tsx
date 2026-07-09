@@ -9,12 +9,14 @@ import { ProficiencyBadge } from "@/components/gamification/ProficiencyBadge";
 import { XPBar } from "@/components/gamification/XPBar";
 import { XPToast } from "@/components/gamification/XPToast";
 import { LearnBlockRenderer } from "@/components/learn/LearnBlockRenderer";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { PointsBadge } from "@/components/ui/points-badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { SUBMIT_WAVE_ANSWERS_MUTATION, WAVE_PLAYER_QUERY } from "@/graphql/student";
 import { computeProficiency } from "@/lib/gamification";
+import { playErrorSound, playSuccessSound } from "@/lib/sounds";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
 
@@ -99,7 +101,10 @@ function WavePlayerPage() {
       if (r.passed && r.xpEarned > 0) {
         setShowXpToast(true);
         setShowConfetti(true);
+        playSuccessSound();
         window.setTimeout(() => setShowConfetti(false), 3200);
+      } else if (!r.passed) {
+        playErrorSound();
       }
     }
     reexecuteQuery({ requestPolicy: "network-only" });
@@ -177,9 +182,13 @@ function WavePlayerPage() {
             <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
               <Clock className="h-3 w-3" /> Wave {wave.sequenceOrder}
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-gold/15 px-2.5 py-1 text-xs font-semibold text-gold">
-              <Zap className="h-3 w-3" /> {wave.xpReward} XP
-            </span>
+            <PointsBadge
+              name="XP Reward"
+              total={wave.xpReward}
+              size="sm"
+              icon={Zap}
+              className="border-0 p-0"
+            />
             {maxAttempts !== null && (
               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
                 Attempts {Math.min(attemptsCount + (result ? 1 : 0), maxAttempts)}/{maxAttempts}

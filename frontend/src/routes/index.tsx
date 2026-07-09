@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { GraduationCap, Sparkles, Trophy, Waves, Zap } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth";
 
 export const Route = createFileRoute("/")({
