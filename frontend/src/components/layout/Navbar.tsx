@@ -1,16 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { XPBar } from "@/components/gamification/XPBar";
 import { Button } from "@/components/ui/Button";
 import { useAuthStore } from "@/stores/auth";
 
 export function Navbar() {
   const { user, isAuthenticated } = useAuthStore();
+  const isStudent = isAuthenticated && user?.role === "STUDENT";
 
   return (
-    <header className="border-b bg-background">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link to="/" className="text-xl font-bold tracking-tight hover:text-primary">
-          StudEd
+          Stud<span className="text-primary">Ed</span>
         </Link>
 
         <nav className="flex items-center gap-2 sm:gap-4">
@@ -39,6 +41,12 @@ export function Navbar() {
               </Link>
             )}
 
+          {isStudent && user && (
+            <div className="hidden min-w-[180px] sm:block">
+              <XPBar totalXp={user.totalXp} compact />
+            </div>
+          )}
+
           {!isAuthenticated ? (
             <>
               <Link to="/login">
@@ -52,7 +60,7 @@ export function Navbar() {
             </>
           ) : (
             <div className="flex items-center gap-2">
-              <span className="hidden text-sm text-muted-foreground sm:inline">
+              <span className="hidden text-sm text-muted-foreground md:inline">
                 {user?.fullName}
               </span>
               <LogoutButton size="sm" />

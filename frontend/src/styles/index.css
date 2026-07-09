@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
 /* Dark mode is toggled via `.dark` class on <html> (same as v3 `darkMode: ["class"]`). */
@@ -25,6 +26,13 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
+
+    /* Gamification palette (from 06-UI-UX/Design-System.md) */
+    --gold: 38 92% 50%;
+    --purple: 258 90% 66%;
+    --orange: 25 95% 53%;
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
   }
 }
 
@@ -54,9 +62,22 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
+  /* Gamification colors */
+  --color-gold: hsl(var(--gold));
+  --color-purple: hsl(var(--purple));
+  --color-orange: hsl(var(--orange));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+
+  /* Fonts */
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sinhala: "Noto Sans Sinhala", "Iskoola Pota", "Iskoola Pota B", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 @layer base {
@@ -65,5 +86,12 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Sinhala text opt-in via .font-sinhala utility (mapped above) */
+  :lang(si) {
+    font-family: var(--font-sinhala);
   }
 }

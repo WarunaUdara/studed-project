@@ -32,6 +32,7 @@ interface AuthState {
   isAuthenticated: boolean;
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
+  updateTotalXp: (totalXp: number) => void;
   logout: () => void;
 }
 
@@ -46,6 +47,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       isLoading: false,
     }),
   setLoading: (isLoading) => set({ isLoading }),
+  updateTotalXp: (totalXp) =>
+    set((state) => (state.user ? { user: { ...state.user, totalXp } } : {})),
   logout: () =>
     set({
       user: null,

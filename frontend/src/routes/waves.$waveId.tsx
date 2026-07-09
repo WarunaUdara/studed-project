@@ -1,13 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, CheckCircle, Zap } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowLeft, CheckCircle, Clock, Lock, RotateCcw, Trophy, Zap } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { QuizBlock } from "@/components/evaluate/QuizBlock";
+import { Confetti } from "@/components/gamification/Confetti";
+import { ProficiencyBadge } from "@/components/gamification/ProficiencyBadge";
+import { XPBar } from "@/components/gamification/XPBar";
+import { XPToast } from "@/components/gamification/XPToast";
 import { LearnBlockRenderer } from "@/components/learn/LearnBlockRenderer";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { SUBMIT_WAVE_ANSWERS_MUTATION, WAVE_PLAYER_QUERY } from "@/graphql/student";
+import { computeProficiency } from "@/lib/gamification";
+import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/stores/auth";
 
 interface LearnBlock {
   id: string;
@@ -51,15 +60,26 @@ function WavePlayerPage() {
     variables: { id: waveId },
   });
   const [submitResult, submitAnswers] = useMutation(SUBMIT_WAVE_ANSWERS_MUTATION);
+  const { user, updateTotalXp } = useAuthStore();
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<WaveResult | null>(null);
   const [activeTab, setActiveTab] = useState<"learn" | "evaluate">("learn");
+  const [learnViewed, setLearnViewed] = useState(false);
+  const [showXpToast, setShowXpToast] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const wave = data?.wave;
 
   const learnBlocks: LearnBlock[] = useMemo(() => wave?.learnBlocks ?? [], [wave]);
   const evaluateBlocks: EvaluateBlock[] = useMemo(() => wave?.evaluateBlocks ?? [], [wave]);
+
+  const hasLearn = learnBlocks.length > 0;
+  const evaluateLocked = hasLearn && !learnViewed;
+
+  useEffect(() => {
+    if (!hasLearn) setLearnViewed(true);
+  }, [hasLearn]);
 
   const handleAnswerChange = (blockId: string, answer: string) => {
     setAnswers((prev) => ({ ...prev, [blockId]: answer }));
@@ -73,16 +93,30 @@ function WavePlayerPage() {
 
     const res = await submitAnswers({ waveId, answers: answersInput });
     if (res.data?.submitWaveAnswers) {
-      setResult(res.data.submitWaveAnswers as WaveResult);
+      const r = res.data.submitWaveAnswers as WaveResult;
+      setResult(r);
+      updateTotalXp(r.totalXp);
+      if (r.passed && r.xpEarned > 0) {
+        setShowXpToast(true);
+        setShowConfetti(true);
+        window.setTimeout(() => setShowConfetti(false), 3200);
+      }
     }
     reexecuteQuery({ requestPolicy: "network-only" });
+  };
+
+  const handleTryAgain = () => {
+    setAnswers({});
+    setResult(null);
   };
 
   if (fetching) {
     return (
       <ProtectedRoute>
-        <main className="min-h-screen bg-background p-6">
-          <p className="text-muted-foreground">Loading wave...</p>
+        <main className="mx-auto max-w-4xl space-y-4 p-4 pt-6 sm:p-6">
+          <Skeleton className="h-6 w-40" />
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-64 w-full" />
         </main>
       </ProtectedRoute>
     );
@@ -91,7 +125,7 @@ function WavePlayerPage() {
   if (error || !wave) {
     return (
       <ProtectedRoute>
-        <main className="min-h-screen bg-background p-6">
+        <main className="mx-auto max-w-4xl p-6">
           <p className="text-destructive">Failed to load wave.</p>
           <Link to="/dashboard">
             <Button variant="outline" className="mt-4">
@@ -104,145 +138,231 @@ function WavePlayerPage() {
   }
 
   const isCompleted = wave.myProgress?.status === "COMPLETED";
+  const attemptsCount = wave.myProgress?.attemptsCount ?? 0;
+  const maxAttempts = wave.maxReattempts > 0 ? wave.maxReattempts : null;
+  const canReattempt = result ? !result.passed && result.remainingAttempts > 0 : false;
+  const justEarnedXp = result?.passed && result.xpEarned > 0;
+  const proficiency = computeProficiency(
+    isCompleted ? [{ status: "COMPLETED", highestScore: wave.myProgress?.highestScore }] : [],
+  );
 
   return (
     <ProtectedRoute>
-      <div className="mx-auto max-w-4xl p-4 pt-6 sm:p-6 sm:pt-8">
-        <div className="mb-6 flex items-center justify-between">
+      <Confetti show={showConfetti} />
+      <XPToast
+        amount={result?.xpEarned ?? 0}
+        show={showXpToast}
+        onDismiss={() => setShowXpToast(false)}
+      />
+
+      <div className="mx-auto max-w-4xl space-y-5 p-4 pt-6 sm:p-6 sm:pt-8">
+        {/* Header bar */}
+        <div className="flex items-center justify-between gap-3">
           <Link
             to="/courses/$courseId"
             params={{ courseId: wave.lesson?.course?.id ?? "" }}
-            className="text-sm font-medium hover:text-primary"
+            className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary"
           >
-            <ArrowLeft className="inline h-4 w-4" /> Back to{" "}
-            {wave.lesson?.course?.title ?? "Course"}
+            <ArrowLeft className="h-4 w-4" /> {wave.lesson?.course?.title ?? "Course"}
           </Link>
-          <div className="flex items-center gap-3">
-            {isCompleted && <CheckCircle className="h-5 w-5 text-green-600" />}
-            <span className="text-sm text-muted-foreground">
-              <Zap className="inline h-4 w-4" /> {wave.xpReward} XP
-            </span>
+          <div className="hidden w-48 sm:block">
+            <XPBar totalXp={user?.totalXp ?? 0} compact />
           </div>
         </div>
 
-        <section>
-          <div className="mb-6 space-y-2">
-            <h1 className="text-2xl font-bold">{wave.title}</h1>
-            <p className="text-sm text-muted-foreground">
-              {wave.lesson?.title} · {wave.difficulty} · Passing: {wave.passingThreshold}%
-            </p>
+        {/* Title block */}
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {isCompleted && <ProficiencyBadge level={proficiency} size="sm" />}
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+              <Clock className="h-3 w-3" /> Wave {wave.sequenceOrder}
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-gold/15 px-2.5 py-1 text-xs font-semibold text-gold">
+              <Zap className="h-3 w-3" /> {wave.xpReward} XP
+            </span>
+            {maxAttempts !== null && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                Attempts {Math.min(attemptsCount + (result ? 1 : 0), maxAttempts)}/{maxAttempts}
+              </span>
+            )}
           </div>
+          <h1 className="text-2xl font-bold tracking-tight">{wave.title}</h1>
+          <p className="text-sm text-muted-foreground">
+            {wave.lesson?.title} · {wave.difficulty} · Pass: {wave.passingThreshold}%
+          </p>
+        </div>
 
-          <div className="mb-6 flex gap-2 border-b">
-            <button
-              type="button"
-              onClick={() => setActiveTab("learn")}
-              className={`border-b-2 px-4 py-2 text-sm font-medium ${
-                activeTab === "learn"
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "learn" | "evaluate")}>
+          <TabsList className="w-full justify-start">
+            <TabsTrigger value="learn" className="flex-1 sm:flex-none">
               Learn
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("evaluate")}
-              className={`border-b-2 px-4 py-2 text-sm font-medium ${
-                activeTab === "evaluate"
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Evaluate
-            </button>
-          </div>
-
-          {activeTab === "learn" && (
-            <div className="space-y-6">
-              {learnBlocks.length === 0 ? (
-                <p className="text-muted-foreground">No learning content yet.</p>
+            </TabsTrigger>
+            <TabsTrigger value="evaluate" disabled={evaluateLocked} className="flex-1 sm:flex-none">
+              {evaluateLocked ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <Lock className="h-3 w-3" /> Evaluate
+                </span>
               ) : (
-                learnBlocks.map((block) => <LearnBlockRenderer key={block.id} block={block} />)
+                "Evaluate"
               )}
-              <Button onClick={() => setActiveTab("evaluate")} className="w-full">
-                Start Evaluation
-              </Button>
-            </div>
-          )}
+            </TabsTrigger>
+          </TabsList>
 
-          {activeTab === "evaluate" && (
-            <div className="space-y-6">
-              {evaluateBlocks.length === 0 ? (
-                <p className="text-muted-foreground">No evaluation questions yet.</p>
-              ) : (
-                <>
-                  {evaluateBlocks.map((block, index) => (
-                    <QuizBlock
-                      key={block.id}
-                      block={block}
-                      index={index}
-                      answer={answers[block.id] ?? ""}
-                      onAnswerChange={(answer) => handleAnswerChange(block.id, answer)}
-                      feedback={
-                        result
-                          ? {
-                              correct:
-                                result.feedback.find((f) => f.evaluateBlockId === block.id)
-                                  ?.correct ?? false,
-                              correctAnswer: result.feedback.find(
-                                (f) => f.evaluateBlockId === block.id,
-                              )?.correctAnswer,
-                              explanation: result.feedback.find(
-                                (f) => f.evaluateBlockId === block.id,
-                              )?.explanation,
-                            }
-                          : null
-                      }
-                    />
-                  ))}
+          <TabsContent value="learn" className="mt-5 space-y-6">
+            {learnBlocks.length === 0 ? (
+              <p className="text-muted-foreground">No learning content yet.</p>
+            ) : (
+              learnBlocks.map((block) => <LearnBlockRenderer key={block.id} block={block} />)
+            )}
+            <Button
+              onClick={() => {
+                setLearnViewed(true);
+                setActiveTab("evaluate");
+              }}
+              className="w-full"
+              size="lg"
+            >
+              Start Evaluation
+            </Button>
+          </TabsContent>
 
-                  {result && (
-                    <Card
-                      className={
-                        result.passed ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"
-                      }
-                    >
-                      <CardHeader>
-                        <CardTitle className={result.passed ? "text-green-800" : "text-red-800"}>
-                          {result.passed ? "Wave Completed!" : "Try Again"}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-2">
-                        <p className="text-lg font-medium">Score: {result.score}%</p>
-                        {result.passed && (
-                          <p className="text-green-700">
-                            +{result.xpEarned} XP earned! Total XP: {result.totalXp}
-                          </p>
-                        )}
-                        {!result.passed && (
-                          <p className="text-red-700">
-                            You need {wave.passingThreshold}% to pass. Remaining attempts:{" "}
-                            {result.remainingAttempts}
-                          </p>
-                        )}
-                      </CardContent>
-                    </Card>
-                  )}
+          <TabsContent value="evaluate" className="mt-5 space-y-6">
+            {evaluateBlocks.length === 0 ? (
+              <p className="text-muted-foreground">No evaluation questions yet.</p>
+            ) : (
+              <>
+                {evaluateBlocks.map((block, index) => (
+                  <QuizBlock
+                    key={block.id}
+                    block={block}
+                    index={index}
+                    answer={answers[block.id] ?? ""}
+                    onAnswerChange={(answer) => handleAnswerChange(block.id, answer)}
+                    feedback={
+                      result
+                        ? {
+                            correct:
+                              result.feedback.find((f) => f.evaluateBlockId === block.id)
+                                ?.correct ?? false,
+                            correctAnswer: result.feedback.find(
+                              (f) => f.evaluateBlockId === block.id,
+                            )?.correctAnswer,
+                            explanation: result.feedback.find((f) => f.evaluateBlockId === block.id)
+                              ?.explanation,
+                          }
+                        : null
+                    }
+                  />
+                ))}
 
+                {result && (
+                  <ResultCard
+                    passed={result.passed}
+                    score={result.score}
+                    xpEarned={result.xpEarned}
+                    totalXp={result.totalXp}
+                    passingThreshold={wave.passingThreshold}
+                    remainingAttempts={result.remainingAttempts}
+                    justEarnedXp={!!justEarnedXp}
+                    canReattempt={canReattempt}
+                    onTryAgain={handleTryAgain}
+                  />
+                )}
+
+                {!result && (
                   <Button
                     onClick={handleSubmit}
                     disabled={submitResult.fetching || evaluateBlocks.length === 0}
                     className="w-full"
+                    size="lg"
                   >
                     {submitResult.fetching ? "Submitting..." : "Submit Answers"}
                   </Button>
-                </>
-              )}
-            </div>
-          )}
-        </section>
+                )}
+              </>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </ProtectedRoute>
+  );
+}
+
+interface ResultCardProps {
+  passed: boolean;
+  score: number;
+  xpEarned: number;
+  totalXp: number;
+  passingThreshold: number;
+  remainingAttempts: number;
+  justEarnedXp: boolean;
+  canReattempt: boolean;
+  onTryAgain: () => void;
+}
+
+function ResultCard({
+  passed,
+  score,
+  xpEarned,
+  totalXp,
+  passingThreshold,
+  remainingAttempts,
+  justEarnedXp,
+  canReattempt,
+  onTryAgain,
+}: ResultCardProps) {
+  return (
+    <Card
+      className={
+        passed ? "border-success/40 bg-success/5" : "border-destructive/40 bg-destructive/5"
+      }
+    >
+      <CardHeader>
+        <CardTitle
+          className={cn("flex items-center gap-2", passed ? "text-success" : "text-destructive")}
+        >
+          {passed ? (
+            <>
+              <CheckCircle className="h-5 w-5" /> Wave Completed!
+            </>
+          ) : (
+            <>
+              <RotateCcw className="h-5 w-5" /> Not quite — try again
+            </>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <p className="text-3xl font-extrabold tabular-nums">{score}%</p>
+
+        {passed && (
+          <div className="flex items-center gap-2 rounded-lg bg-gold/10 px-3 py-2">
+            <Trophy className="h-5 w-5 text-gold" />
+            <p className="text-sm font-semibold text-gold">
+              {justEarnedXp ? `+${xpEarned} XP earned!` : "Already completed — no additional XP."}
+            </p>
+          </div>
+        )}
+
+        {!passed && (
+          <p className="text-sm text-destructive">
+            You need {passingThreshold}% to pass. Remaining attempts: {remainingAttempts}
+          </p>
+        )}
+
+        <p className="text-xs text-muted-foreground">Total XP: {totalXp.toLocaleString()}</p>
+
+        {canReattempt && (
+          <Button onClick={onTryAgain} variant="outline" className="w-full">
+            <RotateCcw className="mr-1 h-4 w-4" /> Try Again
+          </Button>
+        )}
+        {!passed && remainingAttempts === 0 && (
+          <p className="rounded-lg bg-muted px-3 py-2 text-center text-sm text-muted-foreground">
+            No reattempts remaining. This wave is now review-only.
+          </p>
+        )}
+      </CardContent>
+    </Card>
   );
 }

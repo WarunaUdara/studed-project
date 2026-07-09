@@ -1,7 +1,7 @@
 ---
 title: "Project Backlog"
 description: "Living backlog for the StudEd MVP/POC, maintained by all parallel agents."
-date: 2026-07-05
+date: 2026-07-09
 tags:
   - meta
   - backlog
@@ -19,82 +19,77 @@ tags:
 > - Move accepted tasks to **Priority Queue** with an owner recommendation.
 > - Keep entries concrete and small enough for a single focused commit.
 
-## Done
+> [!warning] Reconciled 2026-07-09 against live code (via CodeGraph)
+> Several items previously listed as "not implemented" are actually **DONE**: `submitWaveAnswers`, `enrollInCourse`, `progress-service` (real persistence), `gamification-service` (real XP + Redis leaderboards), the student dashboard, the wave player, the basic leaderboard UI, and a `mock-data-loader` for seeding. The remaining high-value work is the **premium gamified student UI layer** plus a few small backend wiring gaps. Evidence: `services/api-gateway/graph/schema.resolvers.go:157,182`; `services/progress-service/internal/service/progress.go`; `services/gamification-service/internal/service/gamification.go`; commits `17cef33`, `a5de904`, `dfe7ac1`, `eab6f2a`.
 
-| Task | Owner | Commit / Note |
-|------|-------|---------------|
-| Fix educator course list scoping in API gateway | Agent A/C | `02d4c38` + `f72a0e9` — pass authenticated educator ID to `course-service` instead of exposing `educatorId` in public filter |
-| Add local Docker Compose orchestration for auth/course/api-gateway | Agent A/C | `d2a636b` + uncommitted Dockerfiles / `docker-compose.yml` changes |
-| Implement `updateCourse` GraphQL mutation end-to-end | Agent B | Added `UpdateCourse` proto RPC, course-service handler/service/repository, API gateway client, resolver |
-| Add frontend edit course flow | Agent A | `120fdcc`, `e8e2d51`, `a3ac658` — update mutation, edit page, edit button |
-| Add public course catalog routes | Agent A | `b2649f1`, `88c5158`, `d8902a8` — courses list, course detail, homepage link |
-| Verify local infrastructure (`postgres`, `redis`, `elasticsearch`) starts via `make dev-up` | Agent B | Docker Desktop must be running first |
-| Verify educator happy-path: register, login, create course, update course, create lesson, create wave, publish course | Agent B | Tested end-to-end via GraphQL against Dockerized services |
-| Verify frontend dev server and production build | Agent B | `bun run dev`, `bun run build`, `bun run lint`, `bun run typecheck` all pass |
-| Verify Go services build and tests pass | Agent B | `make go-build`, `make go-test` pass |
+## Done (verified in code)
+
+| Task | Owner | Evidence |
+|------|-------|----------|
+| Auth: register/login/refresh/logout end-to-end | prior agents | `schema.resolvers.go:19-49`; `auth-service` |
+| Course CRUD: create/update/publish + list/detail | prior agents | `schema.resolvers.go:79-105`; `course-service` |
+| Lesson + Wave creation, Wave update | prior agents | `schema.resolvers.go:118-144` |
+| `submitWaveAnswers` resolver (grading, score, maxReattempts, XP) | prior agents | `schema.resolvers.go:157` -> `progress-service` `RecordAttempt` |
+| `enrollInCourse` resolver (idempotent enrollment + progress summary) | prior agents | `schema.resolvers.go:182` |
+| `progress-service` real persistence (enrollments, wave_attempts, grading) | prior agents | `services/progress-service/internal/service/progress.go` (GORM AutoMigrate) |
+| `gamification-service` real XP (user_xp, xp_history, tiered formula) + Redis leaderboards | prior agents | `services/gamification-service/internal/service/gamification.go`; `repository/leaderboard.go` |
+| Student GraphQL queries: Me, Courses, Course, Lesson, Wave, Progress, WaveProgress, Leaderboard, MyRank, MyEnrollments | prior agents | `schema.resolvers.go` query resolvers |
+| Frontend: auth flow, educator portal, student catalog, basic dashboard, basic wave player, basic leaderboard list | prior agents | `routes/dashboard.tsx`, `routes/waves.$waveId.tsx`, `routes/courses.*.tsx` |
+| Demo seed script (idempotent mock-data-loader) | prior agents | commit `eab6f2a` |
+| Docker Compose orchestration for all wired services | prior agents | `docker-compose.yml`; commits `60dd5c6`, `d2a636b` |
 
 ## In Progress
 
 | Task | Owner | Note |
 |------|-------|------|
-| Public course catalog + enrollment UI | Agent A | Catalog list/detail routes committed; enrollment mutation still blocked by backend |
+| Premium gamified student UI layer | this session | Design tokens + fonts + UI primitives + gamification components + dashboard/wave-player rebuild |
 
 ## Priority Queue (highest first)
 
 | Priority | Title | Description | Dependencies | Risk | Est. Effort | Owner Rec. | Required For |
 |----------|-------|-------------|--------------|------|-------------|------------|--------------|
-| High | Student course catalog + enrollment | Add a `/courses` route that lists published courses for students and an `enrollInCourse` flow. | GraphQL `enrollInCourse` resolver is currently `not implemented`; needs `progress-service` or `course-service` enrollment table. | Medium | Medium | Agent A | Demo, MVP |
-| High | Implement `submitWaveAnswers` resolver | Evaluate phase core logic: grade answers, compute score, award XP, enforce `maxReattempts`. | Needs `progress-service` or `course-service` to store attempts; needs `gamification-service` for XP. | High | Large | Agent C | Demo, MVP |
-| High | Student dashboard + wave player | After enrollment, students need a dashboard and a wave page that renders `learnBlocks` and `evaluateBlocks`. | Requires course catalog and `wave(id)` query (already works). | Medium | Medium | Agent A | Demo, MVP |
-| High | Seed/sample data for demos | Add a script or Makefile target that creates an educator, a published course with lessons/waves, and a student user. | Local infra must be running. | Low | Small | Agent B or any | Demo, POC |
-| Medium | Implement `publishLesson` / `publishWave` GraphQL mutations | Educator portal can publish courses but not lessons/waves. | Needs GraphQL mutations + proto/service wiring (proto already has `PublishLesson`/`PublishWave`). | Low | Small | Agent B | MVP |
-| Medium | Implement `updateLesson` / `updateWave` resolvers | Allow educators to edit lesson/wave metadata after creation. | Needs proto + service + repository updates. | Low | Small | Agent C | MVP |
-| Medium | Lesson/wave ordering & validation | Auto-calculate `sequenceOrder`, prevent duplicates, validate educator ownership on read. | `course-service` repository layer. | Low | Medium | Agent C | MVP |
-| Medium | Auth refresh token flow | Frontend does not refresh expired access tokens; long sessions will fail. | `refreshToken` mutation works, `AuthInitializer` needs retry logic. | Medium | Small | Agent A | MVP |
-| Low | AI content generation resolvers | `generateLearnBlocks`, `generateEvaluateBlocks`, `translateContent` are stubs. | Needs `ai-service` scaffolding and LLM credentials. | High | Large | Agent C | MVP v2 |
-| Low | Subscription & payment flow | `createSubscription`, `cancelSubscription`, payment webhooks are stubs. | Needs `payment-service` and PayHere/Stripe integration. | High | Large | Agent A or C | Production |
-| Low | Leaderboards & achievements | `leaderboard`, `myRank`, `achievements`, subscriptions are stubs. | Needs `gamification-service`. | Medium | Large | Agent C | MVP v2 |
-| Low | Initialize visualization submodules | `submodules/` are empty; math-to-manim, 3Dmol, tscircuit, matter-js not cloned. | Git submodule init/pin. | Low | Small | Any | Production |
+| High | Wire design tokens + fonts into Tailwind v4 theme | Add gamification colors (gold/purple/orange), success green, and Inter/Noto Sans Sinhala/JetBrains Mono to `styles/index.css`. | None | Low | Small | this session | Demo, MVP |
+| High | Build missing UI primitives | `Tabs`, `Tooltip`, `Skeleton`, `ProgressRing` (circular), `CardDescription`/`CardFooter`, Button `success`/`danger` variants. Radix not installed -> lightweight custom. | Tokens | Low | Small | this session | Demo, MVP |
+| High | Gamification components | `XPBar`, `XPToast` (framer-motion), `LeaderboardTable` (medals + scope toggle + "You are #X"), `StreakBadge`, `ProficiencyBadge`. `framer-motion` + `recharts` installed but unused. | Primitives | Medium | Medium | this session | Demo, MVP |
+| High | Rebuild student dashboard (gamified) | Continue-Learning card, My Courses grid with progress rings, Leaderboard snapshot with scope toggle + rank callout, XP/level header, stats/badges section. | Gamification components | Medium | Medium | this session | Demo, MVP |
+| High | Polish wave player (gamified) | Persistent XP bar + level, "Wave N of M", learn-gate (cannot skip to Evaluate), animated XP toast + confetti on pass, reattempt button + "Attempts X/Y", per-question state, proficiency badge on completion. | Gamification components | Medium | Medium | this session | Demo, MVP |
+| High | Persistent XP bar in Navbar | Show level + XP progress; refresh `Me` after submit and update `useAuthStore`. | Gamification components | Low | Small | this session | Demo, MVP |
+| High | Level / XP curve system | **Spec gap** — docs leave the level curve undefined. Needs product decision. | None | Low | Small | this session | Demo, MVP |
+| Medium | Achievements / badges | **Spec gap** — no canonical list; backend achievements absent. Proposed: frontend-computed milestone badges from existing data. Needs product decision. | None | Medium | Medium | this session | MVP |
+| Medium | Wire multi-scope leaderboard updates on submit | Resolver only updates GLOBAL scope on pass (`schema.resolvers.go:172`); course/grade scopes never written. Small resolver change to also update course + grade. | None | Low | Small | this session | MVP |
+| Medium | `publishLesson` / `publishWave` mutations | Proto has `PublishLesson`/`PublishWave`; wire service + repository + resolver. | None | Low | Small | any | MVP |
+| Medium | `updateLesson` resolver | Allow educators to edit lesson metadata. | Proto + service + repo | Low | Small | any | MVP |
+| Medium | Wave gating (LOCKED status) | `GetWaveProgress` never returns LOCKED; no prerequisite enforcement. | course-service | Low | Medium | any | MVP |
+| Medium | Auth refresh token flow (frontend) | Long sessions fail when access token expires; `AuthInitializer` needs retry/refresh. | None | Medium | Small | any | MVP |
+| Low | AI content generation resolvers | `generateLearnBlocks`, `generateEvaluateBlocks`, `translateContent` are stubs (`schema.resolvers.go:208-219`). | `ai-service` + LLM creds | High | Large | any | MVP v2 |
+| Low | Subscription & payment flow | `createSubscription`, `cancelSubscription`, webhooks are stubs (`schema.resolvers.go:223-229`). | `payment-service` + PayHere/Stripe | High | Large | any | Production |
+| Low | Real-time subscriptions | `leaderboardUpdated`, `xpGained`, `achievementUnlocked`, `waveCompleted` are stubs (`schema.resolvers.go:380-396`). | WebSocket infra | Medium | Large | any | MVP v2 |
+| Low | Initialize visualization submodules | `submodules/` empty; math-to-manim, 3Dmol, tscircuit, matter-js not cloned. | git submodule init | Low | Small | any | Production |
 
-## Newly Discovered
+## Spec Gaps Requiring Product Decisions
 
-| Priority | Title | Reason | Dependencies | Risk | Est. Effort | Owner Rec. | Required For |
-|----------|-------|--------|--------------|------|-------------|------------|--------------|
-| High | `make dev-up` assumes Docker Desktop is already running | On macOS the command fails with "Cannot connect to the Docker daemon" if Docker Desktop is not started. | None | Low | Tiny | Agent B or any | POC |
-| High | Running services manually is fragile | Services expect `.env` in their own directory or exported env vars; Docker Compose is the reliable path. | Docker Compose service definitions | Low | Small | Agent A/C | POC |
-| Medium | `course(id)` and `lesson(id)` queries do not verify ownership or enrollment | Educators can read any course; students can read unpublished content. | RBAC middleware already extracts user context. | Medium | Small | Agent A or C | MVP |
-| Medium | Frontend `Select` component uses native `<select>` but spreads `register` from react-hook-form | This may produce type/controlled warnings; verify on all forms. | None | Low | Small | Agent B or any | MVP |
-| Low | ~~`shared/graphql-schema/schema.graphql` is out of sync with the gateway schema~~ | Fixed by Agent A in `f72a0e9`. | None | Low | Tiny | Agent A | Documentation |
-| Low | TanStack Router warning about SWC | Vite logs a recommendation to switch from `@vitejs/plugin-react-swc`. | None | Low | Tiny | Any | Nice-to-have |
+1. **Level / XP curve** — `XP-System.md:84` says the level system is "not yet specified". Need a concrete XP->level curve before building the XP bar + level indicator.
+2. **Badges / achievements canonical list** — no standalone doc; badges are scattered across dashboard/proficiency/leaderboard examples. Need an enumerated list with unlock criteria, or agree to synthesize from proficiency milestones + XP thresholds + streaks + perfect scores.
+3. **Achievements backend** — entirely absent (no model/repo/proto/resolver). Decide: frontend-computed badges (fast) vs. full backend system (defer).
+
+## Backend Gaps (small, non-blocking for demo)
+
+- Leaderboard only auto-updates GLOBAL scope on submit; course/grade scopes are read-only today.
+- No versioned SQL migrations (GORM `AutoMigrate` only) in progress/gamification services.
+- `GetCourseProgress` has N+1 gRPC+DB calls; `CountPassedWavesInCourse`/`InLesson` repo methods exist but are unused.
+- `GetMyRank` is naive (fetches top 10000 + linear scan); should use Redis `ZREVRANK`.
+- `AwardXp` RPC implemented but never called (no manual XP grant surface).
+
+## Stubs (deferred to MVP v2 / Production)
+
+- AI: `GenerateLearnBlocks`, `GenerateEvaluateBlocks`, `TranslateContent` (`schema.resolvers.go:208-219`).
+- Payments: `CreateSubscription`, `CancelSubscription` (`schema.resolvers.go:223-229`).
+- Real-time: `LeaderboardUpdated`, `XpGained`, `AchievementUnlocked`, `WaveCompleted` (`schema.resolvers.go:380-396`).
+- Achievements query returns empty slice (`schema.resolvers.go:376`).
 
 ## Current Blockers
 
-1. **Visualization submodules are empty.** `submodules/` only contains `.gitkeep`; any AI/visualization work is blocked until they are initialized.
-2. **`progress-service`, `gamification-service`, `payment-service`, `ai-service` are stubs.** They compile but contain no business logic, blocking progress tracking, XP, payments, and AI features.
-3. **No shared environment bootstrap.** Running services manually is error-prone because each service expects its own `.env` file or exported env vars.
-4. **No seed data.** Every demo requires manually creating users/courses via GraphQL.
-
-## Suggested Work for Agent A
-
-**Student course catalog + enrollment (High, Demo/MVP)**
-- Create `frontend/src/routes/courses.tsx` and `courses.$courseId.tsx` to list and view published courses.
-- Implement the `enrollInCourse` GraphQL mutation resolver in `services/api-gateway/graph/schema.resolvers.go`.
-- Add an enrollment table/record in `course-service` (or start `progress-service`).
-- Reason: This is a self-contained vertical that unblocks the student demo path and does not overlap with educator content editing.
-
-**Student dashboard + wave player (High, Demo/MVP)**
-- After enrollment, build a student dashboard showing enrolled courses and progress.
-- Render `learnBlocks` and a basic quiz UI for `evaluateBlocks`.
-- Reason: Builds directly on the catalog work and uses the existing `wave(id)` query.
-
-## Suggested Work for Agent C
-
-**Implement `submitWaveAnswers` resolver (High, Demo/MVP)**
-- Implement answer grading against `evaluateBlocks` stored in `course-service`.
-- Store attempt history and compute remaining attempts.
-- Reason: This is the core learning loop and the highest-value backend feature missing for an MVP demo.
-
-**Implement `progress-service` MVP (High, Demo/MVP)**
-- Create DB schema for enrollments, wave attempts, and lesson/course progress.
-- Wire `progress-service` into the API gateway.
-- Reason: `submitWaveAnswers`, leaderboards, and achievements all depend on progress data.
+1. **Visualization submodules are empty.** Blocks any AI/visualization work.
+2. **Achievements backend absent.** Only blocks if badges must be server-awarded (frontend-computed badges unblock the demo).
+3. **Design tokens for gamification (gold/purple/orange) + fonts not wired** into Tailwind v4 theme (being fixed this session).
+4. **`framer-motion` and `recharts` installed but never imported** (being fixed this session).
