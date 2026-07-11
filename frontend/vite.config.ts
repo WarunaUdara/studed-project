@@ -23,5 +23,14 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+    warmup: {
+      clientFiles: [
+        "./src/components/puck-blocks/puck-config.tsx",
+        "./src/routes/educator/_layout/courses.new.tsx",
+        "./src/routes/educator/_layout/courses.tsx",
+        "./src/routes/dashboard.tsx",
+        "./src/routes/waves.$waveId.tsx",
+      ],
+    },
   },
 });

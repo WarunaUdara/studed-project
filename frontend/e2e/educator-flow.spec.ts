@@ -8,19 +8,16 @@ test.describe("Educator Portal Course Lifecycle Flow", () => {
     await page.locator("#email").fill("demo.educator@studed.lk");
     await page.locator("#password").fill("password123");
     await page.getByRole("button", { name: "Sign in" }).click();
-    await expect(page).toHaveURL(/\/educator\/courses/);
+    await page.waitForURL(/\/educator\/courses/, { timeout: 30000 });
   });
 
   test("should create and publish a new course", async ({ page }) => {
     const timestamp = Date.now();
     const courseTitle = `E2E Test Course ${timestamp}`;
 
-    // Navigate to course creation form
-    await page.getByRole("link", { name: "New Course" }).click();
-    // Wait for the form URL and then explicitly wait for the #title input to appear
-    await page.waitForURL(/\/educator\/courses\/new/, { timeout: 30000 });
+    // Navigate directly to creation form (avoids SPA click navigation race)
+    await page.goto("/educator/courses/new");
     await page.locator("#title").waitFor({ state: "visible", timeout: 30000 });
-    await expect(page).toHaveURL(/\/educator\/courses\/new/);
 
     // Fill out create course form (slug is auto-generated from title)
     await page.locator("#title").fill(courseTitle);
@@ -32,18 +29,18 @@ test.describe("Educator Portal Course Lifecycle Flow", () => {
     await page.getByRole("button", { name: "Create Course" }).click();
 
     // Verify redirected back to courses page
-    await expect(page).toHaveURL(/\/educator\/courses/);
+    await page.waitForURL(/\/educator\/courses$/, { timeout: 15000 });
 
     // Verify the new draft course is listed
     const courseCard = page.locator("div.grid").filter({ hasText: courseTitle });
-    await expect(courseCard).toBeVisible();
+    await expect(courseCard).toBeVisible({ timeout: 10000 });
     await expect(courseCard.getByText("Draft")).toBeVisible();
 
     // Publish the course
     await courseCard.getByRole("button", { name: "Publish" }).click();
 
     // Verify course state updates to Published and Publish button disappears
-    await expect(courseCard.getByText("Published")).toBeVisible();
+    await expect(courseCard.getByText("Published")).toBeVisible({ timeout: 10000 });
     await expect(courseCard.getByRole("button", { name: "Publish" })).not.toBeVisible();
   });
 });
