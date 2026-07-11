@@ -9,6 +9,13 @@
         "--path",
         "/Users/malinruwanpathirana/Documents/repos/studed-project"
       ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--browser=firefox"
+      ]
     }
   }
 }
