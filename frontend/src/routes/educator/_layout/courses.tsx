@@ -4,9 +4,8 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { COURSES_QUERY, PUBLISH_COURSE_MUTATION } from "@/graphql/courses";
-
 import { Skeleton } from "@/components/ui/Skeleton";
+import { COURSES_QUERY, PUBLISH_COURSE_MUTATION } from "@/graphql/courses";
 
 interface CourseItem {
   id: string;
