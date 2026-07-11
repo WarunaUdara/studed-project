@@ -3,8 +3,10 @@ import { expect, test } from "@playwright/test";
 test.describe("Authentication and Authorization Flow", () => {
   test("should redirect logged-out users from dashboard to login", async ({ page }) => {
     await page.context().clearCookies();
-    // Use "commit" so we catch the redirect before the full page load
-    await page.goto("/dashboard", { waitUntil: "commit" });
+    // Navigate to dashboard — the SPA auth guard will redirect to /login
+    await page.goto("/dashboard");
+    // Wait up to 15 seconds for the JS-driven redirect to happen
+    await page.waitForURL(/\/login/, { timeout: 15000 });
     await expect(page).toHaveURL(/\/login/);
   });
 
