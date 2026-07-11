@@ -461,17 +461,64 @@ func (r *queryResolver) Lesson(ctx context.Context, id string) (*model.Lesson, e
 
 // Wave is the resolver for the wave field.
 func (r *queryResolver) Wave(ctx context.Context, id string) (*model.Wave, error) {
-	userCtx, ok := middleware.UserFromContext(ctx)
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	wave, err := r.CourseClient.GetWave(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	if ok && userCtx.UserID != "" {
-		progress, _ := r.ProgressClient.GetWaveProgress(ctx, userCtx.UserID, id)
-		wave.MyProgress = progress
+	if wave.Lesson == nil {
+		return nil, errors.New("wave has no associated lesson")
 	}
+
+	lesson, err := r.CourseClient.GetLesson(ctx, wave.Lesson.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve lesson for wave: %w", err)
+	}
+
+	if lesson.Course == nil {
+		return nil, errors.New("lesson has no associated course")
+	}
+
+	course, err := r.CourseClient.GetCourse(ctx, lesson.Course.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve course for wave: %w", err)
+	}
+
+	isEducatorOrAdmin := userCtx.Role == "EDUCATOR" || userCtx.Role == "HEAD_EDUCATOR" || userCtx.Role == "ADMIN"
+	if isEducatorOrAdmin {
+		if userCtx.Role != "ADMIN" {
+			if course.Educator == nil || course.Educator.ID != userCtx.UserID {
+				return nil, errors.New("forbidden: you do not own the course for this wave")
+			}
+		}
+	} else {
+		// Student flow
+		if !course.IsPublished {
+			return nil, errors.New("forbidden: course is not published")
+		}
+		if !lesson.IsPublished {
+			return nil, errors.New("forbidden: lesson is not published")
+		}
+		if !wave.IsPublished {
+			return nil, errors.New("forbidden: wave is not published")
+		}
+
+		enrolled, err := r.ProgressClient.IsEnrolled(ctx, userCtx.UserID, course.ID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to check enrollment: %w", err)
+		}
+		if !enrolled {
+			return nil, errors.New("forbidden: not enrolled in the course for this wave")
+		}
+	}
+
+	progress, _ := r.ProgressClient.GetWaveProgress(ctx, userCtx.UserID, id)
+	wave.MyProgress = progress
 
 	return wave, nil
 }
