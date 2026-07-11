@@ -1,4 +1,4 @@
-import type { Config } from "@puckeditor/core";
+import type { Config, Data } from "@puckeditor/core";
 
 // Define the component props types
 export interface TextBlockProps {
@@ -132,9 +132,9 @@ export const puckConfig: Config = {
             <p className="font-semibold text-foreground">{question}</p>
             {optionList.length > 0 ? (
               <div className="space-y-1.5 pl-2">
-                {optionList.map((opt: string, i: number) => (
+                {optionList.map((opt: string) => (
                   <div
-                    key={i}
+                    key={opt}
                     className="flex items-center gap-2 text-sm border rounded p-2 bg-background/50"
                   >
                     <input
@@ -265,14 +265,8 @@ export interface EvaluateBlockRaw {
   metadata?: string | null;
 }
 
-export interface PuckData {
-  content: {
-    type: string;
-    props: Record<string, any> & { id: string };
-  }[];
-  root: Record<string, any>;
-  zones: Record<string, any>;
-}
+// Re-export Puck's Data type as PuckData for use in the rest of the app
+export type PuckData = Data;
 
 // Convert from GraphQL structure to Puck flat structure
 export function waveDataToPuck(
@@ -356,66 +350,87 @@ export function waveDataToPuck(
 }
 
 // Convert Puck flat structure back to GraphQL inputs
+interface LearnBlockInput {
+  id: string;
+  type: string;
+  content: string;
+  metadata: string | null;
+}
+
+interface EvaluateBlockInput {
+  id: string;
+  type: string;
+  question: string;
+  options: string[] | null;
+  correctAnswer: string;
+  explanation: string;
+  metadata: string | null;
+}
+
+// Safe coercion for unknown props
+const str = (v: unknown, fallback = ""): string => (typeof v === "string" ? v : fallback);
+
 export function puckToWaveData(puckData: PuckData) {
-  const learnBlocks: any[] = [];
-  const evaluateBlocks: any[] = [];
+  const learnBlocks: LearnBlockInput[] = [];
+  const evaluateBlocks: EvaluateBlockInput[] = [];
 
   puckData.content.forEach((block, index) => {
-    const id = block.props.id || `block-${index}-${Date.now()}`;
+    const id = str(block.props.id) || `block-${index}-${Date.now()}`;
     const type = block.type;
 
     if (type === "TextBlock") {
       learnBlocks.push({
         id,
         type: "text",
-        content: block.props.content || "",
+        content: str(block.props.content),
         metadata: null,
       });
     } else if (type === "ImageBlock") {
       learnBlocks.push({
         id,
         type: "image",
-        content: block.props.src || "",
-        metadata: block.props.caption || null,
+        content: str(block.props.src),
+        metadata: str(block.props.caption) || null,
       });
     } else if (type === "MathViz") {
       learnBlocks.push({
         id,
         type: "formula",
-        content: block.props.formula || "",
+        content: str(block.props.formula),
         metadata: null,
       });
     } else if (type === "MCQBlock") {
-      const parsedOptions = block.props.options
-        ? block.props.options.split("\n").filter((o: string) => o.trim())
+      const rawOptions = str(block.props.options);
+      const parsedOptions = rawOptions
+        ? rawOptions.split("\n").filter((o: string) => o.trim())
         : [];
       evaluateBlocks.push({
         id,
         type: "multiple_choice",
-        question: block.props.question || "",
+        question: str(block.props.question),
         options: parsedOptions,
-        correctAnswer: block.props.correctAnswer || "",
-        explanation: block.props.explanation || "",
+        correctAnswer: str(block.props.correctAnswer),
+        explanation: str(block.props.explanation),
         metadata: null,
       });
     } else if (type === "FillBlankBlock") {
       evaluateBlocks.push({
         id,
         type: "fill_in_the_blank",
-        question: block.props.question || "",
+        question: str(block.props.question),
         options: null,
-        correctAnswer: block.props.correctAnswer || "",
-        explanation: block.props.explanation || "",
+        correctAnswer: str(block.props.correctAnswer),
+        explanation: str(block.props.explanation),
         metadata: null,
       });
     } else if (type === "DragDropBlock") {
       evaluateBlocks.push({
         id,
         type: "drag_and_drop",
-        question: block.props.question || "",
+        question: str(block.props.question),
         options: null,
-        correctAnswer: block.props.correctAnswer || "",
-        explanation: block.props.explanation || "",
+        correctAnswer: str(block.props.correctAnswer),
+        explanation: str(block.props.explanation),
         metadata: null,
       });
     }

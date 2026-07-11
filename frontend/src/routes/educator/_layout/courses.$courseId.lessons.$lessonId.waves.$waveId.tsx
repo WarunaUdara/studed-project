@@ -5,7 +5,12 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import "@puckeditor/core/puck.css";
 
-import { puckConfig, puckToWaveData, waveDataToPuck } from "@/components/puck-blocks/puck-config";
+import {
+  type PuckData,
+  puckConfig,
+  puckToWaveData,
+  waveDataToPuck,
+} from "@/components/puck-blocks/puck-config";
 import { Button } from "@/components/ui/button";
 import { PUBLISH_WAVE_MUTATION, UPDATE_WAVE_MUTATION, WAVE_QUERY } from "@/graphql/courses";
 
@@ -26,7 +31,7 @@ function WaveEditorPage() {
   const [updateResult, updateWave] = useMutation(UPDATE_WAVE_MUTATION);
   const [publishResult, publishWave] = useMutation(PUBLISH_WAVE_MUTATION);
 
-  const [puckData, setPuckData] = useState<any>(null);
+  const [puckData, setPuckData] = useState<PuckData | null>(null);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -40,7 +45,7 @@ function WaveEditorPage() {
     }
   }, [wave]);
 
-  const handleSave = async (dataToSave: any) => {
+  const handleSave = async (dataToSave: PuckData) => {
     setSaveStatus("saving");
     setErrorMessage(null);
 
@@ -151,8 +156,8 @@ function WaveEditorPage() {
 
           <Button
             size="sm"
-            onClick={() => handleSave(puckData)}
-            disabled={saveStatus === "saving" || updateResult.fetching}
+            onClick={() => puckData && handleSave(puckData)}
+            disabled={!puckData || saveStatus === "saving" || updateResult.fetching}
           >
             {saveStatus === "saving" ? (
               <>
