@@ -3,6 +3,7 @@ import { BookOpen, Plus, TrendingUp, Users } from "lucide-react";
 import { useQuery } from "urql";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { COURSES_QUERY } from "@/graphql/courses";
 
 interface CourseNode {
@@ -48,22 +49,37 @@ function EducatorDashboardPage() {
         </div>
       </div>
 
-      {fetching && <p className="text-muted-foreground">Loading stats...</p>}
       {error && <p className="text-destructive">Failed to load stats.</p>}
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard
-          title="Total Courses"
-          value={courses.length}
-          icon={<BookOpen className="h-5 w-5" />}
-        />
-        <StatCard
-          title="Published"
-          value={publishedCount}
-          icon={<TrendingUp className="h-5 w-5" />}
-        />
-        <StatCard title="Drafts" value={draftCount} icon={<Users className="h-5 w-5" />} />
-      </div>
+      {fetching ? (
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <Card key={i}>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-5 w-5 rounded-full" />
+              </CardHeader>
+              <CardContent className="pt-0">
+                <Skeleton className="h-8 w-12" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <StatCard
+            title="Total Courses"
+            value={courses.length}
+            icon={<BookOpen className="h-5 w-5" />}
+          />
+          <StatCard
+            title="Published"
+            value={publishedCount}
+            icon={<TrendingUp className="h-5 w-5" />}
+          />
+          <StatCard title="Drafts" value={draftCount} icon={<Users className="h-5 w-5" />} />
+        </div>
+      )}
 
       <Card>
         <CardHeader>
