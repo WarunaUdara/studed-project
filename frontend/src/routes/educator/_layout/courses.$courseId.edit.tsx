@@ -43,6 +43,14 @@ const updateCourseSchema = z.object({
 
 type UpdateCourseForm = z.infer<typeof updateCourseSchema>;
 
+/** Parse raw GraphQL error into a user-friendly message */
+function parseServerError(rawMessage: string): string {
+  if (rawMessage.includes("duplicate key") && rawMessage.includes("idx_courses_slug")) {
+    return "A course with this slug already exists. Please choose a different slug.";
+  }
+  return "Failed to update course. Please try again.";
+}
+
 export const Route = createFileRoute("/educator/_layout/courses/$courseId/edit")({
   component: EditCoursePage,
 });
@@ -94,7 +102,7 @@ function EditCoursePage() {
 
     const result = await updateCourse({ id: courseId, input });
     if (result.error) {
-      setServerError(result.error.message);
+      setServerError(parseServerError(result.error.message));
       return;
     }
     navigate({ to: "/educator/courses/$courseId", params: { courseId } });
