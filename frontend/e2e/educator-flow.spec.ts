@@ -15,9 +15,10 @@ test.describe("Educator Portal Course Lifecycle Flow", () => {
     const timestamp = Date.now();
     const courseTitle = `E2E Test Course ${timestamp}`;
 
-    // Navigate directly to creation form (avoids SPA click navigation race)
-    await page.goto("/educator/courses/new");
-    await page.locator("#title").waitFor({ state: "visible", timeout: 30000 });
+    // Click link to navigate to creation form
+    await page.getByRole("link", { name: "New Course" }).click();
+    await page.waitForURL(/\/educator\/courses\/new/, { timeout: 15000 });
+    await page.locator("#title").waitFor({ state: "visible", timeout: 15000 });
 
     // Fill out create course form (slug is auto-generated from title)
     await page.locator("#title").fill(courseTitle);
