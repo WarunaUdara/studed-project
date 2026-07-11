@@ -61,7 +61,7 @@ test_auth() {
 test_course_lifecycle() {
   echo "[test] course lifecycle..."
 
-  local slug="integration-test-course"
+  local slug="integration-test-course-${random_suffix}"
   local response
 
   response=$(call_graphql \
