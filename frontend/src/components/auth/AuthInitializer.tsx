@@ -5,7 +5,7 @@ import { useAuthStore } from "@/stores/auth";
 
 export function AuthInitializer({ children }: { children: React.ReactNode }) {
   const { user, isLoading, setUser } = useAuthStore();
-  const [{ data, fetching, error }] = useQuery({ query: ME_QUERY });
+  const [{ data, fetching }] = useQuery({ query: ME_QUERY });
 
   useEffect(() => {
     if (fetching) return;
