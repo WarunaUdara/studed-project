@@ -4,18 +4,17 @@ import { ME_QUERY } from "@/graphql/auth";
 import { useAuthStore } from "@/stores/auth";
 
 export function AuthInitializer({ children }: { children: React.ReactNode }) {
-  const setUser = useAuthStore((s) => s.setUser);
+  const { user, isLoading, setUser } = useAuthStore();
   const [{ data, fetching, error }] = useQuery({ query: ME_QUERY });
 
   useEffect(() => {
     if (fetching) return;
 
-    if (data?.me) {
-      setUser(data.me);
-    } else {
-      setUser(null);
+    const me = data?.me ?? null;
+    if (user?.id !== me?.id || isLoading) {
+      setUser(me);
     }
-  }, [data, fetching, error, setUser]);
+  }, [data, fetching, user, isLoading, setUser]);
 
   return <>{children}</>;
 }
