@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { COURSE_QUERY, CREATE_LESSON_MUTATION } from "@/graphql/courses";
 
 interface Lesson {
@@ -70,7 +71,33 @@ function CourseDetailPage() {
   };
 
   if (fetching) {
-    return <p className="text-muted-foreground">Loading course...</p>;
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-9 w-20" />
+          <Skeleton className="h-8 w-48" />
+        </div>
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-6 w-32" />
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-9 w-16" />
+                <Skeleton className="h-6 w-16 rounded-full" />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <div className="flex gap-4">
+              <Skeleton className="h-6 w-20 rounded-full" />
+              <Skeleton className="h-6 w-24 rounded-full" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   if (error || !course) {
