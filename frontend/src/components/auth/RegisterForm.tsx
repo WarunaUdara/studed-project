@@ -68,7 +68,7 @@ export function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
       <div className="space-y-2">
         <Label htmlFor="fullName">Full name</Label>
         <Input id="fullName" placeholder="John Doe" {...register("fullName")} />
