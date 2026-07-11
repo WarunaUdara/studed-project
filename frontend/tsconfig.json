@@ -17,9 +17,10 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": ["node"]
   },
-  "include": ["src"],
+  "include": ["src", "playwright.config.ts", "e2e"],
   "references": [
     {
       "path": "./tsconfig.node.json"

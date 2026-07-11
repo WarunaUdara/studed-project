@@ -14,6 +14,7 @@
       "!**/node_modules",
       "!**/src/routeTree.gen.ts",
       "!**/src/styles/index.css",
+      "!**/test-results",
       "!**/src/components/ui/achievement-badge.tsx",
       "!**/src/components/ui/leaderboard-rankings.tsx",
       "!**/src/components/ui/points-badge.tsx",
