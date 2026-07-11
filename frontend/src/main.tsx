@@ -4,6 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider as UrqlProvider } from "urql";
 import { AuthInitializer } from "./components/auth/AuthInitializer";
+import { GlobalErrorBoundary } from "./components/error/GlobalErrorBoundary";
 import { graphqlClient } from "./lib/graphql";
 import { routeTree } from "./routeTree.gen";
 import "./styles/index.css";
@@ -19,12 +20,14 @@ declare module "@tanstack/react-router" {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <UrqlProvider value={graphqlClient}>
-      <QueryClientProvider client={queryClient}>
-        <AuthInitializer>
-          <RouterProvider router={router} />
-        </AuthInitializer>
-      </QueryClientProvider>
-    </UrqlProvider>
+    <GlobalErrorBoundary>
+      <UrqlProvider value={graphqlClient}>
+        <QueryClientProvider client={queryClient}>
+          <AuthInitializer>
+            <RouterProvider router={router} />
+          </AuthInitializer>
+        </QueryClientProvider>
+      </UrqlProvider>
+    </GlobalErrorBoundary>
   </React.StrictMode>,
 );
