@@ -252,3 +252,45 @@ export const SUBMIT_WAVE_ANSWERS_MUTATION = `
     }
   }
 ` as const;
+
+export const UPDATE_WAVE_MUTATION = `
+  mutation UpdateWave($id: ID!, $input: UpdateWaveInput!) {
+    updateWave(id: $id, input: $input) {
+      id
+      title
+      sequenceOrder
+      xpReward
+      maxReattempts
+      passingThreshold
+      estimatedDuration
+      difficulty
+      isPublished
+      learnBlocks {
+        id
+        type
+        content
+        metadata
+      }
+      evaluateBlocks {
+        id
+        type
+        question
+        options
+        correctAnswer
+        explanation
+        metadata
+      }
+    }
+  }
+` as const;
+
+export const PUBLISH_WAVE_MUTATION = `
+  mutation PublishWave($id: ID!) {
+    publishWave(id: $id) {
+      id
+      title
+      isPublished
+    }
+  }
+` as const;
+
