@@ -7,6 +7,7 @@ COOKIE_JAR="${REPO_ROOT}/.integration-test-cookies"
 
 pass_count=0
 fail_count=0
+random_suffix="$(date +%s)-$RANDOM"
 
 pass() {
   echo "  ✅ $1"
@@ -44,10 +45,11 @@ test_auth() {
   echo "[test] authentication..."
   rm -f "${COOKIE_JAR}"
 
+  local email="test-educator-${random_suffix}@studed.lk"
   local response
   response=$(call_graphql \
     '"mutation Register($input: RegisterInput!) { register(input: $input) { user { id email role } accessToken } }"' \
-    '{"input":{"email":"test-educator@studed.lk","password":"password123","fullName":"Test Educator","role":"EDUCATOR","preferredLanguage":"en"}}')
+    "{\"input\":{\"email\":\"${email}\",\"password\":\"password123\",\"fullName\":\"Test Educator\",\"role\":\"EDUCATOR\",\"preferredLanguage\":\"en\"}}")
 
   if echo "${response}" | jq -e '.data.register.user.role == "EDUCATOR"' >/dev/null 2>&1; then
     pass "educator registration returns EDUCATOR user"
@@ -93,6 +95,78 @@ test_course_lifecycle() {
     pass "publishCourse mutation marks course as published"
   else
     fail "publishCourse mutation failed: $(echo "${response}" | jq -c '.errors')"
+  fi
+
+  # RBAC and enrollment verification
+  echo "[test] RBAC and enrollment validation..."
+
+  # 1. Check that course owner (original educator) can query the course
+  response=$(call_graphql \
+    '"query Course($id: ID!) { course(id: $id) { id title educator { id } } }"' \
+    "{\"id\":\"${course_id}\"}")
+  if echo "${response}" | jq -e '.data.course.id' >/dev/null 2>&1; then
+    pass "course owner can fetch their own course"
+  else
+    fail "course owner failed to fetch course: $(echo "${response}" | jq -c '.errors')"
+  fi
+
+  # 2. Check that another educator cannot fetch this course
+  local cookie_jar_other="${REPO_ROOT}/.integration-test-cookies-other"
+  local email_other="test-educator-other-${random_suffix}@studed.lk"
+  local response_other
+  response_other=$(curl -s -c "${cookie_jar_other}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"mutation Register(\$input: RegisterInput!) { register(input: \$input) { user { id } } }\",\"variables\":{\"input\":{\"email\":\"${email_other}\",\"password\":\"password123\",\"fullName\":\"Other Educator\",\"role\":\"EDUCATOR\",\"preferredLanguage\":\"en\"}}}" \
+    "${GATEWAY}/graphql")
+  
+  response_other=$(curl -s -b "${cookie_jar_other}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"query Course(\$id: ID!) { course(id: \$id) { id } }\",\"variables\":{\"id\":\"${course_id}\"}}" \
+    "${GATEWAY}/graphql")
+  rm -f "${cookie_jar_other}"
+
+  if echo "${response_other}" | grep -q "forbidden: you do not own this course"; then
+    pass "educator cannot fetch a course they do not own"
+  else
+    fail "unauthorized course fetch by educator was not blocked: $(echo "${response_other}" | jq -c '.errors')"
+  fi
+
+  # 3. Check that a student cannot fetch the course without enrollment
+  local cookie_jar_student="${REPO_ROOT}/.integration-test-cookies-student"
+  local email_student="test-student-${random_suffix}@studed.lk"
+  local response_student
+  response_student=$(curl -s -c "${cookie_jar_student}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"mutation Register(\$input: RegisterInput!) { register(input: \$input) { user { id } } }\",\"variables\":{\"input\":{\"email\":\"${email_student}\",\"password\":\"password123\",\"fullName\":\"Test Student\",\"role\":\"STUDENT\",\"preferredLanguage\":\"en\"}}}" \
+    "${GATEWAY}/graphql")
+
+  response_student=$(curl -s -b "${cookie_jar_student}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"query Course(\$id: ID!) { course(id: \$id) { id } }\",\"variables\":{\"id\":\"${course_id}\"}}" \
+    "${GATEWAY}/graphql")
+
+  if echo "${response_student}" | grep -q "forbidden: not enrolled in this course"; then
+    pass "student cannot fetch a course they are not enrolled in"
+  else
+    fail "student fetching unenrolled course was not blocked: $(echo "${response_student}" | jq -c '.errors')"
+  fi
+
+  # 4. Check that student can fetch the course after enrolling
+  response_student=$(curl -s -b "${cookie_jar_student}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"mutation EnrollInCourse(\$courseId: ID!) { enrollInCourse(courseId: \$courseId) { id } }\",\"variables\":{\"courseId\":\"${course_id}\"}}" \
+    "${GATEWAY}/graphql")
+
+  response_student=$(curl -s -b "${cookie_jar_student}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"query Course(\$id: ID!) { course(id: \$id) { id } }\",\"variables\":{\"id\":\"${course_id}\"}}" \
+    "${GATEWAY}/graphql")
+  rm -f "${cookie_jar_student}"
+
+  if echo "${response_student}" | jq -e '.data.course.id' >/dev/null 2>&1; then
+    pass "student can fetch course after enrolling"
+  else
+    fail "student fetching enrolled course failed: $(echo "${response_student}" | jq -c '.errors')"
   fi
 }
 
