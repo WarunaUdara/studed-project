@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -91,6 +92,14 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 		return nil, fmt.Errorf("user is not enrolled in this course")
 	}
 
+	progress, err := s.GetWaveProgress(ctx, userID, waveID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check wave progress: %w", err)
+	}
+	if progress.Status == string(model.ProgressStatusLocked) {
+		return nil, fmt.Errorf("cannot attempt wave: wave is locked")
+	}
+
 	attempts, err := s.repo.GetAttemptsByWave(ctx, userID, waveID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch attempts: %w", err)
@@ -171,6 +180,82 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 }
 
 func (s *progressService) GetWaveProgress(ctx context.Context, userID, waveID string) (*progresspb.WaveProgressResponse, error) {
+	// 1. Fetch current wave details to locate its course
+	waveResp, err := s.course.GetWave(ctx, &coursepb.GetWaveRequest{Id: waveID})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch wave details: %w", err)
+	}
+	if waveResp.Error != "" {
+		return nil, fmt.Errorf("failed to fetch wave details: %s", waveResp.Error)
+	}
+	wave := waveResp.Wave
+
+	// 2. Fetch the lesson to find course ID
+	lessonResp, err := s.course.GetLesson(ctx, &coursepb.GetLessonRequest{Id: wave.LessonId})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch lesson details: %w", err)
+	}
+	if lessonResp.Error != "" {
+		return nil, fmt.Errorf("failed to fetch lesson details: %s", lessonResp.Error)
+	}
+	lesson := lessonResp.Lesson
+	courseID := lesson.CourseId
+
+	// 3. Fetch all lessons in this course to reconstruct natural order
+	lessonsResp, err := s.course.ListLessons(ctx, &coursepb.ListLessonsRequest{CourseId: courseID})
+	if err != nil {
+		return nil, fmt.Errorf("failed to list lessons: %w", err)
+	}
+	lessons := lessonsResp.Lessons
+	sort.Slice(lessons, func(i, j int) bool {
+		return lessons[i].SequenceOrder < lessons[j].SequenceOrder
+	})
+
+	// 4. Collect and sort all waves across the sorted lessons
+	var courseWaves []*coursepb.Wave
+	for _, l := range lessons {
+		wavesResp, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: l.Id})
+		if err != nil {
+			return nil, fmt.Errorf("failed to list waves: %w", err)
+		}
+		lwaves := wavesResp.Waves
+		sort.Slice(lwaves, func(i, j int) bool {
+			return lwaves[i].SequenceOrder < lwaves[j].SequenceOrder
+		})
+		courseWaves = append(courseWaves, lwaves...)
+	}
+
+	// 5. Find current wave index
+	currentIndex := -1
+	for i, w := range courseWaves {
+		if w.Id == waveID {
+			currentIndex = i
+			break
+		}
+	}
+
+	// 6. Check if locked by previous wave completion
+	if currentIndex > 0 {
+		prevWaveID := courseWaves[currentIndex-1].Id
+		prevAttempts, err := s.repo.GetAttemptsByWave(ctx, userID, prevWaveID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to fetch previous wave attempts: %w", err)
+		}
+		prevCompleted := false
+		for _, a := range prevAttempts {
+			if a.Passed {
+				prevCompleted = true
+				break
+			}
+		}
+		if !prevCompleted {
+			return &progresspb.WaveProgressResponse{
+				Status:        string(model.ProgressStatusLocked),
+				AttemptsCount: 0,
+			}, nil
+		}
+	}
+
 	attempts, err := s.repo.GetAttemptsByWave(ctx, userID, waveID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch attempts: %w", err)
@@ -202,10 +287,10 @@ func (s *progressService) GetWaveProgress(ctx context.Context, userID, waveID st
 	}
 
 	return &progresspb.WaveProgressResponse{
-		Status:            string(status),
-		AttemptsCount:     int32(len(attempts)),
-		HighestScore:      highestScore,
-		CompletedAtUnix:   completedAt,
+		Status:              string(status),
+		AttemptsCount:       int32(len(attempts)),
+		HighestScore:        highestScore,
+		CompletedAtUnix:     completedAt,
 		LastAttemptedAtUnix: lastAttemptedAt,
 	}, nil
 }
