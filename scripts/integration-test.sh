@@ -161,12 +161,118 @@ test_course_lifecycle() {
     -H "Content-Type: application/json" \
     -d "{\"query\":\"query Course(\$id: ID!) { course(id: \$id) { id } }\",\"variables\":{\"id\":\"${course_id}\"}}" \
     "${GATEWAY}/graphql")
-  rm -f "${cookie_jar_student}"
 
   if echo "${response_student}" | jq -e '.data.course.id' >/dev/null 2>&1; then
     pass "student can fetch course after enrolling"
   else
     fail "student fetching enrolled course failed: $(echo "${response_student}" | jq -c '.errors')"
+  fi
+
+  # 5. Create a lesson and two waves to test sequence-based wave gating
+  echo "[test] wave gating validation..."
+
+  # Create Lesson
+  response=$(call_graphql \
+    '"mutation CreateLesson($courseId: ID!, $input: CreateLessonInput!) { createLesson(courseId: $courseId, input: $input) { id } }"' \
+    "{\"courseId\":\"${course_id}\",\"input\":{\"title\":\"Gating Lesson\",\"sequenceOrder\":1}}")
+  local lesson_id
+  lesson_id=$(echo "${response}" | jq -r '.data.createLesson.id')
+
+  # Publish Lesson
+  response=$(call_graphql \
+    '"mutation PublishLesson($id: ID!) { publishLesson(id: $id) { id isPublished } }"' \
+    "{\"id\":\"${lesson_id}\"}")
+
+  # Create Wave 1
+  response=$(call_graphql \
+    '"mutation CreateWave($lessonId: ID!, $input: CreateWaveInput!) { createWave(lessonId: $lessonId, input: $input) { id } }"' \
+    "{\"lessonId\":\"${lesson_id}\",\"input\":{\"title\":\"Wave 1\",\"sequenceOrder\":1,\"xpReward\":100,\"maxReattempts\":3,\"passingThreshold\":50,\"estimatedDuration\":10,\"difficulty\":\"MEDIUM\",\"learnBlocks\":[{\"id\":\"lb1\",\"type\":\"text\",\"content\":\"Learn content 1\"}],\"evaluateBlocks\":[{\"id\":\"eb1\",\"type\":\"multiple_choice\",\"question\":\"What is 1+1?\",\"options\":[\"2\",\"3\"],\"correctAnswer\":\"2\",\"explanation\":\"Correct!\"}]}}")
+  local wave1_id
+  wave1_id=$(echo "${response}" | jq -r '.data.createWave.id')
+
+  # Publish Wave 1
+  response=$(call_graphql \
+    '"mutation PublishWave($id: ID!) { publishWave(id: $id) { id isPublished } }"' \
+    "{\"id\":\"${wave1_id}\"}")
+
+  # Create Wave 2
+  response=$(call_graphql \
+    '"mutation CreateWave($lessonId: ID!, $input: CreateWaveInput!) { createWave(lessonId: $lessonId, input: $input) { id } }"' \
+    "{\"lessonId\":\"${lesson_id}\",\"input\":{\"title\":\"Wave 2\",\"sequenceOrder\":2,\"xpReward\":100,\"maxReattempts\":3,\"passingThreshold\":50,\"estimatedDuration\":10,\"difficulty\":\"MEDIUM\",\"learnBlocks\":[{\"id\":\"lb2\",\"type\":\"text\",\"content\":\"Learn content 2\"}],\"evaluateBlocks\":[{\"id\":\"eb2\",\"type\":\"multiple_choice\",\"question\":\"What is 2+2?\",\"options\":[\"4\",\"5\"],\"correctAnswer\":\"4\",\"explanation\":\"Correct!\"}]}}")
+  local wave2_id
+  wave2_id=$(echo "${response}" | jq -r '.data.createWave.id')
+
+  # Publish Wave 2
+  response=$(call_graphql \
+    '"mutation PublishWave($id: ID!) { publishWave(id: $id) { id isPublished } }"' \
+    "{\"id\":\"${wave2_id}\"}")
+
+  # Query Wave 1 progress (should be AVAILABLE)
+  response_student=$(curl -s -b "${cookie_jar_student}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"query Wave(\$id: ID!) { wave(id: \$id) { id myProgress { status } } }\",\"variables\":{\"id\":\"${wave1_id}\"}}" \
+    "${GATEWAY}/graphql")
+  if [ "$(echo "${response_student}" | jq -r '.data.wave.myProgress.status')" = "AVAILABLE" ]; then
+    pass "wave 1 is AVAILABLE by default"
+  else
+    fail "wave 1 was not AVAILABLE: $(echo "${response_student}" | jq -c '.errors')"
+  fi
+
+  # Query Wave 2 progress (should be LOCKED)
+  response_student=$(curl -s -b "${cookie_jar_student}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"query Wave(\$id: ID!) { wave(id: \$id) { id myProgress { status } } }\",\"variables\":{\"id\":\"${wave2_id}\"}}" \
+    "${GATEWAY}/graphql")
+  if [ "$(echo "${response_student}" | jq -r '.data.wave.myProgress.status')" = "LOCKED" ]; then
+    pass "wave 2 is LOCKED initially"
+  else
+    fail "wave 2 was not LOCKED: $(echo "${response_student}" | jq -c '.errors')"
+  fi
+
+  # Try to submit answers for Wave 2 (should fail because LOCKED)
+  response_student=$(curl -s -b "${cookie_jar_student}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"mutation SubmitWaveAnswers(\$waveId: ID!, \$answers: [AnswerInput!]!) { submitWaveAnswers(waveId: \$waveId, answers: \$answers) { score passed } }\",\"variables\":{\"waveId\":\"${wave2_id}\",\"answers\":[{\"evaluateBlockId\":\"eb2\",\"answer\":\"4\"}]}}" \
+    "${GATEWAY}/graphql")
+  if echo "${response_student}" | grep -q "cannot attempt wave: wave is locked"; then
+    pass "attempting LOCKED wave 2 is blocked by API"
+  else
+    fail "attempting LOCKED wave 2 was not blocked: $(echo "${response_student}" | jq -c '.errors')"
+  fi
+
+  # Submit answers for Wave 1 and pass
+  response_student=$(curl -s -b "${cookie_jar_student}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"mutation SubmitWaveAnswers(\$waveId: ID!, \$answers: [AnswerInput!]!) { submitWaveAnswers(waveId: \$waveId, answers: \$answers) { score passed } }\",\"variables\":{\"waveId\":\"${wave1_id}\",\"answers\":[{\"evaluateBlockId\":\"eb1\",\"answer\":\"2\"}]}}" \
+    "${GATEWAY}/graphql")
+  if [ "$(echo "${response_student}" | jq -r '.data.submitWaveAnswers.passed')" = "true" ]; then
+    pass "completed wave 1 successfully"
+  else
+    fail "completing wave 1 failed: $(echo "${response_student}" | jq -c '.errors')"
+  fi
+
+  # Query Wave 2 progress again (should now be AVAILABLE)
+  response_student=$(curl -s -b "${cookie_jar_student}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"query Wave(\$id: ID!) { wave(id: \$id) { id myProgress { status } } }\",\"variables\":{\"id\":\"${wave2_id}\"}}" \
+    "${GATEWAY}/graphql")
+  if [ "$(echo "${response_student}" | jq -r '.data.wave.myProgress.status')" = "AVAILABLE" ]; then
+    pass "wave 2 is AVAILABLE after wave 1 completed"
+  else
+    fail "wave 2 was not AVAILABLE: $(echo "${response_student}" | jq -c '.errors')"
+  fi
+
+  # Attempt Wave 2 (should succeed now)
+  response_student=$(curl -s -b "${cookie_jar_student}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"mutation SubmitWaveAnswers(\$waveId: ID!, \$answers: [AnswerInput!]!) { submitWaveAnswers(waveId: \$waveId, answers: \$answers) { score passed } }\",\"variables\":{\"waveId\":\"${wave2_id}\",\"answers\":[{\"evaluateBlockId\":\"eb2\",\"answer\":\"4\"}]}}" \
+    "${GATEWAY}/graphql")
+  rm -f "${cookie_jar_student}"
+
+  if [ "$(echo "${response_student}" | jq -r '.data.submitWaveAnswers.passed')" = "true" ]; then
+    pass "completed wave 2 successfully after unlock"
+  else
+    fail "completing wave 2 failed: $(echo "${response_student}" | jq -c '.errors')"
   fi
 }
 
