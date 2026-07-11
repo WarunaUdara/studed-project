@@ -35,12 +35,30 @@ const createCourseSchema = z.object({
   slug: z
     .string()
     .min(1, "Slug is required")
-    .regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens"),
+    .regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
   gradeLevel: z.enum(gradeValues),
   price: z.number().min(0).optional(),
 });
 
 type CreateCourseForm = z.infer<typeof createCourseSchema>;
+
+/** Converts a title string to a URL-safe slug */
+function toSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+/** Parse raw GraphQL error into a user-friendly message */
+function parseServerError(rawMessage: string): string {
+  if (rawMessage.includes("duplicate key") && rawMessage.includes("idx_courses_slug")) {
+    return "A course with this slug already exists. Please choose a different slug.";
+  }
+  return "Failed to create course. Please try again.";
+}
 
 export const Route = createFileRoute("/educator/_layout/courses/new")({
   component: CreateCoursePage,
@@ -54,6 +72,7 @@ function CreateCoursePage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<CreateCourseForm>({
     resolver: zodResolver(createCourseSchema),
@@ -76,7 +95,7 @@ function CreateCoursePage() {
     });
 
     if (result.error) {
-      setServerError(result.error.message);
+      setServerError(parseServerError(result.error.message));
       return;
     }
 
@@ -92,10 +111,19 @@ function CreateCoursePage() {
           <CardTitle>Create New Course</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
-              <Input id="title" {...register("title")} />
+              <Input
+                id="title"
+                {...register("title")}
+                onChange={(e) => {
+                  // forward to react-hook-form
+                  register("title").onChange(e);
+                  // auto-fill slug from title
+                  setValue("slug", toSlug(e.target.value), { shouldValidate: false });
+                }}
+              />
               {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
             </div>
 
@@ -108,7 +136,10 @@ function CreateCoursePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="slug">Slug</Label>
+              <Label htmlFor="slug">
+                Slug{" "}
+                <span className="text-xs text-muted-foreground">(auto-generated, editable)</span>
+              </Label>
               <Input id="slug" {...register("slug")} placeholder="my-course-slug" />
               {errors.slug && <p className="text-sm text-destructive">{errors.slug.message}</p>}
             </div>
@@ -122,18 +153,23 @@ function CreateCoursePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="price">Price (Rs.)</Label>
+              <Label htmlFor="price">Price (Rs.) — leave blank for free</Label>
               <Input
                 id="price"
                 type="number"
                 min={0}
                 step="0.01"
+                placeholder="0.00"
                 {...register("price", { valueAsNumber: true })}
               />
               {errors.price && <p className="text-sm text-destructive">{errors.price.message}</p>}
             </div>
 
-            {serverError && <p className="text-sm text-destructive">{serverError}</p>}
+            {serverError && (
+              <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2">
+                <p className="text-sm text-destructive">{serverError}</p>
+              </div>
+            )}
 
             <div className="flex gap-3">
               <Button type="submit" disabled={isSubmitting || createResult.fetching}>

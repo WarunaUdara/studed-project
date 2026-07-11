@@ -3,7 +3,8 @@ import { expect, test } from "@playwright/test";
 test.describe("Authentication and Authorization Flow", () => {
   test("should redirect logged-out users from dashboard to login", async ({ page }) => {
     await page.context().clearCookies();
-    await page.goto("/dashboard");
+    // Use "commit" so we catch the redirect before the full page load
+    await page.goto("/dashboard", { waitUntil: "commit" });
     await expect(page).toHaveURL(/\/login/);
   });
 

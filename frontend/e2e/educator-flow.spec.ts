@@ -14,16 +14,17 @@ test.describe("Educator Portal Course Lifecycle Flow", () => {
   test("should create and publish a new course", async ({ page }) => {
     const timestamp = Date.now();
     const courseTitle = `E2E Test Course ${timestamp}`;
-    const courseSlug = `e2e-course-${timestamp}`;
 
     // Navigate to course creation form
     await page.getByRole("link", { name: "New Course" }).click();
+    // Wait for the form URL and then explicitly wait for the #title input to appear
+    await page.waitForURL(/\/educator\/courses\/new/, { timeout: 30000 });
+    await page.locator("#title").waitFor({ state: "visible", timeout: 30000 });
     await expect(page).toHaveURL(/\/educator\/courses\/new/);
 
-    // Fill out create course form
+    // Fill out create course form (slug is auto-generated from title)
     await page.locator("#title").fill(courseTitle);
     await page.locator("#description").fill("Automated test course description.");
-    await page.locator("#slug").fill(courseSlug);
     await page.locator("#gradeLevel").selectOption("G10");
     await page.locator("#price").fill("1500");
 
