@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Select, type SelectOption } from "@/components/ui/Select";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { COURSE_QUERY, UPDATE_COURSE_MUTATION } from "@/graphql/courses";
 
 const grades: SelectOption[] = [
@@ -100,7 +101,34 @@ function EditCoursePage() {
   };
 
   if (loadingCourse) {
-    return <p className="text-muted-foreground">Loading course...</p>;
+    return (
+      <div className="mx-auto max-w-xl">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-24" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-12" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+            <Skeleton className="h-10 w-32" />
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   if (!course) {
