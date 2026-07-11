@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Select, type SelectOption } from "@/components/ui/Select";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { CREATE_WAVE_MUTATION, LESSON_QUERY } from "@/graphql/courses";
 
 interface Wave {
@@ -94,7 +95,29 @@ function LessonDetailPage() {
   };
 
   if (fetching) {
-    return <p className="text-muted-foreground">Loading lesson...</p>;
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-9 w-20" />
+          <Skeleton className="h-8 w-48" />
+        </div>
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-6 w-32" />
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-9 w-16" />
+                <Skeleton className="h-6 w-16 rounded-full" />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   if (error || !lesson) {
