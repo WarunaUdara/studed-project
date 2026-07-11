@@ -347,16 +347,56 @@ func (r *queryResolver) MyEnrollments(ctx context.Context) ([]*model.Course, err
 
 // Course is the resolver for the course field.
 func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	course, err := r.CourseClient.GetCourseWithLessons(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	userCtx, ok := middleware.UserFromContext(ctx)
-	if ok && userCtx.UserID != "" {
-		progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, id)
-		course.MyProgress = progress
+	isEducatorOrAdmin := userCtx.Role == "EDUCATOR" || userCtx.Role == "HEAD_EDUCATOR" || userCtx.Role == "ADMIN"
+	if isEducatorOrAdmin {
+		if userCtx.Role != "ADMIN" {
+			if course.Educator == nil || course.Educator.ID != userCtx.UserID {
+				return nil, errors.New("forbidden: you do not own this course")
+			}
+		}
+	} else {
+		// Student flow
+		if !course.IsPublished {
+			return nil, errors.New("forbidden: course is not published")
+		}
+
+		enrolled, err := r.ProgressClient.IsEnrolled(ctx, userCtx.UserID, id)
+		if err != nil {
+			return nil, fmt.Errorf("failed to check enrollment: %w", err)
+		}
+		if !enrolled {
+			return nil, errors.New("forbidden: not enrolled in this course")
+		}
+
+		// Filter out unpublished lessons and waves
+		publishedLessons := make([]*model.Lesson, 0, len(course.Lessons))
+		for _, lesson := range course.Lessons {
+			if lesson.IsPublished {
+				publishedWaves := make([]*model.Wave, 0, len(lesson.Waves))
+				for _, wave := range lesson.Waves {
+					if wave.IsPublished {
+						publishedWaves = append(publishedWaves, wave)
+					}
+				}
+				lesson.Waves = publishedWaves
+				publishedLessons = append(publishedLessons, lesson)
+			}
+		}
+		course.Lessons = publishedLessons
 	}
+
+	progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, id)
+	course.MyProgress = progress
 
 	return course, nil
 }
