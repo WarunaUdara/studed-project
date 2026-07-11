@@ -245,21 +245,25 @@ function LessonDetailPage() {
           ) : (
             <div className="space-y-2">
               {waves.map((wave) => (
-                <div
+                <Link
                   key={wave.id}
-                  className="flex items-center justify-between rounded-lg border p-4"
+                  to="/educator/courses/$courseId/lessons/$lessonId/waves/$waveId"
+                  params={{ courseId, lessonId, waveId: wave.id }}
+                  className="block"
                 >
-                  <div>
-                    <p className="font-medium">{wave.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Order {wave.sequenceOrder} · {wave.difficulty} ·{" "}
-                      <Zap className="inline h-3 w-3" /> {wave.xpReward} XP
-                    </p>
+                  <div className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted transition-colors">
+                    <div>
+                      <p className="font-medium">{wave.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Order {wave.sequenceOrder} · {wave.difficulty} ·{" "}
+                        <Zap className="inline h-3 w-3" /> {wave.xpReward} XP
+                      </p>
+                    </div>
+                    <span className={wave.isPublished ? "text-green-600" : "text-amber-600"}>
+                      {wave.isPublished ? "Published" : "Draft"}
+                    </span>
                   </div>
-                  <span className={wave.isPublished ? "text-green-600" : "text-amber-600"}>
-                    {wave.isPublished ? "Published" : "Draft"}
-                  </span>
-                </div>
+                </Link>
               ))}
             </div>
           )}
