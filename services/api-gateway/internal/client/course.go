@@ -443,6 +443,7 @@ func protoCourseToModel(c *coursepb.Course) *model.Course {
 		Description: c.Description,
 		Slug:        c.Slug,
 		GradeLevel:  protoGradeToModel(c.GradeLevel),
+		Educator:    &model.User{ID: c.EducatorId},
 		Price:       price,
 		IsPublished: c.Status == coursepb.CourseStatus_COURSE_STATUS_PUBLISHED,
 		Lessons:     []*model.Lesson{},
@@ -456,6 +457,7 @@ func protoLessonToModel(l *coursepb.Lesson) *model.Lesson {
 	}
 	return &model.Lesson{
 		ID:            l.Id,
+		Course:        &model.Course{ID: l.CourseId},
 		Title:         l.Title,
 		SequenceOrder: int(l.SequenceOrder),
 		IsPublished:   l.IsPublished,
@@ -469,6 +471,7 @@ func protoWaveToModel(w *coursepb.Wave) *model.Wave {
 	}
 	wave := &model.Wave{
 		ID:                w.Id,
+		Lesson:            &model.Lesson{ID: w.LessonId},
 		Title:             w.Title,
 		SequenceOrder:     int(w.SequenceOrder),
 		XpReward:          int(w.XpReward),
