@@ -72,7 +72,11 @@ export const puckConfig: Config = {
           </span>
           {src ? (
             <div className="space-y-2">
-              <img src={src} alt={alt} className="max-h-72 w-full rounded-md object-contain border" />
+              <img
+                src={src}
+                alt={alt}
+                className="max-h-72 w-full rounded-md object-contain border"
+              />
               {caption && <p className="text-xs text-center text-muted-foreground">{caption}</p>}
             </div>
           ) : (
@@ -119,7 +123,7 @@ export const puckConfig: Config = {
         explanation: "Sri Jayawardenepura Kotte is the official administrative capital.",
       },
       render: ({ question, options, correctAnswer, explanation }) => {
-        const optionList = options ? options.split("\n").filter((o) => o.trim()) : [];
+        const optionList = options ? options.split("\n").filter((o: string) => o.trim()) : [];
         return (
           <div className="p-4 rounded-lg border border-primary/20 bg-primary/5 text-card-foreground shadow-sm space-y-3">
             <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-primary px-1.5 py-0.5 rounded bg-primary/10">
@@ -128,10 +132,20 @@ export const puckConfig: Config = {
             <p className="font-semibold text-foreground">{question}</p>
             {optionList.length > 0 ? (
               <div className="space-y-1.5 pl-2">
-                {optionList.map((opt, i) => (
-                  <div key={i} className="flex items-center gap-2 text-sm border rounded p-2 bg-background/50">
-                    <input type="radio" disabled checked={opt === correctAnswer} className="h-3.5 w-3.5" />
-                    <span className={opt === correctAnswer ? "font-medium text-success" : ""}>{opt}</span>
+                {optionList.map((opt: string, i: number) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2 text-sm border rounded p-2 bg-background/50"
+                  >
+                    <input
+                      type="radio"
+                      disabled
+                      checked={opt === correctAnswer}
+                      className="h-3.5 w-3.5"
+                    />
+                    <span className={opt === correctAnswer ? "font-medium text-success" : ""}>
+                      {opt}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -171,7 +185,12 @@ export const puckConfig: Config = {
           </span>
           <p className="font-semibold text-foreground">{question}</p>
           <div className="flex gap-2 items-center pl-2">
-            <input type="text" disabled placeholder="User types here..." className="border rounded px-3 py-1.5 bg-background text-sm max-w-xs w-full" />
+            <input
+              type="text"
+              disabled
+              placeholder="User types here..."
+              className="border rounded px-3 py-1.5 bg-background text-sm max-w-xs w-full"
+            />
           </div>
           {correctAnswer && (
             <p className="text-xs text-success font-medium">
@@ -205,8 +224,12 @@ export const puckConfig: Config = {
           </span>
           <p className="font-semibold text-foreground">{question}</p>
           <div className="flex flex-wrap gap-2 pl-2">
-            <span className="border rounded-md px-3 py-1.5 bg-background text-sm cursor-grab">Formula</span>
-            <span className="border border-dashed rounded-md px-3 py-1.5 text-muted-foreground text-sm">Drop zone</span>
+            <span className="border rounded-md px-3 py-1.5 bg-background text-sm cursor-grab">
+              Formula
+            </span>
+            <span className="border border-dashed rounded-md px-3 py-1.5 text-muted-foreground text-sm">
+              Drop zone
+            </span>
           </div>
           {correctAnswer && (
             <p className="text-xs text-success font-medium">
@@ -254,7 +277,7 @@ export interface PuckData {
 // Convert from GraphQL structure to Puck flat structure
 export function waveDataToPuck(
   learnBlocks: LearnBlockRaw[],
-  evaluateBlocks: EvaluateBlockRaw[]
+  evaluateBlocks: EvaluateBlockRaw[],
 ): PuckData {
   const content: PuckData["content"] = [];
 

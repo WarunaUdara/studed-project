@@ -1,28 +1,22 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Puck } from "@puckeditor/core";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Check, Loader2, Save, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "urql";
-import { Puck } from "@puckeditor/core";
 import "@puckeditor/core/puck.css";
 
+import { puckConfig, puckToWaveData, waveDataToPuck } from "@/components/puck-blocks/puck-config";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import {
-  WAVE_QUERY,
-  UPDATE_WAVE_MUTATION,
-  PUBLISH_WAVE_MUTATION,
-} from "@/graphql/courses";
-import { puckConfig, waveDataToPuck, puckToWaveData } from "@/components/puck-blocks/puck-config";
+import { PUBLISH_WAVE_MUTATION, UPDATE_WAVE_MUTATION, WAVE_QUERY } from "@/graphql/courses";
 
 export const Route = createFileRoute(
-  "/educator/_layout/courses/$courseId/lessons/$lessonId/waves/$waveId"
+  "/educator/_layout/courses/$courseId/lessons/$lessonId/waves/$waveId",
 )({
   component: WaveEditorPage,
 });
 
 function WaveEditorPage() {
   const { courseId, lessonId, waveId } = Route.useParams();
-  const navigate = useNavigate();
 
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: WAVE_QUERY,
@@ -100,7 +94,9 @@ function WaveEditorPage() {
   if (error || !wave) {
     return (
       <div className="space-y-4">
-        <p className="text-destructive font-medium">Failed to load Wave: {error?.message || "Not found"}</p>
+        <p className="text-destructive font-medium">
+          Failed to load Wave: {error?.message || "Not found"}
+        </p>
         <Link to="/educator/courses/$courseId/lessons/$lessonId" params={{ courseId, lessonId }}>
           <Button variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Lesson
@@ -138,7 +134,12 @@ function WaveEditorPage() {
           </span>
 
           {!wave.isPublished && (
-            <Button size="sm" variant="outline" onClick={handlePublish} disabled={publishResult.fetching}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handlePublish}
+              disabled={publishResult.fetching}
+            >
               {publishResult.fetching ? (
                 <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
               ) : (
