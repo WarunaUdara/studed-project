@@ -5,19 +5,17 @@ import { useAuthStore } from "@/stores/auth";
 
 export function AuthInitializer({ children }: { children: React.ReactNode }) {
   const setUser = useAuthStore((s) => s.setUser);
-  const setLoading = useAuthStore((s) => s.setLoading);
-  const [{ data, error }] = useQuery({ query: ME_QUERY });
+  const [{ data, fetching, error }] = useQuery({ query: ME_QUERY });
 
   useEffect(() => {
+    if (fetching) return;
+
     if (data?.me) {
       setUser(data.me);
-      return;
+    } else {
+      setUser(null);
     }
-    if (error) {
-      setLoading(false);
-      return;
-    }
-  }, [data, error, setUser, setLoading]);
+  }, [data, fetching, error, setUser]);
 
   return <>{children}</>;
 }
