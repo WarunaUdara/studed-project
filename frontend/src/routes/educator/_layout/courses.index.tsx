@@ -66,7 +66,7 @@ function EducatorCoursesPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {courses.map((course: CourseItem) => (
-          <Card key={course.id}>
+          <Card key={course.id} data-testid="course-card">
             <CardHeader>
               <CardTitle className="text-lg">{course.title}</CardTitle>
             </CardHeader>
