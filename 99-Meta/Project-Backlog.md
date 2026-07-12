@@ -37,6 +37,8 @@ tags:
 | Frontend: auth flow, educator portal, student catalog, basic dashboard, basic wave player, basic leaderboard list | prior agents | `routes/dashboard.tsx`, `routes/waves.$waveId.tsx`, `routes/courses.*.tsx` |
 | Demo seed script (idempotent mock-data-loader) | prior agents | commit `eab6f2a` |
 | Docker Compose orchestration for all wired services | prior agents | `docker-compose.yml`; commits `60dd5c6`, `d2a636b` |
+| Auth refresh token flow (frontend) | this session | `AuthInitializer.tsx`, `auth.ts`, `schema.resolvers.go` |
+| Grade-based enrollment checking | this session | `schema.resolvers.go` `EnrollInCourse` verification |
 
 ## In Progress
 
@@ -60,7 +62,6 @@ tags:
 | Medium | `publishLesson` / `publishWave` mutations | Proto has `PublishLesson`/`PublishWave`; wire service + repository + resolver. | None | Low | Small | any | MVP |
 | Medium | `updateLesson` resolver | Allow educators to edit lesson metadata. | Proto + service + repo | Low | Small | any | MVP |
 | Medium | Wave gating (LOCKED status) | `GetWaveProgress` never returns LOCKED; no prerequisite enforcement. | course-service | Low | Medium | any | MVP |
-| Medium | Auth refresh token flow (frontend) | Long sessions fail when access token expires; `AuthInitializer` needs retry/refresh. | None | Medium | Small | any | MVP |
 | Low | AI content generation resolvers | `generateLearnBlocks`, `generateEvaluateBlocks`, `translateContent` are stubs (`schema.resolvers.go:208-219`). | `ai-service` + LLM creds | High | Large | any | MVP v2 |
 | Low | Subscription & payment flow | `createSubscription`, `cancelSubscription`, webhooks are stubs (`schema.resolvers.go:223-229`). | `payment-service` + PayHere/Stripe | High | Large | any | Production |
 | Low | Real-time subscriptions | `leaderboardUpdated`, `xpGained`, `achievementUnlocked`, `waveCompleted` are stubs (`schema.resolvers.go:380-396`). | WebSocket infra | Medium | Large | any | MVP v2 |
