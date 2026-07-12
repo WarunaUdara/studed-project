@@ -7,7 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useToast } from "@/components/ui/Toast";
 import { COURSE_QUERY, CREATE_LESSON_MUTATION, PUBLISH_LESSON_MUTATION } from "@/graphql/courses";
+import { sanitizeGraphQLError } from "@/lib/errors";
 
 interface Lesson {
   id: string;
@@ -34,6 +36,7 @@ export const Route = createFileRoute("/educator/_layout/courses/$courseId")({
 
 function CourseDetailPage() {
   const { courseId } = Route.useParams();
+  const { toast } = useToast();
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: COURSE_QUERY,
     variables: { id: courseId },
@@ -54,7 +57,11 @@ function CourseDetailPage() {
     setPublishingLessonId(id);
     const result = await publishLesson({ id });
     setPublishingLessonId(null);
-    if (!result.error) {
+    if (result.error) {
+      const e = sanitizeGraphQLError(result.error);
+      toast({ type: "error", title: e.title, message: e.message });
+    } else {
+      toast({ type: "success", title: "Published", message: "Lesson is now visible to students." });
       reexecuteQuery({ requestPolicy: "network-only" });
     }
   };
