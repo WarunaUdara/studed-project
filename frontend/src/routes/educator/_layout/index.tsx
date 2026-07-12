@@ -4,40 +4,23 @@ import {
   ArrowRight,
   BookOpen,
   CheckCircle,
-  Clock,
-  Layers,
   Plus,
+  Sparkles,
   TrendingUp,
-  Zap,
+  Users,
 } from "lucide-react";
 import { useMemo } from "react";
 import { useQuery } from "urql";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { ProgressRing } from "@/components/ui/ProgressRing";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { EDUCATOR_COURSES_QUERY } from "@/graphql/courses";
-
-interface WaveNode {
-  id: string;
-  isPublished: boolean;
-  xpReward: number;
-  myProgress?: { status: string; attemptsCount: number } | null;
-}
-
-interface LessonNode {
-  id: string;
-  isPublished: boolean;
-  waves: WaveNode[];
-}
+import { COURSES_QUERY } from "@/graphql/courses";
 
 interface CourseNode {
   id: string;
   title: string;
   isPublished: boolean;
   createdAt: string;
-  lessons?: LessonNode[] | null;
-  myProgress?: { completedWaves: number; totalWaves: number } | null;
 }
 
 export const Route = createFileRoute("/educator/_layout/")({
@@ -46,7 +29,7 @@ export const Route = createFileRoute("/educator/_layout/")({
 
 function EducatorDashboardPage() {
   const [{ data, fetching, error }] = useQuery({
-    query: EDUCATOR_COURSES_QUERY,
+    query: COURSES_QUERY,
     variables: { filter: {} },
   });
 
@@ -56,25 +39,7 @@ function EducatorDashboardPage() {
   const stats = useMemo(() => {
     const published = courses.filter((c) => c.isPublished);
     const drafts = courses.filter((c) => !c.isPublished);
-    let totalLessons = 0;
-    let totalWaves = 0;
-    let publishedWaves = 0;
-    let totalXp = 0;
-
-    for (const c of courses) {
-      for (const l of c.lessons ?? []) {
-        totalLessons++;
-        for (const w of l.waves ?? []) {
-          totalWaves++;
-          if (w.isPublished) {
-            publishedWaves++;
-            totalXp += w.xpReward ?? 0;
-          }
-        }
-      }
-    }
-
-    return { published, drafts, totalLessons, totalWaves, publishedWaves, totalXp };
+    return { published, drafts };
   }, [courses]);
 
   const recentCourses = courses.slice(0, 8);
@@ -86,31 +51,31 @@ function EducatorDashboardPage() {
       icon: BookOpen,
       color: "text-primary",
       bg: "bg-primary/10",
-      sub: `${stats.published.length} published`,
+      sub: "All your courses",
     },
     {
-      label: "Total Lessons",
-      value: stats.totalLessons,
-      icon: Layers,
-      color: "text-blue-500",
-      bg: "bg-blue-500/10",
-      sub: `Across all courses`,
-    },
-    {
-      label: "Waves Published",
-      value: stats.publishedWaves,
+      label: "Published",
+      value: stats.published.length,
       icon: CheckCircle,
       color: "text-success",
       bg: "bg-success/10",
-      sub: `${stats.totalWaves} total waves`,
+      sub: "Live for students",
     },
     {
-      label: "XP Available",
-      value: stats.totalXp.toLocaleString(),
-      icon: Zap,
+      label: "Drafts",
+      value: stats.drafts.length,
+      icon: Sparkles,
       color: "text-amber-500",
       bg: "bg-amber-500/10",
-      sub: "Across published waves",
+      sub: "In progress",
+    },
+    {
+      label: "Completion Rate",
+      value: courses.length > 0 ? `${Math.round((stats.published.length / courses.length) * 100)}%` : "—",
+      icon: TrendingUp,
+      color: "text-blue-500",
+      bg: "bg-blue-500/10",
+      sub: "Published / total",
     },
   ];
 
@@ -141,7 +106,11 @@ function EducatorDashboardPage() {
       </div>
 
       {/* Error */}
-      {error && <p className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">Failed to load stats.</p>}
+      {error && (
+        <p className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+          Failed to load stats.
+        </p>
+      )}
 
       {/* Stat cards */}
       {fetching ? (
@@ -189,7 +158,7 @@ function EducatorDashboardPage() {
         {/* Recent courses list */}
         <Card className="lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-base font-semibold">Your Courses</CardTitle>
+            <CardTitle className="text-base font-semibold">Recent Courses</CardTitle>
             <Link to="/educator/courses">
               <Button variant="ghost" size="sm" className="text-xs">
                 View all <ArrowRight className="ml-1 h-3 w-3" />
@@ -215,50 +184,45 @@ function EducatorDashboardPage() {
               </div>
             ) : (
               <ul className="divide-y">
-                {recentCourses.map((course) => {
-                  const lessons = course.lessons ?? [];
-                  const waves = lessons.flatMap((l) => l.waves ?? []);
-                  const publishedWaves = waves.filter((w) => w.isPublished).length;
-                  const completionRatio =
-                    waves.length > 0 ? Math.round((publishedWaves / waves.length) * 100) : 0;
-
-                  return (
-                    <li key={course.id} className="flex items-center gap-4 py-3">
-                      <ProgressRing value={completionRatio} size={40} strokeWidth={4} className="text-primary shrink-0">
-                        <span className="text-[9px] font-bold">{completionRatio}%</span>
-                      </ProgressRing>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-medium text-sm">{course.title}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {lessons.length} lessons · {waves.length} waves · {publishedWaves} published
-                        </p>
-                      </div>
-                      <div className="flex shrink-0 items-center gap-2">
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                            course.isPublished
-                              ? "bg-success/15 text-success"
-                              : "bg-amber-500/15 text-amber-600"
-                          }`}
-                        >
-                          {course.isPublished ? "Live" : "Draft"}
-                        </span>
-                        <Link to="/educator/courses/$courseId" params={{ courseId: course.id }}>
-                          <Button variant="ghost" size="sm" className="h-7 text-xs">
-                            Edit
-                          </Button>
-                        </Link>
-                      </div>
-                    </li>
-                  );
-                })}
+                {recentCourses.map((course) => (
+                  <li key={course.id} className="flex items-center gap-4 py-3">
+                    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                      course.isPublished ? "bg-success/10" : "bg-amber-500/10"
+                    }`}>
+                      <BookOpen className={`h-4 w-4 ${course.isPublished ? "text-success" : "text-amber-500"}`} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium text-sm">{course.title}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Created {new Date(course.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                          course.isPublished
+                            ? "bg-success/15 text-success"
+                            : "bg-amber-500/15 text-amber-600"
+                        }`}
+                      >
+                        {course.isPublished ? "Live" : "Draft"}
+                      </span>
+                      <Link to="/educator/courses/$courseId" params={{ courseId: course.id }}>
+                        <Button variant="ghost" size="sm" className="h-7 text-xs">
+                          Edit
+                        </Button>
+                      </Link>
+                    </div>
+                  </li>
+                ))}
               </ul>
             )}
           </CardContent>
         </Card>
 
-        {/* Quick stats sidebar */}
+        {/* Sidebar cards */}
         <div className="space-y-4">
+          {/* Publishing health */}
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-semibold flex items-center gap-2">
@@ -274,12 +238,6 @@ function EducatorDashboardPage() {
                 color="bg-success"
               />
               <HealthBar
-                label="Published Waves"
-                value={stats.publishedWaves}
-                total={stats.totalWaves}
-                color="bg-primary"
-              />
-              <HealthBar
                 label="Draft Courses"
                 value={stats.drafts.length}
                 total={courses.length}
@@ -288,17 +246,7 @@ function EducatorDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-4 space-y-2">
-              <div className="flex items-center gap-2 text-sm">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Total XP available</span>
-              </div>
-              <p className="text-2xl font-bold text-amber-500">{stats.totalXp.toLocaleString()} XP</p>
-              <p className="text-xs text-muted-foreground">Across {stats.publishedWaves} published waves</p>
-            </CardContent>
-          </Card>
-
+          {/* Quick actions */}
           <Card>
             <CardContent className="p-4 space-y-3">
               <p className="text-sm font-medium">Quick Actions</p>
@@ -311,6 +259,11 @@ function EducatorDashboardPage() {
                 <Link to="/educator/courses" className="block">
                   <Button variant="outline" size="sm" className="w-full justify-start text-xs">
                     <BookOpen className="mr-2 h-3.5 w-3.5" /> Manage Courses
+                  </Button>
+                </Link>
+                <Link to="/educator" className="block">
+                  <Button variant="outline" size="sm" className="w-full justify-start text-xs">
+                    <Users className="mr-2 h-3.5 w-3.5" /> Dashboard
                   </Button>
                 </Link>
               </div>

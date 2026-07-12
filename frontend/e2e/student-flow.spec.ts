@@ -18,44 +18,63 @@ test.describe("Student Course Journey Flow", () => {
     await page.getByRole("link", { name: "Courses", exact: true }).click();
     await expect(page).toHaveURL(/\/courses/);
 
-    // Verify course cards are visible
-    const courseCard = page.locator("div.group").filter({ hasText: "Grade 10 Mathematics" }).first();
-    await expect(courseCard).toBeVisible();
-
-    // Wait for the View button to be visible to ensure card actions are fully loaded
-    await expect(courseCard.getByRole("link", { name: "View" })).toBeVisible({ timeout: 15000 });
+    // Verify course cards are visible — use data-testid added by the card
+    const courseCard = page
+      .locator("[data-testid='course-card']")
+      .filter({ hasText: "Grade 10 Mathematics" })
+      .first();
+    await expect(courseCard).toBeVisible({ timeout: 15000 });
 
     // Click Enroll if the button is visible (not enrolled yet)
-    const enrollButton = courseCard.getByRole("button", { name: "Enroll" });
+    const enrollButton = courseCard.getByRole("button", { name: /Enroll/i });
     if (await enrollButton.isVisible()) {
       await enrollButton.click();
       await expect(page.getByText("Enrolled!")).toBeVisible({ timeout: 10000 });
     }
 
-    // 2. Click "View" on the course card
-    await courseCard.getByRole("link", { name: "View" }).click();
+    // 2. Click "View" or "Continue" on the course card
+    const viewLink = courseCard.getByRole("link", { name: /View|Continue/i });
+    await expect(viewLink).toBeVisible({ timeout: 10000 });
+    await viewLink.click();
     await expect(page).toHaveURL(/\/courses\/[a-f0-9-]+/);
 
-    // Verify course syllabus details are visible (wait for page transition to finish)
-    await expect(page.getByRole("button", { name: "Back to Courses" })).toBeVisible({ timeout: 15000 });
-    await expect(page.getByText("complete", { exact: true })).toBeVisible();
+    // Verify course syllabus is visible — wait for the back button
+    await expect(
+      page.getByRole("button", { name: "Back to Courses" }),
+    ).toBeVisible({ timeout: 15000 });
+
+    // The course progress ring shows 'complete' text inside it
+    await expect(
+      page.getByText("complete", { exact: true }).first(),
+    ).toBeVisible();
 
     // 3. Find first unlocked wave and start it
-    const startButton = page.getByRole("button", { name: "Start" }).first();
-    await expect(startButton).toBeVisible();
+    const startButton = page.getByRole("button", { name: /^Start$/ }).first();
+    await expect(startButton).toBeVisible({ timeout: 10000 });
     await startButton.click();
     await expect(page).toHaveURL(/\/waves\/[a-f0-9-]+/);
 
-    // 4. In Wave Player, verify Learn block renders and click "Start Evaluation"
+    // 4. In Wave Player: wait for the page to load (no error state)
+    // The wave player renders either the Learn/Evaluate tabs or an error card
+    // We wait for the tabs list to be visible — with a longer timeout for API latency
+    await expect(
+      page.getByRole("tablist").first(),
+    ).toBeVisible({ timeout: 20000 });
+
+    // Verify the Learn tab is present
     await expect(page.getByRole("tab", { name: "Learn" })).toBeVisible();
+
+    // Click "Start Evaluation" to move to the Evaluate tab
     const startEvalButton = page.getByRole("button", { name: "Start Evaluation" });
     await expect(startEvalButton).toBeVisible();
     await startEvalButton.click();
 
-    // 5. Verify the Evaluate tab is active and questions are present
-    await expect(page.getByRole("button", { name: "Submit Answers" })).toBeVisible();
+    // 5. Verify evaluate questions are present
+    await expect(
+      page.getByRole("button", { name: "Submit Answers" }),
+    ).toBeVisible({ timeout: 10000 });
 
-    // Answer the first question (type answer or select option)
+    // Answer the first question (text input or radio)
     const textInput = page.locator("input[placeholder='Type your answer']").first();
     const radioOption = page.locator("input[type='radio']").first();
 
@@ -69,7 +88,7 @@ test.describe("Student Course Journey Flow", () => {
     // 6. Submit answers
     await page.getByRole("button", { name: "Submit Answers" }).click();
 
-    // Verify results card is displayed (either completed or try again)
-    await expect(page.locator("text=Total XP:")).toBeVisible();
+    // 7. Verify results card is displayed
+    await expect(page.getByText("Total XP:")).toBeVisible({ timeout: 15000 });
   });
 });
