@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowLeft, BookOpen, CheckCircle, Clock, PlayCircle, Zap } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle, Clock, Lock, PlayCircle, Zap } from "lucide-react";
 import { useMemo } from "react";
 import { useQuery } from "urql";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { ProgressRing } from "@/components/ui/ProgressRing";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { COURSE_PLAYER_QUERY } from "@/graphql/student";
 import { sanitizeGraphQLError } from "@/lib/errors";
+import { cn } from "@/lib/utils";
 
 interface Wave {
   id: string;
@@ -178,43 +179,64 @@ function CoursePlayerPage() {
                   lesson.waves.map((wave) => {
                     const isCompleted = wave.myProgress?.status === "COMPLETED";
                     const isStarted = wave.myProgress?.status === "STARTED";
-                    return (
-                      <Link key={wave.id} to="/waves/$waveId" params={{ waveId: wave.id }}>
-                        <div className="group flex items-center justify-between rounded-xl border p-4 transition-all hover:border-primary/30 hover:bg-primary/5">
-                          <div className="flex items-center gap-3">
-                            {isCompleted ? (
-                              <CheckCircle className="h-5 w-5 shrink-0 text-success" />
-                            ) : isStarted ? (
-                              <Clock className="h-5 w-5 shrink-0 text-orange" />
-                            ) : (
-                              <PlayCircle className="h-5 w-5 shrink-0 text-primary" />
-                            )}
-                            <div>
-                              <p className="font-medium group-hover:text-primary">{wave.title}</p>
-                              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                                <span>{wave.difficulty}</span>
-                                <span className="flex items-center gap-0.5">
-                                  <Zap className="h-3 w-3 text-gold" /> {wave.xpReward} XP
-                                </span>
-                                {wave.myProgress?.highestScore !== null &&
-                                  wave.myProgress?.highestScore !== undefined && (
-                                    <span>Best: {wave.myProgress.highestScore}%</span>
-                                  )}
-                              </div>
+                    const isLocked = wave.myProgress?.status === "LOCKED";
+
+                    const content = (
+                      <div className={cn(
+                        "flex items-center justify-between rounded-xl border p-4 transition-all",
+                        isLocked
+                          ? "bg-muted/10 opacity-60 border-border"
+                          : "group hover:border-primary/30 hover:bg-primary/5 cursor-pointer"
+                      )}>
+                        <div className="flex items-center gap-3">
+                          {isLocked ? (
+                            <Lock className="h-5 w-5 shrink-0 text-muted-foreground" />
+                          ) : isCompleted ? (
+                            <CheckCircle className="h-5 w-5 shrink-0 text-success" />
+                          ) : isStarted ? (
+                            <Clock className="h-5 w-5 shrink-0 text-orange" />
+                          ) : (
+                            <PlayCircle className="h-5 w-5 shrink-0 text-primary" />
+                          )}
+                          <div>
+                            <p className={cn("font-medium", !isLocked && "group-hover:text-primary")}>
+                              {wave.title}
+                            </p>
+                            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                              <span>{wave.difficulty}</span>
+                              <span className="flex items-center gap-0.5">
+                                <Zap className="h-3 w-3 text-gold" /> {wave.xpReward} XP
+                              </span>
+                              {wave.myProgress?.highestScore !== null &&
+                                wave.myProgress?.highestScore !== undefined && (
+                                  <span>Best: {wave.myProgress.highestScore}%</span>
+                                )}
                             </div>
                           </div>
-                          {isCompleted ? (
-                            <span className="text-sm font-medium text-success">Completed</span>
-                          ) : (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="group-hover:bg-primary group-hover:text-primary-foreground"
-                            >
-                              Start
-                            </Button>
-                          )}
                         </div>
+                        {isLocked ? (
+                          <span className="text-sm font-medium text-muted-foreground">Locked</span>
+                        ) : isCompleted ? (
+                          <span className="text-sm font-medium text-success">Completed</span>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="group-hover:bg-primary group-hover:text-primary-foreground"
+                          >
+                            Start
+                          </Button>
+                        )}
+                      </div>
+                    );
+
+                    if (isLocked) {
+                      return <div key={wave.id}>{content}</div>;
+                    }
+
+                    return (
+                      <Link key={wave.id} to="/waves/$waveId" params={{ waveId: wave.id }}>
+                        {content}
                       </Link>
                     );
                   })
