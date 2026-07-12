@@ -47,3 +47,10 @@ temp/
 *.exe
 .mock-educator-cookies
 .mock-student-cookies
+
+# Service compiled binaries
+services/*/service
+services/*/*/service
+
+# macOS aliases / symlinks at project root
+Macintosh HD

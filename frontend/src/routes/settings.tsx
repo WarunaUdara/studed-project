@@ -3,8 +3,8 @@ import { Shield, User as UserIcon } from "lucide-react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { StudentShell } from "@/components/layout/StudentShell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Label } from "@/components/ui/Label";
 import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
 import { useAuthStore } from "@/stores/auth";
 
 export const Route = createFileRoute("/settings")({
@@ -51,7 +51,11 @@ function SettingsPage() {
                   </div>
                   <div className="space-y-1">
                     <Label className="text-muted-foreground">Preferred Language</Label>
-                    <Input value={user?.preferredLanguage?.toUpperCase() ?? "EN"} disabled className="bg-muted/50" />
+                    <Input
+                      value={user?.preferredLanguage?.toUpperCase() ?? "EN"}
+                      disabled
+                      className="bg-muted/50"
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -69,7 +73,11 @@ function SettingsPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">Role</Label>
-                  <Input value={user?.role ?? "STUDENT"} disabled className="bg-muted/50 font-semibold text-primary" />
+                  <Input
+                    value={user?.role ?? "STUDENT"}
+                    disabled
+                    className="bg-muted/50 font-semibold text-primary"
+                  />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-muted-foreground">Account Status</Label>

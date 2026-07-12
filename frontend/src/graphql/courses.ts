@@ -26,6 +26,36 @@ export const COURSES_QUERY = `
   }
 ` as const;
 
+export const EDUCATOR_COURSES_QUERY = `
+  query EducatorCourses($filter: CourseFilter, $pagination: PaginationInput) {
+    courses(filter: $filter, pagination: $pagination) {
+      edges {
+        node {
+          id
+          title
+          isPublished
+          createdAt
+          lessons {
+            id
+            isPublished
+            waves {
+              id
+              isPublished
+              xpReward
+            }
+          }
+        }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+` as const;
+
+
 export const COURSE_QUERY = `
   query Course($id: ID!) {
     course(id: $id) {
@@ -283,6 +313,16 @@ export const UPDATE_WAVE_MUTATION = `
         explanation
         metadata
       }
+    }
+  }
+` as const;
+
+export const PUBLISH_LESSON_MUTATION = `
+  mutation PublishLesson($id: ID!) {
+    publishLesson(id: $id) {
+      id
+      title
+      isPublished
     }
   }
 ` as const;
