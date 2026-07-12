@@ -324,11 +324,17 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 
 	totalXp, _ := r.GamificationClient.GetUserXp(ctx, userCtx.UserID)
 
+	var grade *model.Grade
+	if authUser, err := r.AuthClient.GetUser(ctx, userCtx.UserID); err == nil {
+		grade = authUser.Grade
+	}
+
 	return &model.User{
 		ID:                userCtx.UserID,
 		Email:             userCtx.Email,
 		FullName:          userCtx.FullName,
 		Role:              model.Role(userCtx.Role),
+		Grade:             grade,
 		PreferredLanguage: userCtx.PreferredLanguage,
 		TotalXp:           totalXp,
 	}, nil
@@ -548,6 +554,7 @@ func (r *queryResolver) Wave(ctx context.Context, id string) (*model.Wave, error
 
 	progress, _ := r.ProgressClient.GetWaveProgress(ctx, userCtx.UserID, id)
 	wave.MyProgress = progress
+	wave.Lesson = lesson
 
 	return wave, nil
 }

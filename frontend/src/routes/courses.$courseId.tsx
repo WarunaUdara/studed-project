@@ -182,12 +182,14 @@ function CoursePlayerPage() {
                     const isLocked = wave.myProgress?.status === "LOCKED";
 
                     const content = (
-                      <div className={cn(
-                        "flex items-center justify-between rounded-xl border p-4 transition-all",
-                        isLocked
-                          ? "bg-muted/10 opacity-60 border-border"
-                          : "group hover:border-primary/30 hover:bg-primary/5 cursor-pointer"
-                      )}>
+                      <div
+                        className={cn(
+                          "flex items-center justify-between rounded-xl border p-4 transition-all",
+                          isLocked
+                            ? "bg-muted/10 opacity-60 border-border"
+                            : "group hover:border-primary/30 hover:bg-primary/5 cursor-pointer",
+                        )}
+                      >
                         <div className="flex items-center gap-3">
                           {isLocked ? (
                             <Lock className="h-5 w-5 shrink-0 text-muted-foreground" />
@@ -199,7 +201,9 @@ function CoursePlayerPage() {
                             <PlayCircle className="h-5 w-5 shrink-0 text-primary" />
                           )}
                           <div>
-                            <p className={cn("font-medium", !isLocked && "group-hover:text-primary")}>
+                            <p
+                              className={cn("font-medium", !isLocked && "group-hover:text-primary")}
+                            >
                               {wave.title}
                             </p>
                             <div className="flex items-center gap-3 text-sm text-muted-foreground">

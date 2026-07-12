@@ -15,7 +15,7 @@
 	docker compose logs -f
 
  seed:
-	./scripts/seed.sh
+	./scripts/mock-data-loader.sh
 
  dev:
 	./scripts/dev.sh

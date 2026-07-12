@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BookOpen, Pencil, Plus } from "lucide-react";
+import { ArrowLeft, BookOpen, Loader2, Pencil, Plus, Send } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { COURSE_QUERY, CREATE_LESSON_MUTATION } from "@/graphql/courses";
+import { COURSE_QUERY, CREATE_LESSON_MUTATION, PUBLISH_LESSON_MUTATION } from "@/graphql/courses";
 
 interface Lesson {
   id: string;
@@ -39,6 +39,8 @@ function CourseDetailPage() {
     variables: { id: courseId },
   });
   const [createResult, createLesson] = useMutation(CREATE_LESSON_MUTATION);
+  const [publishLessonResult, publishLesson] = useMutation(PUBLISH_LESSON_MUTATION);
+  const [publishingLessonId, setPublishingLessonId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
   const [sequenceOrder, setSequenceOrder] = useState("1");
@@ -47,6 +49,15 @@ function CourseDetailPage() {
   const course: Course | undefined = data?.course;
 
   const lessons = useMemo(() => course?.lessons ?? [], [course]);
+
+  const handlePublishLesson = async (id: string) => {
+    setPublishingLessonId(id);
+    const result = await publishLesson({ id });
+    setPublishingLessonId(null);
+    if (!result.error) {
+      reexecuteQuery({ requestPolicy: "network-only" });
+    }
+  };
 
   const handleCreateLesson = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -209,21 +220,38 @@ function CourseDetailPage() {
           ) : (
             <div className="space-y-2">
               {lessons.map((lesson) => (
-                <Link
+                <div
                   key={lesson.id}
-                  to="/educator/courses/$courseId/lessons/$lessonId"
-                  params={{ courseId, lessonId: lesson.id }}
+                  className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted"
                 >
-                  <div className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted">
-                    <div>
-                      <p className="font-medium">{lesson.title}</p>
-                      <p className="text-sm text-muted-foreground">Order: {lesson.sequenceOrder}</p>
-                    </div>
+                  <Link
+                    to="/educator/courses/$courseId/lessons/$lessonId"
+                    params={{ courseId, lessonId: lesson.id }}
+                    className="min-w-0 flex-1"
+                  >
+                    <p className="font-medium">{lesson.title}</p>
+                    <p className="text-sm text-muted-foreground">Order: {lesson.sequenceOrder}</p>
+                  </Link>
+                  <div className="flex items-center gap-2 shrink-0 ml-4">
                     <span className={lesson.isPublished ? "text-green-600" : "text-amber-600"}>
                       {lesson.isPublished ? "Published" : "Draft"}
                     </span>
+                    {!lesson.isPublished && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={publishingLessonId === lesson.id || publishLessonResult.fetching}
+                        onClick={() => handlePublishLesson(lesson.id)}
+                      >
+                        {publishingLessonId === lesson.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Send className="h-4 w-4" />
+                        )}
+                      </Button>
+                    )}
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           )}

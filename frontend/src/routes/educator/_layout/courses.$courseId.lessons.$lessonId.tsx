@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Layers, Plus, Zap } from "lucide-react";
+import { ArrowLeft, Layers, Loader2, Plus, Send, Zap } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Select, type SelectOption } from "@/components/ui/Select";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { CREATE_WAVE_MUTATION, LESSON_QUERY } from "@/graphql/courses";
+import { CREATE_WAVE_MUTATION, LESSON_QUERY, PUBLISH_WAVE_MUTATION } from "@/graphql/courses";
 
 interface Wave {
   id: string;
@@ -47,6 +47,8 @@ function LessonDetailPage() {
     variables: { id: lessonId },
   });
   const [createResult, createWave] = useMutation(CREATE_WAVE_MUTATION);
+  const [publishWaveResult, publishWave] = useMutation(PUBLISH_WAVE_MUTATION);
+  const [publishingWaveId, setPublishingWaveId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
 
   const [title, setTitle] = useState("");
@@ -60,6 +62,15 @@ function LessonDetailPage() {
 
   const lesson: Lesson | undefined = data?.lesson;
   const waves = useMemo(() => lesson?.waves ?? [], [lesson]);
+
+  const handlePublishWave = async (id: string) => {
+    setPublishingWaveId(id);
+    const result = await publishWave({ id });
+    setPublishingWaveId(null);
+    if (!result.error) {
+      reexecuteQuery({ requestPolicy: "network-only" });
+    }
+  };
 
   const handleCreateWave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -268,25 +279,41 @@ function LessonDetailPage() {
           ) : (
             <div className="space-y-2">
               {waves.map((wave) => (
-                <Link
+                <div
                   key={wave.id}
-                  to="/educator/courses/$courseId/lessons/$lessonId/waves/$waveId"
-                  params={{ courseId, lessonId, waveId: wave.id }}
-                  className="block"
+                  className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted transition-colors"
                 >
-                  <div className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted transition-colors">
-                    <div>
-                      <p className="font-medium">{wave.title}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Order {wave.sequenceOrder} · {wave.difficulty} ·{" "}
-                        <Zap className="inline h-3 w-3" /> {wave.xpReward} XP
-                      </p>
-                    </div>
+                  <Link
+                    to="/educator/courses/$courseId/lessons/$lessonId/waves/$waveId"
+                    params={{ courseId, lessonId, waveId: wave.id }}
+                    className="min-w-0 flex-1"
+                  >
+                    <p className="font-medium">{wave.title}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Order {wave.sequenceOrder} · {wave.difficulty} ·{" "}
+                      <Zap className="inline h-3 w-3" /> {wave.xpReward} XP
+                    </p>
+                  </Link>
+                  <div className="flex items-center gap-2 shrink-0 ml-4">
                     <span className={wave.isPublished ? "text-green-600" : "text-amber-600"}>
                       {wave.isPublished ? "Published" : "Draft"}
                     </span>
+                    {!wave.isPublished && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={publishingWaveId === wave.id || publishWaveResult.fetching}
+                        onClick={() => handlePublishWave(wave.id)}
+                      >
+                        {publishingWaveId === wave.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Send className="h-4 w-4" />
+                        )}
+                      </Button>
+                    )}
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           )}

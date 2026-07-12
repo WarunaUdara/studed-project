@@ -162,7 +162,8 @@ function WavePlayerPage() {
             <div className="space-y-2">
               <h2 className="text-lg font-bold text-foreground">Wave is Locked</h2>
               <p className="text-sm text-muted-foreground">
-                You must complete the preceding waves in this lesson before you can unlock and play this wave.
+                You must complete the preceding waves in this lesson before you can unlock and play
+                this wave.
               </p>
             </div>
           </div>

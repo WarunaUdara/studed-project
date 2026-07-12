@@ -93,7 +93,8 @@ function AchievementsPage() {
           <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tight">Achievements</h1>
             <p className="text-muted-foreground">
-              Unlock unique badges and climb the tiers by completing waves, earning perfect scores, and gaining experience.
+              Unlock unique badges and climb the tiers by completing waves, earning perfect scores,
+              and gaining experience.
             </p>
           </div>
 
@@ -105,7 +106,9 @@ function AchievementsPage() {
                 <CardTitle className="text-2xl font-bold">Level {level}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xs text-muted-foreground">{totalXp.toLocaleString()} total XP earned</p>
+                <p className="text-xs text-muted-foreground">
+                  {totalXp.toLocaleString()} total XP earned
+                </p>
               </CardContent>
             </Card>
             <Card>
@@ -143,7 +146,9 @@ function AchievementsPage() {
                 <Trophy className="h-5 w-5 text-gold" />
                 Badge Showcase
               </CardTitle>
-              <CardDescription>Click or hover on a badge to view unlock requirements.</CardDescription>
+              <CardDescription>
+                Click or hover on a badge to view unlock requirements.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {fetching ? (
