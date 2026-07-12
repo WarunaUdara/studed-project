@@ -375,9 +375,19 @@ func (r *queryResolver) MyEnrollments(ctx context.Context) ([]*model.Course, err
 	for _, course := range courses {
 		progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, course.ID)
 		course.MyProgress = progress
+		r.populateWavesProgress(ctx, userCtx.UserID, course)
 	}
 
 	return courses, nil
+}
+
+func (r *queryResolver) populateWavesProgress(ctx context.Context, userID string, course *model.Course) {
+	for _, lesson := range course.Lessons {
+		for _, wave := range lesson.Waves {
+			progress, _ := r.ProgressClient.GetWaveProgress(ctx, userID, wave.ID)
+			wave.MyProgress = progress
+		}
+	}
 }
 
 // Course is the resolver for the course field.
@@ -428,6 +438,7 @@ func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, e
 			}
 		}
 		course.Lessons = publishedLessons
+		r.populateWavesProgress(ctx, userCtx.UserID, course)
 	}
 
 	progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, id)

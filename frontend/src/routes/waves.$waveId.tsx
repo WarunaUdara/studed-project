@@ -336,7 +336,12 @@ function WavePlayerPage() {
                     {submitError && <p className="text-sm text-destructive">{submitError}</p>}
                     <Button
                       onClick={handleSubmit}
-                      disabled={submitResult.fetching || evaluateBlocks.length === 0 || result?.passed || result?.remainingAttempts === 0}
+                      disabled={
+                        submitResult.fetching ||
+                        evaluateBlocks.length === 0 ||
+                        isCompleted ||
+                        (maxAttempts !== null && attemptsCount >= maxAttempts)
+                      }
                       className="w-full"
                       size="lg"
                     >
