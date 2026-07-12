@@ -26,9 +26,10 @@ test.describe("Student Course Journey Flow", () => {
     await courseCard.getByRole("link", { name: "View" }).click();
     await expect(page).toHaveURL(/\/courses\/[a-f0-9-]+/);
 
-    // Verify course syllabus details are visible
-    await expect(page.getByRole("heading", { name: "Lessons" })).not.toBeVisible(); // Just lessons list card header
-    await expect(page.locator("text=complete")).toBeVisible();
+    // Verify course syllabus details are visible (wait for page transition to finish)
+    await expect(page.getByRole("button", { name: "Back to Courses" })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole("heading", { name: "Lessons" })).toBeVisible();
+    await expect(page.getByText("complete")).toBeVisible();
 
     // 3. Find first unlocked wave and start it
     const startButton = page.getByRole("button", { name: "Start" }).first();
