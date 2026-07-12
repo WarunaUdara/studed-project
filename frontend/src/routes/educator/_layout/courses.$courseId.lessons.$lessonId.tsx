@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Select, type SelectOption } from "@/components/ui/Select";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useToast } from "@/components/ui/Toast";
 import { CREATE_WAVE_MUTATION, LESSON_QUERY, PUBLISH_WAVE_MUTATION } from "@/graphql/courses";
+import { sanitizeGraphQLError } from "@/lib/errors";
 
 interface Wave {
   id: string;
@@ -42,6 +44,7 @@ export const Route = createFileRoute("/educator/_layout/courses/$courseId/lesson
 
 function LessonDetailPage() {
   const { courseId, lessonId } = Route.useParams();
+  const { toast } = useToast();
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: LESSON_QUERY,
     variables: { id: lessonId },
@@ -67,7 +70,11 @@ function LessonDetailPage() {
     setPublishingWaveId(id);
     const result = await publishWave({ id });
     setPublishingWaveId(null);
-    if (!result.error) {
+    if (result.error) {
+      const e = sanitizeGraphQLError(result.error);
+      toast({ type: "error", title: e.title, message: e.message });
+    } else {
+      toast({ type: "success", title: "Published", message: "Wave is now visible to students." });
       reexecuteQuery({ requestPolicy: "network-only" });
     }
   };
