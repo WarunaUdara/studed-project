@@ -131,13 +131,34 @@ test_course_lifecycle() {
     fail "unauthorized course fetch by educator was not blocked: $(echo "${response_other}" | jq -c '.errors')"
   fi
 
+  # 2.5 Check that grade mismatch enrollment is blocked
+  local cookie_jar_mismatch="${REPO_ROOT}/.integration-test-cookies-mismatch"
+  local email_mismatch="test-student-mismatch-${random_suffix}@studed.lk"
+  local response_mismatch
+  response_mismatch=$(curl -s -c "${cookie_jar_mismatch}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"mutation Register(\$input: RegisterInput!) { register(input: \$input) { user { id } } }\",\"variables\":{\"input\":{\"email\":\"${email_mismatch}\",\"password\":\"password123\",\"fullName\":\"Mismatch Student\",\"role\":\"STUDENT\",\"preferredLanguage\":\"en\",\"grade\":\"G11\"}}}" \
+    "${GATEWAY}/graphql")
+
+  response_mismatch=$(curl -s -b "${cookie_jar_mismatch}" \
+    -H "Content-Type: application/json" \
+    -d "{\"query\":\"mutation EnrollInCourse(\$courseId: ID!) { enrollInCourse(courseId: \$courseId) { id } }\",\"variables\":{\"courseId\":\"${course_id}\"}}" \
+    "${GATEWAY}/graphql")
+  rm -f "${cookie_jar_mismatch}"
+
+  if echo "${response_mismatch}" | grep -q "grade mismatch"; then
+    pass "grade mismatch enrollment is blocked by API"
+  else
+    fail "grade mismatch enrollment was not blocked: $(echo "${response_mismatch}" | jq -c '.errors')"
+  fi
+
   # 3. Check that a student cannot fetch the course without enrollment
   local cookie_jar_student="${REPO_ROOT}/.integration-test-cookies-student"
   local email_student="test-student-${random_suffix}@studed.lk"
   local response_student
   response_student=$(curl -s -c "${cookie_jar_student}" \
     -H "Content-Type: application/json" \
-    -d "{\"query\":\"mutation Register(\$input: RegisterInput!) { register(input: \$input) { user { id } } }\",\"variables\":{\"input\":{\"email\":\"${email_student}\",\"password\":\"password123\",\"fullName\":\"Test Student\",\"role\":\"STUDENT\",\"preferredLanguage\":\"en\"}}}" \
+    -d "{\"query\":\"mutation Register(\$input: RegisterInput!) { register(input: \$input) { user { id } } }\",\"variables\":{\"input\":{\"email\":\"${email_student}\",\"password\":\"password123\",\"fullName\":\"Test Student\",\"role\":\"STUDENT\",\"preferredLanguage\":\"en\",\"grade\":\"G10\"}}}" \
     "${GATEWAY}/graphql")
 
   response_student=$(curl -s -b "${cookie_jar_student}" \
