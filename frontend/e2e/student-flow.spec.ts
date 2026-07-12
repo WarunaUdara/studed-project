@@ -38,7 +38,7 @@ test.describe("Student Course Journey Flow", () => {
 
     // Verify course syllabus details are visible (wait for page transition to finish)
     await expect(page.getByRole("button", { name: "Back to Courses" })).toBeVisible({ timeout: 15000 });
-    await expect(page.getByText("complete")).toBeVisible();
+    await expect(page.getByText("complete", { exact: true })).toBeVisible();
 
     // 3. Find first unlocked wave and start it
     const startButton = page.getByRole("button", { name: "Start" }).first();
