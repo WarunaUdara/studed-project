@@ -20,7 +20,7 @@
     },
     "types": ["node"]
   },
-  "include": ["src", "playwright.config.ts", "e2e"],
+  "include": ["src", "e2e"],
   "references": [
     {
       "path": "./tsconfig.node.json"
