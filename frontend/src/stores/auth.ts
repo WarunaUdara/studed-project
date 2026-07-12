@@ -40,19 +40,25 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isLoading: true,
   isAuthenticated: false,
-  setUser: (user) =>
+  setUser: (user) => {
+    if (user !== null) {
+      localStorage.setItem("studed_has_session", "true");
+    }
     set({
       user,
       isAuthenticated: user !== null,
       isLoading: false,
-    }),
+    });
+  },
   setLoading: (isLoading) => set({ isLoading }),
   updateTotalXp: (totalXp) =>
     set((state) => (state.user ? { user: { ...state.user, totalXp } } : {})),
-  logout: () =>
+  logout: () => {
+    localStorage.removeItem("studed_has_session");
     set({
       user: null,
       isAuthenticated: false,
       isLoading: false,
-    }),
+    });
+  },
 }));
