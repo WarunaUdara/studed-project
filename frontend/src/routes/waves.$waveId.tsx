@@ -273,17 +273,30 @@ function WavePlayerPage() {
                 ))}
 
                 {result && (
-                  <ResultCard
-                    passed={result.passed}
-                    score={result.score}
-                    xpEarned={result.xpEarned}
-                    totalXp={result.totalXp}
-                    passingThreshold={wave.passingThreshold}
-                    remainingAttempts={result.remainingAttempts}
-                    justEarnedXp={!!justEarnedXp}
-                    canReattempt={canReattempt}
-                    onTryAgain={handleTryAgain}
-                  />
+                  <div className="space-y-4">
+                    <ResultCard
+                      passed={result.passed}
+                      score={result.score}
+                      xpEarned={result.xpEarned}
+                      totalXp={result.totalXp}
+                      passingThreshold={wave.passingThreshold}
+                      remainingAttempts={result.remainingAttempts}
+                      justEarnedXp={!!justEarnedXp}
+                      canReattempt={canReattempt}
+                      onTryAgain={handleTryAgain}
+                    />
+                    {result.passed && (
+                      <Link
+                        to="/courses/$courseId"
+                        params={{ courseId: wave.lesson?.course?.id ?? "" }}
+                        className="block w-full"
+                      >
+                        <Button className="w-full" size="lg">
+                          Back to Course
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
                 )}
 
                 {!result && (
