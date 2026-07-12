@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/Toast";
 import { COURSES_QUERY } from "@/graphql/courses";
 import { ENROLL_IN_COURSE_MUTATION } from "@/graphql/student";
 import { sanitizeGraphQLError } from "@/lib/errors";
+import { StudentShell } from "@/components/layout/StudentShell";
 import { useAuthStore } from "@/stores/auth";
 
 interface Course {
@@ -56,7 +57,8 @@ function CoursesCatalogPage() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl p-4 pt-6 sm:p-6 sm:pt-8">
+    <StudentShell>
+      <div className="space-y-6">
       <div className="mb-8 space-y-2">
         <h1 className="bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
           Course Catalog
@@ -181,6 +183,7 @@ function CoursesCatalogPage() {
           );
         })}
       </div>
-    </div>
+      </div>
+    </StudentShell>
   );
 }
