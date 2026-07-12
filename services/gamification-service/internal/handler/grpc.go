@@ -55,3 +55,11 @@ func (h *GamificationGRPCHandler) UpdateLeaderboard(ctx context.Context, req *ga
 	}
 	return resp, nil
 }
+
+func (h *GamificationGRPCHandler) GetRank(ctx context.Context, req *gampb.GetRankRequest) (*gampb.GetRankResponse, error) {
+	resp, err := h.svc.GetRank(ctx, req.UserId, req.Scope, req.CourseId, int32(req.Grade))
+	if err != nil {
+		return &gampb.GetRankResponse{Error: err.Error()}, nil
+	}
+	return resp, nil
+}

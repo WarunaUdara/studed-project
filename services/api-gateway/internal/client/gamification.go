@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/studed/api-gateway/graph/model"
 	gampb "github.com/studed/shared/proto/gen/go/gamification"
@@ -97,9 +98,9 @@ func (c *GamificationClient) UpdateLeaderboard(ctx context.Context, userID, full
 }
 
 func (c *GamificationClient) GetMyRank(ctx context.Context, userID string, scope model.LeaderboardScope, courseID *string, grade *model.Grade) (int, error) {
-	req := &gampb.GetLeaderboardRequest{
-		Scope: string(scope),
-		Limit: 10000,
+	req := &gampb.GetRankRequest{
+		UserId: userID,
+		Scope:  string(scope),
 	}
 	if courseID != nil {
 		req.CourseId = *courseID
@@ -108,19 +109,16 @@ func (c *GamificationClient) GetMyRank(ctx context.Context, userID string, scope
 		req.Grade = modelGradeToProto(*grade)
 	}
 
-	resp, err := c.client.GetLeaderboard(ctx, req)
+	resp, err := c.client.GetRank(ctx, req)
 	if err != nil {
 		return 0, fmt.Errorf("get my rank failed: %w", err)
 	}
 	if resp.Error != "" {
+		if strings.Contains(resp.Error, "not found") {
+			return 0, nil
+		}
 		return 0, fmt.Errorf("get my rank failed: %s", resp.Error)
 	}
 
-	for _, e := range resp.Entries {
-		if e.UserId == userID {
-			return int(e.Rank), nil
-		}
-	}
-
-	return 0, nil
+	return int(resp.Rank), nil
 }

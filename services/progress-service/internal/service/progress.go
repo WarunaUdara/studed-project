@@ -317,6 +317,13 @@ func (s *progressService) GetCourseProgress(ctx context.Context, userID, courseI
 
 	var totalWaves int32
 	var completedWaves int32
+
+	completedWavesVal, err := s.repo.CountPassedWavesInCourse(ctx, userID, courseID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to count passed waves in course: %w", err)
+	}
+	completedWaves = int32(completedWavesVal)
+
 	lessonProgressList := make([]*progresspb.LessonProgress, 0, len(lessonsResp.Lessons))
 
 	for _, lesson := range lessonsResp.Lessons {
@@ -326,22 +333,13 @@ func (s *progressService) GetCourseProgress(ctx context.Context, userID, courseI
 		}
 
 		lessonTotal := int32(len(wavesResp.Waves))
-		lessonCompleted := int32(0)
+		totalWaves += lessonTotal
 
-		for _, wave := range wavesResp.Waves {
-			totalWaves++
-			attempts, err := s.repo.GetAttemptsByWave(ctx, userID, wave.Id)
-			if err != nil {
-				return nil, fmt.Errorf("failed to fetch attempts: %w", err)
-			}
-			for _, a := range attempts {
-				if a.Passed {
-					lessonCompleted++
-					completedWaves++
-					break
-				}
-			}
+		lessonCompletedVal, err := s.repo.CountPassedWavesInLesson(ctx, userID, lesson.Id)
+		if err != nil {
+			return nil, fmt.Errorf("failed to count passed waves in lesson: %w", err)
 		}
+		lessonCompleted := int32(lessonCompletedVal)
 
 		lessonProgressList = append(lessonProgressList, &progresspb.LessonProgress{
 			LessonId:       lesson.Id,
