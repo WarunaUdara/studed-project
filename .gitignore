@@ -32,6 +32,9 @@ logs/
 .seed-cookies
 .integration-test-cookies
 
+# Test artifacts
+frontend/test-results/
+
 # Test coverage
 coverage/
 *.out

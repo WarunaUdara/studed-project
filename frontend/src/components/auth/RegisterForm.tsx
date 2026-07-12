@@ -60,7 +60,7 @@ export function RegisterForm() {
       const user = result.data.register.user;
       setUser(user);
       if (user.role === "EDUCATOR" || user.role === "HEAD_EDUCATOR" || user.role === "ADMIN") {
-        navigate({ to: "/educator" });
+        navigate({ to: "/educator/courses" });
       } else {
         navigate({ to: "/dashboard" });
       }
