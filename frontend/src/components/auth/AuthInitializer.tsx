@@ -13,7 +13,7 @@ const REFRESH_TOKEN_MUTATION = `
 
 export function AuthInitializer({ children }: { children: React.ReactNode }) {
   const { isLoading, setUser } = useAuthStore();
-  const [{ data, fetching, error }, reexecuteQuery] = useQuery({
+  const [{ data, fetching }, reexecuteQuery] = useQuery({
     query: ME_QUERY,
     requestPolicy: "network-only",
   });
@@ -28,7 +28,6 @@ export function AuthInitializer({ children }: { children: React.ReactNode }) {
     const hasSession = localStorage.getItem("studed_has_session") === "true";
 
     if (!me && hasSession) {
-      // Try to refresh token using the HttpOnly cookie fallback on the server
       setRefreshing(true);
       refreshToken({ refreshToken: "" })
         .then((res) => {
@@ -47,7 +46,7 @@ export function AuthInitializer({ children }: { children: React.ReactNode }) {
     } else {
       setUser(me);
     }
-  }, [data, fetching, error, isLoading, setUser, refreshToken, reexecuteQuery, refreshing]);
+  }, [data, fetching, isLoading, setUser, refreshToken, reexecuteQuery, refreshing]);
 
   if (isLoading || refreshing) {
     return (
