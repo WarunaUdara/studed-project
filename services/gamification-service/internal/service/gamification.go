@@ -14,6 +14,7 @@ type GamificationService interface {
 	GetUserXp(ctx context.Context, userID string) (*gampb.GetUserXpResponse, error)
 	GetLeaderboard(ctx context.Context, scope, courseID string, grade int32, limit int32) (*gampb.GetLeaderboardResponse, error)
 	UpdateLeaderboard(ctx context.Context, userID, fullName string, totalXp int32, scope, courseID string, grade int32) (*gampb.UpdateLeaderboardResponse, error)
+	GetRank(ctx context.Context, userID string, scope, courseID string, grade int32) (*gampb.GetRankResponse, error)
 }
 
 type gamificationService struct {
@@ -115,4 +116,14 @@ func (s *gamificationService) UpdateLeaderboard(ctx context.Context, userID, ful
 		return nil, fmt.Errorf("failed to update leaderboard: %w", err)
 	}
 	return &gampb.UpdateLeaderboardResponse{}, nil
+}
+
+func (s *gamificationService) GetRank(ctx context.Context, userID string, scope, courseID string, grade int32) (*gampb.GetRankResponse, error) {
+	rank, err := s.leaderboardRepo.GetRank(ctx, userID, scope, courseID, grade)
+	if err != nil {
+		return nil, err
+	}
+	return &gampb.GetRankResponse{
+		Rank: int32(rank),
+	}, nil
 }
