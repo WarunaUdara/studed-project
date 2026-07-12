@@ -37,10 +37,24 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*
 
 // RefreshToken is the resolver for the refreshToken field.
 func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken string) (*model.AuthPayload, error) {
+	if refreshToken == "" {
+		req, ok := middleware.RequestFromContext(ctx)
+		if ok {
+			if cookie, err := req.Cookie("refresh_token"); err == nil {
+				refreshToken = cookie.Value
+			}
+		}
+	}
+
+	if refreshToken == "" {
+		return nil, errors.New("refresh token is required")
+	}
+
 	payload, err := r.AuthClient.RefreshToken(ctx, refreshToken)
 	if err != nil {
 		return nil, err
 	}
+
 	setAuthCookies(ctx, payload.AccessToken, payload.RefreshToken)
 	return payload, nil
 }
