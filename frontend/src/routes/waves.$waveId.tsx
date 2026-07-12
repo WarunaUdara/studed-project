@@ -67,6 +67,7 @@ function WavePlayerPage() {
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<WaveResult | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"learn" | "evaluate">("learn");
   const [learnViewed, setLearnViewed] = useState(false);
   const [showXpToast, setShowXpToast] = useState(false);
@@ -89,12 +90,18 @@ function WavePlayerPage() {
   };
 
   const handleSubmit = async () => {
+    setSubmitError(null);
     const answersInput = evaluateBlocks.map((block) => ({
       evaluateBlockId: block.id,
       answer: answers[block.id] ?? "",
     }));
 
     const res = await submitAnswers({ waveId, answers: answersInput });
+    if (res.error) {
+      setSubmitError(res.error.message);
+      return;
+    }
+    
     if (res.data?.submitWaveAnswers) {
       const r = res.data.submitWaveAnswers as WaveResult;
       setResult(r);
@@ -325,14 +332,17 @@ function WavePlayerPage() {
                 )}
 
                 {!result && (
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={submitResult.fetching || evaluateBlocks.length === 0}
-                    className="w-full"
-                    size="lg"
-                  >
-                    {submitResult.fetching ? "Submitting..." : "Submit Answers"}
-                  </Button>
+                  <>
+                    {submitError && <p className="text-sm text-destructive">{submitError}</p>}
+                    <Button
+                      onClick={handleSubmit}
+                      disabled={submitResult.fetching || evaluateBlocks.length === 0 || result?.passed || result?.remainingAttempts === 0}
+                      className="w-full"
+                      size="lg"
+                    >
+                      {submitResult.fetching ? "Submitting..." : "Submit Answers"}
+                    </Button>
+                  </>
                 )}
               </>
             )}
