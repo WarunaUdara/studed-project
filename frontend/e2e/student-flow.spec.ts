@@ -11,11 +11,13 @@ test.describe("Student Course Journey Flow", () => {
     await expect(page).toHaveURL(/\/dashboard/);
   });
 
-  test("should browse courses catalog, view a course, and complete a wave evaluation", async ({ page }) => {
+  test("should browse courses catalog, view a course, and complete a wave evaluation", async ({
+    page,
+  }) => {
     // 1. Navigate to Course Catalog
-    await page.getByRole("link", { name: "Courses" }).click();
+    await page.getByRole("link", { name: "Courses", exact: true }).click();
     await expect(page).toHaveURL(/\/courses/);
-    
+
     // Verify course cards are visible
     const courseCard = page.locator(".grid >> div").first();
     await expect(courseCard).toBeVisible();
