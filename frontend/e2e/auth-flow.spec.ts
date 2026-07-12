@@ -22,7 +22,7 @@ test.describe("Authentication and Authorization Flow", () => {
     await expect(page.getByRole("heading", { name: "Continue Learning" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Level Progress" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Leaderboard" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Log out" })).toBeVisible();
+    await expect(page.getByRole("banner").getByRole("button", { name: "Log out" })).toBeVisible();
   });
 
   test("should authenticate as educator and redirect to educator courses", async ({ page }) => {
