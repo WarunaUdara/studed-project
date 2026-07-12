@@ -14,42 +14,60 @@ export default async function globalSetup() {
   try {
     // 1. Warm up public routes
     for (const route of ["/login", "/register"]) {
-      await page.goto(`${BASE_URL}${route}`, { waitUntil: "domcontentloaded", timeout: 15000 }).catch(() => {});
+      await page
+        .goto(`${BASE_URL}${route}`, { waitUntil: "domcontentloaded", timeout: 15000 })
+        .catch(() => {});
     }
 
     // 2. Log in as educator and warm up educator routes
     await page.goto(`${BASE_URL}/login`, { waitUntil: "domcontentloaded" }).catch(() => {});
-    await page.locator("#email").fill("demo.educator@studed.lk").catch(() => {});
-    await page.locator("#password").fill("password123").catch(() => {});
-    await page.getByRole("button", { name: "Sign in" }).click().catch(() => {});
-    
+    await page
+      .locator("#email")
+      .fill("demo.educator@studed.lk")
+      .catch(() => {});
+    await page
+      .locator("#password")
+      .fill("password123")
+      .catch(() => {});
+    await page
+      .getByRole("button", { name: "Sign in" })
+      .click()
+      .catch(() => {});
+
     // Wait for the main educator page to load
     await page.waitForURL(/\/educator\/courses/, { timeout: 15000 }).catch(() => {});
 
     // Now visit all educator routes so Vite compiles them
-    const educatorRoutes = [
-      "/educator/courses",
-      "/educator/courses/new",
-    ];
+    const educatorRoutes = ["/educator/courses", "/educator/courses/new"];
     for (const route of educatorRoutes) {
-      await page.goto(`${BASE_URL}${route}`, { waitUntil: "domcontentloaded", timeout: 15000 }).catch(() => {});
+      await page
+        .goto(`${BASE_URL}${route}`, { waitUntil: "domcontentloaded", timeout: 15000 })
+        .catch(() => {});
     }
 
     // 3. Clear cookies, log in as student, and warm up student routes
     await context.clearCookies();
     await page.goto(`${BASE_URL}/login`, { waitUntil: "domcontentloaded" }).catch(() => {});
-    await page.locator("#email").fill("demo.student@studed.lk").catch(() => {});
-    await page.locator("#password").fill("password123").catch(() => {});
-    await page.getByRole("button", { name: "Sign in" }).click().catch(() => {});
-    
+    await page
+      .locator("#email")
+      .fill("demo.student@studed.lk")
+      .catch(() => {});
+    await page
+      .locator("#password")
+      .fill("password123")
+      .catch(() => {});
+    await page
+      .getByRole("button", { name: "Sign in" })
+      .click()
+      .catch(() => {});
+
     await page.waitForURL(/\/dashboard/, { timeout: 15000 }).catch(() => {});
 
-    const studentRoutes = [
-      "/dashboard",
-      "/courses",
-    ];
+    const studentRoutes = ["/dashboard", "/courses"];
     for (const route of studentRoutes) {
-      await page.goto(`${BASE_URL}${route}`, { waitUntil: "domcontentloaded", timeout: 15000 }).catch(() => {});
+      await page
+        .goto(`${BASE_URL}${route}`, { waitUntil: "domcontentloaded", timeout: 15000 })
+        .catch(() => {});
     }
   } catch (err) {
     console.warn("Global warmup warning:", err);

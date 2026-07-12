@@ -33,7 +33,7 @@ test.describe("Educator Portal Course Lifecycle Flow", () => {
     await page.waitForURL(/\/educator\/courses$/, { timeout: 15000 });
 
     // Verify the new draft course is listed
-    const courseCard = page.locator("div.grid").filter({ hasText: courseTitle });
+    const courseCard = page.getByTestId("course-card").filter({ hasText: courseTitle });
     await expect(courseCard).toBeVisible({ timeout: 10000 });
     await expect(courseCard.getByText("Draft")).toBeVisible();
 
