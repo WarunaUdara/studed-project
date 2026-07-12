@@ -15,6 +15,7 @@ import { PointsBadge } from "@/components/ui/points-badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { SUBMIT_WAVE_ANSWERS_MUTATION, WAVE_PLAYER_QUERY } from "@/graphql/student";
+import { sanitizeGraphQLError } from "@/lib/errors";
 import { computeProficiency } from "@/lib/gamification";
 import { playErrorSound, playSuccessSound } from "@/lib/sounds";
 import { cn } from "@/lib/utils";
@@ -128,14 +129,21 @@ function WavePlayerPage() {
   }
 
   if (error || !wave) {
+    const err = error
+      ? sanitizeGraphQLError(error)
+      : {
+          title: "Wave Not Found",
+          message: "This wave could not be found or you do not have permission to view it.",
+        };
     return (
       <ProtectedRoute>
-        <main className="mx-auto max-w-4xl p-6">
-          <p className="text-destructive">Failed to load wave.</p>
+        <main className="mx-auto max-w-xl p-6 pt-16 text-center space-y-6">
+          <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-8 space-y-2">
+            <h2 className="text-lg font-semibold text-destructive">{err.title}</h2>
+            <p className="text-sm text-muted-foreground">{err.message}</p>
+          </div>
           <Link to="/dashboard">
-            <Button variant="outline" className="mt-4">
-              Back to dashboard
-            </Button>
+            <Button variant="outline">Back to dashboard</Button>
           </Link>
         </main>
       </ProtectedRoute>
