@@ -113,6 +113,24 @@ publish_course() {
     "{\"id\":\"${course_id}\"}" >/dev/null
 }
 
+publish_lesson() {
+  local jar="$1"
+  local lesson_id="$2"
+
+  graphql "${jar}" \
+    'mutation PublishLesson($id: ID!) { publishLesson(id: $id) { id isPublished } }' \
+    "{\"id\":\"${lesson_id}\"}" >/dev/null
+}
+
+publish_wave() {
+  local jar="$1"
+  local wave_id="$2"
+
+  graphql "${jar}" \
+    'mutation PublishWave($id: ID!) { publishWave(id: $id) { id isPublished } }' \
+    "{\"id\":\"${wave_id}\"}" >/dev/null
+}
+
 create_lesson() {
   local jar="$1"
   local course_id="$2"
@@ -142,6 +160,11 @@ create_wave() {
   local correct="$6"
 
   local response
+  response=$(graphql "${jar}" \
+    'mutation CreateWave($lessonId: ID!, $input: CreateWaveInput!) { createWave(lessonId: $lessonId, input: $input) { id title sequenceOrder learnBlocks { id type content } evaluateBlocks { id type question options correctAnswer } } }' \
+    "{\"jsonId\":\"${lesson_id}\",\"input\":{\"title\":\"${title}\",\"sequenceOrder\":${sequence},\"xpReward\":100,\"maxReattempts\":3,\"passingThreshold\":50,\"estimatedDuration\":10,\"difficulty\":\"MEDIUM\",\"learnBlocks\":[{\"id\":\"lb1\",\"type\":\"text\",\"content\":\"This is a mock learn block for ${title}.\"}],\"evaluateBlocks\":[{\"id\":\"eb1\",\"type\":\"multiple_choice\",\"question\":\"${question}\",\"options\":[\"${correct}\",\"Wrong A\",\"Wrong B\"],\"correctAnswer\":\"${correct}\",\"explanation\":\"Correct!\"}]}}")
+
+  # Note: The field name in the input schema for createWave is lessonId
   response=$(graphql "${jar}" \
     'mutation CreateWave($lessonId: ID!, $input: CreateWaveInput!) { createWave(lessonId: $lessonId, input: $input) { id title sequenceOrder learnBlocks { id type content } evaluateBlocks { id type question options correctAnswer } } }' \
     "{\"lessonId\":\"${lesson_id}\",\"input\":{\"title\":\"${title}\",\"sequenceOrder\":${sequence},\"xpReward\":100,\"maxReattempts\":3,\"passingThreshold\":50,\"estimatedDuration\":10,\"difficulty\":\"MEDIUM\",\"learnBlocks\":[{\"id\":\"lb1\",\"type\":\"text\",\"content\":\"This is a mock learn block for ${title}.\"}],\"evaluateBlocks\":[{\"id\":\"eb1\",\"type\":\"multiple_choice\",\"question\":\"${question}\",\"options\":[\"${correct}\",\"Wrong A\",\"Wrong B\"],\"correctAnswer\":\"${correct}\",\"explanation\":\"Correct!\"}]}}")
@@ -193,26 +216,34 @@ main() {
   course_id=$(create_course "${EDUCATOR_JAR}" "Grade 10 Science" "g10-science" "G10")
   science_id="${course_id}"
   lesson_id=$(create_lesson "${EDUCATOR_JAR}" "${course_id}" "Introduction to Biology" 1)
+  publish_lesson "${EDUCATOR_JAR}" "${lesson_id}"
   wave_id=$(create_wave "${EDUCATOR_JAR}" "${lesson_id}" "Cell Structure" 1 "What is the powerhouse of the cell?" "Mitochondria")
+  publish_wave "${EDUCATOR_JAR}" "${wave_id}"
   publish_course "${EDUCATOR_JAR}" "${course_id}"
   echo "[mock] published G10 Science"
 
   course_id=$(create_course "${EDUCATOR_JAR}" "Grade 10 Mathematics" "g10-mathematics" "G10")
   math_id="${course_id}"
   lesson_id=$(create_lesson "${EDUCATOR_JAR}" "${course_id}" "Algebra Basics" 1)
+  publish_lesson "${EDUCATOR_JAR}" "${lesson_id}"
   wave_id=$(create_wave "${EDUCATOR_JAR}" "${lesson_id}" "Linear Equations" 1 "What is the value of x in 2x = 4?" "2")
+  publish_wave "${EDUCATOR_JAR}" "${wave_id}"
   publish_course "${EDUCATOR_JAR}" "${course_id}"
   echo "[mock] published G10 Mathematics"
 
   course_id=$(create_course "${EDUCATOR_JAR}" "O/L English" "ol-english" "OL")
   lesson_id=$(create_lesson "${EDUCATOR_JAR}" "${course_id}" "Grammar Fundamentals" 1)
+  publish_lesson "${EDUCATOR_JAR}" "${lesson_id}"
   wave_id=$(create_wave "${EDUCATOR_JAR}" "${lesson_id}" "Tenses" 1 "Which tense describes an action happening now?" "Present continuous")
+  publish_wave "${EDUCATOR_JAR}" "${wave_id}"
   publish_course "${EDUCATOR_JAR}" "${course_id}"
   echo "[mock] published O/L English"
 
   course_id=$(create_course "${EDUCATOR_JAR}" "A/L Physics" "al-physics" "AL")
   lesson_id=$(create_lesson "${EDUCATOR_JAR}" "${course_id}" "Mechanics" 1)
+  publish_lesson "${EDUCATOR_JAR}" "${lesson_id}"
   wave_id=$(create_wave "${EDUCATOR_JAR}" "${lesson_id}" "Newton's Laws" 1 "What is Newton's first law also known as?" "Law of inertia")
+  publish_wave "${EDUCATOR_JAR}" "${wave_id}"
   publish_course "${EDUCATOR_JAR}" "${course_id}"
   echo "[mock] published A/L Physics"
 
