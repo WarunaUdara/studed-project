@@ -19,10 +19,10 @@ test.describe("Student Course Journey Flow", () => {
     await expect(page).toHaveURL(/\/courses/);
 
     // Verify course cards are visible
-    const courseCard = page.locator(".grid >> div").first();
+    const courseCard = page.locator("div.group").filter({ hasText: "Grade 10 Mathematics" }).first();
     await expect(courseCard).toBeVisible();
 
-    // 2. Click "View" on the first course card
+    // 2. Click "View" on the course card
     await courseCard.getByRole("link", { name: "View" }).click();
     await expect(page).toHaveURL(/\/courses\/[a-f0-9-]+/);
 
