@@ -170,7 +170,7 @@ function AchievementsPage() {
                           trigger: "metric",
                           achievedAt: b.earned ? new Date().toISOString() : null,
                         }}
-                        badgeSize="md"
+                        badgeSize="default"
                       />
                       <h3 className="mt-2 text-sm font-semibold">{b.label}</h3>
                       <p className="mt-0.5 text-[11px] text-muted-foreground leading-tight">
