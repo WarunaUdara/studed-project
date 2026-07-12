@@ -22,6 +22,13 @@ test.describe("Student Course Journey Flow", () => {
     const courseCard = page.locator("div.group").filter({ hasText: "Grade 10 Mathematics" }).first();
     await expect(courseCard).toBeVisible();
 
+    // Click Enroll if the button is visible (not enrolled yet)
+    const enrollButton = courseCard.getByRole("button", { name: "Enroll" });
+    if (await enrollButton.isVisible()) {
+      await enrollButton.click();
+      await expect(page.getByText("Enrolled!")).toBeVisible({ timeout: 10000 });
+    }
+
     // 2. Click "View" on the course card
     await courseCard.getByRole("link", { name: "View" }).click();
     await expect(page).toHaveURL(/\/courses\/[a-f0-9-]+/);
