@@ -97,6 +97,9 @@ export const WAVE_QUERY = `
       estimatedDuration
       difficulty
       isPublished
+      lesson {
+        title
+      }
       learnBlocks {
         id
         type

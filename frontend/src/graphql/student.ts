@@ -42,6 +42,10 @@ export const COURSE_PLAYER_QUERY = `
       price
       isPublished
       createdAt
+      myProgress {
+        completedWaves
+        totalWaves
+      }
       lessons {
         id
         title

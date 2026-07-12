@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { BookOpen, Sparkles, Trophy as TrophyIcon, Zap } from "lucide-react";
 import { useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { StudentShell } from "@/components/layout/StudentShell";
 import { XPBar } from "@/components/gamification/XPBar";
 import { AchievementBadge, type UserAchievement } from "@/components/ui/achievement-badge";
 import { Button } from "@/components/ui/button";
@@ -206,7 +207,8 @@ function DashboardPage() {
 
   return (
     <ProtectedRoute allowedRoles={["STUDENT"]}>
-      <div className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6">
+      <StudentShell>
+        <div className="space-y-6">
         {/* Hero header */}
         <div className="flex flex-col gap-4 rounded-2xl border bg-gradient-to-br from-primary/10 via-card to-card p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
@@ -458,7 +460,8 @@ function DashboardPage() {
             </Card>
           </div>
         </div>
-      </div>
+        </div>
+      </StudentShell>
     </ProtectedRoute>
   );
 }
