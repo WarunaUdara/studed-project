@@ -150,6 +150,30 @@ function WavePlayerPage() {
     );
   }
 
+  const isLocked = wave.myProgress?.status === "LOCKED";
+  if (isLocked) {
+    return (
+      <ProtectedRoute>
+        <main className="mx-auto max-w-xl p-6 pt-16 text-center space-y-6">
+          <div className="rounded-2xl border border-muted bg-muted/5 p-8 flex flex-col items-center justify-center space-y-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+              <Lock className="h-6 w-6" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-lg font-bold text-foreground">Wave is Locked</h2>
+              <p className="text-sm text-muted-foreground">
+                You must complete the preceding waves in this lesson before you can unlock and play this wave.
+              </p>
+            </div>
+          </div>
+          <Link to="/courses/$courseId" params={{ courseId: wave.lesson?.course?.id ?? "" }}>
+            <Button variant="outline">Back to course</Button>
+          </Link>
+        </main>
+      </ProtectedRoute>
+    );
+  }
+
   const isCompleted = wave.myProgress?.status === "COMPLETED";
   const attemptsCount = wave.myProgress?.attemptsCount ?? 0;
   const maxAttempts = wave.maxReattempts > 0 ? wave.maxReattempts : null;
