@@ -25,11 +25,18 @@ export function Navbar() {
           </Link>
 
           {isAuthenticated && user?.role === "STUDENT" && (
-            <Link to="/dashboard">
-              <Button variant="ghost" size="sm">
-                Dashboard
-              </Button>
-            </Link>
+            <>
+              <Link to="/dashboard">
+                <Button variant="ghost" size="sm">
+                  Dashboard
+                </Button>
+              </Link>
+              <Link to="/leaderboard">
+                <Button variant="ghost" size="sm">
+                  Leaderboard
+                </Button>
+              </Link>
+            </>
           )}
 
           {isAuthenticated &&
