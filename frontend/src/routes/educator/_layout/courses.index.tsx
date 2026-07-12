@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Skeleton } from "@/components/ui/Skeleton";
 import { COURSES_QUERY, PUBLISH_COURSE_MUTATION } from "@/graphql/courses";
 
 interface CourseItem {
@@ -55,28 +54,7 @@ function EducatorCoursesPage() {
         </Link>
       </div>
 
-      {fetching && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Card key={i}>
-              <CardHeader>
-                <Skeleton className="h-6 w-3/4" />
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-5/6" />
-                <div className="flex items-center justify-between pt-2">
-                  <Skeleton className="h-6 w-16 rounded-full" />
-                  <Skeleton className="h-4 w-12" />
-                </div>
-                <div className="flex gap-2 pt-2">
-                  <Skeleton className="h-8 w-20" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      {fetching && <p className="text-muted-foreground">Loading courses...</p>}
       {error && <p className="text-destructive">Failed to load courses.</p>}
 
       {!fetching && courses.length === 0 && (
@@ -88,7 +66,7 @@ function EducatorCoursesPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {courses.map((course: CourseItem) => (
-          <Card key={course.id} data-testid="course-card">
+          <Card key={course.id}>
             <CardHeader>
               <CardTitle className="text-lg">{course.title}</CardTitle>
             </CardHeader>
