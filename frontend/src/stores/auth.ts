@@ -24,6 +24,7 @@ export interface User {
   grade?: Grade | null;
   preferredLanguage: string;
   totalXp: number;
+  streak: number;
 }
 
 interface AuthState {

@@ -58,6 +58,7 @@ type User {
   preferredLanguage: String!
   subscription: UserSubscription
   totalXp: Int!
+  streak: Int!
   createdAt: DateTime!
 }
 

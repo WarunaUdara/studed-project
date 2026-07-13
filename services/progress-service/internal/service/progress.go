@@ -163,6 +163,75 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 		return nil, fmt.Errorf("failed to record attempt: %w", err)
 	}
 
+	if passed {
+		// 1. Check if lesson is complete
+		wavesResp, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: wave.LessonId})
+		if err == nil {
+			lessonTotal := int32(len(wavesResp.Waves))
+			lessonCompletedVal, err := s.repo.CountPassedWavesInLesson(ctx, userID, wave.LessonId)
+			if err == nil && int32(lessonCompletedVal) == lessonTotal {
+				// Unlock lesson_complete!
+				_, _ = s.gamification.UnlockAchievement(ctx, &gampb.UnlockAchievementRequest{
+					UserId:        userID,
+					AchievementId: "lesson_complete",
+				})
+
+				// 2. Check if lesson is proficient (average score of all waves in lesson >= 80)
+				var sumScores int32
+				var countWaves int32
+				for _, w := range wavesResp.Waves {
+					var waveHighest int32
+					attempts, err := s.repo.GetAttemptsByWave(ctx, userID, w.Id)
+					if err == nil {
+						for _, a := range attempts {
+							if a.Score > waveHighest {
+								waveHighest = a.Score
+							}
+						}
+						sumScores += waveHighest
+						countWaves++
+					}
+				}
+				if countWaves == lessonTotal && lessonTotal > 0 {
+					avg := float64(sumScores) / float64(lessonTotal)
+					if avg >= 80 {
+						_, _ = s.gamification.UnlockAchievement(ctx, &gampb.UnlockAchievementRequest{
+							UserId:        userID,
+							AchievementId: "lesson_proficient",
+						})
+					}
+				}
+			}
+		}
+
+		// 3. Check if course is complete
+		lessonsResp, err := s.course.ListLessons(ctx, &coursepb.ListLessonsRequest{CourseId: lesson.CourseId})
+		if err == nil {
+			var courseTotalWaves int32
+			for _, l := range lessonsResp.Lessons {
+				lwaves, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: l.Id})
+				if err == nil {
+					courseTotalWaves += int32(len(lwaves.Waves))
+				}
+			}
+			courseCompletedVal, err := s.repo.CountPassedWavesInCourse(ctx, userID, lesson.CourseId)
+			if err == nil && int32(courseCompletedVal) == courseTotalWaves && courseTotalWaves > 0 {
+				// Unlock first_course!
+				_, _ = s.gamification.UnlockAchievement(ctx, &gampb.UnlockAchievementRequest{
+					UserId:        userID,
+					AchievementId: "first_course",
+				})
+			}
+		}
+
+		// Update totalXp to include any achievement milestone bonuses
+		xpResp, err := s.gamification.GetUserXp(ctx, &gampb.GetUserXpRequest{UserId: userID})
+		if err == nil && xpResp.Error == "" {
+			totalXp = xpResp.TotalXp
+		}
+	}
+
+
 	remainingAttempts := wave.MaxReattempts - int32(len(attempts)) - 1
 	if remainingAttempts < 0 {
 		remainingAttempts = 0

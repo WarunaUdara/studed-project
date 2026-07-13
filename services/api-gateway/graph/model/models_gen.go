@@ -226,6 +226,7 @@ type User struct {
 	PreferredLanguage string            `json:"preferredLanguage"`
 	Subscription      *UserSubscription `json:"subscription,omitempty"`
 	TotalXp           int               `json:"totalXp"`
+	Streak            int               `json:"streak"`
 	CreatedAt         time.Time         `json:"createdAt"`
 }
 

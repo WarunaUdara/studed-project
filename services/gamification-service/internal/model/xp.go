@@ -31,5 +31,5 @@ func (XpHistory) TableName() string {
 }
 
 func AutoMigrate(db *gorm.DB) error {
-	return db.AutoMigrate(&UserXp{}, &XpHistory{})
+	return db.AutoMigrate(&UserXp{}, &XpHistory{}, &UserStreak{}, &Achievement{}, &UserAchievement{})
 }

@@ -335,3 +335,15 @@ export const PUBLISH_WAVE_MUTATION = `
     }
   }
 ` as const;
+
+export const ACHIEVEMENTS_QUERY = `
+  query GetAchievements {
+    achievements {
+      id
+      name
+      description
+      iconUrl
+      unlockedAt
+    }
+  }
+` as const;

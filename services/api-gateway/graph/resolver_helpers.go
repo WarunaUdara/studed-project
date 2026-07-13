@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/studed/api-gateway/graph/model"
 	"github.com/studed/api-gateway/internal/middleware"
 )
 
@@ -52,3 +53,24 @@ func setAuthCookies(ctx context.Context, accessToken, refreshToken string) {
 		MaxAge:   int(7 * 24 * time.Hour / time.Second),
 	})
 }
+
+func (r *Resolver) populateWavesProgress(ctx context.Context, userID string, course *model.Course) {
+	if course == nil {
+		return
+	}
+	for _, lesson := range course.Lessons {
+		if lesson == nil {
+			continue
+		}
+		for _, wave := range lesson.Waves {
+			if wave == nil {
+				continue
+			}
+			progress, err := r.ProgressClient.GetWaveProgress(ctx, userID, wave.ID)
+			if err == nil {
+				wave.MyProgress = progress
+			}
+		}
+	}
+}
+

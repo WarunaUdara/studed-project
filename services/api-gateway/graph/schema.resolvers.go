@@ -323,6 +323,7 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 	}
 
 	totalXp, _ := r.GamificationClient.GetUserXp(ctx, userCtx.UserID)
+	streak, _ := r.GamificationClient.GetUserStreak(ctx, userCtx.UserID)
 
 	var grade *model.Grade
 	if authUser, err := r.AuthClient.GetUser(ctx, userCtx.UserID); err == nil {
@@ -337,6 +338,7 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 		Grade:             grade,
 		PreferredLanguage: userCtx.PreferredLanguage,
 		TotalXp:           totalXp,
+		Streak:            streak,
 	}, nil
 }
 
@@ -379,15 +381,6 @@ func (r *queryResolver) MyEnrollments(ctx context.Context) ([]*model.Course, err
 	}
 
 	return courses, nil
-}
-
-func (r *queryResolver) populateWavesProgress(ctx context.Context, userID string, course *model.Course) {
-	for _, lesson := range course.Lessons {
-		for _, wave := range lesson.Waves {
-			progress, _ := r.ProgressClient.GetWaveProgress(ctx, userID, wave.ID)
-			wave.MyProgress = progress
-		}
-	}
 }
 
 // Course is the resolver for the course field.
@@ -611,7 +604,12 @@ func (r *queryResolver) MyRank(ctx context.Context, scope model.LeaderboardScope
 
 // Achievements is the resolver for the achievements field.
 func (r *queryResolver) Achievements(ctx context.Context) ([]*model.Achievement, error) {
-	return []*model.Achievement{}, nil
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.GamificationClient.GetAchievements(ctx, userCtx.UserID)
 }
 
 // LeaderboardUpdated is the resolver for the leaderboardUpdated field.

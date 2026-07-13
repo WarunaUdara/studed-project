@@ -16,14 +16,12 @@ import {
 } from "@/components/ui/points-levels-timeline";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { StreakBadge } from "@/components/ui/streak-badge";
-import { LEADERBOARD_QUERY, MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
+import { ACHIEVEMENTS_QUERY, LEADERBOARD_QUERY, MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
 import { sanitizeGraphQLError } from "@/lib/errors";
 import {
   BADGE_DEFS,
   type BadgeInputs,
-  computeBadges,
   cumulativeXpForLevel,
-  earnedCount,
   levelFromXp,
 } from "@/lib/gamification";
 import { useAuthStore } from "@/stores/auth";
@@ -157,16 +155,17 @@ function DashboardPage() {
     query: LEADERBOARD_QUERY,
     variables: { scope: "GLOBAL" },
   });
+  const [{ data: achievementsData }] = useQuery({ query: ACHIEVEMENTS_QUERY });
 
   const enrollments: CourseEnrollment[] = enrollmentsData?.myEnrollments ?? [];
   const leaderboard: LeaderboardEntry[] = leaderboardData?.leaderboard ?? [];
+  const serverUnlockedAchievements: Array<{ id: string; unlockedAt: string }> =
+    achievementsData?.achievements ?? [];
 
   const totalXp = user?.totalXp ?? 0;
   const { level } = levelFromXp(totalXp);
 
   const badgeInputs = computeBadgeInputsFromEnrollments(enrollments, totalXp);
-  const badges = computeBadges(badgeInputs);
-  const badgesEarned = earnedCount(badges);
 
   const completedWaves = badgeInputs.completedWaves;
   const completedCourses = badgeInputs.completedCourses;
@@ -196,12 +195,21 @@ function DashboardPage() {
     byline: `${e.totalXp.toLocaleString()} XP`,
   }));
 
-  const trophyAchievements: UserAchievement[] = badges.map((b) => ({
-    id: b.id,
-    name: b.label,
-    trigger: "metric" as const,
-    achievedAt: b.earned ? new Date().toISOString() : null,
-  }));
+  const unlockedMap = new Map<string, string>(
+    serverUnlockedAchievements.map((a) => [a.id, a.unlockedAt]),
+  );
+
+  const trophyAchievements: UserAchievement[] = BADGE_DEFS.map((b) => {
+    const unlockedAt = unlockedMap.get(b.id) ?? null;
+    return {
+      id: b.id,
+      name: b.label,
+      trigger: "metric" as const,
+      achievedAt: unlockedAt,
+    };
+  });
+
+  const badgesEarned = serverUnlockedAchievements.length;
 
   const levelTimeline = buildLevelTimeline(totalXp);
 
@@ -424,7 +432,11 @@ function DashboardPage() {
 
               {/* Streak badge */}
               <div className="flex justify-center">
-                <StreakBadge length={0} subtitle="Start your streak!" size="sm" />
+                <StreakBadge
+                  length={user?.streak ?? 0}
+                  subtitle={(user?.streak ?? 0) > 0 ? "Keep it up!" : "Start your streak!"}
+                  size="sm"
+                />
               </div>
 
               {/* Achievements — Trophy UI AchievementBadge grid */}

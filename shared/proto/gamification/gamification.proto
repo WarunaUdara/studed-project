@@ -91,4 +91,46 @@ service GamificationService {
   rpc GetLeaderboard(GetLeaderboardRequest) returns (GetLeaderboardResponse);
   rpc UpdateLeaderboard(UpdateLeaderboardRequest) returns (UpdateLeaderboardResponse);
   rpc GetRank(GetRankRequest) returns (GetRankResponse);
+  rpc GetAchievements(GetAchievementsRequest) returns (GetAchievementsResponse);
+  rpc UnlockAchievement(UnlockAchievementRequest) returns (UnlockAchievementResponse);
+  rpc GetUserStreak(GetUserStreakRequest) returns (GetUserStreakResponse);
 }
+
+message GetAchievementsRequest {
+  string user_id = 1;
+}
+
+message Achievement {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string icon_url = 4;
+  int64 unlocked_at_unix = 5;
+}
+
+message GetAchievementsResponse {
+  repeated Achievement achievements = 1;
+  string error = 2;
+}
+
+message UnlockAchievementRequest {
+  string user_id = 1;
+  string achievement_id = 2;
+}
+
+message UnlockAchievementResponse {
+  bool unlocked = 1;
+  string error = 2;
+}
+
+message GetUserStreakRequest {
+  string user_id = 1;
+}
+
+message GetUserStreakResponse {
+  int32 current_streak = 1;
+  int32 longest_streak = 2;
+  int64 last_login_date_unix = 3;
+  string error = 4;
+}
+
