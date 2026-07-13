@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface EvaluateBlock {
   id: string;
@@ -74,9 +75,10 @@ export function QuizBlock({ block, index, answer, onAnswerChange, feedback }: Qu
 
       {feedback && (
         <div
-          className={`rounded-lg p-3 pl-9 ${
-            feedback.correct ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"
-          }`}
+          className={cn(
+            "mt-3 rounded-lg p-3 pl-9",
+            feedback.correct ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive",
+          )}
         >
           <p className="font-medium">{feedback.correct ? "Correct" : "Incorrect"}</p>
           {!feedback.correct && feedback.correctAnswer && (
