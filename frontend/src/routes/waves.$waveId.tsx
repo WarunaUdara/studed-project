@@ -101,7 +101,7 @@ function WavePlayerPage() {
       setSubmitError(res.error.message);
       return;
     }
-    
+
     if (res.data?.submitWaveAnswers) {
       const r = res.data.submitWaveAnswers as WaveResult;
       setResult(r);
