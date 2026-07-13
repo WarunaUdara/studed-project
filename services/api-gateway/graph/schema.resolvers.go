@@ -415,13 +415,7 @@ func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, e
 			return nil, errors.New("forbidden: course is not published")
 		}
 
-		enrolled, err := r.ProgressClient.IsEnrolled(ctx, userCtx.UserID, id)
-		if err != nil {
-			return nil, fmt.Errorf("failed to check enrollment: %w", err)
-		}
-		if !enrolled {
-			return nil, errors.New("forbidden: not enrolled in this course")
-		}
+		// Enrollment check removed to allow viewing course details
 
 		// Filter out unpublished lessons and waves
 		publishedLessons := make([]*model.Lesson, 0, len(course.Lessons))
