@@ -51,7 +51,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	driver, err := postgres_migrate.WithInstance(sqlDB, &postgres_migrate.Config{})
+	driver, err := postgres_migrate.WithInstance(sqlDB, &postgres_migrate.Config{
+		MigrationsTable: "progress_schema_migrations",
+	})
 	if err != nil {
 		log.Error("failed to create migration driver", slog.Any("error", err))
 		os.Exit(1)
