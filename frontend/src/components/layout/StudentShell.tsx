@@ -102,7 +102,7 @@ export function StudentShell({ children, banner, className }: StudentShellProps)
             <div className="mt-3 border-t border-sidebar-border pt-3">
               <XPBar totalXp={user?.totalXp ?? 0} compact />
               <div className="mt-2 flex items-center justify-between gap-2">
-                <StreakFlame dayCount={0} size="sm" />
+                <StreakFlame dayCount={user?.streak ?? 0} size="sm" />
                 <LogoutButton size="sm" variant="ghost" />
               </div>
             </div>

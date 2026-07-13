@@ -187,6 +187,7 @@ type ComplexityRoot struct {
 		ID                func(childComplexity int) int
 		PreferredLanguage func(childComplexity int) int
 		Role              func(childComplexity int) int
+		Streak            func(childComplexity int) int
 		Subscription      func(childComplexity int) int
 		TotalXp           func(childComplexity int) int
 	}
@@ -1050,6 +1051,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.User.Role(childComplexity), true
+	case "User.streak":
+		if e.ComplexityRoot.User.Streak == nil {
+			break
+		}
+
+		return e.ComplexityRoot.User.Streak(childComplexity), true
 	case "User.subscription":
 		if e.ComplexityRoot.User.Subscription == nil {
 			break
@@ -1609,6 +1616,8 @@ func (ec *executionContext) childFields_User(ctx context.Context, field graphql.
 		return ec.fieldContext_User_subscription(ctx, field)
 	case "totalXp":
 		return ec.fieldContext_User_totalXp(ctx, field)
+	case "streak":
+		return ec.fieldContext_User_streak(ctx, field)
 	case "createdAt":
 		return ec.fieldContext_User_createdAt(ctx, field)
 	}
@@ -5522,6 +5531,29 @@ func (ec *executionContext) fieldContext_User_totalXp(_ context.Context, field g
 	return graphql.NewScalarFieldContext("User", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
+func (ec *executionContext) _User_streak(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_User_streak(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Streak, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_User_streak(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("User", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
 func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -9429,6 +9461,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "totalXp":
 			out.Values[i] = ec._User_totalXp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "streak":
+			out.Values[i] = ec._User_streak(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

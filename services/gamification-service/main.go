@@ -79,7 +79,8 @@ func main() {
 
 	xpRepo := repository.NewXpRepository(db)
 	leaderboardRepo := repository.NewLeaderboardRepository(redisClient)
-	gamificationSvc := service.NewGamificationService(xpRepo, leaderboardRepo)
+	achievementRepo := repository.NewAchievementRepository(db)
+	gamificationSvc := service.NewGamificationService(xpRepo, leaderboardRepo, achievementRepo)
 	grpcHandler := handler.NewGamificationGRPCHandler(gamificationSvc)
 
 	grpcListener, err := net.Listen("tcp", cfg.ServiceAddr)

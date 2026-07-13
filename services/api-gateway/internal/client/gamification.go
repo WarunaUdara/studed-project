@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/studed/api-gateway/graph/model"
 	gampb "github.com/studed/shared/proto/gen/go/gamification"
@@ -122,3 +123,38 @@ func (c *GamificationClient) GetMyRank(ctx context.Context, userID string, scope
 
 	return int(resp.Rank), nil
 }
+
+func (c *GamificationClient) GetUserStreak(ctx context.Context, userID string) (int, error) {
+	resp, err := c.client.GetUserStreak(ctx, &gampb.GetUserStreakRequest{UserId: userID})
+	if err != nil {
+		return 0, fmt.Errorf("get user streak failed: %w", err)
+	}
+	if resp.Error != "" {
+		return 0, fmt.Errorf("get user streak failed: %s", resp.Error)
+	}
+	return int(resp.CurrentStreak), nil
+}
+
+func (c *GamificationClient) GetAchievements(ctx context.Context, userID string) ([]*model.Achievement, error) {
+	resp, err := c.client.GetAchievements(ctx, &gampb.GetAchievementsRequest{UserId: userID})
+	if err != nil {
+		return nil, fmt.Errorf("get achievements failed: %w", err)
+	}
+	if resp.Error != "" {
+		return nil, fmt.Errorf("get achievements failed: %s", resp.Error)
+	}
+
+	achievements := make([]*model.Achievement, len(resp.Achievements))
+	for i, a := range resp.Achievements {
+		unlockedAt := time.Unix(a.UnlockedAtUnix, 0)
+		achievements[i] = &model.Achievement{
+			ID:          a.Id,
+			Name:        a.Name,
+			Description: a.Description,
+			IconURL:     &a.IconUrl,
+			UnlockedAt:  unlockedAt,
+		}
+	}
+	return achievements, nil
+}
+
