@@ -4,37 +4,25 @@ import (
 	"time"
 )
 
-type UserStreak struct {
-	UserID        string    `gorm:"primaryKey"`
-	CurrentStreak int32     `gorm:"not null;default:0"`
-	LongestStreak int32     `gorm:"not null;default:0"`
-	LastLoginDate time.Time `gorm:"not null"`
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
-}
-
-func (UserStreak) TableName() string {
-	return "user_streaks"
-}
-
-type Achievement struct {
-	ID          string `gorm:"primaryKey"`
-	Name        string `gorm:"not null"`
-	Description string `gorm:"not null"`
-	IconUrl     string `gorm:"not null"`
-	Criteria    string `gorm:"not null"`
-}
-
-func (Achievement) TableName() string {
-	return "achievements"
-}
-
 type UserAchievement struct {
-	UserID        string    `gorm:"primaryKey"`
-	AchievementID string    `gorm:"primaryKey"`
-	UnlockedAt    time.Time `gorm:"not null;default:now()"`
+	UserID        string    `gorm:"primaryKey;column:user_id"`
+	AchievementID string    `gorm:"primaryKey;column:achievement_id"`
+	UnlockedAt    time.Time `gorm:"column:unlocked_at"`
 }
 
 func (UserAchievement) TableName() string {
 	return "user_achievements"
+}
+
+type UserStreak struct {
+	UserID        string    `gorm:"primaryKey;column:user_id"`
+	CurrentStreak int32     `gorm:"column:current_streak"`
+	LongestStreak int32     `gorm:"column:longest_streak"`
+	LastLoginDate time.Time `gorm:"column:last_login_date"`
+	CreatedAt     time.Time `gorm:"column:created_at"`
+	UpdatedAt     time.Time `gorm:"column:updated_at"`
+}
+
+func (UserStreak) TableName() string {
+	return "user_streaks"
 }
