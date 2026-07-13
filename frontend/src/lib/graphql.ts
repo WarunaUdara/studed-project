@@ -1,5 +1,5 @@
-import { cacheExchange, createClient, fetchExchange } from "urql";
 import { authExchange } from "@urql/exchange-auth";
+import { cacheExchange, createClient, fetchExchange } from "urql";
 
 const REFRESH_TOKEN_MUTATION = `
   mutation RefreshToken($refreshToken: String!) {
@@ -25,20 +25,21 @@ export const graphqlClient = createClient({
           return false;
         },
         didAuthError(error) {
-          return error.graphQLErrors.some((e) =>
-            e.message?.toLowerCase().includes("unauthorized")
-          );
+          return error.graphQLErrors.some((e) => e.message?.toLowerCase().includes("unauthorized"));
         },
         async refreshAuth() {
           try {
             const result = await utils.mutate(REFRESH_TOKEN_MUTATION, { refreshToken: "" });
             if (!result.data?.refreshToken) {
               localStorage.removeItem("studed_has_session");
-              if (window.location.pathname !== "/login" && window.location.pathname !== "/register") {
+              if (
+                window.location.pathname !== "/login" &&
+                window.location.pathname !== "/register"
+              ) {
                 window.location.href = "/login";
               }
             }
-          } catch (err) {
+          } catch (_err) {
             localStorage.removeItem("studed_has_session");
             if (window.location.pathname !== "/login" && window.location.pathname !== "/register") {
               window.location.href = "/login";
