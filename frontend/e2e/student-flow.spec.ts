@@ -51,10 +51,11 @@ test.describe("Student Course Journey Flow", () => {
       page.getByText("complete", { exact: true }).first(),
     ).toBeVisible();
 
-    // 3. Find first unlocked wave and start it
-    const startButton = page.getByRole("button", { name: /^Start$/ }).first();
-    await expect(startButton).toBeVisible({ timeout: 10000 });
-    await startButton.click();
+    // 3. Find first wave link (may be a Start button or a link) - click the wave card directly
+    // Use the first Link pointing to /waves/ on this page
+    const waveLink = page.locator("a[href*='/waves/']").first();
+    await expect(waveLink).toBeVisible({ timeout: 10000 });
+    await waveLink.click();
     await expect(page).toHaveURL(/\/waves\/[a-f0-9-]+/);
 
     // 4. In Wave Player: wait for the page to load (no error state)

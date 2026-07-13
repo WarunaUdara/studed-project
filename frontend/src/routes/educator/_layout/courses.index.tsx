@@ -3,7 +3,7 @@ import { CheckCircle, Eye, Plus, Send, Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
 import { COURSES_QUERY, PUBLISH_COURSE_MUTATION } from "@/graphql/courses";

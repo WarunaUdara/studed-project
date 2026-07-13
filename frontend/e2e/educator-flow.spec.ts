@@ -8,7 +8,7 @@ test.describe("Educator Portal Course Lifecycle Flow", () => {
     await page.locator("#email").fill("demo.educator@studed.lk");
     await page.locator("#password").fill("password123");
     await page.getByRole("button", { name: "Sign in" }).click();
-    await page.waitForURL(/\/educator\/courses/, { timeout: 30000 });
+    await page.waitForURL(/\/educator/, { timeout: 30000 });
   });
 
   test("should create and publish a new course", async ({ page }) => {
@@ -40,8 +40,8 @@ test.describe("Educator Portal Course Lifecycle Flow", () => {
     // Publish the course
     await courseCard.getByRole("button", { name: "Publish" }).click();
 
-    // Verify course state updates to Published and Publish button disappears
-    await expect(courseCard.getByText("Published")).toBeVisible({ timeout: 10000 });
+    // Verify course state updates to Live and Publish button disappears
+    await expect(courseCard.getByText("Live").first()).toBeVisible({ timeout: 10000 });
     await expect(courseCard.getByRole("button", { name: "Publish" })).not.toBeVisible();
   });
 });

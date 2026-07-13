@@ -4,6 +4,7 @@ import {
   ArrowRight,
   BookOpen,
   CheckCircle,
+  Clock,
   Plus,
   Sparkles,
   TrendingUp,
@@ -14,13 +15,29 @@ import { useQuery } from "urql";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { ProgressRing } from "@/components/ui/ProgressRing";
 import { COURSES_QUERY } from "@/graphql/courses";
+
+interface WaveNode {
+  id: string;
+  isPublished: boolean;
+  xpReward: number;
+  myProgress?: { status: string; attemptsCount: number } | null;
+}
+
+interface LessonNode {
+  id: string;
+  isPublished: boolean;
+  waves: WaveNode[];
+}
 
 interface CourseNode {
   id: string;
   title: string;
   isPublished: boolean;
   createdAt: string;
+  lessons?: LessonNode[] | null;
+  myProgress?: { completedWaves: number; totalWaves: number } | null;
 }
 
 export const Route = createFileRoute("/educator/_layout/")({
@@ -39,7 +56,25 @@ function EducatorDashboardPage() {
   const stats = useMemo(() => {
     const published = courses.filter((c) => c.isPublished);
     const drafts = courses.filter((c) => !c.isPublished);
-    return { published, drafts };
+    let totalLessons = 0;
+    let totalWaves = 0;
+    let publishedWaves = 0;
+    let totalXp = 0;
+
+    for (const c of courses) {
+      for (const l of c.lessons ?? []) {
+        totalLessons++;
+        for (const w of l.waves ?? []) {
+          totalWaves++;
+          if (w.isPublished) {
+            publishedWaves++;
+            totalXp += w.xpReward ?? 0;
+          }
+        }
+      }
+    }
+
+    return { published, drafts, totalLessons, totalWaves, publishedWaves, totalXp };
   }, [courses]);
 
   const recentCourses = courses.slice(0, 8);

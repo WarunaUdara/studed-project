@@ -1,11 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Shield, User as UserIcon } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  Award,
+  BookOpen,
+  CheckCircle,
+  Globe,
+  Shield,
+  User as UserIcon,
+  Zap,
+} from "lucide-react";
+import { useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { StudentShell } from "@/components/layout/StudentShell";
+import { XPBar } from "@/components/gamification/XPBar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
+import { MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
+import { levelFromXp } from "@/lib/gamification";
 import { useAuthStore } from "@/stores/auth";
+
+const LEVEL_NAMES = [
+  "Rookie", "Novice", "Learner", "Scholar", "Expert", "Master", "Grand Master", "Enlightened",
+];
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -13,81 +30,175 @@ export const Route = createFileRoute("/settings")({
 
 function SettingsPage() {
   const { user } = useAuthStore();
+  const totalXp = user?.totalXp ?? 0;
+  const { level, progress } = levelFromXp(totalXp);
+  const levelName = LEVEL_NAMES[Math.min(level - 1, LEVEL_NAMES.length - 1)] ?? "Learner";
+
+  const [{ data }] = useQuery({ query: MY_ENROLLMENTS_QUERY });
+  const enrollments = data?.myEnrollments ?? [];
+  const completedCourses = enrollments.filter((c: { myProgress?: { completedWaves: number; totalWaves: number } | null }) => {
+    const p = c.myProgress;
+    return p && p.totalWaves > 0 && p.completedWaves === p.totalWaves;
+  }).length;
 
   return (
     <ProtectedRoute allowedRoles={["STUDENT"]}>
       <StudentShell>
         <div className="space-y-6">
-          <div className="space-y-2">
+          {/* Header */}
+          <div className="space-y-1">
             <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
             <p className="text-muted-foreground">
-              Manage your StudEd student profile and account preferences.
+              Manage your StudEd profile and account preferences.
             </p>
           </div>
 
+          {/* XP / Level card */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card">
+              <CardContent className="p-6">
+                <div className="flex flex-wrap items-start gap-6">
+                  {/* Avatar */}
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/70 text-2xl font-black text-primary-foreground shadow-md">
+                    {user?.fullName?.charAt(0).toUpperCase() ?? "S"}
+                  </div>
+
+                  <div className="flex-1 space-y-3 min-w-0">
+                    <div>
+                      <p className="text-xl font-bold">{user?.fullName ?? "Learner"}</p>
+                      <p className="text-sm text-muted-foreground">{user?.email ?? ""}</p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-3">
+                      {/* Level badge */}
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
+                        <Award className="h-3.5 w-3.5" /> Level {level} · {levelName}
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-sm font-semibold text-amber-600">
+                        <Zap className="h-3.5 w-3.5" /> {totalXp.toLocaleString()} XP
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1 text-sm font-semibold text-success">
+                        <CheckCircle className="h-3.5 w-3.5" /> {enrollments.length} enrolled
+                      </span>
+                    </div>
+
+                    {/* XP progress to next level */}
+                    <div className="space-y-1.5 max-w-xs">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>Progress to Level {level + 1}</span>
+                        <span className="font-medium">{Math.round(progress)}%</span>
+                      </div>
+                      <XPBar totalXp={totalXp} compact />
+                    </div>
+                  </div>
+
+                  {/* Quick stats */}
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-1">
+                    <div className="rounded-xl bg-muted/50 p-3 text-center">
+                      <BookOpen className="mx-auto mb-1 h-4 w-4 text-muted-foreground" />
+                      <p className="text-lg font-bold">{enrollments.length}</p>
+                      <p className="text-[10px] text-muted-foreground">Enrolled</p>
+                    </div>
+                    <div className="rounded-xl bg-muted/50 p-3 text-center">
+                      <CheckCircle className="mx-auto mb-1 h-4 w-4 text-success" />
+                      <p className="text-lg font-bold text-success">{completedCourses}</p>
+                      <p className="text-[10px] text-muted-foreground">Completed</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
           <div className="grid gap-6 md:grid-cols-2">
             {/* Account Profile Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <UserIcon className="h-5 w-5 text-primary" />
-                  Student Profile
-                </CardTitle>
-                <CardDescription>Your personal profile details.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Full Name</Label>
-                  <Input value={user?.fullName ?? "Learner"} disabled className="bg-muted/50" />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Email Address</Label>
-                  <Input value={user?.email ?? ""} disabled className="bg-muted/50" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <Label className="text-muted-foreground">Grade Level</Label>
-                    <Input value={user?.grade ?? "—"} disabled className="bg-muted/50" />
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <UserIcon className="h-5 w-5 text-primary" />
+                    Student Profile
+                  </CardTitle>
+                  <CardDescription>Your personal profile details.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-muted-foreground">Full Name</Label>
+                    <Input value={user?.fullName ?? "Learner"} disabled className="bg-muted/50" />
                   </div>
-                  <div className="space-y-1">
-                    <Label className="text-muted-foreground">Preferred Language</Label>
-                    <Input
-                      value={user?.preferredLanguage?.toUpperCase() ?? "EN"}
-                      disabled
-                      className="bg-muted/50"
-                    />
+                  <div className="space-y-1.5">
+                    <Label className="text-muted-foreground">Email Address</Label>
+                    <Input value={user?.email ?? ""} disabled className="bg-muted/50" />
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-muted-foreground">Grade Level</Label>
+                      <Input value={user?.grade ?? "—"} disabled className="bg-muted/50" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-muted-foreground flex items-center gap-1">
+                        <Globe className="h-3.5 w-3.5" /> Language
+                      </Label>
+                      <Input
+                        value={user?.preferredLanguage?.toUpperCase() ?? "EN"}
+                        disabled
+                        className="bg-muted/50"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
 
             {/* Access & Security Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <Shield className="h-5 w-5 text-purple" />
-                  Access & Security
-                </CardTitle>
-                <CardDescription>Security and role settings.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Role</Label>
-                  <Input
-                    value={user?.role ?? "STUDENT"}
-                    disabled
-                    className="bg-muted/50 font-semibold text-primary"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Account Status</Label>
-                  <div className="flex items-center gap-2 rounded-lg border border-success/30 bg-success/5 px-3 py-2 text-sm text-success">
-                    <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
-                    Active subscription & verified
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <Shield className="h-5 w-5 text-purple-500" />
+                    Access & Security
+                  </CardTitle>
+                  <CardDescription>Security and role settings.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-muted-foreground">Role</Label>
+                    <Input
+                      value={user?.role ?? "STUDENT"}
+                      disabled
+                      className="bg-muted/50 font-semibold text-primary"
+                    />
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                  <div className="space-y-1.5">
+                    <Label className="text-muted-foreground">Account Status</Label>
+                    <div className="flex items-center gap-2 rounded-lg border border-success/30 bg-success/5 px-3 py-2.5 text-sm text-success">
+                      <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
+                      Active subscription &amp; verified
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-muted-foreground">User ID</Label>
+                    <Input
+                      value={user?.id ?? "—"}
+                      disabled
+                      className="bg-muted/50 font-mono text-xs text-muted-foreground"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           </div>
         </div>
       </StudentShell>
