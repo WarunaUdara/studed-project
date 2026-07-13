@@ -141,7 +141,11 @@ function EducatorDashboardPage() {
       </div>
 
       {/* Error */}
-      {error && <p className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">Failed to load stats.</p>}
+      {error && (
+        <p className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+          Failed to load stats.
+        </p>
+      )}
 
       {/* Stat cards */}
       {fetching ? (
@@ -170,7 +174,9 @@ function EducatorDashboardPage() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-3">
                       <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                      <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${stat.bg}`}>
+                      <div
+                        className={`flex h-9 w-9 items-center justify-center rounded-xl ${stat.bg}`}
+                      >
                         <Icon className={`h-5 w-5 ${stat.color}`} />
                       </div>
                     </div>
@@ -224,13 +230,19 @@ function EducatorDashboardPage() {
 
                   return (
                     <li key={course.id} className="flex items-center gap-4 py-3">
-                      <ProgressRing value={completionRatio} size={40} strokeWidth={4} className="text-primary shrink-0">
+                      <ProgressRing
+                        value={completionRatio}
+                        size={40}
+                        strokeWidth={4}
+                        className="text-primary shrink-0"
+                      >
                         <span className="text-[9px] font-bold">{completionRatio}%</span>
                       </ProgressRing>
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-medium text-sm">{course.title}</p>
                         <p className="text-xs text-muted-foreground">
-                          {lessons.length} lessons · {waves.length} waves · {publishedWaves} published
+                          {lessons.length} lessons · {waves.length} waves · {publishedWaves}{" "}
+                          published
                         </p>
                       </div>
                       <div className="flex shrink-0 items-center gap-2">
@@ -294,8 +306,12 @@ function EducatorDashboardPage() {
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <span className="text-muted-foreground">Total XP available</span>
               </div>
-              <p className="text-2xl font-bold text-amber-500">{stats.totalXp.toLocaleString()} XP</p>
-              <p className="text-xs text-muted-foreground">Across {stats.publishedWaves} published waves</p>
+              <p className="text-2xl font-bold text-amber-500">
+                {stats.totalXp.toLocaleString()} XP
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Across {stats.publishedWaves} published waves
+              </p>
             </CardContent>
           </Card>
 

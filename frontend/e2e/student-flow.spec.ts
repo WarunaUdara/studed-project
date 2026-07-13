@@ -19,7 +19,10 @@ test.describe("Student Course Journey Flow", () => {
     await expect(page).toHaveURL(/\/courses/);
 
     // Verify course cards are visible
-    const courseCard = page.locator("div.group").filter({ hasText: "Grade 10 Mathematics" }).first();
+    const courseCard = page
+      .locator("div.group")
+      .filter({ hasText: "Grade 10 Mathematics" })
+      .first();
     await expect(courseCard).toBeVisible();
 
     // Wait for the View button to be visible to ensure card actions are fully loaded
@@ -37,7 +40,9 @@ test.describe("Student Course Journey Flow", () => {
     await expect(page).toHaveURL(/\/courses\/[a-f0-9-]+/);
 
     // Verify course syllabus details are visible (wait for page transition to finish)
-    await expect(page.getByRole("button", { name: "Back to Courses" })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole("button", { name: "Back to Courses" })).toBeVisible({
+      timeout: 15000,
+    });
     await expect(page.getByText("complete", { exact: true })).toBeVisible();
 
     // 3. Find first unlocked wave and start it
