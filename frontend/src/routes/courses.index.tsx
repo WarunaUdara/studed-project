@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { BookOpen, CheckCircle, GraduationCap, Search, SlidersHorizontal, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
@@ -26,18 +26,36 @@ interface Course {
 
 const GRADE_OPTIONS = [
   "ALL",
-  "GRADE_1", "GRADE_2", "GRADE_3", "GRADE_4", "GRADE_5",
-  "GRADE_6", "GRADE_7", "GRADE_8", "GRADE_9", "GRADE_10", "GRADE_11",
-  "OL", "AL",
+  "GRADE_1",
+  "GRADE_2",
+  "GRADE_3",
+  "GRADE_4",
+  "GRADE_5",
+  "GRADE_6",
+  "GRADE_7",
+  "GRADE_8",
+  "GRADE_9",
+  "GRADE_10",
+  "GRADE_11",
+  "OL",
+  "AL",
 ];
 
 const GRADE_LABELS: Record<string, string> = {
   ALL: "All Grades",
-  GRADE_1: "Grade 1", GRADE_2: "Grade 2", GRADE_3: "Grade 3",
-  GRADE_4: "Grade 4", GRADE_5: "Grade 5", GRADE_6: "Grade 6",
-  GRADE_7: "Grade 7", GRADE_8: "Grade 8", GRADE_9: "Grade 9",
-  GRADE_10: "Grade 10", GRADE_11: "Grade 11",
-  OL: "O/L", AL: "A/L",
+  GRADE_1: "Grade 1",
+  GRADE_2: "Grade 2",
+  GRADE_3: "Grade 3",
+  GRADE_4: "Grade 4",
+  GRADE_5: "Grade 5",
+  GRADE_6: "Grade 6",
+  GRADE_7: "Grade 7",
+  GRADE_8: "Grade 8",
+  GRADE_9: "Grade 9",
+  GRADE_10: "Grade 10",
+  GRADE_11: "Grade 11",
+  OL: "O/L",
+  AL: "A/L",
 };
 
 const CARD_GRADIENTS = [
@@ -77,9 +95,7 @@ function CoursesCatalogPage() {
     if (search.trim()) {
       const q = search.toLowerCase();
       filtered = filtered.filter(
-        (c: Course) =>
-          c.title.toLowerCase().includes(q) ||
-          c.description.toLowerCase().includes(q),
+        (c: Course) => c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q),
       );
     }
     if (gradeFilter !== "ALL") {
@@ -131,6 +147,7 @@ function CoursesCatalogPage() {
             />
             {search && (
               <button
+                type="button"
                 onClick={() => setSearch("")}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
@@ -167,6 +184,7 @@ function CoursesCatalogPage() {
                 <p className="w-full text-xs font-medium text-muted-foreground mb-1">Grade Level</p>
                 {GRADE_OPTIONS.map((g) => (
                   <button
+                    type="button"
                     key={g}
                     onClick={() => setGradeFilter(g)}
                     className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${

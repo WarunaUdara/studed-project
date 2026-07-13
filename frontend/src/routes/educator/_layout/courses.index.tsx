@@ -3,9 +3,11 @@ import { CheckCircle, Eye, Plus, Send, Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useToast } from "@/components/ui/Toast";
 import { COURSES_QUERY, PUBLISH_COURSE_MUTATION } from "@/graphql/courses";
+import { sanitizeGraphQLError } from "@/lib/errors";
 
 interface CourseItem {
   id: string;
@@ -25,6 +27,7 @@ export const Route = createFileRoute("/educator/_layout/courses/")({
 });
 
 function EducatorCoursesPage() {
+  const { toast } = useToast();
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: COURSES_QUERY,
     variables: { filter: {} },
@@ -41,7 +44,11 @@ function EducatorCoursesPage() {
     setPublishingId(id);
     const result = await publishCourse({ id });
     setPublishingId(null);
-    if (!result.error) {
+    if (result.error) {
+      const e = sanitizeGraphQLError(result.error);
+      toast({ type: "error", title: e.title, message: e.message });
+    } else {
+      toast({ type: "success", title: "Published", message: "Course is now visible to students." });
       reexecuteQuery({ requestPolicy: "network-only" });
     }
   };

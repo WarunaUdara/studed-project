@@ -46,6 +46,7 @@ export function Tabs({
 export function TabsList({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
+      role="tablist"
       className={cn("inline-flex items-center gap-1 rounded-lg bg-muted p-1", className)}
       {...props}
     />
@@ -62,6 +63,8 @@ export function TabsTrigger({ value, className, ...props }: TabsTriggerProps) {
   const active = ctx.value === value;
   return (
     <button
+      role="tab"
+      aria-selected={active}
       type="button"
       onClick={() => ctx.setValue(value)}
       className={cn(
@@ -85,7 +88,7 @@ export function TabsContent({ value, className, children, ...props }: TabsConten
   if (!ctx) throw new Error("TabsContent must be used within Tabs");
   if (ctx.value !== value) return null;
   return (
-    <div className={cn("focus-visible:outline-none", className)} {...props}>
+    <div role="tabpanel" className={cn("focus-visible:outline-none", className)} {...props}>
       {children}
     </div>
   );

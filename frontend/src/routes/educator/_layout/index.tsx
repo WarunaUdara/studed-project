@@ -139,7 +139,9 @@ function EducatorDashboardPage() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-3">
                       <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                      <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${stat.bg}`}>
+                      <div
+                        className={`flex h-9 w-9 items-center justify-center rounded-xl ${stat.bg}`}
+                      >
                         <Icon className={`h-5 w-5 ${stat.color}`} />
                       </div>
                     </div>
@@ -184,37 +186,49 @@ function EducatorDashboardPage() {
               </div>
             ) : (
               <ul className="divide-y">
-                {recentCourses.map((course) => (
-                  <li key={course.id} className="flex items-center gap-4 py-3">
-                    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
-                      course.isPublished ? "bg-success/10" : "bg-amber-500/10"
-                    }`}>
-                      <BookOpen className={`h-4 w-4 ${course.isPublished ? "text-success" : "text-amber-500"}`} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium text-sm">{course.title}</p>
-                      <p className="text-xs text-muted-foreground">
-                        Created {new Date(course.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="flex shrink-0 items-center gap-2">
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                          course.isPublished
-                            ? "bg-success/15 text-success"
-                            : "bg-amber-500/15 text-amber-600"
-                        }`}
+                {recentCourses.map((course) => {
+                  const lessons = course.lessons ?? [];
+                  const waves = lessons.flatMap((l) => l.waves ?? []);
+                  const publishedWaves = waves.filter((w) => w.isPublished).length;
+                  const completionRatio =
+                    waves.length > 0 ? Math.round((publishedWaves / waves.length) * 100) : 0;
+
+                  return (
+                    <li key={course.id} className="flex items-center gap-4 py-3">
+                      <ProgressRing
+                        value={completionRatio}
+                        size={40}
+                        strokeWidth={4}
+                        className="text-primary shrink-0"
                       >
-                        {course.isPublished ? "Live" : "Draft"}
-                      </span>
-                      <Link to="/educator/courses/$courseId" params={{ courseId: course.id }}>
-                        <Button variant="ghost" size="sm" className="h-7 text-xs">
-                          Edit
-                        </Button>
-                      </Link>
-                    </div>
-                  </li>
-                ))}
+                        <span className="text-[9px] font-bold">{completionRatio}%</span>
+                      </ProgressRing>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-medium text-sm">{course.title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {lessons.length} lessons · {waves.length} waves · {publishedWaves}{" "}
+                          published
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                            course.isPublished
+                              ? "bg-success/15 text-success"
+                              : "bg-amber-500/15 text-amber-600"
+                          }`}
+                        >
+                          {course.isPublished ? "Live" : "Draft"}
+                        </span>
+                        <Link to="/educator/courses/$courseId" params={{ courseId: course.id }}>
+                          <Button variant="ghost" size="sm" className="h-7 text-xs">
+                            Edit
+                          </Button>
+                        </Link>
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </CardContent>
@@ -246,7 +260,20 @@ function EducatorDashboardPage() {
             </CardContent>
           </Card>
 
-          {/* Quick actions */}
+          <Card>
+            <CardContent className="p-4 space-y-2">
+              <div className="flex items-center gap-2 text-sm">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                <span className="text-muted-foreground">Total XP available</span>
+              </div>
+              <p className="text-2xl font-bold text-amber-500">
+                {stats.totalXp.toLocaleString()} XP
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Across {stats.publishedWaves} published waves
+              </p>
+            </CardContent>
+          </Card>
           <Card>
             <CardContent className="p-4 space-y-3">
               <p className="text-sm font-medium">Quick Actions</p>

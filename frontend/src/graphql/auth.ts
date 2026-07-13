@@ -68,6 +68,7 @@ export const ME_QUERY = `
       grade
       preferredLanguage
       totalXp
+      streak
     }
   }
 ` as const;

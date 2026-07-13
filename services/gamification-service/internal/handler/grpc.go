@@ -55,3 +55,36 @@ func (h *GamificationGRPCHandler) UpdateLeaderboard(ctx context.Context, req *ga
 	}
 	return resp, nil
 }
+
+func (h *GamificationGRPCHandler) GetRank(ctx context.Context, req *gampb.GetRankRequest) (*gampb.GetRankResponse, error) {
+	resp, err := h.svc.GetRank(ctx, req.UserId, req.Scope, req.CourseId, int32(req.Grade))
+	if err != nil {
+		return &gampb.GetRankResponse{Error: err.Error()}, nil
+	}
+	return resp, nil
+}
+
+func (h *GamificationGRPCHandler) GetAchievements(ctx context.Context, req *gampb.GetAchievementsRequest) (*gampb.GetAchievementsResponse, error) {
+	resp, err := h.svc.GetAchievements(ctx, req.UserId)
+	if err != nil {
+		return &gampb.GetAchievementsResponse{Error: err.Error()}, nil
+	}
+	return resp, nil
+}
+
+func (h *GamificationGRPCHandler) UnlockAchievement(ctx context.Context, req *gampb.UnlockAchievementRequest) (*gampb.UnlockAchievementResponse, error) {
+	resp, err := h.svc.UnlockAchievement(ctx, req.UserId, req.AchievementId)
+	if err != nil {
+		return &gampb.UnlockAchievementResponse{Error: err.Error()}, nil
+	}
+	return resp, nil
+}
+
+func (h *GamificationGRPCHandler) GetUserStreak(ctx context.Context, req *gampb.GetUserStreakRequest) (*gampb.GetUserStreakResponse, error) {
+	resp, err := h.svc.GetUserStreak(ctx, req.UserId)
+	if err != nil {
+		return &gampb.GetUserStreakResponse{Error: err.Error()}, nil
+	}
+	return resp, nil
+}
+

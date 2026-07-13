@@ -25,6 +25,9 @@ test.describe("Student Course Journey Flow", () => {
       .first();
     await expect(courseCard).toBeVisible({ timeout: 15000 });
 
+    // Wait for the View button to be visible to ensure card actions are fully loaded
+    await expect(courseCard.getByRole("link", { name: "View" })).toBeVisible({ timeout: 15000 });
+
     // Click Enroll if the button is visible (not enrolled yet)
     const enrollButton = courseCard.getByRole("button", { name: /Enroll/i });
     if (await enrollButton.isVisible()) {

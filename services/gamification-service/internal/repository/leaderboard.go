@@ -13,6 +13,7 @@ import (
 type LeaderboardRepository interface {
 	UpdateLeaderboard(ctx context.Context, userID, fullName string, totalXp int32, scope, courseID string, grade int32) error
 	GetLeaderboard(ctx context.Context, scope, courseID string, grade int32, limit int32) ([]*gampb.LeaderboardEntry, error)
+	GetRank(ctx context.Context, userID string, scope, courseID string, grade int32) (int64, error)
 }
 
 type leaderboardRepository struct {
@@ -98,6 +99,23 @@ func (r *leaderboardRepository) GetLeaderboard(ctx context.Context, scope, cours
 	}
 
 	return entries, nil
+}
+
+func (r *leaderboardRepository) GetRank(ctx context.Context, userID string, scope, courseID string, grade int32) (int64, error) {
+	key := leaderboardKey(scope, courseID, grade)
+
+	// Scan for the member starting with userID
+	iter := r.client.ZScan(ctx, key, 0, userID+"|*", 1).Iterator()
+	if iter.Next(ctx) {
+		member := iter.Val()
+		rank, err := r.client.ZRevRank(ctx, key, member).Result()
+		if err != nil {
+			return 0, err
+		}
+		return rank + 1, nil
+	}
+
+	return 0, fmt.Errorf("user not found on leaderboard")
 }
 
 func int32ToString(v int32) string {

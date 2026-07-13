@@ -2,12 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowLeft, BookOpen, CheckCircle, Clock, Lock, PlayCircle, Zap } from "lucide-react";
 import { useMemo } from "react";
-import { useQuery } from "urql";
+import { useMutation, useQuery } from "urql";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { COURSE_PLAYER_QUERY } from "@/graphql/student";
+import { useToast } from "@/components/ui/Toast";
+import { COURSE_PLAYER_QUERY, ENROLL_IN_COURSE_MUTATION } from "@/graphql/student";
 import { sanitizeGraphQLError } from "@/lib/errors";
 import { cn } from "@/lib/utils";
 
@@ -59,8 +60,24 @@ function CoursePlayerPage() {
   const completedWaves = course?.myProgress?.completedWaves ?? 0;
   const totalWaves = course?.myProgress?.totalWaves ?? 0;
   const progress = totalWaves > 0 ? Math.round((completedWaves / totalWaves) * 100) : 0;
+  const isEnrolled = course?.myProgress !== null && course?.myProgress !== undefined;
 
   const lessons = useMemo(() => course?.lessons ?? [], [course]);
+
+  const { toast } = useToast();
+  const [enrollResult, enroll] = useMutation(ENROLL_IN_COURSE_MUTATION);
+
+  const handleEnroll = async () => {
+    if (!courseId) return;
+    const result = await enroll({ courseId });
+    if (result.error) {
+      const e = sanitizeGraphQLError(result.error);
+      toast({ type: "error", title: e.title, message: e.message });
+    } else {
+      toast({ type: "success", title: "Enrolled!", message: "You can now start learning." });
+      reexecuteQuery({ requestPolicy: "network-only" });
+    }
+  };
 
   if (fetching) {
     return (
@@ -100,11 +117,18 @@ function CoursePlayerPage() {
 
   return (
     <div className="mx-auto max-w-6xl p-4 pt-6 sm:p-6 sm:pt-8">
-      <Link to="/courses">
-        <Button variant="ghost" size="sm" className="mb-6 gap-1">
-          <ArrowLeft className="h-4 w-4" /> Back to Courses
-        </Button>
-      </Link>
+      <div className="mb-6 flex items-center justify-between">
+        <Link to="/courses">
+          <Button variant="ghost" size="sm" className="gap-1">
+            <ArrowLeft className="h-4 w-4" /> Back to Courses
+          </Button>
+        </Link>
+        {!isEnrolled && (
+          <Button onClick={handleEnroll} disabled={enrollResult.fetching}>
+            {enrollResult.fetching ? "Enrolling..." : "Enroll Free"}
+          </Button>
+        )}
+      </div>
 
       {/* Course header */}
       <motion.div
@@ -189,7 +213,7 @@ function CoursePlayerPage() {
                   lesson.waves.map((wave) => {
                     const isCompleted = wave.myProgress?.status === "COMPLETED";
                     const isStarted = wave.myProgress?.status === "STARTED";
-                    const isLocked = wave.myProgress?.status === "LOCKED";
+                    const isLocked = !isEnrolled || wave.myProgress?.status === "LOCKED";
 
                     const content = (
                       <div

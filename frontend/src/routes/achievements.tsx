@@ -6,6 +6,7 @@ import { StudentShell } from "@/components/layout/StudentShell";
 import { AchievementBadge } from "@/components/ui/achievement-badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
+import { sanitizeGraphQLError } from "@/lib/errors";
 import { BADGE_DEFS, computeBadges, earnedCount, levelFromXp } from "@/lib/gamification";
 import { useAuthStore } from "@/stores/auth";
 
@@ -30,7 +31,7 @@ function AchievementsPage() {
   const totalXp = user?.totalXp ?? 0;
   const { level } = levelFromXp(totalXp);
 
-  const [{ data, fetching }] = useQuery({
+  const [{ data, fetching, error }] = useQuery({
     query: MY_ENROLLMENTS_QUERY,
   });
 
@@ -156,6 +157,13 @@ function AchievementsPage() {
                   {[1, 2, 3, 4].map((i) => (
                     <div key={i} className="h-24 animate-pulse rounded-xl bg-muted" />
                   ))}
+                </div>
+              ) : error ? (
+                <div className="rounded-xl border border-dashed p-6 text-center">
+                  <p className="font-medium">{sanitizeGraphQLError(error).title}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {sanitizeGraphQLError(error).message}
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">

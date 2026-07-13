@@ -323,6 +323,7 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 	}
 
 	totalXp, _ := r.GamificationClient.GetUserXp(ctx, userCtx.UserID)
+	streak, _ := r.GamificationClient.GetUserStreak(ctx, userCtx.UserID)
 
 	var grade *model.Grade
 	if authUser, err := r.AuthClient.GetUser(ctx, userCtx.UserID); err == nil {
@@ -337,6 +338,7 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 		Grade:             grade,
 		PreferredLanguage: userCtx.PreferredLanguage,
 		TotalXp:           totalXp,
+		Streak:            streak,
 	}, nil
 }
 
@@ -375,6 +377,7 @@ func (r *queryResolver) MyEnrollments(ctx context.Context) ([]*model.Course, err
 	for _, course := range courses {
 		progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, course.ID)
 		course.MyProgress = progress
+		r.populateWavesProgress(ctx, userCtx.UserID, course)
 	}
 
 	return courses, nil
@@ -405,13 +408,7 @@ func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, e
 			return nil, errors.New("forbidden: course is not published")
 		}
 
-		enrolled, err := r.ProgressClient.IsEnrolled(ctx, userCtx.UserID, id)
-		if err != nil {
-			return nil, fmt.Errorf("failed to check enrollment: %w", err)
-		}
-		if !enrolled {
-			return nil, errors.New("forbidden: not enrolled in this course")
-		}
+		// Enrollment check removed to allow viewing course details
 
 		// Filter out unpublished lessons and waves
 		publishedLessons := make([]*model.Lesson, 0, len(course.Lessons))
@@ -428,6 +425,7 @@ func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, e
 			}
 		}
 		course.Lessons = publishedLessons
+		r.populateWavesProgress(ctx, userCtx.UserID, course)
 	}
 
 	progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, id)
@@ -606,7 +604,12 @@ func (r *queryResolver) MyRank(ctx context.Context, scope model.LeaderboardScope
 
 // Achievements is the resolver for the achievements field.
 func (r *queryResolver) Achievements(ctx context.Context) ([]*model.Achievement, error) {
-	return []*model.Achievement{}, nil
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.GamificationClient.GetAchievements(ctx, userCtx.UserID)
 }
 
 // LeaderboardUpdated is the resolver for the leaderboardUpdated field.

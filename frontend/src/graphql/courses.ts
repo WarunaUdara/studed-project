@@ -55,7 +55,6 @@ export const EDUCATOR_COURSES_QUERY = `
   }
 ` as const;
 
-
 export const COURSE_QUERY = `
   query Course($id: ID!) {
     course(id: $id) {
@@ -333,6 +332,18 @@ export const PUBLISH_WAVE_MUTATION = `
       id
       title
       isPublished
+    }
+  }
+` as const;
+
+export const ACHIEVEMENTS_QUERY = `
+  query GetAchievements {
+    achievements {
+      id
+      name
+      description
+      iconUrl
+      unlockedAt
     }
   }
 ` as const;
