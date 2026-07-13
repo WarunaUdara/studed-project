@@ -88,11 +88,7 @@ export function TabsContent({ value, className, children, ...props }: TabsConten
   if (!ctx) throw new Error("TabsContent must be used within Tabs");
   if (ctx.value !== value) return null;
   return (
-    <div
-      role="tabpanel"
-      className={cn("focus-visible:outline-none", className)}
-      {...props}
-    >
+    <div role="tabpanel" className={cn("focus-visible:outline-none", className)} {...props}>
       {children}
     </div>
   );
