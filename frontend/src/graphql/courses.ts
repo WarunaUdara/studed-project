@@ -55,7 +55,6 @@ export const EDUCATOR_COURSES_QUERY = `
   }
 ` as const;
 
-
 export const COURSE_QUERY = `
   query Course($id: ID!) {
     course(id: $id) {
