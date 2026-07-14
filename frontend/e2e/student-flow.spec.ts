@@ -42,14 +42,12 @@ test.describe("Student Course Journey Flow", () => {
     await expect(page).toHaveURL(/\/courses\/[a-f0-9-]+/);
 
     // Verify course syllabus is visible — wait for the back button
-    await expect(
-      page.getByRole("button", { name: "Back to Courses" }),
-    ).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole("button", { name: "Back to Courses" })).toBeVisible({
+      timeout: 15000,
+    });
 
     // The course progress ring shows 'complete' text inside it
-    await expect(
-      page.getByText("complete", { exact: true }).first(),
-    ).toBeVisible();
+    await expect(page.getByText("complete", { exact: true }).first()).toBeVisible();
 
     // 3. Find first wave link (may be a Start button or a link) - click the wave card directly
     // Use the first Link pointing to /waves/ on this page
@@ -61,9 +59,7 @@ test.describe("Student Course Journey Flow", () => {
     // 4. In Wave Player: wait for the page to load (no error state)
     // The wave player renders either the Learn/Evaluate tabs or an error card
     // We wait for the tabs list to be visible — with a longer timeout for API latency
-    await expect(
-      page.getByRole("tablist").first(),
-    ).toBeVisible({ timeout: 20000 });
+    await expect(page.getByRole("tablist").first()).toBeVisible({ timeout: 20000 });
 
     // Verify the Learn tab is present
     await expect(page.getByRole("tab", { name: "Learn" })).toBeVisible();
@@ -74,9 +70,9 @@ test.describe("Student Course Journey Flow", () => {
     await startEvalButton.click();
 
     // 5. Verify evaluate questions are present
-    await expect(
-      page.getByRole("button", { name: "Submit Answers" }),
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("button", { name: "Submit Answers" })).toBeVisible({
+      timeout: 10000,
+    });
 
     // Answer the first question (text input or radio)
     const textInput = page.locator("input[placeholder='Type your answer']").first();

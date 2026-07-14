@@ -16,9 +16,9 @@ test.describe("Leaderboard Page", () => {
     await expect(page).toHaveURL(/\/leaderboard/);
 
     // Page heading
-    await expect(
-      page.getByRole("heading", { name: /leaderboard/i }),
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("heading", { name: /leaderboard/i })).toBeVisible({
+      timeout: 10000,
+    });
 
     // Scope tabs should be visible
     const globalTab = page.getByRole("button", { name: "Global" });

@@ -1,18 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import {
-  Award,
-  BookOpen,
-  CheckCircle,
-  Globe,
-  Shield,
-  User as UserIcon,
-  Zap,
-} from "lucide-react";
+import { Award, BookOpen, CheckCircle, Globe, Shield, User as UserIcon, Zap } from "lucide-react";
 import { useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { StudentShell } from "@/components/layout/StudentShell";
 import { XPBar } from "@/components/gamification/XPBar";
+import { StudentShell } from "@/components/layout/StudentShell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
@@ -21,7 +13,14 @@ import { levelFromXp } from "@/lib/gamification";
 import { useAuthStore } from "@/stores/auth";
 
 const LEVEL_NAMES = [
-  "Rookie", "Novice", "Learner", "Scholar", "Expert", "Master", "Grand Master", "Enlightened",
+  "Rookie",
+  "Novice",
+  "Learner",
+  "Scholar",
+  "Expert",
+  "Master",
+  "Grand Master",
+  "Enlightened",
 ];
 
 export const Route = createFileRoute("/settings")({
@@ -36,10 +35,12 @@ function SettingsPage() {
 
   const [{ data }] = useQuery({ query: MY_ENROLLMENTS_QUERY });
   const enrollments = data?.myEnrollments ?? [];
-  const completedCourses = enrollments.filter((c: { myProgress?: { completedWaves: number; totalWaves: number } | null }) => {
-    const p = c.myProgress;
-    return p && p.totalWaves > 0 && p.completedWaves === p.totalWaves;
-  }).length;
+  const completedCourses = enrollments.filter(
+    (c: { myProgress?: { completedWaves: number; totalWaves: number } | null }) => {
+      const p = c.myProgress;
+      return p && p.totalWaves > 0 && p.completedWaves === p.totalWaves;
+    },
+  ).length;
 
   return (
     <ProtectedRoute allowedRoles={["STUDENT"]}>

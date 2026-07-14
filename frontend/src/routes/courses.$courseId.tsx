@@ -194,15 +194,23 @@ function CoursePlayerPage() {
                 </span>
                 <h2 className="flex-1 text-lg font-semibold">{lesson.title}</h2>
                 {/* Lesson-level mini progress */}
-                {lesson.waves.length > 0 && (() => {
-                  const done = lesson.waves.filter((w) => w.myProgress?.status === "COMPLETED").length;
-                  const pct = Math.round((done / lesson.waves.length) * 100);
-                  return (
-                    <ProgressRing value={pct} size={36} strokeWidth={4} className="text-primary shrink-0">
-                      <span className="text-[9px] font-bold">{pct}%</span>
-                    </ProgressRing>
-                  );
-                })()}
+                {lesson.waves.length > 0 &&
+                  (() => {
+                    const done = lesson.waves.filter(
+                      (w) => w.myProgress?.status === "COMPLETED",
+                    ).length;
+                    const pct = Math.round((done / lesson.waves.length) * 100);
+                    return (
+                      <ProgressRing
+                        value={pct}
+                        size={36}
+                        strokeWidth={4}
+                        className="text-primary shrink-0"
+                      >
+                        <span className="text-[9px] font-bold">{pct}%</span>
+                      </ProgressRing>
+                    );
+                  })()}
               </div>
               <CardContent className="space-y-2 p-4">
                 {lesson.waves.length === 0 ? (
@@ -241,18 +249,24 @@ function CoursePlayerPage() {
                               {wave.title}
                             </p>
                             <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
-                              <span className="rounded-full bg-muted px-2 py-0.5">{wave.difficulty}</span>
+                              <span className="rounded-full bg-muted px-2 py-0.5">
+                                {wave.difficulty}
+                              </span>
                               <span className="flex items-center gap-0.5">
                                 <Zap className="h-3 w-3 text-amber-500" /> {wave.xpReward} XP
                               </span>
-                              {wave.myProgress?.attemptsCount !== undefined && wave.myProgress.attemptsCount > 0 && (
-                                <span className="rounded-full bg-muted px-2 py-0.5">
-                                  {wave.myProgress.attemptsCount} attempt{wave.myProgress.attemptsCount !== 1 ? "s" : ""}
-                                </span>
-                              )}
+                              {wave.myProgress?.attemptsCount !== undefined &&
+                                wave.myProgress.attemptsCount > 0 && (
+                                  <span className="rounded-full bg-muted px-2 py-0.5">
+                                    {wave.myProgress.attemptsCount} attempt
+                                    {wave.myProgress.attemptsCount !== 1 ? "s" : ""}
+                                  </span>
+                                )}
                               {wave.myProgress?.highestScore !== null &&
                                 wave.myProgress?.highestScore !== undefined && (
-                                  <span className="font-semibold text-success">Best: {wave.myProgress.highestScore}%</span>
+                                  <span className="font-semibold text-success">
+                                    Best: {wave.myProgress.highestScore}%
+                                  </span>
                                 )}
                             </div>
                           </div>

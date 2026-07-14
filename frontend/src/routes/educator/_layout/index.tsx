@@ -14,8 +14,8 @@ import { useMemo } from "react";
 import { useQuery } from "urql";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Skeleton } from "@/components/ui/Skeleton";
 import { ProgressRing } from "@/components/ui/ProgressRing";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { COURSES_QUERY } from "@/graphql/courses";
 
 interface WaveNode {
@@ -106,7 +106,10 @@ function EducatorDashboardPage() {
     },
     {
       label: "Completion Rate",
-      value: courses.length > 0 ? `${Math.round((stats.published.length / courses.length) * 100)}%` : "—",
+      value:
+        courses.length > 0
+          ? `${Math.round((stats.published.length / courses.length) * 100)}%`
+          : "—",
       icon: TrendingUp,
       color: "text-blue-500",
       bg: "bg-blue-500/10",

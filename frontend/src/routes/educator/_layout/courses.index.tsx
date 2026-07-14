@@ -19,9 +19,6 @@ interface CourseItem {
   price?: number | null;
 }
 
-
-
-
 export const Route = createFileRoute("/educator/_layout/courses/")({
   component: EducatorCoursesPage,
 });
@@ -109,14 +106,12 @@ function EducatorCoursesPage() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {courses.map((course: CourseItem) => {
           return (
-            <div
-              key={course.id}
-              data-testid="course-card"
-              className="group"
-            >
+            <div key={course.id} data-testid="course-card" className="group">
               <Card className="flex h-full flex-col hover:shadow-md hover:border-primary/30 transition-all hover:-translate-y-0.5">
                 {/* Status bar */}
-                <div className={`h-1.5 w-full rounded-t-xl ${course.isPublished ? "bg-success" : "bg-amber-400"}`} />
+                <div
+                  className={`h-1.5 w-full rounded-t-xl ${course.isPublished ? "bg-success" : "bg-amber-400"}`}
+                />
 
                 <CardContent className="flex flex-1 flex-col gap-4 p-5">
                   {/* Title + status badge */}
