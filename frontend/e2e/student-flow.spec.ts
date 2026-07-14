@@ -69,26 +69,32 @@ test.describe("Student Course Journey Flow", () => {
     await expect(startEvalButton).toBeVisible();
     await startEvalButton.click();
 
-    // 5. Verify evaluate questions are present
-    await expect(page.getByRole("button", { name: "Submit Answers" })).toBeVisible({
-      timeout: 10000,
-    });
+    // 5. This wave may already be completed from a prior run against the
+    // same seeded backend (waves stay completed across re-runs of this
+    // suite) — the player shows a read-only result summary instead of the
+    // submit form in that case, so handle both states.
+    const submitButton = page.getByRole("button", { name: "Submit Answers" });
+    const alreadyCompleted = page.getByText("Total XP:");
 
-    // Answer the first question (text input or radio)
-    const textInput = page.locator("input[placeholder='Type your answer']").first();
-    const radioOption = page.locator("input[type='radio']").first();
+    await expect(submitButton.or(alreadyCompleted)).toBeVisible({ timeout: 10000 });
 
-    if (await textInput.isVisible()) {
-      await textInput.fill("test answer");
-      await textInput.blur();
-    } else if (await radioOption.isVisible()) {
-      await radioOption.click();
+    if (await submitButton.isVisible()) {
+      // Answer the first question (text input or radio)
+      const textInput = page.locator("input[placeholder='Type your answer']").first();
+      const radioOption = page.locator("input[type='radio']").first();
+
+      if (await textInput.isVisible()) {
+        await textInput.fill("test answer");
+        await textInput.blur();
+      } else if (await radioOption.isVisible()) {
+        await radioOption.click();
+      }
+
+      // 6. Submit answers
+      await submitButton.click();
     }
 
-    // 6. Submit answers
-    await page.getByRole("button", { name: "Submit Answers" }).click();
-
     // 7. Verify results card is displayed
-    await expect(page.getByText("Total XP:")).toBeVisible({ timeout: 15000 });
+    await expect(alreadyCompleted).toBeVisible({ timeout: 15000 });
   });
 });

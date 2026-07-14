@@ -187,6 +187,23 @@ function WavePlayerPage() {
   const maxAttempts = wave.maxReattempts > 0 ? wave.maxReattempts : null;
   const canReattempt = result ? !result.passed && result.remainingAttempts > 0 : false;
   const justEarnedXp = result?.passed && result.xpEarned > 0;
+
+  // On a fresh page load of an already-completed wave there's no fresh
+  // submission `result` yet — synthesize a read-only one from myProgress so
+  // returning students see their prior score instead of a dead, disabled
+  // Submit button with no explanation.
+  const displayResult: WaveResult | null =
+    result ??
+    (isCompleted
+      ? {
+          score: wave.myProgress?.highestScore ?? 0,
+          xpEarned: 0,
+          totalXp: user?.totalXp ?? 0,
+          passed: true,
+          remainingAttempts: maxAttempts !== null ? Math.max(maxAttempts - attemptsCount, 0) : 0,
+          feedback: [],
+        }
+      : null);
   const proficiency = computeProficiency(
     isCompleted ? [{ status: "COMPLETED", highestScore: wave.myProgress?.highestScore }] : [],
   );
@@ -304,20 +321,20 @@ function WavePlayerPage() {
                   />
                 ))}
 
-                {result && (
+                {displayResult && (
                   <div className="space-y-4">
                     <ResultCard
-                      passed={result.passed}
-                      score={result.score}
-                      xpEarned={result.xpEarned}
-                      totalXp={result.totalXp}
+                      passed={displayResult.passed}
+                      score={displayResult.score}
+                      xpEarned={displayResult.xpEarned}
+                      totalXp={displayResult.totalXp}
                       passingThreshold={wave.passingThreshold}
-                      remainingAttempts={result.remainingAttempts}
+                      remainingAttempts={displayResult.remainingAttempts}
                       justEarnedXp={!!justEarnedXp}
                       canReattempt={canReattempt}
                       onTryAgain={handleTryAgain}
                     />
-                    {result.passed && (
+                    {displayResult.passed && (
                       <Link
                         to="/courses/$courseId"
                         params={{ courseId: wave.lesson?.course?.id ?? "" }}
@@ -331,7 +348,7 @@ function WavePlayerPage() {
                   </div>
                 )}
 
-                {!result && (
+                {!displayResult && (
                   <>
                     {submitError && <p className="text-sm text-destructive">{submitError}</p>}
                     <Button
@@ -339,7 +356,6 @@ function WavePlayerPage() {
                       disabled={
                         submitResult.fetching ||
                         evaluateBlocks.length === 0 ||
-                        isCompleted ||
                         (maxAttempts !== null && attemptsCount >= maxAttempts)
                       }
                       className="w-full"
