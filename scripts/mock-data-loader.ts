@@ -184,7 +184,35 @@ async function publishCourse(session: Session, id: string) {
   );
 }
 
+async function findLessonByTitle(session: Session, courseId: string, title: string): Promise<string | null> {
+  const res = await session.graphql(
+    `query Course($id: ID!) {
+      course(id: $id) {
+        lessons {
+          id
+          title
+        }
+      }
+    }`,
+    { id: courseId }
+  );
+
+  const lessons = res.data?.course?.lessons || [];
+  for (const lesson of lessons) {
+    if (lesson.title === title) {
+      return lesson.id;
+    }
+  }
+  return null;
+}
+
 async function createLesson(session: Session, courseId: string, title: string, sequence: number): Promise<string> {
+  const existingId = await findLessonByTitle(session, courseId, title);
+  if (existingId) {
+    console.log(`[mock] lesson '${title}' already exists: ${existingId}`);
+    return existingId;
+  }
+
   const res = await session.graphql(
     `mutation CreateLesson($courseId: ID!, $input: CreateLessonInput!) {
       createLesson(courseId: $courseId, input: $input) {
@@ -221,7 +249,40 @@ async function publishLesson(session: Session, id: string) {
   );
 }
 
-async function createWave(session: Session, lessonId: string, title: string, sequence: number, question: string, correct: string): Promise<string> {
+async function findWaveByTitle(session: Session, courseId: string, lessonId: string, title: string): Promise<string | null> {
+  const res = await session.graphql(
+    `query Course($id: ID!) {
+      course(id: $id) {
+        lessons {
+          id
+          waves {
+            id
+            title
+          }
+        }
+      }
+    }`,
+    { id: courseId }
+  );
+
+  const lessons = res.data?.course?.lessons || [];
+  const lesson = lessons.find((l: any) => l.id === lessonId);
+  const waves = lesson?.waves || [];
+  for (const wave of waves) {
+    if (wave.title === title) {
+      return wave.id;
+    }
+  }
+  return null;
+}
+
+async function createWave(session: Session, courseId: string, lessonId: string, title: string, sequence: number, question: string, correct: string): Promise<string> {
+  const existingId = await findWaveByTitle(session, courseId, lessonId, title);
+  if (existingId) {
+    console.log(`[mock] wave '${title}' already exists: ${existingId}`);
+    return existingId;
+  }
+
   const res = await session.graphql(
     `mutation CreateWave($lessonId: ID!, $input: CreateWaveInput!) {
       createWave(lessonId: $lessonId, input: $input) {
@@ -323,6 +384,7 @@ async function main() {
   await publishLesson(educator, bioLessonId);
   const cellWaveId = await createWave(
     educator,
+    scienceId,
     bioLessonId,
     "Cell Structure",
     1,
@@ -339,6 +401,7 @@ async function main() {
   await publishLesson(educator, algebraLessonId);
   const linearWaveId = await createWave(
     educator,
+    mathId,
     algebraLessonId,
     "Linear Equations",
     1,
@@ -355,6 +418,7 @@ async function main() {
   await publishLesson(educator, grammarLessonId);
   const tensesWaveId = await createWave(
     educator,
+    englishId,
     grammarLessonId,
     "Tenses",
     1,
@@ -371,6 +435,7 @@ async function main() {
   await publishLesson(educator, mechanicsLessonId);
   const lawsWaveId = await createWave(
     educator,
+    physicsId,
     mechanicsLessonId,
     "Newton's Laws",
     1,

@@ -165,7 +165,7 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 
 	if passed {
 		// 1. Check if lesson is complete
-		wavesResp, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: wave.LessonId})
+		wavesResp, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: wave.LessonId, PublishedOnly: true})
 		if err == nil {
 			lessonTotal := int32(len(wavesResp.Waves))
 			lessonCompletedVal, err := s.repo.CountPassedWavesInLesson(ctx, userID, wave.LessonId)
@@ -205,11 +205,11 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 		}
 
 		// 3. Check if course is complete
-		lessonsResp, err := s.course.ListLessons(ctx, &coursepb.ListLessonsRequest{CourseId: lesson.CourseId})
+		lessonsResp, err := s.course.ListLessons(ctx, &coursepb.ListLessonsRequest{CourseId: lesson.CourseId, PublishedOnly: true})
 		if err == nil {
 			var courseTotalWaves int32
 			for _, l := range lessonsResp.Lessons {
-				lwaves, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: l.Id})
+				lwaves, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: l.Id, PublishedOnly: true})
 				if err == nil {
 					courseTotalWaves += int32(len(lwaves.Waves))
 				}
@@ -271,7 +271,7 @@ func (s *progressService) GetWaveProgress(ctx context.Context, userID, waveID st
 	courseID := lesson.CourseId
 
 	// 3. Fetch all lessons in this course to reconstruct natural order
-	lessonsResp, err := s.course.ListLessons(ctx, &coursepb.ListLessonsRequest{CourseId: courseID})
+	lessonsResp, err := s.course.ListLessons(ctx, &coursepb.ListLessonsRequest{CourseId: courseID, PublishedOnly: true})
 	if err != nil {
 		return nil, fmt.Errorf("failed to list lessons: %w", err)
 	}
@@ -283,7 +283,7 @@ func (s *progressService) GetWaveProgress(ctx context.Context, userID, waveID st
 	// 4. Collect and sort all waves across the sorted lessons
 	var courseWaves []*coursepb.Wave
 	for _, l := range lessons {
-		wavesResp, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: l.Id})
+		wavesResp, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: l.Id, PublishedOnly: true})
 		if err != nil {
 			return nil, fmt.Errorf("failed to list waves: %w", err)
 		}
@@ -379,7 +379,7 @@ func (s *progressService) GetCourseProgress(ctx context.Context, userID, courseI
 		return nil, fmt.Errorf("user is not enrolled in this course")
 	}
 
-	lessonsResp, err := s.course.ListLessons(ctx, &coursepb.ListLessonsRequest{CourseId: courseID})
+	lessonsResp, err := s.course.ListLessons(ctx, &coursepb.ListLessonsRequest{CourseId: courseID, PublishedOnly: true})
 	if err != nil {
 		return nil, fmt.Errorf("failed to list lessons: %w", err)
 	}
@@ -396,7 +396,7 @@ func (s *progressService) GetCourseProgress(ctx context.Context, userID, courseI
 	lessonProgressList := make([]*progresspb.LessonProgress, 0, len(lessonsResp.Lessons))
 
 	for _, lesson := range lessonsResp.Lessons {
-		wavesResp, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: lesson.Id})
+		wavesResp, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: lesson.Id, PublishedOnly: true})
 		if err != nil {
 			return nil, fmt.Errorf("failed to list waves: %w", err)
 		}

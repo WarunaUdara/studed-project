@@ -131,11 +131,30 @@ publish_wave() {
     "{\"id\":\"${wave_id}\"}" >/dev/null
 }
 
+find_lesson_by_title() {
+  local jar="$1"
+  local course_id="$2"
+  local title="$3"
+
+  graphql "${jar}" \
+    'query Course($id: ID!) { course(id: $id) { lessons { id title } } }' \
+    "{\"id\":\"${course_id}\"}" \
+    | jq -r --arg title "${title}" '.data.course.lessons[]? | select(.title == $title) | .id' \
+    | head -n1
+}
+
 create_lesson() {
   local jar="$1"
   local course_id="$2"
   local title="$3"
   local sequence="$4"
+
+  local existing_id
+  existing_id=$(find_lesson_by_title "${jar}" "${course_id}" "${title}")
+  if [ -n "${existing_id}" ]; then
+    echo "${existing_id}"
+    return 0
+  fi
 
   local response
   response=$(graphql "${jar}" \
@@ -151,6 +170,18 @@ create_lesson() {
   echo "${response}" | jq -r '.data.createLesson.id'
 }
 
+find_wave_by_title() {
+  local jar="$1"
+  local lesson_id="$2"
+  local title="$3"
+
+  graphql "${jar}" \
+    'query Lesson($id: ID!) { lesson(id: $id) { waves { id title } } }' \
+    "{\"id\":\"${lesson_id}\"}" \
+    | jq -r --arg title "${title}" '.data.lesson.waves[]? | select(.title == $title) | .id' \
+    | head -n1
+}
+
 create_wave() {
   local jar="$1"
   local lesson_id="$2"
@@ -159,12 +190,14 @@ create_wave() {
   local question="$5"
   local correct="$6"
 
-  local response
-  response=$(graphql "${jar}" \
-    'mutation CreateWave($lessonId: ID!, $input: CreateWaveInput!) { createWave(lessonId: $lessonId, input: $input) { id title sequenceOrder learnBlocks { id type content } evaluateBlocks { id type question options correctAnswer } } }' \
-    "{\"jsonId\":\"${lesson_id}\",\"input\":{\"title\":\"${title}\",\"sequenceOrder\":${sequence},\"xpReward\":100,\"maxReattempts\":3,\"passingThreshold\":50,\"estimatedDuration\":10,\"difficulty\":\"MEDIUM\",\"learnBlocks\":[{\"id\":\"lb1\",\"type\":\"text\",\"content\":\"This is a mock learn block for ${title}.\"}],\"evaluateBlocks\":[{\"id\":\"eb1\",\"type\":\"multiple_choice\",\"question\":\"${question}\",\"options\":[\"${correct}\",\"Wrong A\",\"Wrong B\"],\"correctAnswer\":\"${correct}\",\"explanation\":\"Correct!\"}]}}")
+  local existing_id
+  existing_id=$(find_wave_by_title "${jar}" "${lesson_id}" "${title}")
+  if [ -n "${existing_id}" ]; then
+    echo "${existing_id}"
+    return 0
+  fi
 
-  # Note: The field name in the input schema for createWave is lessonId
+  local response
   response=$(graphql "${jar}" \
     'mutation CreateWave($lessonId: ID!, $input: CreateWaveInput!) { createWave(lessonId: $lessonId, input: $input) { id title sequenceOrder learnBlocks { id type content } evaluateBlocks { id type question options correctAnswer } } }' \
     "{\"lessonId\":\"${lesson_id}\",\"input\":{\"title\":\"${title}\",\"sequenceOrder\":${sequence},\"xpReward\":100,\"maxReattempts\":3,\"passingThreshold\":50,\"estimatedDuration\":10,\"difficulty\":\"MEDIUM\",\"learnBlocks\":[{\"id\":\"lb1\",\"type\":\"text\",\"content\":\"This is a mock learn block for ${title}.\"}],\"evaluateBlocks\":[{\"id\":\"eb1\",\"type\":\"multiple_choice\",\"question\":\"${question}\",\"options\":[\"${correct}\",\"Wrong A\",\"Wrong B\"],\"correctAnswer\":\"${correct}\",\"explanation\":\"Correct!\"}]}}")
