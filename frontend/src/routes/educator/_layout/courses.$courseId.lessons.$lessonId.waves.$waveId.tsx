@@ -1,18 +1,19 @@
-import { Puck } from "@puckeditor/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Check, Loader2, Save, Send } from "lucide-react";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useMutation, useQuery } from "urql";
-import "@puckeditor/core/puck.css";
 
 import {
   type PuckData,
-  puckConfig,
   puckToWaveData,
   waveDataToPuck,
 } from "@/components/puck-blocks/puck-config";
 import { Button } from "@/components/ui/button";
 import { PUBLISH_WAVE_MUTATION, UPDATE_WAVE_MUTATION, WAVE_QUERY } from "@/graphql/courses";
+
+// @puckeditor/core (~large, plus its CSS) is code-split into its own chunk
+// and only fetched when an educator actually opens the wave editor.
+const PuckCanvas = lazy(() => import("@/components/puck-blocks/PuckCanvas"));
 
 export const Route = createFileRoute(
   "/educator/_layout/courses/$courseId/lessons/$lessonId/waves/$waveId",
@@ -185,12 +186,16 @@ function WaveEditorPage() {
       {/* Puck Canvas Container */}
       <div className="flex-1 border rounded-lg overflow-hidden bg-background relative min-h-[400px]">
         {puckData && (
-          <Puck
-            config={puckConfig}
-            data={puckData}
-            onChange={(newData) => setPuckData(newData)}
-            onPublish={handleSave}
-          />
+          <Suspense
+            fallback={
+              <div className="flex h-full items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <span className="ml-2 text-muted-foreground">Loading editor...</span>
+              </div>
+            }
+          >
+            <PuckCanvas data={puckData} onChange={setPuckData} onPublish={handleSave} />
+          </Suspense>
         )}
       </div>
     </div>
