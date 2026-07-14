@@ -6,6 +6,41 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [TanStackRouterVite(), react(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("@puckeditor")) {
+              return "vendor-puck";
+            }
+            if (id.includes("recharts") || id.includes("d3")) {
+              return "vendor-charts";
+            }
+            if (id.includes("framer-motion")) {
+              return "vendor-motion";
+            }
+            if (id.includes("lucide-react")) {
+              return "vendor-lucide";
+            }
+            if (id.includes("urql") || id.includes("graphql")) {
+              return "vendor-graphql";
+            }
+            if (id.includes("@base-ui")) {
+              return "vendor-baseui";
+            }
+            if (id.includes("zod")) {
+              return "vendor-zod";
+            }
+            if (id.includes("react") || id.includes("react-dom") || id.includes("@tanstack")) {
+              return "vendor-core";
+            }
+            return "vendor";
+          }
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
