@@ -1,9 +1,7 @@
-import { levelFromXp } from "@/lib/gamification";
-
 /**
- * Demo leaderboard entries used when the GraphQL backend isn't ready/returns
- * nothing. These exist purely so the new leaderboard/achievements UI can
- * showcase its gamification affordances (rank glyphs, "You are #42", etc).
+ * Demo leaderboard entries used only by the public, pre-login landing page
+ * preview (GamifiedPreview). Never used on authenticated pages — real
+ * leaderboard data always comes from the GraphQL API there.
  */
 export interface DemoLeaderboardEntry {
   rank: number;
@@ -26,7 +24,7 @@ const NAMES = [
   "Ishara N.",
 ];
 
-export function buildDemoLeaderboard(youId: string, youXp = 3120): DemoLeaderboardEntry[] {
+function buildDemoLeaderboard(youId: string, youXp = 3120): DemoLeaderboardEntry[] {
   const xs = [8420, 7635, 6890, 5920, 5385, 4860, 4225, 3870, 3510, 3120, 2845, 2480, 2120, 1780];
   const entries: DemoLeaderboardEntry[] = xs.map((xp, i) => ({
     rank: i + 1,
@@ -42,94 +40,6 @@ export function buildDemoLeaderboard(youId: string, youXp = 3120): DemoLeaderboa
     entries.push({ rank: 42, user: { id: youId, fullName: "You" }, totalXp: youXp });
   }
   return entries.sort((a, b) => a.rank - b.rank);
-}
-
-/** Daily XP series for a 7-day dashboard chart (used when backend empty). */
-export const DEMO_7DAY_XP = [80, 140, 220, 120, 360, 280, 200];
-
-/** Daily XP series for a 30-day achievements chart. */
-export function demo30dayXp(): number[] {
-  const out: number[] = [];
-  for (let i = 0; i < 30; i++) {
-    out.push(Math.round(40 + Math.random() * 240 + (i % 7 === 0 ? 360 : 0)));
-  }
-  return out;
-}
-
-/** XP breakdown by category — used in the achievements page bar chart. */
-export function demoXpBreakdown(totalXp: number): {
-  waves: number;
-  proficiencyBonuses: number;
-  streaks: number;
-  perfectScores: number;
-} {
-  return {
-    waves: Math.round(totalXp * 0.62),
-    proficiencyBonuses: Math.round(totalXp * 0.18),
-    streaks: Math.round(totalXp * 0.12),
-    perfectScores: Math.round(totalXp * 0.08),
-  };
-}
-
-/** Per-lesson proficiency counts used to render the proficiency dashboard. */
-export interface DemoProficiencyBucket {
-  level: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED" | "PROFICIENT" | "EXPERT";
-  label: string;
-  count: number;
-}
-
-export function demoProficiencyBuckets(): DemoProficiencyBucket[] {
-  return [
-    { level: "NOT_STARTED", label: "Not Started", count: 6 },
-    { level: "IN_PROGRESS", label: "In Progress", count: 4 },
-    { level: "COMPLETED", label: "Completed", count: 5 },
-    { level: "PROFICIENT", label: "Proficient", count: 3 },
-    { level: "EXPERT", label: "Expert", count: 1 },
-  ];
-}
-
-export interface DemoTopTarget {
-  lessonTitle: string;
-  wavesRemaining: number;
-}
-
-export function demoTopTargets(): DemoTopTarget[] {
-  return [
-    { lessonTitle: "Algebra Basics", wavesRemaining: 2 },
-    { lessonTitle: "Cell Biology", wavesRemaining: 1 },
-    { lessonTitle: "Newton's Laws", wavesRemaining: 3 },
-  ];
-}
-
-export interface DemoSuggestedReattempt {
-  lessonTitle: string;
-  waveTitle: string;
-  bestScore: number;
-}
-
-export function demoSuggestedReattempts(): DemoSuggestedReattempt[] {
-  return [
-    { lessonTitle: "Numbers", waveTitle: "Fractions Quiz", bestScore: 75 },
-    { lessonTitle: "Forces", waveTitle: "Friction MCQ", bestScore: 68 },
-  ];
-}
-
-export function levelName(level: number): string {
-  const names = [
-    "Rookie",
-    "Novice",
-    "Learner",
-    "Scholar",
-    "Expert",
-    "Master",
-    "Grand Master",
-    "Enlightened",
-  ];
-  return names[Math.min(level - 1, names.length - 1)] ?? "Enlightened";
-}
-
-export function levelInfoForXp(totalXp: number) {
-  return levelFromXp(totalXp);
 }
 
 /**

@@ -12,7 +12,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/Input";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { LEADERBOARD_QUERY } from "@/graphql/courses";
-import { buildDemoLeaderboard } from "@/lib/demoData";
 import { sanitizeGraphQLError } from "@/lib/errors";
 import { privateLeaderboardName } from "@/lib/gamification";
 import { cn } from "@/lib/utils";
@@ -43,8 +42,7 @@ const SKELETON_KEYS = [
 
 function LeaderboardPage() {
   const { user } = useAuthStore();
-  const youId = user?.id ?? "demo-you";
-  const youXp = user?.totalXp ?? 3120;
+  const youId = user?.id ?? "";
 
   const [scope, setScope] = useState<Scope>("GLOBAL");
   const [query, setQuery] = useState("");
@@ -54,17 +52,14 @@ function LeaderboardPage() {
     variables: { scope },
   });
 
-  const leaderboard: LeaderboardEntry[] = useMemo(() => {
-    const real = data?.leaderboard ?? [];
-    if (real.length === 0) {
-      return buildDemoLeaderboard(youId, youXp);
-    }
-    return real as LeaderboardEntry[];
-  }, [data, youId, youXp]);
+  const leaderboard: LeaderboardEntry[] = useMemo(
+    () => (data?.leaderboard ?? []) as LeaderboardEntry[],
+    [data],
+  );
 
   const myEntry = leaderboard.find((e) => e.user.id === youId);
-  const myRank = myEntry?.rank ?? 42;
-  const myXp = myEntry?.totalXp ?? youXp;
+  const myRank = myEntry?.rank ?? null;
+  const myXp = myEntry?.totalXp ?? user?.totalXp ?? 0;
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -101,12 +96,17 @@ function LeaderboardPage() {
               </span>
               <div>
                 <p className="text-sm text-muted-foreground">Your current rank</p>
-                <p className="text-2xl font-extrabold tracking-tight">
-                  <RankBadge rank={myRank} total={total} size="lg" /> #{myRank}{" "}
-                  <span className="text-muted-foreground font-medium">/ {total}</span>
-                </p>
+                {myRank === null ? (
+                  <p className="text-2xl font-extrabold tracking-tight">Not ranked yet</p>
+                ) : (
+                  <p className="text-2xl font-extrabold tracking-tight">
+                    <RankBadge rank={myRank} total={total} size="lg" /> #{myRank}{" "}
+                    <span className="text-muted-foreground font-medium">/ {total}</span>
+                  </p>
+                )}
                 <p className="text-sm text-muted-foreground">
-                  {myXp.toLocaleString()} XP · keep going!
+                  {myXp.toLocaleString()} XP ·{" "}
+                  {myRank === null ? "complete a wave to join the board!" : "keep going!"}
                 </p>
               </div>
             </div>
@@ -171,6 +171,10 @@ function LeaderboardPage() {
                 <p className="mt-1 text-sm text-muted-foreground">
                   {sanitizeGraphQLError(error).message}
                 </p>
+              </div>
+            ) : total === 0 ? (
+              <div className="py-8 text-center text-sm text-muted-foreground">
+                No one has earned XP on this leaderboard yet. Complete a wave to be the first!
               </div>
             ) : visible.length === 0 ? (
               <div className="py-8 text-center text-sm text-muted-foreground">

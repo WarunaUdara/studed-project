@@ -24,8 +24,7 @@ test.describe("Leaderboard Page", () => {
     const globalTab = page.getByRole("button", { name: "Global" });
     await expect(globalTab).toBeVisible();
 
-    // At least one leaderboard row should load
-    // The leaderboard shows either real or demo data
+    // At least one leaderboard row should load from the real GraphQL API
     await expect(page.locator("main, [role='main']").first()).toBeVisible();
 
     // Check a rank is displayed (rank 1 badge)
