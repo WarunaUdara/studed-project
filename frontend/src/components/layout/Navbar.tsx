@@ -1,14 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import { Zap } from "lucide-react";
+import { Moon, Sun, Zap } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { XPBar } from "@/components/gamification/XPBar";
 import { Button } from "@/components/ui/button";
 import { PointsBadge } from "@/components/ui/points-badge";
 import { useAuthStore } from "@/stores/auth";
+import { useUiPrefs } from "@/stores/uiPrefs";
 
 export function Navbar() {
   const { user, isAuthenticated } = useAuthStore();
   const isStudent = isAuthenticated && user?.role === "STUDENT";
+  const theme = useUiPrefs((s) => s.theme);
+  const toggleTheme = useUiPrefs((s) => s.toggleTheme);
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75">
@@ -58,6 +61,16 @@ export function Navbar() {
               </div>
             </div>
           )}
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="rounded-full"
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4 text-warning" /> : <Moon className="h-4 w-4 text-primary" />}
+          </Button>
 
           {!isAuthenticated ? (
             <>

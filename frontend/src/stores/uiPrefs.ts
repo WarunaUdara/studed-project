@@ -1,19 +1,23 @@
 import { create } from "zustand";
 
 export type Language = "EN" | "SI";
+export type Theme = "light" | "dark";
 
 export interface UiPreferencesState {
   language: Language;
+  theme: Theme;
   reducedMotion: boolean;
   leaderboardOptOut: boolean;
   showRankNotifs: boolean;
   soundEnabled: boolean;
   setLanguage: (lang: Language) => void;
+  setTheme: (theme: Theme) => void;
   setReducedMotion: (v: boolean) => void;
   setLeaderboardOptOut: (v: boolean) => void;
   setShowRankNotifs: (v: boolean) => void;
   setSoundEnabled: (v: boolean) => void;
   toggleLanguage: () => void;
+  toggleTheme: () => void;
   hydrate: () => void;
 }
 
@@ -21,6 +25,7 @@ const STORAGE_KEY = "studed-ui-prefs";
 
 interface PersistedPrefs {
   language: Language;
+  theme: Theme;
   reducedMotion: boolean;
   leaderboardOptOut: boolean;
   showRankNotifs: boolean;
@@ -48,6 +53,7 @@ function write(prefs: PersistedPrefs) {
 
 export const useUiPrefs = create<UiPreferencesState>((set, get) => ({
   language: "EN",
+  theme: "light",
   reducedMotion: false,
   leaderboardOptOut: false,
   showRankNotifs: true,
@@ -60,6 +66,17 @@ export const useUiPrefs = create<UiPreferencesState>((set, get) => ({
     const next = get().language === "EN" ? "SI" : "EN";
     set({ language: next });
     persist(get());
+  },
+  setTheme: (theme) => {
+    set({ theme });
+    persist(get());
+    if (typeof document !== "undefined") {
+      document.documentElement.classList.toggle("dark", theme === "dark");
+    }
+  },
+  toggleTheme: () => {
+    const next = get().theme === "light" ? "dark" : "light";
+    get().setTheme(next);
   },
   setReducedMotion: (reducedMotion) => {
     set({ reducedMotion });
@@ -82,16 +99,25 @@ export const useUiPrefs = create<UiPreferencesState>((set, get) => ({
   },
   hydrate: () => {
     const p = read();
+    let initialTheme = p.theme;
+    if (!initialTheme && typeof window !== "undefined") {
+      initialTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    const theme = initialTheme ?? "light";
+
     set({
       language: p.language ?? "EN",
+      theme,
       reducedMotion: p.reducedMotion ?? false,
       leaderboardOptOut: p.leaderboardOptOut ?? false,
       showRankNotifs: p.showRankNotifs ?? true,
       soundEnabled: p.soundEnabled ?? true,
     });
+    
     const reduce = p.reducedMotion ?? false;
     if (typeof document !== "undefined") {
       document.documentElement.classList.toggle("reduce-motion", reduce);
+      document.documentElement.classList.toggle("dark", theme === "dark");
     }
   },
 }));
@@ -99,6 +125,7 @@ export const useUiPrefs = create<UiPreferencesState>((set, get) => ({
 function persist(s: UiPreferencesState) {
   write({
     language: s.language,
+    theme: s.theme,
     reducedMotion: s.reducedMotion,
     leaderboardOptOut: s.leaderboardOptOut,
     showRankNotifs: s.showRankNotifs,
