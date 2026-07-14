@@ -99,11 +99,7 @@ export const useUiPrefs = create<UiPreferencesState>((set, get) => ({
   },
   hydrate: () => {
     const p = read();
-    let initialTheme = p.theme;
-    if (!initialTheme && typeof window !== "undefined") {
-      initialTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    }
-    const theme = initialTheme ?? "light";
+    const theme = p.theme ?? "light";
 
     set({
       language: p.language ?? "EN",
