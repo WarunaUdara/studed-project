@@ -15,6 +15,7 @@ type ProgressRepository interface {
 	GetAttemptsByWave(ctx context.Context, userID, waveID string) ([]model.WaveAttempt, error)
 	CountPassedWavesInCourse(ctx context.Context, userID, courseID string) (int64, error)
 	CountPassedWavesInLesson(ctx context.Context, userID, lessonID string) (int64, error)
+	CountPassedWavesGroupedByLesson(ctx context.Context, userID, courseID string) (map[string]int64, error)
 }
 
 type progressRepository struct {
@@ -77,4 +78,27 @@ func (r *progressRepository) CountPassedWavesInLesson(ctx context.Context, userI
 		return 0, err
 	}
 	return count, nil
+}
+
+// CountPassedWavesGroupedByLesson returns, in a single query, the number of
+// distinct passed waves per lesson for every lesson in courseID — replacing
+// what would otherwise be one CountPassedWavesInLesson call per lesson.
+func (r *progressRepository) CountPassedWavesGroupedByLesson(ctx context.Context, userID, courseID string) (map[string]int64, error) {
+	var rows []struct {
+		LessonID string
+		Count    int64
+	}
+	if err := r.db.WithContext(ctx).Model(&model.WaveAttempt{}).
+		Select("lesson_id, COUNT(DISTINCT wave_id) as count").
+		Where("user_id = ? AND course_id = ? AND passed = ?", userID, courseID, true).
+		Group("lesson_id").
+		Scan(&rows).Error; err != nil {
+		return nil, err
+	}
+
+	counts := make(map[string]int64, len(rows))
+	for _, row := range rows {
+		counts[row.LessonID] = row.Count
+	}
+	return counts, nil
 }

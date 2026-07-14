@@ -28,6 +28,7 @@ type CourseService interface {
 	CreateWave(ctx context.Context, req *coursepb.CreateWaveRequest) (*coursepb.WaveResponse, error)
 	GetWave(ctx context.Context, req *coursepb.GetWaveRequest) (*coursepb.WaveResponse, error)
 	ListWaves(ctx context.Context, req *coursepb.ListWavesRequest) (*coursepb.WaveListResponse, error)
+	ListWavesByLessonIds(ctx context.Context, req *coursepb.ListWavesByLessonIdsRequest) (*coursepb.WaveListResponse, error)
 	UpdateWave(ctx context.Context, req *coursepb.UpdateWaveRequest) (*coursepb.WaveResponse, error)
 	PublishWave(ctx context.Context, req *coursepb.PublishWaveRequest) (*coursepb.WaveResponse, error)
 }
@@ -407,6 +408,24 @@ func (s *courseService) ListWaves(ctx context.Context, req *coursepb.ListWavesRe
 	}
 
 	waves, err := s.waveRepo.ListByLesson(ctx, req.LessonId, req.PublishedOnly)
+	if err != nil {
+		return nil, err
+	}
+
+	protoWaves := make([]*coursepb.Wave, len(waves))
+	for i, w := range waves {
+		protoWaves[i] = w.ToProto()
+	}
+
+	return &coursepb.WaveListResponse{Waves: protoWaves}, nil
+}
+
+func (s *courseService) ListWavesByLessonIds(ctx context.Context, req *coursepb.ListWavesByLessonIdsRequest) (*coursepb.WaveListResponse, error) {
+	if len(req.LessonIds) == 0 {
+		return &coursepb.WaveListResponse{}, nil
+	}
+
+	waves, err := s.waveRepo.ListByLessonIDs(ctx, req.LessonIds, req.PublishedOnly)
 	if err != nil {
 		return nil, err
 	}

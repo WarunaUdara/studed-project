@@ -108,6 +108,10 @@ func (h *CourseGRPCHandler) ListWaves(ctx context.Context, req *coursepb.ListWav
 	return h.svc.ListWaves(ctx, req)
 }
 
+func (h *CourseGRPCHandler) ListWavesByLessonIds(ctx context.Context, req *coursepb.ListWavesByLessonIdsRequest) (*coursepb.WaveListResponse, error) {
+	return h.svc.ListWavesByLessonIds(ctx, req)
+}
+
 func (h *CourseGRPCHandler) UpdateWave(ctx context.Context, req *coursepb.UpdateWaveRequest) (*coursepb.WaveResponse, error) {
 	resp, err := h.svc.UpdateWave(ctx, req)
 	if err != nil {

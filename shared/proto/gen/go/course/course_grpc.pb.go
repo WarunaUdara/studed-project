@@ -19,21 +19,22 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CourseService_CreateCourse_FullMethodName  = "/course.CourseService/CreateCourse"
-	CourseService_GetCourse_FullMethodName     = "/course.CourseService/GetCourse"
-	CourseService_ListCourses_FullMethodName   = "/course.CourseService/ListCourses"
-	CourseService_UpdateCourse_FullMethodName  = "/course.CourseService/UpdateCourse"
-	CourseService_PublishCourse_FullMethodName = "/course.CourseService/PublishCourse"
-	CourseService_CreateLesson_FullMethodName  = "/course.CourseService/CreateLesson"
-	CourseService_GetLesson_FullMethodName     = "/course.CourseService/GetLesson"
-	CourseService_ListLessons_FullMethodName   = "/course.CourseService/ListLessons"
-	CourseService_UpdateLesson_FullMethodName  = "/course.CourseService/UpdateLesson"
-	CourseService_PublishLesson_FullMethodName = "/course.CourseService/PublishLesson"
-	CourseService_CreateWave_FullMethodName    = "/course.CourseService/CreateWave"
-	CourseService_GetWave_FullMethodName       = "/course.CourseService/GetWave"
-	CourseService_ListWaves_FullMethodName     = "/course.CourseService/ListWaves"
-	CourseService_UpdateWave_FullMethodName    = "/course.CourseService/UpdateWave"
-	CourseService_PublishWave_FullMethodName   = "/course.CourseService/PublishWave"
+	CourseService_CreateCourse_FullMethodName         = "/course.CourseService/CreateCourse"
+	CourseService_GetCourse_FullMethodName            = "/course.CourseService/GetCourse"
+	CourseService_ListCourses_FullMethodName          = "/course.CourseService/ListCourses"
+	CourseService_UpdateCourse_FullMethodName         = "/course.CourseService/UpdateCourse"
+	CourseService_PublishCourse_FullMethodName        = "/course.CourseService/PublishCourse"
+	CourseService_CreateLesson_FullMethodName         = "/course.CourseService/CreateLesson"
+	CourseService_GetLesson_FullMethodName            = "/course.CourseService/GetLesson"
+	CourseService_ListLessons_FullMethodName          = "/course.CourseService/ListLessons"
+	CourseService_UpdateLesson_FullMethodName         = "/course.CourseService/UpdateLesson"
+	CourseService_PublishLesson_FullMethodName        = "/course.CourseService/PublishLesson"
+	CourseService_CreateWave_FullMethodName           = "/course.CourseService/CreateWave"
+	CourseService_GetWave_FullMethodName              = "/course.CourseService/GetWave"
+	CourseService_ListWaves_FullMethodName            = "/course.CourseService/ListWaves"
+	CourseService_ListWavesByLessonIds_FullMethodName = "/course.CourseService/ListWavesByLessonIds"
+	CourseService_UpdateWave_FullMethodName           = "/course.CourseService/UpdateWave"
+	CourseService_PublishWave_FullMethodName          = "/course.CourseService/PublishWave"
 )
 
 // CourseServiceClient is the client API for CourseService service.
@@ -53,6 +54,7 @@ type CourseServiceClient interface {
 	CreateWave(ctx context.Context, in *CreateWaveRequest, opts ...grpc.CallOption) (*WaveResponse, error)
 	GetWave(ctx context.Context, in *GetWaveRequest, opts ...grpc.CallOption) (*WaveResponse, error)
 	ListWaves(ctx context.Context, in *ListWavesRequest, opts ...grpc.CallOption) (*WaveListResponse, error)
+	ListWavesByLessonIds(ctx context.Context, in *ListWavesByLessonIdsRequest, opts ...grpc.CallOption) (*WaveListResponse, error)
 	UpdateWave(ctx context.Context, in *UpdateWaveRequest, opts ...grpc.CallOption) (*WaveResponse, error)
 	PublishWave(ctx context.Context, in *PublishWaveRequest, opts ...grpc.CallOption) (*WaveResponse, error)
 }
@@ -195,6 +197,16 @@ func (c *courseServiceClient) ListWaves(ctx context.Context, in *ListWavesReques
 	return out, nil
 }
 
+func (c *courseServiceClient) ListWavesByLessonIds(ctx context.Context, in *ListWavesByLessonIdsRequest, opts ...grpc.CallOption) (*WaveListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WaveListResponse)
+	err := c.cc.Invoke(ctx, CourseService_ListWavesByLessonIds_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *courseServiceClient) UpdateWave(ctx context.Context, in *UpdateWaveRequest, opts ...grpc.CallOption) (*WaveResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(WaveResponse)
@@ -232,6 +244,7 @@ type CourseServiceServer interface {
 	CreateWave(context.Context, *CreateWaveRequest) (*WaveResponse, error)
 	GetWave(context.Context, *GetWaveRequest) (*WaveResponse, error)
 	ListWaves(context.Context, *ListWavesRequest) (*WaveListResponse, error)
+	ListWavesByLessonIds(context.Context, *ListWavesByLessonIdsRequest) (*WaveListResponse, error)
 	UpdateWave(context.Context, *UpdateWaveRequest) (*WaveResponse, error)
 	PublishWave(context.Context, *PublishWaveRequest) (*WaveResponse, error)
 	mustEmbedUnimplementedCourseServiceServer()
@@ -282,6 +295,9 @@ func (UnimplementedCourseServiceServer) GetWave(context.Context, *GetWaveRequest
 }
 func (UnimplementedCourseServiceServer) ListWaves(context.Context, *ListWavesRequest) (*WaveListResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListWaves not implemented")
+}
+func (UnimplementedCourseServiceServer) ListWavesByLessonIds(context.Context, *ListWavesByLessonIdsRequest) (*WaveListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListWavesByLessonIds not implemented")
 }
 func (UnimplementedCourseServiceServer) UpdateWave(context.Context, *UpdateWaveRequest) (*WaveResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateWave not implemented")
@@ -544,6 +560,24 @@ func _CourseService_ListWaves_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CourseService_ListWavesByLessonIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWavesByLessonIdsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourseServiceServer).ListWavesByLessonIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CourseService_ListWavesByLessonIds_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourseServiceServer).ListWavesByLessonIds(ctx, req.(*ListWavesByLessonIdsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CourseService_UpdateWave_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateWaveRequest)
 	if err := dec(in); err != nil {
@@ -638,6 +672,10 @@ var CourseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListWaves",
 			Handler:    _CourseService_ListWaves_Handler,
+		},
+		{
+			MethodName: "ListWavesByLessonIds",
+			Handler:    _CourseService_ListWavesByLessonIds_Handler,
 		},
 		{
 			MethodName: "UpdateWave",

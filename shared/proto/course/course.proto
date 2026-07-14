@@ -161,6 +161,11 @@ message ListWavesRequest {
   bool published_only = 2;
 }
 
+message ListWavesByLessonIdsRequest {
+  repeated string lesson_ids = 1;
+  bool published_only = 2;
+}
+
 message UpdateWaveRequest {
   string id = 1;
   string title = 2;
@@ -205,6 +210,7 @@ service CourseService {
   rpc CreateWave(CreateWaveRequest) returns (WaveResponse);
   rpc GetWave(GetWaveRequest) returns (WaveResponse);
   rpc ListWaves(ListWavesRequest) returns (WaveListResponse);
+  rpc ListWavesByLessonIds(ListWavesByLessonIdsRequest) returns (WaveListResponse);
   rpc UpdateWave(UpdateWaveRequest) returns (WaveResponse);
   rpc PublishWave(PublishWaveRequest) returns (WaveResponse);
 }

@@ -150,6 +150,24 @@ func (r *fakeWaveRepo) ListByLesson(ctx context.Context, lessonID string, publis
 	return out, nil
 }
 
+func (r *fakeWaveRepo) ListByLessonIDs(ctx context.Context, lessonIDs []string, publishedOnly bool) ([]*model.Wave, error) {
+	wanted := make(map[string]bool, len(lessonIDs))
+	for _, id := range lessonIDs {
+		wanted[id] = true
+	}
+	var out []*model.Wave
+	for _, w := range r.waves {
+		if !wanted[w.LessonID] {
+			continue
+		}
+		if publishedOnly && !w.IsPublished {
+			continue
+		}
+		out = append(out, w)
+	}
+	return out, nil
+}
+
 func (r *fakeWaveRepo) Update(ctx context.Context, w *model.Wave) error {
 	r.waves[w.ID] = w
 	return nil
@@ -375,6 +393,58 @@ func TestPublishLesson_IsIdempotent(t *testing.T) {
 }
 
 /* ----- Wave ----- */
+
+func TestListWavesByLessonIds_BatchesAcrossMultipleLessons(t *testing.T) {
+	svc, _, _, _ := newTestCourseService()
+
+	course, _ := svc.CreateCourse(context.Background(), &coursepb.CreateCourseRequest{
+		Title: "Mathematics", Slug: "math", EducatorId: "edu-1",
+	})
+	lesson1, _ := svc.CreateLesson(context.Background(), &coursepb.CreateLessonRequest{
+		CourseId: course.Course.Id, EducatorId: "edu-1", Title: "Algebra",
+	})
+	lesson2, _ := svc.CreateLesson(context.Background(), &coursepb.CreateLessonRequest{
+		CourseId: course.Course.Id, EducatorId: "edu-1", Title: "Geometry",
+	})
+	wave1, _ := svc.CreateWave(context.Background(), &coursepb.CreateWaveRequest{
+		LessonId: lesson1.Lesson.Id, EducatorId: "edu-1", Title: "Linear Equations",
+	})
+	wave2, _ := svc.CreateWave(context.Background(), &coursepb.CreateWaveRequest{
+		LessonId: lesson2.Lesson.Id, EducatorId: "edu-1", Title: "Triangles",
+	})
+	// A wave in an unrelated lesson must not be returned.
+	otherLesson, _ := svc.CreateLesson(context.Background(), &coursepb.CreateLessonRequest{
+		CourseId: course.Course.Id, EducatorId: "edu-1", Title: "Unrelated",
+	})
+	_, _ = svc.CreateWave(context.Background(), &coursepb.CreateWaveRequest{
+		LessonId: otherLesson.Lesson.Id, EducatorId: "edu-1", Title: "Should not appear",
+	})
+
+	resp, err := svc.ListWavesByLessonIds(context.Background(), &coursepb.ListWavesByLessonIdsRequest{
+		LessonIds: []string{lesson1.Lesson.Id, lesson2.Lesson.Id},
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(resp.Waves) != 2 {
+		t.Fatalf("expected exactly 2 waves across the requested lessons, got %d: %+v", len(resp.Waves), resp.Waves)
+	}
+	gotIDs := map[string]bool{resp.Waves[0].Id: true, resp.Waves[1].Id: true}
+	if !gotIDs[wave1.Wave.Id] || !gotIDs[wave2.Wave.Id] {
+		t.Fatalf("expected waves %s and %s, got %+v", wave1.Wave.Id, wave2.Wave.Id, resp.Waves)
+	}
+}
+
+func TestListWavesByLessonIds_EmptyInputReturnsEmptyList(t *testing.T) {
+	svc, _, _, _ := newTestCourseService()
+	resp, err := svc.ListWavesByLessonIds(context.Background(), &coursepb.ListWavesByLessonIdsRequest{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(resp.Waves) != 0 {
+		t.Fatalf("expected no waves for an empty lesson id list, got %+v", resp.Waves)
+	}
+}
 
 func TestCreateWave_RejectsNonOwnerOfCourse(t *testing.T) {
 	svc, _, _, _ := newTestCourseService()

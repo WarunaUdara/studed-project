@@ -162,6 +162,24 @@ func (r *fakeProgressRepo) CountPassedWavesInLesson(ctx context.Context, userID,
 	return int64(len(seen)), nil
 }
 
+func (r *fakeProgressRepo) CountPassedWavesGroupedByLesson(ctx context.Context, userID, courseID string) (map[string]int64, error) {
+	seenPerLesson := map[string]map[string]bool{}
+	for _, a := range r.attempts {
+		if a.UserID != userID || a.CourseID != courseID || !a.Passed {
+			continue
+		}
+		if seenPerLesson[a.LessonID] == nil {
+			seenPerLesson[a.LessonID] = map[string]bool{}
+		}
+		seenPerLesson[a.LessonID][a.WaveID] = true
+	}
+	counts := make(map[string]int64, len(seenPerLesson))
+	for lessonID, waves := range seenPerLesson {
+		counts[lessonID] = int64(len(waves))
+	}
+	return counts, nil
+}
+
 type notFoundErr struct{}
 
 func (notFoundErr) Error() string { return "not found" }
@@ -187,6 +205,10 @@ func (c *fakeCourseClient) GetWave(ctx context.Context, in *coursepb.GetWaveRequ
 	return &coursepb.WaveResponse{Wave: w}, nil
 }
 
+func (c *fakeCourseClient) GetCourse(ctx context.Context, in *coursepb.GetCourseRequest, opts ...grpc.CallOption) (*coursepb.CourseResponse, error) {
+	return &coursepb.CourseResponse{Course: &coursepb.Course{Id: in.Id, Title: "Test Course"}}, nil
+}
+
 func (c *fakeCourseClient) GetLesson(ctx context.Context, in *coursepb.GetLessonRequest, opts ...grpc.CallOption) (*coursepb.LessonResponse, error) {
 	l, ok := c.lessons[in.Id]
 	if !ok {
@@ -197,6 +219,14 @@ func (c *fakeCourseClient) GetLesson(ctx context.Context, in *coursepb.GetLesson
 
 func (c *fakeCourseClient) ListWaves(ctx context.Context, in *coursepb.ListWavesRequest, opts ...grpc.CallOption) (*coursepb.WaveListResponse, error) {
 	return &coursepb.WaveListResponse{Waves: c.wavesByLesson[in.LessonId]}, nil
+}
+
+func (c *fakeCourseClient) ListWavesByLessonIds(ctx context.Context, in *coursepb.ListWavesByLessonIdsRequest, opts ...grpc.CallOption) (*coursepb.WaveListResponse, error) {
+	var out []*coursepb.Wave
+	for _, lessonID := range in.LessonIds {
+		out = append(out, c.wavesByLesson[lessonID]...)
+	}
+	return &coursepb.WaveListResponse{Waves: out}, nil
 }
 
 func (c *fakeCourseClient) ListLessons(ctx context.Context, in *coursepb.ListLessonsRequest, opts ...grpc.CallOption) (*coursepb.LessonListResponse, error) {
@@ -394,5 +424,69 @@ func TestGetWaveProgress_LockedWithoutPriorWaveCompletion(t *testing.T) {
 	}
 	if resp.Status != string(model.ProgressStatusLocked) {
 		t.Fatalf("expected LOCKED for wave-2 before wave-1 is passed, got %s", resp.Status)
+	}
+}
+
+func TestGetCourseProgress_AggregatesAcrossMultipleLessons(t *testing.T) {
+	repo := &fakeProgressRepo{}
+	course := &fakeCourseClient{
+		waves:         make(map[string]*coursepb.Wave),
+		lessons:       make(map[string]*coursepb.Lesson),
+		wavesByLesson: make(map[string][]*coursepb.Wave),
+	}
+	gamification := newFakeGamificationClient()
+
+	lesson1 := &coursepb.Lesson{Id: "lesson-1", CourseId: "course-1", SequenceOrder: 1}
+	lesson2 := &coursepb.Lesson{Id: "lesson-2", CourseId: "course-1", SequenceOrder: 2}
+	course.lessons[lesson1.Id] = lesson1
+	course.lessons[lesson2.Id] = lesson2
+
+	wave1 := &coursepb.Wave{Id: "wave-1", LessonId: lesson1.Id, SequenceOrder: 1}
+	wave2 := &coursepb.Wave{Id: "wave-2", LessonId: lesson1.Id, SequenceOrder: 2}
+	wave3 := &coursepb.Wave{Id: "wave-3", LessonId: lesson2.Id, SequenceOrder: 1}
+	course.wavesByLesson[lesson1.Id] = []*coursepb.Wave{wave1, wave2}
+	course.wavesByLesson[lesson2.Id] = []*coursepb.Wave{wave3}
+
+	svc := NewProgressService(repo, course, gamification).(*progressService)
+
+	if _, err := svc.EnrollInCourse(context.Background(), "u1", "course-1"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	// Pass wave-1 (lesson-1) and wave-3 (lesson-2); leave wave-2 unattempted.
+	repo.attempts = append(repo.attempts,
+		model.WaveAttempt{UserID: "u1", WaveID: "wave-1", LessonID: lesson1.Id, CourseID: "course-1", Passed: true},
+		model.WaveAttempt{UserID: "u1", WaveID: "wave-3", LessonID: lesson2.Id, CourseID: "course-1", Passed: true},
+	)
+
+	resp, err := svc.GetCourseProgress(context.Background(), "u1", "course-1")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if resp.TotalWaves != 3 {
+		t.Fatalf("expected 3 total waves across both lessons, got %d", resp.TotalWaves)
+	}
+	if resp.CompletedWaves != 2 {
+		t.Fatalf("expected 2 completed waves, got %d", resp.CompletedWaves)
+	}
+	if len(resp.LessonProgress) != 2 {
+		t.Fatalf("expected per-lesson progress for both lessons, got %d entries", len(resp.LessonProgress))
+	}
+
+	byLesson := map[string]*progresspb.LessonProgress{}
+	for _, lp := range resp.LessonProgress {
+		byLesson[lp.LessonId] = lp
+	}
+	if byLesson[lesson1.Id].TotalWaves != 2 || byLesson[lesson1.Id].CompletedWaves != 1 {
+		t.Fatalf("unexpected lesson-1 progress: %+v", byLesson[lesson1.Id])
+	}
+	if byLesson[lesson2.Id].TotalWaves != 1 || byLesson[lesson2.Id].CompletedWaves != 1 {
+		t.Fatalf("unexpected lesson-2 progress: %+v", byLesson[lesson2.Id])
+	}
+}
+
+func TestGetCourseProgress_RejectsUnenrolledUser(t *testing.T) {
+	svc, _, _, _ := newTestProgressService()
+	if _, err := svc.GetCourseProgress(context.Background(), "u1", "course-1"); err == nil {
+		t.Fatal("expected an error for an unenrolled user")
 	}
 }

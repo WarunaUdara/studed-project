@@ -393,26 +393,36 @@ func (s *progressService) GetCourseProgress(ctx context.Context, userID, courseI
 	}
 	completedWaves = int32(completedWavesVal)
 
+	lessonIDs := make([]string, len(lessonsResp.Lessons))
+	for i, lesson := range lessonsResp.Lessons {
+		lessonIDs[i] = lesson.Id
+	}
+
+	// One batched gRPC call for all waves across every lesson, and one
+	// grouped DB query for completed-wave counts, instead of a per-lesson
+	// ListWaves + CountPassedWavesInLesson round trip.
+	wavesResp, err := s.course.ListWavesByLessonIds(ctx, &coursepb.ListWavesByLessonIdsRequest{LessonIds: lessonIDs, PublishedOnly: true})
+	if err != nil {
+		return nil, fmt.Errorf("failed to list waves: %w", err)
+	}
+	wavesByLesson := make(map[string]int32, len(lessonIDs))
+	for _, w := range wavesResp.Waves {
+		wavesByLesson[w.LessonId]++
+	}
+
+	completedByLesson, err := s.repo.CountPassedWavesGroupedByLesson(ctx, userID, courseID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to count passed waves by lesson: %w", err)
+	}
+
 	lessonProgressList := make([]*progresspb.LessonProgress, 0, len(lessonsResp.Lessons))
-
 	for _, lesson := range lessonsResp.Lessons {
-		wavesResp, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: lesson.Id, PublishedOnly: true})
-		if err != nil {
-			return nil, fmt.Errorf("failed to list waves: %w", err)
-		}
-
-		lessonTotal := int32(len(wavesResp.Waves))
+		lessonTotal := wavesByLesson[lesson.Id]
 		totalWaves += lessonTotal
-
-		lessonCompletedVal, err := s.repo.CountPassedWavesInLesson(ctx, userID, lesson.Id)
-		if err != nil {
-			return nil, fmt.Errorf("failed to count passed waves in lesson: %w", err)
-		}
-		lessonCompleted := int32(lessonCompletedVal)
 
 		lessonProgressList = append(lessonProgressList, &progresspb.LessonProgress{
 			LessonId:       lesson.Id,
-			CompletedWaves: lessonCompleted,
+			CompletedWaves: int32(completedByLesson[lesson.Id]),
 			TotalWaves:     lessonTotal,
 		})
 	}
