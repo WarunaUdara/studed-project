@@ -20,7 +20,7 @@ test.describe("Authentication and Authorization Flow", () => {
 
     await expect(page).toHaveURL(/\/dashboard/);
     await expect(page.getByRole("heading", { name: "Continue Learning" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Level Progress" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Gamification Hub" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Leaderboard" })).toBeVisible();
     await expect(page.getByRole("banner").getByRole("button", { name: "Log out" })).toBeVisible();
   });
