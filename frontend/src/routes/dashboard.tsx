@@ -25,6 +25,8 @@ import {
 } from "@/lib/gamificationUtils";
 import { useAuthStore } from "@/stores/auth";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/Toast";
+import { PomodoroTimer } from "@/components/gamification/PomodoroTimer";
 
 interface LeaderboardEntry {
   rank: number;
@@ -37,7 +39,8 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function DashboardPage() {
-  const { user } = useAuthStore();
+  const { user, updateTotalXp } = useAuthStore();
+  const { toast } = useToast();
   const [{ data: enrollmentsData, fetching: enrollmentsFetching, error: enrollmentsError }] =
     useQuery({ query: MY_ENROLLMENTS_QUERY });
   const [{ data: leaderboardData, fetching: leaderboardFetching }] = useQuery({
@@ -124,6 +127,15 @@ function DashboardPage() {
     const diffDays = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
     return { name: examName, daysRemaining: diffDays };
   }, [user]);
+
+  const handleXpEarned = (xp: number) => {
+    updateTotalXp(totalXp + xp);
+    toast({
+      type: "success",
+      title: "Focus Session Complete!",
+      message: `Great job focusing! You gained +${xp} XP towards your goals.`,
+    });
+  };
 
   return (
     <ProtectedRoute allowedRoles={["STUDENT"]}>
@@ -367,6 +379,9 @@ function DashboardPage() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Pomodoro Focus Timer */}
+              <PomodoroTimer onXpEarned={handleXpEarned} />
 
               {/* Streak flame badge */}
               <div className="flex justify-center">
