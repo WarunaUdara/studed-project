@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, Sparkles, Trophy as TrophyIcon, Zap, Calendar, Globe, Award, ListStart, ArrowRight } from "lucide-react";
+import { BookOpen, Sparkles, Trophy as TrophyIcon, Zap, Calendar, Globe, Award, ArrowRight } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -22,9 +22,15 @@ import {
   levelName,
   buildLevelTimeline,
   type CourseEnrollment,
-  type LeaderboardEntry,
 } from "@/lib/gamificationUtils";
 import { useAuthStore } from "@/stores/auth";
+import { cn } from "@/lib/utils";
+
+interface LeaderboardEntry {
+  rank: number;
+  user: { id: string; fullName: string };
+  totalXp: number;
+}
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
