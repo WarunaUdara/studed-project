@@ -96,6 +96,29 @@ function DashboardPage() {
 
   const levelTimeline = buildLevelTimeline(totalXp);
 
+  const [curriculum, setCurriculum] = useState<"LOCAL" | "GLOBAL">("LOCAL");
+  const [gamifyTab, setGamifyTab] = useState<"stats" | "badges" | "timeline">("stats");
+
+  // Dynamic Exam countdown based on student grade level
+  const examInfo = useMemo(() => {
+    const now = new Date();
+    const grade = user?.grade?.toUpperCase() ?? "G10";
+    let examName = "Term Test Evaluation";
+    let targetDate = new Date(now.getFullYear(), 11, 15); // Default to December 15 of current year
+
+    if (grade === "G10" || grade === "G11") {
+      examName = "G.C.E. O/L Examination";
+      targetDate = new Date("2026-12-10T09:00:00");
+    } else if (grade === "G12" || grade === "G13" || grade === "AL") {
+      examName = "G.C.E. A/L Examination";
+      targetDate = new Date("2026-11-25T09:00:00");
+    }
+
+    const diffMs = targetDate.getTime() - now.getTime();
+    const diffDays = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+    return { name: examName, daysRemaining: diffDays };
+  }, [user]);
+
   return (
     <ProtectedRoute allowedRoles={["STUDENT"]}>
       <StudentShell>
@@ -275,45 +298,71 @@ function DashboardPage() {
               </Card>
             </div>
 
-            {/* Right column (1/3) — Stats + Achievements + Levels */}
+            {/* Right column (1/3) — Decluttered Curriculum Selection, Streaks and Consolidated Gamification Hub */}
             <div className="space-y-6">
+              {/* Exam & Curriculum Tracker Card */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Zap className="h-5 w-5 text-primary" />
-                    Your Stats
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Calendar className="h-5 w-5 text-primary" />
+                    Curriculum & Exam Tracker
                   </CardTitle>
+                  <CardDescription>Track your national study milestone</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <StatRow
-                    label="Total XP"
-                    value={totalXp.toLocaleString()}
-                    icon={<Zap className="h-4 w-4 text-primary" />}
-                  />
-                  <StatRow
-                    label="Level"
-                    value={`${level} — ${levelName(level)}`}
-                    icon={<Sparkles className="h-4 w-4 text-purple" />}
-                  />
-                  <StatRow
-                    label="Waves Completed"
-                    value={String(completedWaves)}
-                    icon={<BookOpen className="h-4 w-4 text-success" />}
-                  />
-                  <StatRow
-                    label="Courses Done"
-                    value={String(completedCourses)}
-                    icon={<TrophyIcon className="h-4 w-4 text-gold" />}
-                  />
-                  <StatRow
-                    label="Badges Earned"
-                    value={`${badgesEarned}/${BADGE_DEFS.length}`}
-                    icon={<Sparkles className="h-4 w-4 text-orange" />}
-                  />
+                  {/* Curriculum Toggle */}
+                  <div className="flex rounded-lg bg-muted p-1">
+                    <button
+                      type="button"
+                      data-testid="curriculum-local"
+                      onClick={() => setCurriculum("LOCAL")}
+                      className={cn(
+                        "flex flex-1 items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-semibold transition-all",
+                        curriculum === "LOCAL"
+                          ? "bg-card text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      <Award className="h-3.5 w-3.5" />
+                      Sri Lankan
+                    </button>
+                    <button
+                      type="button"
+                      data-testid="curriculum-global"
+                      onClick={() => setCurriculum("GLOBAL")}
+                      className={cn(
+                        "flex flex-1 items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-semibold transition-all",
+                        curriculum === "GLOBAL"
+                          ? "bg-card text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      <Globe className="h-3.5 w-3.5" />
+                      Global (Edexcel/CIE)
+                    </button>
+                  </div>
+
+                  {/* Countdown display */}
+                  <div className="rounded-xl border bg-muted/40 p-3.5 text-center">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                      {examInfo.name}
+                    </p>
+                    <p className="mt-1.5 text-3xl font-black text-primary tabular-nums" data-testid="exam-countdown">
+                      {examInfo.daysRemaining}
+                    </p>
+                    <p className="text-xs text-muted-foreground">days remaining</p>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Target: {curriculum === "LOCAL" ? "SL Syllabus" : "UK Pearson/Edexcel"}</span>
+                    <span className="flex items-center gap-0.5 text-primary hover:underline cursor-pointer">
+                      View syllabus <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </div>
                 </CardContent>
               </Card>
 
-              {/* Streak badge */}
+              {/* Streak flame badge */}
               <div className="flex justify-center">
                 <StreakBadge
                   length={user?.streak ?? 0}
@@ -322,35 +371,83 @@ function DashboardPage() {
                 />
               </div>
 
-              {/* Achievements — Trophy UI AchievementBadge grid */}
+              {/* Gamification Hub Card - Consolidating Stats, Badges, and Level Progression */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl">Achievements</CardTitle>
-                  <CardDescription>
-                    {badgesEarned} of {BADGE_DEFS.length} unlocked
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                    {trophyAchievements.map((a) => (
-                      <AchievementBadge key={a.id} achievement={a} badgeSize="sm" />
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Gamification Hub</CardTitle>
+                  <CardDescription>Manage achievements and path progress</CardDescription>
+                  <div className="mt-3 flex border-b">
+                    {(["stats", "badges", "timeline"] as const).map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        data-testid={`tab-${t}`}
+                        onClick={() => setGamifyTab(t)}
+                        className={cn(
+                          "flex-1 pb-2 text-xs font-medium border-b-2 capitalize transition-all",
+                          gamifyTab === t
+                            ? "border-primary text-primary font-bold"
+                            : "border-transparent text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        {t === "timeline" ? "path" : t}
+                      </button>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Level progression — Trophy UI PointsLevelsTimeline */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl">Level Progress</CardTitle>
-                  <CardDescription>Your journey through StudEd</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <PointsLevelsTimeline
-                    levels={levelTimeline}
-                    currentPoints={totalXp}
-                    currentLevelLabel="You are here"
-                  />
+                <CardContent className="pt-3">
+                  {gamifyTab === "stats" && (
+                    <div className="space-y-4">
+                      <StatRow
+                        label="Total XP"
+                        value={totalXp.toLocaleString()}
+                        icon={<Zap className="h-4 w-4 text-primary" />}
+                      />
+                      <StatRow
+                        label="Level"
+                        value={`${level} — ${levelName(level)}`}
+                        icon={<Sparkles className="h-4 w-4 text-purple" />}
+                      />
+                      <StatRow
+                        label="Waves Completed"
+                        value={String(completedWaves)}
+                        icon={<BookOpen className="h-4 w-4 text-success" />}
+                      />
+                      <StatRow
+                        label="Courses Done"
+                        value={String(completedCourses)}
+                        icon={<TrophyIcon className="h-4 w-4 text-gold" />}
+                      />
+                      <StatRow
+                        label="Badges Earned"
+                        value={`${badgesEarned}/${BADGE_DEFS.length}`}
+                        icon={<Sparkles className="h-4 w-4 text-orange" />}
+                      />
+                    </div>
+                  )}
+
+                  {gamifyTab === "badges" && (
+                    <div>
+                      <div className="mb-2 text-xs text-muted-foreground">
+                        {badgesEarned} of {BADGE_DEFS.length} badges unlocked
+                      </div>
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {trophyAchievements.map((a) => (
+                          <AchievementBadge key={a.id} achievement={a} badgeSize="sm" />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {gamifyTab === "timeline" && (
+                    <div className="max-h-[300px] overflow-y-auto pr-1">
+                      <PointsLevelsTimeline
+                        levels={levelTimeline}
+                        currentPoints={totalXp}
+                        currentLevelLabel="You are here"
+                      />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
