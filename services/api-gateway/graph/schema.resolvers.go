@@ -594,6 +594,14 @@ func (r *queryResolver) MyRank(ctx context.Context, scope model.LeaderboardScope
 	}
 
 	var grade *model.Grade
+	if scope == model.LeaderboardScopeGrade {
+		authUser, err := r.AuthClient.GetUser(ctx, userCtx.UserID)
+		if err != nil {
+			return nil, err
+		}
+		grade = authUser.Grade
+	}
+
 	rank, err := r.GamificationClient.GetMyRank(ctx, userCtx.UserID, scope, courseID, grade)
 	if err != nil {
 		return nil, err
