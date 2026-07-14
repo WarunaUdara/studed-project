@@ -51,6 +51,7 @@ temp/
 # Service compiled binaries
 services/*/service
 services/*/*/service
+services/*/*-service
 
 # macOS aliases / symlinks at project root
 Macintosh HD
