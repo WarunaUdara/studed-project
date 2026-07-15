@@ -109,7 +109,7 @@ export const useUiPrefs = create<UiPreferencesState>((set, get) => ({
       showRankNotifs: p.showRankNotifs ?? true,
       soundEnabled: p.soundEnabled ?? true,
     });
-    
+
     const reduce = p.reducedMotion ?? false;
     if (typeof document !== "undefined") {
       document.documentElement.classList.toggle("reduce-motion", reduce);

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Sparkles, Trophy, CheckCircle2, Award, Zap, HelpCircle } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Award, CheckCircle2, HelpCircle, Sparkles, Trophy, Zap } from "lucide-react";
 import { AchievementBadge } from "@/components/ui/achievement-badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { BADGE_DEFS } from "@/lib/gamification";
 
 export const Route = createFileRoute("/educator/_layout/achievements")({
@@ -37,13 +37,17 @@ function EducatorAchievementsPage() {
                 Platform Achievement Badges
               </CardTitle>
               <CardDescription>
-                Preview of all 8 active student reward badges currently wired to lesson completion triggers.
+                Preview of all 8 active student reward badges currently wired to lesson completion
+                triggers.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                 {achievements.map((badge) => (
-                  <Card key={badge.id} className="flex flex-col items-center justify-center p-4 text-center border-muted hover:border-primary/30 transition-all hover:shadow-sm">
+                  <Card
+                    key={badge.id}
+                    className="flex flex-col items-center justify-center p-4 text-center border-muted hover:border-primary/30 transition-all hover:shadow-sm"
+                  >
                     <AchievementBadge achievement={badge} badgeSize="lg" />
                     <span className="mt-2 text-xs font-bold text-foreground truncate max-w-full">
                       {badge.name}
@@ -66,14 +70,17 @@ function EducatorAchievementsPage() {
             </CardHeader>
             <CardContent className="space-y-3.5 text-xs text-muted-foreground">
               <p>
-                StudEd incorporates positive reinforcement loops designed around cognitive learning principles.
+                StudEd incorporates positive reinforcement loops designed around cognitive learning
+                principles.
               </p>
-              
+
               <div className="flex gap-2 rounded-lg bg-background p-2.5 border">
                 <Zap className="h-4 w-4 text-primary shrink-0" />
                 <div>
                   <p className="font-semibold text-foreground">XP Accumulation</p>
-                  <p className="mt-0.5">Students earn XP by reading slides and answering wave questions accurately.</p>
+                  <p className="mt-0.5">
+                    Students earn XP by reading slides and answering wave questions accurately.
+                  </p>
                 </div>
               </div>
 
@@ -81,7 +88,10 @@ function EducatorAchievementsPage() {
                 <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
                 <div>
                   <p className="font-semibold text-foreground">Daily Streaks</p>
-                  <p className="mt-0.5">Consistently logging in and studying fuels the study flame, amplifying student engagement.</p>
+                  <p className="mt-0.5">
+                    Consistently logging in and studying fuels the study flame, amplifying student
+                    engagement.
+                  </p>
                 </div>
               </div>
 
@@ -89,7 +99,10 @@ function EducatorAchievementsPage() {
                 <Award className="h-4 w-4 text-orange shrink-0" />
                 <div>
                   <p className="font-semibold text-foreground">Badge Triggers</p>
-                  <p className="mt-0.5">Badges are automatically unlocked when wave proficiency, completed courses, or Pomodoro sessions cross defined limits.</p>
+                  <p className="mt-0.5">
+                    Badges are automatically unlocked when wave proficiency, completed courses, or
+                    Pomodoro sessions cross defined limits.
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -104,10 +117,12 @@ function EducatorAchievementsPage() {
             </CardHeader>
             <CardContent className="text-xs text-muted-foreground space-y-2">
               <p>
-                Custom achievements tied to specific course enrollment categories are currently planned for MVP Phase 2.
+                Custom achievements tied to specific course enrollment categories are currently
+                planned for MVP Phase 2.
               </p>
               <p>
-                Reach out to the platform administration console for special request curricula triggers.
+                Reach out to the platform administration console for special request curricula
+                triggers.
               </p>
             </CardContent>
           </Card>

@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Trophy, BookOpen, Users, GraduationCap } from "lucide-react";
-import { useState, useMemo } from "react";
+import { BookOpen, GraduationCap, Trophy, Users } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "urql";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Skeleton } from "@/components/ui/Skeleton";
 import { LeaderboardRankings } from "@/components/ui/leaderboard-rankings";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { COURSES_QUERY, LEADERBOARD_QUERY } from "@/graphql/courses";
+import type { CoursesQueryData, LeaderboardQueryData } from "@/lib/graphqlTypes";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/educator/_layout/leaderboard")({
@@ -24,44 +25,45 @@ function EducatorLeaderboardPage() {
   const [selectedGrade, setSelectedGrade] = useState<string>("G10");
 
   // Fetch educator courses to populate the course selector
-  const [{ data: coursesData, fetching: coursesFetching }] = useQuery({
+  const [{ data: coursesData, fetching: coursesFetching }] = useQuery<CoursesQueryData>({
     query: COURSES_QUERY,
     variables: { filter: {} },
   });
 
   const courses = useMemo(() => {
-    return coursesData?.courses?.edges?.map((edge: any) => edge.node) ?? [];
+    return coursesData?.courses?.edges?.map((edge) => edge.node) ?? [];
   }, [coursesData]);
 
-  // Automatically select the first course if none is selected
-  useMemo(() => {
+  useEffect(() => {
     if (courses.length > 0 && !selectedCourseId) {
       setSelectedCourseId(courses[0].id);
     }
   }, [courses, selectedCourseId]);
 
   // Fetch leaderboard data based on selected scope and variables
-  const [{ data: leaderboardData, fetching: leaderboardFetching, error }] = useQuery({
-    query: LEADERBOARD_QUERY,
-    variables: {
-      scope,
-      courseId: scope === "COURSE" ? selectedCourseId : undefined,
-      grade: scope === "GRADE" ? selectedGrade : undefined,
-    },
-    pause: scope === "COURSE" && !selectedCourseId,
-  });
+  const [{ data: leaderboardData, fetching: leaderboardFetching, error }] =
+    useQuery<LeaderboardQueryData>({
+      query: LEADERBOARD_QUERY,
+      variables: {
+        scope,
+        courseId: scope === "COURSE" ? selectedCourseId : undefined,
+        grade: scope === "GRADE" ? selectedGrade : undefined,
+      },
+      pause: scope === "COURSE" && !selectedCourseId,
+    });
 
   const leaderboard = leaderboardData?.leaderboard ?? [];
 
-  const trophyRankings = leaderboard.map((e: any) => ({
-    userId: e.user.id,
-    userName: e.user.fullName,
-    rank: e.rank,
-    value: e.totalXp,
-    byline: `${e.totalXp.toLocaleString()} XP`,
+  const trophyRankings = leaderboard.map((entry) => ({
+    userId: entry.user.id,
+    userName: entry.user.fullName,
+    rank: entry.rank,
+    value: entry.totalXp,
+    byline: `${entry.totalXp.toLocaleString()} XP`,
   }));
 
-  const activeCourseTitle = courses.find((c: any) => c.id === selectedCourseId)?.title ?? "Selected Course";
+  const activeCourseTitle =
+    courses.find((course) => course.id === selectedCourseId)?.title ?? "Selected Course";
 
   return (
     <div className="space-y-6">
@@ -140,7 +142,7 @@ function EducatorLeaderboardPage() {
                   onChange={(e) => setSelectedCourseId(e.target.value)}
                   className="w-full rounded-lg border bg-background px-3 py-1.5 text-xs outline-none transition-all focus:border-primary/50 focus:ring-1 focus:ring-primary/20"
                 >
-                  {courses.map((course: any) => (
+                  {courses.map((course) => (
                     <option key={course.id} value={course.id}>
                       {course.title}
                     </option>
@@ -180,12 +182,15 @@ function EducatorLeaderboardPage() {
                 <Trophy className="h-5 w-5 text-gold" />
                 {scope === "GLOBAL" && "Global Cohort Leaderboard"}
                 {scope === "COURSE" && `Rankings: ${activeCourseTitle}`}
-                {scope === "GRADE" && `Rankings: ${GRADES.find((g) => g.value === selectedGrade)?.label}`}
+                {scope === "GRADE" &&
+                  `Rankings: ${GRADES.find((g) => g.value === selectedGrade)?.label}`}
               </CardTitle>
               <CardDescription>
                 {scope === "GLOBAL" && "Overview of student rankings across the entire platform"}
-                {scope === "COURSE" && "XP accumulated strictly within this course's lessons and waves"}
-                {scope === "GRADE" && "Compare student milestones within this academic grade category"}
+                {scope === "COURSE" &&
+                  "XP accumulated strictly within this course's lessons and waves"}
+                {scope === "GRADE" &&
+                  "Compare student milestones within this academic grade category"}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -200,11 +205,13 @@ function EducatorLeaderboardPage() {
                   <Skeleton className="h-10 w-full" />
                   <Skeleton className="h-10 w-full" />
                 </div>
-              ) : rankingsCount(trophyRankings) === 0 ? (
+              ) : trophyRankings.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 py-12 text-center text-muted-foreground">
                   <Users className="h-8 w-8 opacity-40" />
                   <p className="text-sm font-medium">No students ranked yet</p>
-                  <p className="text-xs">Once students enroll and complete waves, their names will show up here.</p>
+                  <p className="text-xs">
+                    Once students enroll and complete waves, their names will show up here.
+                  </p>
                 </div>
               ) : (
                 <LeaderboardRankings rankings={trophyRankings} />
@@ -215,8 +222,4 @@ function EducatorLeaderboardPage() {
       </div>
     </div>
   );
-}
-
-function rankingsCount(rankings: any[]): number {
-  return rankings.length;
 }

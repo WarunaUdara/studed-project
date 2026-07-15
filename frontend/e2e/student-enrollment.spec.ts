@@ -22,11 +22,17 @@ test.describe("Student Course Search, Filter, and Enrollment Flow", () => {
 
     // Type "Physics" to search
     await searchInput.fill("Physics");
-    
+
     // Verify only Physics course card is visible, and Mathematics is NOT visible
-    const physicsCard = page.locator("[data-testid='course-card']").filter({ hasText: "A/L Physics" }).first();
-    const mathCard = page.locator("[data-testid='course-card']").filter({ hasText: "Grade 10 Mathematics" }).first();
-    
+    const physicsCard = page
+      .locator("[data-testid='course-card']")
+      .filter({ hasText: "A/L Physics" })
+      .first();
+    const mathCard = page
+      .locator("[data-testid='course-card']")
+      .filter({ hasText: "Grade 10 Mathematics" })
+      .first();
+
     await expect(physicsCard).toBeVisible({ timeout: 5000 });
     await expect(mathCard).not.toBeVisible();
 
@@ -76,7 +82,7 @@ test.describe("Student Course Search, Filter, and Enrollment Flow", () => {
       targetCard = enrollableG10Card;
       const enrollBtn = enrollableG10Card.getByRole("button", { name: /Enroll Free/i });
       await enrollBtn.click();
-      
+
       // Verify Enrolled success toast
       await expect(page.getByText("Enrolled!")).toBeVisible({ timeout: 15000 });
     } else {
@@ -90,8 +96,10 @@ test.describe("Student Course Search, Filter, and Enrollment Flow", () => {
 
     // Verify redirected to course detail page
     await expect(page).toHaveURL(/\/courses\/[a-f0-9-]+/);
-    await expect(page.getByRole("button", { name: "Back to Courses" })).toBeVisible({ timeout: 10000 });
-    
+    await expect(page.getByRole("button", { name: "Back to Courses" })).toBeVisible({
+      timeout: 10000,
+    });
+
     // Verify lessons and waves are shown on the syllabus
     const syllabusCard = page.locator(".overflow-hidden").first();
     await expect(syllabusCard).toBeVisible();

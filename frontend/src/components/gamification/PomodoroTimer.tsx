@@ -1,35 +1,40 @@
-import { useState, useEffect, useRef } from "react";
-import { Play, Pause, RotateCcw, SkipForward, CheckCircle2, Flame, Award } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/Card";
-import { Button } from "../ui/button";
+import { Award, CheckCircle2, Flame, Pause, Play, RotateCcw, SkipForward } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/Card";
 
 interface PomodoroTimerProps {
   onXpEarned?: (xp: number) => void;
 }
 
+const TIMES = {
+  focus: 25 * 60,
+  short: 5 * 60,
+  long: 15 * 60,
+} as const;
+
+type PomodoroMode = keyof typeof TIMES;
+type BrowserWindow = Window &
+  typeof globalThis & {
+    webkitAudioContext?: typeof AudioContext;
+  };
+
 export function PomodoroTimer({ onXpEarned }: PomodoroTimerProps) {
-  const [mode, setMode] = useState<"focus" | "short" | "long">("focus");
+  const [mode, setMode] = useState<PomodoroMode>("focus");
   const [isActive, setIsActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [task, setTask] = useState("");
   const [sessionsCompleted, setSessionsCompleted] = useState(0);
 
-  const timerRef = useRef<any>(null);
-
-  // Time configurations in seconds
-  const TIMES = {
-    focus: 25 * 60,
-    short: 5 * 60,
-    long: 15 * 60,
-  };
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Switch modes
-  const handleModeChange = (newMode: "focus" | "short" | "long") => {
+  const handleModeChange = useCallback((newMode: PomodoroMode) => {
     setIsActive(false);
     setMode(newMode);
     setTimeLeft(TIMES[newMode]);
-  };
+  }, []);
 
   // Reset timer
   const handleReset = () => {
@@ -37,20 +42,19 @@ export function PomodoroTimer({ onXpEarned }: PomodoroTimerProps) {
     setTimeLeft(TIMES[mode]);
   };
 
-  // Skip / complete session manually or transition
-  const handleSkip = () => {
-    setIsActive(false);
-    if (mode === "focus") {
-      triggerCompletion();
-    } else {
-      handleModeChange("focus");
+  const playAlertSound = useCallback(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
     }
-  };
 
-  // Play synthetic completion alert sound
-  const playAlertSound = () => {
     try {
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const audioContextConstructor =
+        window.AudioContext || (window as BrowserWindow).webkitAudioContext;
+      if (!audioContextConstructor) {
+        return;
+      }
+
+      const audioCtx = new audioContextConstructor();
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
 
@@ -58,30 +62,35 @@ export function PomodoroTimer({ onXpEarned }: PomodoroTimerProps) {
       gainNode.connect(audioCtx.destination);
 
       oscillator.type = "sine";
-      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
+      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
       gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
 
+      oscillator.addEventListener("ended", () => {
+        void audioCtx.close();
+      });
       oscillator.start();
       gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
       oscillator.stop(audioCtx.currentTime + 1.2);
-    } catch (e) {
-      console.warn("AudioContext block", e);
+    } catch {
+      // Browsers may deny audio until the user has interacted with the page.
     }
-  };
+  }, []);
 
-  const triggerCompletion = () => {
+  const triggerCompletion = useCallback(() => {
     playAlertSound();
     if (mode === "focus") {
-      setSessionsCompleted((prev) => prev + 1);
-      if (onXpEarned) {
-        onXpEarned(10); // Award 10 XP for completing a session
-      }
-      // Transition to break
-      const nextBreak = (sessionsCompleted + 1) % 4 === 0 ? "long" : "short";
-      handleModeChange(nextBreak);
+      const nextSessions = sessionsCompleted + 1;
+      setSessionsCompleted(nextSessions);
+      handleModeChange(nextSessions % 4 === 0 ? "long" : "short");
+      onXpEarned?.(10);
     } else {
       handleModeChange("focus");
     }
+  }, [handleModeChange, mode, onXpEarned, playAlertSound, sessionsCompleted]);
+
+  const handleSkip = () => {
+    setIsActive(false);
+    triggerCompletion();
   };
 
   // Timer loop
@@ -90,7 +99,9 @@ export function PomodoroTimer({ onXpEarned }: PomodoroTimerProps) {
       timerRef.current = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
-            clearInterval(timerRef.current!);
+            if (timerRef.current) {
+              clearInterval(timerRef.current);
+            }
             triggerCompletion();
             return 0;
           }
@@ -102,9 +113,11 @@ export function PomodoroTimer({ onXpEarned }: PomodoroTimerProps) {
     }
 
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
     };
-  }, [isActive, mode, sessionsCompleted]);
+  }, [isActive, triggerCompletion]);
 
   // Format time (MM:SS)
   const formatTime = (seconds: number) => {
@@ -114,14 +127,20 @@ export function PomodoroTimer({ onXpEarned }: PomodoroTimerProps) {
   };
 
   const progress = (timeLeft / TIMES[mode]) * 100;
-  const currentTaskPlaceholder = mode === "focus" ? "What are we focusing on?" : "Take a deep breath...";
+  const currentTaskPlaceholder =
+    mode === "focus" ? "What are we focusing on?" : "Take a deep breath...";
 
   return (
     <Card className="border-primary/20 bg-gradient-to-br from-card via-card to-primary/5">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center justify-between text-lg">
           <span className="flex items-center gap-2">
-            <Flame className={cn("h-5 w-5", isActive ? "animate-pulse text-primary" : "text-muted-foreground")} />
+            <Flame
+              className={cn(
+                "h-5 w-5",
+                isActive ? "animate-pulse text-primary" : "text-muted-foreground",
+              )}
+            />
             Pomodoro Focus Timer
           </span>
           {sessionsCompleted > 0 && (
@@ -156,7 +175,7 @@ export function PomodoroTimer({ onXpEarned }: PomodoroTimerProps) {
 
         {/* Circular SVG / Timer Countdown Display */}
         <div className="relative flex flex-col items-center justify-center py-4">
-          <svg className="h-32 w-32 -rotate-90">
+          <svg aria-hidden="true" className="h-32 w-32 -rotate-90">
             <circle
               cx="64"
               cy="64"
@@ -175,7 +194,10 @@ export function PomodoroTimer({ onXpEarned }: PomodoroTimerProps) {
             />
           </svg>
           <div className="absolute flex flex-col items-center justify-center">
-            <span className="text-2xl font-black tabular-nums tracking-tight" data-testid="pomodoro-time">
+            <span
+              className="text-2xl font-black tabular-nums tracking-tight"
+              data-testid="pomodoro-time"
+            >
               {formatTime(timeLeft)}
             </span>
             <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
@@ -192,6 +214,7 @@ export function PomodoroTimer({ onXpEarned }: PomodoroTimerProps) {
           onChange={(e) => setTask(e.target.value)}
           disabled={mode !== "focus"}
           data-testid="pomodoro-task-input"
+          aria-label="Focus task"
           className="w-full rounded-lg border bg-background px-3 py-1.5 text-xs outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/50 focus:ring-1 focus:ring-primary/20"
         />
 
@@ -215,6 +238,8 @@ export function PomodoroTimer({ onXpEarned }: PomodoroTimerProps) {
             onClick={handleReset}
             size="sm"
             className="px-2.5"
+            aria-label="Reset timer"
+            title="Reset timer"
           >
             <RotateCcw className="h-4 w-4" />
           </Button>
@@ -226,6 +251,8 @@ export function PomodoroTimer({ onXpEarned }: PomodoroTimerProps) {
             onClick={handleSkip}
             size="sm"
             className="px-2.5"
+            aria-label="Skip timer"
+            title="Skip timer"
           >
             <SkipForward className="h-4 w-4" />
           </Button>
@@ -234,7 +261,8 @@ export function PomodoroTimer({ onXpEarned }: PomodoroTimerProps) {
         {mode === "focus" && (
           <div className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground">
             <Award className="h-3 w-3 text-primary" />
-            Finish session to gain <span className="font-semibold text-foreground">+10 Focus XP</span>
+            Finish session to gain{" "}
+            <span className="font-semibold text-foreground">+10 Focus XP</span>
           </div>
         )}
       </CardContent>

@@ -22,18 +22,53 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { to: "/educator", label: "Dashboard", icon: Home, matchPrefix: "/educator" },
-  { to: "/educator/courses", label: "My Courses", icon: BookOpen, matchPrefix: "/educator/courses" },
-  { to: "/educator/leaderboard", label: "Leaderboard", icon: Users, matchPrefix: "/educator/leaderboard" },
-  { to: "/educator/achievements", label: "Achievements", icon: TrendingUp, matchPrefix: "/educator/achievements" },
-  { to: "/educator/settings", label: "Settings", icon: SettingsIcon, matchPrefix: "/educator/settings" },
+  {
+    to: "/educator/courses",
+    label: "My Courses",
+    icon: BookOpen,
+    matchPrefix: "/educator/courses",
+  },
+  {
+    to: "/educator/leaderboard",
+    label: "Leaderboard",
+    icon: Users,
+    matchPrefix: "/educator/leaderboard",
+  },
+  {
+    to: "/educator/achievements",
+    label: "Achievements",
+    icon: TrendingUp,
+    matchPrefix: "/educator/achievements",
+  },
+  {
+    to: "/educator/settings",
+    label: "Settings",
+    icon: SettingsIcon,
+    matchPrefix: "/educator/settings",
+  },
 ];
 
 const MOBILE_TABS: NavItem[] = [
   { to: "/educator", label: "Home", icon: Home, matchPrefix: "/educator" },
   { to: "/educator/courses", label: "Courses", icon: LayoutGrid, matchPrefix: "/educator/courses" },
-  { to: "/educator/leaderboard", label: "Ranks", icon: Crown, matchPrefix: "/educator/leaderboard" },
-  { to: "/educator/achievements", label: "Stats", icon: TrendingUp, matchPrefix: "/educator/achievements" },
-  { to: "/educator/settings", label: "Profile", icon: SettingsIcon, matchPrefix: "/educator/settings" },
+  {
+    to: "/educator/leaderboard",
+    label: "Ranks",
+    icon: Crown,
+    matchPrefix: "/educator/leaderboard",
+  },
+  {
+    to: "/educator/achievements",
+    label: "Stats",
+    icon: TrendingUp,
+    matchPrefix: "/educator/achievements",
+  },
+  {
+    to: "/educator/settings",
+    label: "Profile",
+    icon: SettingsIcon,
+    matchPrefix: "/educator/settings",
+  },
 ];
 
 export interface EducatorShellProps {
@@ -61,7 +96,8 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold">{user?.fullName ?? "Educator"}</p>
                 <p className="truncate text-xs text-muted-foreground">
-                  {user?.role === "HEAD_EDUCATOR" ? "Head Educator" : "Educator"} · {user?.preferredLanguage?.toUpperCase() ?? "EN"}
+                  {user?.role === "HEAD_EDUCATOR" ? "Head Educator" : "Educator"} ·{" "}
+                  {user?.preferredLanguage?.toUpperCase() ?? "EN"}
                 </p>
               </div>
             </div>
@@ -69,7 +105,10 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
             <nav className="space-y-1">
               {NAV_ITEMS.map((item) => {
                 // Fuzzy match for nested courses links
-                const active = matchRoute({ to: item.matchPrefix, fuzzy: item.matchPrefix !== "/educator" });
+                const active = matchRoute({
+                  to: item.matchPrefix,
+                  fuzzy: item.matchPrefix !== "/educator",
+                });
                 const Icon = item.icon;
                 return (
                   <Link
@@ -96,14 +135,14 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
             </div>
           </div>
 
-          <p className="px-2 text-[11px] text-muted-foreground">Educator Portal · Curriculum Management</p>
+          <p className="px-2 text-[11px] text-muted-foreground">
+            Educator Portal · Curriculum Management
+          </p>
         </div>
       </aside>
 
       {/* Content */}
-      <div className="min-w-0 flex-1 space-y-6 pb-24 lg:pb-0">
-        {children}
-      </div>
+      <div className="min-w-0 flex-1 space-y-6 pb-24 lg:pb-0">{children}</div>
 
       {/* Mobile bottom tab bar */}
       <nav
@@ -112,7 +151,10 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
       >
         <div className="mx-auto flex max-w-3xl items-stretch justify-between">
           {MOBILE_TABS.map((item) => {
-            const active = matchRoute({ to: item.matchPrefix, fuzzy: item.matchPrefix !== "/educator" });
+            const active = matchRoute({
+              to: item.matchPrefix,
+              fuzzy: item.matchPrefix !== "/educator",
+            });
             const Icon = item.icon;
             return (
               <Link

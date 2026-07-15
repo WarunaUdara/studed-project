@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { BookOpen, CheckCircle, Globe, Shield, User as UserIcon, Moon, Sun } from "lucide-react";
+import { BookOpen, CheckCircle, Globe, Moon, Shield, Sun, User as UserIcon } from "lucide-react";
 import { useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
-import { Button } from "@/components/ui/button";
 import { COURSES_QUERY } from "@/graphql/courses";
+import type { CoursesQueryData } from "@/lib/graphqlTypes";
 import { useAuthStore } from "@/stores/auth";
 import { useUiPrefs } from "@/stores/uiPrefs";
 
@@ -20,13 +21,13 @@ function EducatorSettingsPage() {
   const theme = useUiPrefs((s) => s.theme);
   const toggleTheme = useUiPrefs((s) => s.toggleTheme);
 
-  const [{ data }] = useQuery({
+  const [{ data }] = useQuery<CoursesQueryData>({
     query: COURSES_QUERY,
     variables: { filter: {} },
   });
 
-  const courses = data?.courses?.edges?.map((edge: any) => edge.node) ?? [];
-  const publishedCoursesCount = courses.filter((c: any) => c.isPublished).length;
+  const courses = data?.courses?.edges?.map((edge) => edge.node) ?? [];
+  const publishedCoursesCount = courses.filter((course) => course.isPublished).length;
 
   return (
     <ProtectedRoute allowedRoles={["EDUCATOR", "HEAD_EDUCATOR", "ADMIN"]}>
@@ -61,7 +62,8 @@ function EducatorSettingsPage() {
 
                   <div className="flex flex-wrap gap-3">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
-                      <Shield className="h-3.5 w-3.5" /> {user?.role === "HEAD_EDUCATOR" ? "Head Educator" : "Educator"}
+                      <Shield className="h-3.5 w-3.5" />{" "}
+                      {user?.role === "HEAD_EDUCATOR" ? "Head Educator" : "Educator"}
                     </span>
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1 text-sm font-semibold text-success">
                       <BookOpen className="h-3.5 w-3.5" /> {courses.length} courses managed
@@ -113,7 +115,11 @@ function EducatorSettingsPage() {
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-muted-foreground">Role Account</Label>
-                    <Input value={user?.role ?? "EDUCATOR"} disabled className="bg-muted/50 font-semibold text-primary" />
+                    <Input
+                      value={user?.role ?? "EDUCATOR"}
+                      disabled
+                      className="bg-muted/50 font-semibold text-primary"
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -139,10 +145,21 @@ function EducatorSettingsPage() {
                 <div className="flex items-center justify-between rounded-lg border p-3">
                   <div>
                     <p className="text-sm font-semibold">Theme Mode</p>
-                    <p className="text-xs text-muted-foreground">Toggle portal color palette preference</p>
+                    <p className="text-xs text-muted-foreground">
+                      Toggle portal color palette preference
+                    </p>
                   </div>
-                  <Button variant="outline" size="icon" onClick={toggleTheme} className="rounded-full">
-                    {theme === "dark" ? <Sun className="h-4 w-4 text-warning" /> : <Moon className="h-4 w-4 text-primary" />}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={toggleTheme}
+                    className="rounded-full"
+                  >
+                    {theme === "dark" ? (
+                      <Sun className="h-4 w-4 text-warning" />
+                    ) : (
+                      <Moon className="h-4 w-4 text-primary" />
+                    )}
                   </Button>
                 </div>
 

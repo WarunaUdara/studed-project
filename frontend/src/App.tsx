@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import { Outlet, useRouterState } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { ToastProvider } from "@/components/ui/Toast";
 import { useUiPrefs } from "@/stores/uiPrefs";
@@ -18,7 +18,6 @@ export function App() {
   useEffect(() => {
     useUiPrefs.getState().hydrate();
   }, []);
-
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">

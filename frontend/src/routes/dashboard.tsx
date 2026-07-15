@@ -1,8 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, Sparkles, Trophy as TrophyIcon, Zap, Calendar, Globe, Award, ArrowRight } from "lucide-react";
-import { useState, useMemo } from "react";
+import {
+  ArrowRight,
+  Award,
+  BookOpen,
+  Calendar,
+  Globe,
+  Sparkles,
+  Trophy as TrophyIcon,
+  Zap,
+} from "lucide-react";
+import { useMemo, useState } from "react";
 import { useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { PomodoroTimer } from "@/components/gamification/PomodoroTimer";
 import { XPBar } from "@/components/gamification/XPBar";
 import { StudentShell } from "@/components/layout/StudentShell";
 import { AchievementBadge, type UserAchievement } from "@/components/ui/achievement-badge";
@@ -14,19 +24,18 @@ import { PointsBadge } from "@/components/ui/points-badge";
 import { PointsLevelsTimeline } from "@/components/ui/points-levels-timeline";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { StreakBadge } from "@/components/ui/streak-badge";
+import { useToast } from "@/components/ui/Toast";
 import { ACHIEVEMENTS_QUERY, LEADERBOARD_QUERY, MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
 import { sanitizeGraphQLError } from "@/lib/errors";
 import { BADGE_DEFS, levelFromXp } from "@/lib/gamification";
 import {
-  computeBadgeInputsFromEnrollments,
-  levelName,
   buildLevelTimeline,
   type CourseEnrollment,
+  computeBadgeInputsFromEnrollments,
+  levelName,
 } from "@/lib/gamificationUtils";
-import { useAuthStore } from "@/stores/auth";
 import { cn } from "@/lib/utils";
-import { useToast } from "@/components/ui/Toast";
-import { PomodoroTimer } from "@/components/gamification/PomodoroTimer";
+import { useAuthStore } from "@/stores/auth";
 
 interface LeaderboardEntry {
   rank: number;
@@ -365,14 +374,19 @@ function DashboardPage() {
                     <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
                       {examInfo.name}
                     </p>
-                    <p className="mt-1.5 text-3xl font-black text-primary tabular-nums" data-testid="exam-countdown">
+                    <p
+                      className="mt-1.5 text-3xl font-black text-primary tabular-nums"
+                      data-testid="exam-countdown"
+                    >
                       {examInfo.daysRemaining}
                     </p>
                     <p className="text-xs text-muted-foreground">days remaining</p>
                   </div>
-                  
+
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Target: {curriculum === "LOCAL" ? "SL Syllabus" : "UK Pearson/Edexcel"}</span>
+                    <span>
+                      Target: {curriculum === "LOCAL" ? "SL Syllabus" : "UK Pearson/Edexcel"}
+                    </span>
                     <span className="flex items-center gap-0.5 text-primary hover:underline cursor-pointer">
                       View syllabus <ArrowRight className="h-3 w-3" />
                     </span>

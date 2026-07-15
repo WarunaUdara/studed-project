@@ -1,8 +1,4 @@
-import {
-  cumulativeXpForLevel,
-  levelFromXp,
-  type BadgeInputs,
-} from "./gamification";
+import { type BadgeInputs, cumulativeXpForLevel, levelFromXp } from "./gamification";
 
 export interface WaveProgress {
   status: string;

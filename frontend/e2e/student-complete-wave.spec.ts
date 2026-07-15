@@ -17,7 +17,7 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
     await page.locator("#email").fill(studentEmail);
     await page.locator("#password").fill("password123");
     await page.locator("#grade").selectOption("AL");
-    
+
     // Submit registration
     await page.getByRole("button", { name: "Create account" }).click();
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
@@ -55,14 +55,17 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
     await expect(page).toHaveURL(/\/courses\/[a-f0-9-]+/);
 
     // 3. Open the Newton's Laws wave
-    const waveLink = page.locator("a[href*='/waves/']").filter({ hasText: "Newton's Laws" }).first();
+    const waveLink = page
+      .locator("a[href*='/waves/']")
+      .filter({ hasText: "Newton's Laws" })
+      .first();
     await expect(waveLink).toBeVisible({ timeout: 10000 });
     await waveLink.click();
     await expect(page).toHaveURL(/\/waves\/[a-f0-9-]+/);
 
     // 4. In Wave Player, check Learn block and proceed to Evaluation
     await expect(page.getByRole("tablist").first()).toBeVisible({ timeout: 15000 });
-    
+
     // Verify Learn tab is present
     await expect(page.getByRole("tab", { name: "Learn" })).toBeVisible();
 
@@ -72,7 +75,9 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
     await startEvalBtn.click();
 
     // 5. Verify Quiz Questions and answer "Law of inertia"
-    await expect(page.getByRole("button", { name: "Submit Answers" })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("button", { name: "Submit Answers" })).toBeVisible({
+      timeout: 10000,
+    });
 
     // Click the correct radio option for Newton's first law
     const correctOptionLabel = page.locator("label").filter({ hasText: "Law of inertia" }).first();

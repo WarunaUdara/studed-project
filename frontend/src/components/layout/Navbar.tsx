@@ -69,7 +69,11 @@ export function Navbar() {
             aria-label="Toggle theme"
             className="rounded-full"
           >
-            {theme === "dark" ? <Sun className="h-4 w-4 text-warning" /> : <Moon className="h-4 w-4 text-primary" />}
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4 text-warning" />
+            ) : (
+              <Moon className="h-4 w-4 text-primary" />
+            )}
           </Button>
 
           {!isAuthenticated ? (
