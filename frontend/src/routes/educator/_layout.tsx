@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { EducatorShell } from "@/components/layout/EducatorShell";
 
 export const Route = createFileRoute("/educator/_layout")({
   component: EducatorLayout,
@@ -8,9 +9,9 @@ export const Route = createFileRoute("/educator/_layout")({
 function EducatorLayout() {
   return (
     <ProtectedRoute allowedRoles={["EDUCATOR", "HEAD_EDUCATOR", "ADMIN"]}>
-      <main className="mx-auto max-w-6xl p-4 sm:p-6">
+      <EducatorShell>
         <Outlet />
-      </main>
+      </EducatorShell>
     </ProtectedRoute>
   );
 }
