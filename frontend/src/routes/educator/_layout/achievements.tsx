@@ -44,7 +44,7 @@ function EducatorAchievementsPage() {
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                 {achievements.map((badge) => (
                   <Card key={badge.id} className="flex flex-col items-center justify-center p-4 text-center border-muted hover:border-primary/30 transition-all hover:shadow-sm">
-                    <AchievementBadge achievement={badge} badgeSize="md" />
+                    <AchievementBadge achievement={badge} badgeSize="lg" />
                     <span className="mt-2 text-xs font-bold text-foreground truncate max-w-full">
                       {badge.name}
                     </span>

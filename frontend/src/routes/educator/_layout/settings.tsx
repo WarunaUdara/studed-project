@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Award, BookOpen, CheckCircle, Globe, Shield, User as UserIcon, Moon, Sun } from "lucide-react";
+import { BookOpen, CheckCircle, Globe, Shield, User as UserIcon, Moon, Sun } from "lucide-react";
 import { useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";

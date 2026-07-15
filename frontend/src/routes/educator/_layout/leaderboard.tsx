@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Trophy, BookOpen, Users, GraduationCap, ArrowRight } from "lucide-react";
+import { Trophy, BookOpen, Users, GraduationCap } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useQuery } from "urql";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { LeaderboardRankings } from "@/components/ui/leaderboard-rankings";
 import { COURSES_QUERY, LEADERBOARD_QUERY } from "@/graphql/courses";

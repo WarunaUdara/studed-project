@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
 
