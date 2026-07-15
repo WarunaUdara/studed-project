@@ -315,6 +315,27 @@ func (r *mutationResolver) CancelSubscription(ctx context.Context) (*model.UserS
 	return nil, errors.New("not implemented")
 }
 
+// UpdateMe is the resolver for the updateMe field.
+func (r *mutationResolver) UpdateMe(ctx context.Context, input model.UpdateMeInput) (*model.User, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedUser, err := r.AuthClient.UpdateUser(ctx, userCtx.UserID, input)
+	if err != nil {
+		return nil, err
+	}
+
+	// Fetch XP & Streaks to populate model fully
+	totalXp, _ := r.GamificationClient.GetUserXp(ctx, userCtx.UserID)
+	streak, _ := r.GamificationClient.GetUserStreak(ctx, userCtx.UserID)
+	updatedUser.TotalXp = totalXp
+	updatedUser.Streak = streak
+
+	return updatedUser, nil
+}
+
 // Me is the resolver for the me field.
 func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 	userCtx, ok := middleware.UserFromContext(ctx)

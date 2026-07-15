@@ -26,6 +26,16 @@ func (r *inMemoryUserRepo) Create(ctx context.Context, user *model.User) error {
 	return nil
 }
 
+func (r *inMemoryUserRepo) Update(ctx context.Context, user *model.User) error {
+	for i, u := range r.users {
+		if u.ID == user.ID {
+			r.users[i] = user
+			return nil
+		}
+	}
+	return errors.New("user not found")
+}
+
 func (r *inMemoryUserRepo) GetByEmail(ctx context.Context, email string) (*model.User, error) {
 	for _, u := range r.users {
 		if u.Email == email {

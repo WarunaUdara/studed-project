@@ -92,6 +92,34 @@ func (c *AuthClient) GetUser(ctx context.Context, userID string) (*model.User, e
 	return protoUserToModel(user), nil
 }
 
+func (c *AuthClient) UpdateUser(ctx context.Context, userID string, input model.UpdateMeInput) (*model.User, error) {
+	var grade authpb.Grade
+	if input.Grade != nil {
+		grade = modelGradeToProto(*input.Grade)
+	}
+
+	var fullName string
+	if input.FullName != nil {
+		fullName = *input.FullName
+	}
+
+	var preferredLanguage string
+	if input.PreferredLanguage != nil {
+		preferredLanguage = *input.PreferredLanguage
+	}
+
+	user, err := c.client.UpdateUser(ctx, &authpb.UpdateUserRequest{
+		UserId:            userID,
+		FullName:          fullName,
+		Grade:             grade,
+		PreferredLanguage: preferredLanguage,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("update user failed: %w", err)
+	}
+	return protoUserToModel(user), nil
+}
+
 func (c *AuthClient) RefreshToken(ctx context.Context, refreshToken string) (*model.AuthPayload, error) {
 	resp, err := c.client.RefreshToken(ctx, &authpb.RefreshTokenRequest{RefreshToken: refreshToken})
 	if err != nil {

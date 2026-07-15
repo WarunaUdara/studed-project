@@ -333,6 +333,12 @@ type Query {
   achievements: [Achievement!]!
 }
 
+input UpdateMeInput {
+  fullName: String
+  grade: Grade
+  preferredLanguage: String
+}
+
 type Mutation {
   register(input: RegisterInput!): AuthPayload!
   login(input: LoginInput!): AuthPayload!
@@ -358,6 +364,7 @@ type Mutation {
 
   createSubscription(input: CreateSubscriptionInput!): UserSubscription!
   cancelSubscription: UserSubscription!
+  updateMe(input: UpdateMeInput!): User!
 }
 
 type Subscription {

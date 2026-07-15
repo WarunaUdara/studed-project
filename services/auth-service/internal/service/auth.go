@@ -18,6 +18,7 @@ type AuthService interface {
 	RefreshToken(ctx context.Context, refreshToken string) (*authpb.AuthResponse, error)
 	ValidateToken(ctx context.Context, accessToken string) (*authpb.ValidateTokenResponse, error)
 	GetUser(ctx context.Context, userID string) (*authpb.User, error)
+	UpdateUser(ctx context.Context, req *authpb.UpdateUserRequest) (*authpb.User, error)
 }
 
 type authService struct {
@@ -157,6 +158,29 @@ func (s *authService) GetUser(ctx context.Context, userID string) (*authpb.User,
 	if err != nil {
 		return nil, fmt.Errorf("user not found: %w", err)
 	}
+	return toProtoUser(user), nil
+}
+
+func (s *authService) UpdateUser(ctx context.Context, req *authpb.UpdateUserRequest) (*authpb.User, error) {
+	user, err := s.repo.GetByID(ctx, req.UserId)
+	if err != nil {
+		return nil, fmt.Errorf("user not found: %w", err)
+	}
+
+	if req.FullName != "" {
+		user.FullName = strings.TrimSpace(req.FullName)
+	}
+	if req.PreferredLanguage != "" {
+		user.PreferredLanguage = strings.TrimSpace(req.PreferredLanguage)
+	}
+	if req.Grade != authpb.Grade_GRADE_UNSPECIFIED {
+		user.Grade = ProtoToModelGrade(req.Grade)
+	}
+
+	if err := s.repo.Update(ctx, user); err != nil {
+		return nil, fmt.Errorf("failed to update user: %w", err)
+	}
+
 	return toProtoUser(user), nil
 }
 

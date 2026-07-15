@@ -678,6 +678,74 @@ func (x *GetUserRequest) GetUserId() string {
 	return ""
 }
 
+type UpdateUserRequest struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	UserId            string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	FullName          string                 `protobuf:"bytes,2,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	Grade             Grade                  `protobuf:"varint,3,opt,name=grade,proto3,enum=auth.Grade" json:"grade,omitempty"`
+	PreferredLanguage string                 `protobuf:"bytes,4,opt,name=preferred_language,json=preferredLanguage,proto3" json:"preferred_language,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *UpdateUserRequest) Reset() {
+	*x = UpdateUserRequest{}
+	mi := &file_auth_auth_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserRequest) ProtoMessage() {}
+
+func (x *UpdateUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_auth_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserRequest.ProtoReflect.Descriptor instead.
+func (*UpdateUserRequest) Descriptor() ([]byte, []int) {
+	return file_auth_auth_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UpdateUserRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UpdateUserRequest) GetFullName() string {
+	if x != nil {
+		return x.FullName
+	}
+	return ""
+}
+
+func (x *UpdateUserRequest) GetGrade() Grade {
+	if x != nil {
+		return x.Grade
+	}
+	return Grade_GRADE_UNSPECIFIED
+}
+
+func (x *UpdateUserRequest) GetPreferredLanguage() string {
+	if x != nil {
+		return x.PreferredLanguage
+	}
+	return ""
+}
+
 var File_auth_auth_proto protoreflect.FileDescriptor
 
 const file_auth_auth_proto_rawDesc = "" +
@@ -723,7 +791,12 @@ const file_auth_auth_proto_rawDesc = "" +
 	"\x12preferred_language\x18\x06 \x01(\tR\x11preferredLanguage\x12\x14\n" +
 	"\x05error\x18\a \x01(\tR\x05error\")\n" +
 	"\x0eGetUserRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId*i\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"\x9b\x01\n" +
+	"\x11UpdateUserRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
+	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12!\n" +
+	"\x05grade\x18\x03 \x01(\x0e2\v.auth.GradeR\x05grade\x12-\n" +
+	"\x12preferred_language\x18\x04 \x01(\tR\x11preferredLanguage*i\n" +
 	"\x04Role\x12\x14\n" +
 	"\x10ROLE_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fROLE_STUDENT\x10\x01\x12\x11\n" +
@@ -746,13 +819,16 @@ const file_auth_auth_proto_rawDesc = "" +
 	"\x12\r\n" +
 	"\tGRADE_G11\x10\v\x12\f\n" +
 	"\bGRADE_OL\x10\f\x12\f\n" +
-	"\bGRADE_AL\x10\r2\xab\x02\n" +
+	"\bGRADE_AL\x10\r2\xde\x02\n" +
 	"\vAuthService\x125\n" +
 	"\bRegister\x12\x15.auth.RegisterRequest\x1a\x12.auth.AuthResponse\x12/\n" +
 	"\x05Login\x12\x12.auth.LoginRequest\x1a\x12.auth.AuthResponse\x12=\n" +
 	"\fRefreshToken\x12\x19.auth.RefreshTokenRequest\x1a\x12.auth.AuthResponse\x12H\n" +
 	"\rValidateToken\x12\x1a.auth.ValidateTokenRequest\x1a\x1b.auth.ValidateTokenResponse\x12+\n" +
 	"\aGetUser\x12\x14.auth.GetUserRequest\x1a\n" +
+	".auth.User\x121\n" +
+	"\n" +
+	"UpdateUser\x12\x17.auth.UpdateUserRequest\x1a\n" +
 	".auth.UserB3Z1github.com/studed/shared/proto/gen/go/auth;authpbb\x06proto3"
 
 var (
@@ -768,7 +844,7 @@ func file_auth_auth_proto_rawDescGZIP() []byte {
 }
 
 var file_auth_auth_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_auth_auth_proto_goTypes = []any{
 	(Role)(0),                     // 0: auth.Role
 	(Grade)(0),                    // 1: auth.Grade
@@ -780,6 +856,7 @@ var file_auth_auth_proto_goTypes = []any{
 	(*RefreshTokenRequest)(nil),   // 7: auth.RefreshTokenRequest
 	(*ValidateTokenResponse)(nil), // 8: auth.ValidateTokenResponse
 	(*GetUserRequest)(nil),        // 9: auth.GetUserRequest
+	(*UpdateUserRequest)(nil),     // 10: auth.UpdateUserRequest
 }
 var file_auth_auth_proto_depIdxs = []int32{
 	0,  // 0: auth.User.role:type_name -> auth.Role
@@ -788,21 +865,24 @@ var file_auth_auth_proto_depIdxs = []int32{
 	1,  // 3: auth.RegisterRequest.grade:type_name -> auth.Grade
 	2,  // 4: auth.AuthResponse.user:type_name -> auth.User
 	0,  // 5: auth.ValidateTokenResponse.role:type_name -> auth.Role
-	3,  // 6: auth.AuthService.Register:input_type -> auth.RegisterRequest
-	4,  // 7: auth.AuthService.Login:input_type -> auth.LoginRequest
-	7,  // 8: auth.AuthService.RefreshToken:input_type -> auth.RefreshTokenRequest
-	6,  // 9: auth.AuthService.ValidateToken:input_type -> auth.ValidateTokenRequest
-	9,  // 10: auth.AuthService.GetUser:input_type -> auth.GetUserRequest
-	5,  // 11: auth.AuthService.Register:output_type -> auth.AuthResponse
-	5,  // 12: auth.AuthService.Login:output_type -> auth.AuthResponse
-	5,  // 13: auth.AuthService.RefreshToken:output_type -> auth.AuthResponse
-	8,  // 14: auth.AuthService.ValidateToken:output_type -> auth.ValidateTokenResponse
-	2,  // 15: auth.AuthService.GetUser:output_type -> auth.User
-	11, // [11:16] is the sub-list for method output_type
-	6,  // [6:11] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	1,  // 6: auth.UpdateUserRequest.grade:type_name -> auth.Grade
+	3,  // 7: auth.AuthService.Register:input_type -> auth.RegisterRequest
+	4,  // 8: auth.AuthService.Login:input_type -> auth.LoginRequest
+	7,  // 9: auth.AuthService.RefreshToken:input_type -> auth.RefreshTokenRequest
+	6,  // 10: auth.AuthService.ValidateToken:input_type -> auth.ValidateTokenRequest
+	9,  // 11: auth.AuthService.GetUser:input_type -> auth.GetUserRequest
+	10, // 12: auth.AuthService.UpdateUser:input_type -> auth.UpdateUserRequest
+	5,  // 13: auth.AuthService.Register:output_type -> auth.AuthResponse
+	5,  // 14: auth.AuthService.Login:output_type -> auth.AuthResponse
+	5,  // 15: auth.AuthService.RefreshToken:output_type -> auth.AuthResponse
+	8,  // 16: auth.AuthService.ValidateToken:output_type -> auth.ValidateTokenResponse
+	2,  // 17: auth.AuthService.GetUser:output_type -> auth.User
+	2,  // 18: auth.AuthService.UpdateUser:output_type -> auth.User
+	13, // [13:19] is the sub-list for method output_type
+	7,  // [7:13] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_auth_auth_proto_init() }
@@ -816,7 +896,7 @@ func file_auth_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_auth_proto_rawDesc), len(file_auth_auth_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   8,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

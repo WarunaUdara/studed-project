@@ -81,10 +81,18 @@ message GetUserRequest {
   string user_id = 1;
 }
 
+message UpdateUserRequest {
+  string user_id = 1;
+  string full_name = 2;
+  Grade grade = 3;
+  string preferred_language = 4;
+}
+
 service AuthService {
   rpc Register(RegisterRequest) returns (AuthResponse);
   rpc Login(LoginRequest) returns (AuthResponse);
   rpc RefreshToken(RefreshTokenRequest) returns (AuthResponse);
   rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
   rpc GetUser(GetUserRequest) returns (User);
+  rpc UpdateUser(UpdateUserRequest) returns (User);
 }

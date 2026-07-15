@@ -205,6 +205,12 @@ type UpdateLessonInput struct {
 	SequenceOrder *int    `json:"sequenceOrder,omitempty"`
 }
 
+type UpdateMeInput struct {
+	FullName          *string `json:"fullName,omitempty"`
+	Grade             *Grade  `json:"grade,omitempty"`
+	PreferredLanguage *string `json:"preferredLanguage,omitempty"`
+}
+
 type UpdateWaveInput struct {
 	Title             *string               `json:"title,omitempty"`
 	SequenceOrder     *int                  `json:"sequenceOrder,omitempty"`

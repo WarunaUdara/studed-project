@@ -143,6 +143,7 @@ type ComplexityRoot struct {
 		TranslateContent       func(childComplexity int, content string, targetLanguage string) int
 		UpdateCourse           func(childComplexity int, id string, input model.UpdateCourseInput) int
 		UpdateLesson           func(childComplexity int, id string, input model.UpdateLessonInput) int
+		UpdateMe               func(childComplexity int, input model.UpdateMeInput) int
 		UpdateWave             func(childComplexity int, id string, input model.UpdateWaveInput) int
 	}
 
@@ -266,6 +267,7 @@ type MutationResolver interface {
 	TranslateContent(ctx context.Context, content string, targetLanguage string) (string, error)
 	CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput) (*model.UserSubscription, error)
 	CancelSubscription(ctx context.Context) (*model.UserSubscription, error)
+	UpdateMe(ctx context.Context, input model.UpdateMeInput) (*model.User, error)
 }
 type QueryResolver interface {
 	Me(ctx context.Context) (*model.User, error)
@@ -821,6 +823,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Mutation.UpdateLesson(childComplexity, args["id"].(string), args["input"].(model.UpdateLessonInput)), true
+	case "Mutation.updateMe":
+		if e.ComplexityRoot.Mutation.UpdateMe == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateMe_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.UpdateMe(childComplexity, args["input"].(model.UpdateMeInput)), true
 	case "Mutation.updateWave":
 		if e.ComplexityRoot.Mutation.UpdateWave == nil {
 			break
@@ -1294,6 +1307,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputRegisterInput,
 		ec.unmarshalInputUpdateCourseInput,
 		ec.unmarshalInputUpdateLessonInput,
+		ec.unmarshalInputUpdateMeInput,
 		ec.unmarshalInputUpdateWaveInput,
 	)
 	first := true
@@ -2143,6 +2157,20 @@ func (ec *executionContext) field_Mutation_updateLesson_args(ctx context.Context
 		return nil, err
 	}
 	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateMe_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (model.UpdateMeInput, error) {
+			return ec.unmarshalNUpdateMeInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐUpdateMeInput(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -4532,6 +4560,50 @@ func (ec *executionContext) fieldContext_Mutation_cancelSubscription(_ context.C
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return ec.childFields_UserSubscription(ctx, field)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateMe(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_updateMe(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().UpdateMe(ctx, fc.Args["input"].(model.UpdateMeInput))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *model.User) graphql.Marshaler {
+			return ec.marshalNUser2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐUser(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_updateMe(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_User(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateMe_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -8100,6 +8172,50 @@ func (ec *executionContext) unmarshalInputUpdateLessonInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateMeInput(ctx context.Context, obj any) (model.UpdateMeInput, error) {
+	var it model.UpdateMeInput
+	if obj == nil {
+		return it, nil
+	}
+
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"fullName", "grade", "preferredLanguage"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "fullName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fullName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FullName = data
+		case "grade":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("grade"))
+			data, err := ec.unmarshalOGrade2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐGrade(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Grade = data
+		case "preferredLanguage":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("preferredLanguage"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PreferredLanguage = data
+		}
+	}
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateWaveInput(ctx context.Context, obj any) (model.UpdateWaveInput, error) {
 	var it model.UpdateWaveInput
 	if obj == nil {
@@ -8968,6 +9084,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "cancelSubscription":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_cancelSubscription(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateMe":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateMe(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -10722,6 +10845,11 @@ func (ec *executionContext) unmarshalNUpdateCourseInput2githubᚗcomᚋstudedᚋ
 
 func (ec *executionContext) unmarshalNUpdateLessonInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐUpdateLessonInput(ctx context.Context, v any) (model.UpdateLessonInput, error) {
 	res, err := ec.unmarshalInputUpdateLessonInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateMeInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐUpdateMeInput(ctx context.Context, v any) (model.UpdateMeInput, error) {
+	res, err := ec.unmarshalInputUpdateMeInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

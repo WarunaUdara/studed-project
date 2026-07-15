@@ -68,3 +68,7 @@ func (h *AuthGRPCHandler) GetUser(ctx context.Context, req *authpb.GetUserReques
 	}
 	return user, nil
 }
+
+func (h *AuthGRPCHandler) UpdateUser(ctx context.Context, req *authpb.UpdateUserRequest) (*authpb.User, error) {
+	return h.svc.UpdateUser(ctx, req)
+}

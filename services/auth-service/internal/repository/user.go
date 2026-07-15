@@ -14,6 +14,7 @@ type UserRepository interface {
 	GetByEmail(ctx context.Context, email string) (*model.User, error)
 	GetByID(ctx context.Context, id string) (*model.User, error)
 	EmailExists(ctx context.Context, email string) (bool, error)
+	Update(ctx context.Context, user *model.User) error
 }
 
 type gormUserRepository struct {
@@ -27,6 +28,13 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 func (r *gormUserRepository) Create(ctx context.Context, user *model.User) error {
 	if err := r.db.WithContext(ctx).Create(user).Error; err != nil {
 		return fmt.Errorf("failed to create user: %w", err)
+	}
+	return nil
+}
+
+func (r *gormUserRepository) Update(ctx context.Context, user *model.User) error {
+	if err := r.db.WithContext(ctx).Save(user).Error; err != nil {
+		return fmt.Errorf("failed to update user: %w", err)
 	}
 	return nil
 }
