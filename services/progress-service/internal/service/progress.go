@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -526,5 +527,9 @@ func scoreAnswers(blocks []evaluateBlock, answers []*progresspb.Answer) (int32, 
 }
 
 func normalizeAnswer(s string) string {
-	return strings.TrimSpace(strings.ToLower(s))
+	cleaned := strings.TrimSpace(strings.ToLower(s))
+	if f, err := strconv.ParseFloat(cleaned, 64); err == nil {
+		return fmt.Sprintf("%g", f)
+	}
+	return cleaned
 }

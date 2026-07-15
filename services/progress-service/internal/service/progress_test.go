@@ -94,6 +94,29 @@ func TestNormalizeAnswer_TrimsAndLowercases(t *testing.T) {
 	}
 }
 
+func TestNormalizeAnswer_NumericEquivalence(t *testing.T) {
+	cases := []struct {
+		a, b  string
+		equal bool
+	}{
+		{"2.0", "2", true},
+		{"2.00", "2.0", true},
+		{"-0.50", "-0.5", true},
+		{"0.333", "0.3330", true},
+		{"2.5", "2.0", false},
+		{"not-a-number", "not-a-number", true},
+	}
+
+	for _, tc := range cases {
+		normA := normalizeAnswer(tc.a)
+		normB := normalizeAnswer(tc.b)
+		equal := normA == normB
+		if equal != tc.equal {
+			t.Errorf("expected equivalence of %q and %q to be %t (normalized: %q vs %q)", tc.a, tc.b, tc.equal, normA, normB)
+		}
+	}
+}
+
 /* ----- fakes for RecordAttempt / GetWaveProgress / EnrollInCourse ----- */
 
 type fakeProgressRepo struct {
