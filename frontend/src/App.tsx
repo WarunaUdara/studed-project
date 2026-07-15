@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { ToastProvider } from "@/components/ui/Toast";
 import { useUiPrefs } from "@/stores/uiPrefs";
+import { PomodoroInitializer } from "@/components/gamification/PomodoroInitializer";
 
 /** Routes that own their full-screen layout (no global Navbar / Footer). */
 const SPLIT_SCREEN_ROUTES = new Set(["/login", "/register"]);
@@ -32,6 +33,7 @@ export function App() {
         <main>
           <Outlet />
         </main>
+        <PomodoroInitializer />
       </ToastProvider>
     </div>
   );

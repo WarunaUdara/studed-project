@@ -34,7 +34,7 @@ test.describe("Student Dashboard UX & Flow Simulation", () => {
 
   test("should render the Pomodoro timer and allow starting focus blocks", async ({ page }) => {
     // 1. Verify Focus Timer elements
-    await expect(page.getByText("Pomodoro Focus Timer")).toBeVisible();
+    await expect(page.getByText("Focus Session Hub")).toBeVisible();
     await expect(page.locator("[data-testid='pomodoro-time']")).toBeVisible();
 
     // 2. Fill task field
@@ -51,6 +51,12 @@ test.describe("Student Dashboard UX & Flow Simulation", () => {
 
     // 4. Reset timer
     const resetButton = page.locator("[data-testid='pomodoro-reset']");
+    
+    // Set up dialog handler to accept the confirmation dialog
+    page.once("dialog", async (dialog) => {
+      await dialog.accept();
+    });
+
     await resetButton.click();
     await expect(playButton).toContainText("Start");
   });

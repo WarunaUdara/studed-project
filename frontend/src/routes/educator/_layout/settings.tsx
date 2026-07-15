@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { BookOpen, CheckCircle, Globe, Shield, User as UserIcon, Moon, Sun, Save } from "lucide-react";
+import { BookOpen, CheckCircle, Globe, Shield, User as UserIcon, Moon, Sun, Save, Volume2, Upload, Sliders, Settings as SettingsIcon } from "lucide-react";
 import { useQuery, useMutation } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -37,6 +37,14 @@ function EducatorSettingsPage() {
   const [fullName, setFullName] = useState(user?.fullName ?? "");
   const [preferredLanguage, setPreferredLanguage] = useState(user?.preferredLanguage ?? "en");
   const [isSaving, setIsSaving] = useState(false);
+
+  // Focus sound configuration states
+  const [soundConfigs, setSoundConfigs] = useState([
+    { id: "adhd", name: "ADHD Binaural Flow", leftFreq: 140, rightFreq: 150, gain: 0.04, desc: "Binaural alpha-wave beat + brown noise hum." },
+    { id: "brown", name: "Brownian Rain Waterfall", leftFreq: 0, rightFreq: 0, gain: 0.04, desc: "Deep rumbling frequency masking for environmental blockout." },
+    { id: "pink", name: "Ocean Breeze", leftFreq: 0, rightFreq: 0, gain: 0.04, desc: "Gentle natural wind simulations." }
+  ]);
+  const [simulatedFile, setSimulatedFile] = useState<string | null>(null);
 
   const [{ data }] = useQuery({
     query: COURSES_QUERY,
@@ -94,6 +102,32 @@ function EducatorSettingsPage() {
       });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleSoundConfigChange = (id: string, field: string, val: number | string) => {
+    setSoundConfigs(prev =>
+      prev.map(c => (c.id === id ? { ...c, [field]: val } : c))
+    );
+  };
+
+  const handleSaveSoundConfigs = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      type: "success",
+      title: "Audio Configurations Updated",
+      message: "Focus Timer sound configurations updated locally in prototype.",
+    });
+  };
+
+  const handleSimulatedUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSimulatedFile(e.target.files[0].name);
+      toast({
+        type: "warning",
+        title: "Cloud Connection Required",
+        message: "Storage credentials not active. Custom upload has been simulated locally.",
+      });
     }
   };
 
@@ -261,7 +295,122 @@ function EducatorSettingsPage() {
             </Card>
           </motion.div>
         </form>
+
+        {/* Focus Sounds Customizer (Admin Surface) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Card className="border-purple/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Volume2 className="h-5 w-5 text-purple" />
+                Focus Sounds Control Room
+              </CardTitle>
+              <CardDescription>
+                Configure synthesized focus noise frequencies, binaural beat alpha-waves, and simulate uploads.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSaveSoundConfigs} className="space-y-5">
+                <div className="grid gap-6 md:grid-cols-3">
+                  {soundConfigs.map((cfg) => (
+                    <div key={cfg.id} className="rounded-xl border p-4 space-y-3 bg-muted/20">
+                      <div>
+                        <span className="font-bold text-sm text-foreground block">{cfg.name}</span>
+                        <span className="text-[10px] text-muted-foreground block leading-tight mt-1">{cfg.desc}</span>
+                      </div>
+
+                      {cfg.id === "adhd" && (
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="space-y-1">
+                            <Label className="text-[10px] text-muted-foreground uppercase font-bold">Left (Hz)</Label>
+                            <Input
+                              type="number"
+                              value={cfg.leftFreq}
+                              onChange={(e) => handleSoundConfigChange(cfg.id, "leftFreq", Number(e.target.value))}
+                              className="bg-background text-xs py-1 h-8 text-center"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-[10px] text-muted-foreground uppercase font-bold">Right (Hz)</Label>
+                            <Input
+                              type="number"
+                              value={cfg.rightFreq}
+                              onChange={(e) => handleSoundConfigChange(cfg.id, "rightFreq", Number(e.target.value))}
+                              className="bg-background text-xs py-1 h-8 text-center"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[10px] text-muted-foreground font-bold">
+                          <span>GAIN LEVEL</span>
+                          <span>{cfg.gain * 100}%</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="0"
+                          max="0.1"
+                          step="0.01"
+                          value={cfg.gain}
+                          onChange={(e) => handleSoundConfigChange(cfg.id, "gain", Number(e.target.value))}
+                          className="w-full accent-purple"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Upload simulated interface */}
+                <div className="rounded-xl border border-dashed p-5 bg-background flex flex-col items-center justify-center text-center space-y-2.5">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple/10 text-purple">
+                    <Upload className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <span className="font-semibold text-sm block">Upload custom ADHD / White Noise sound file</span>
+                    <span className="text-xs text-muted-foreground block mt-0.5">Supports MP3, WAV or FLAC up to 15MB</span>
+                  </div>
+                  <input
+                    type="file"
+                    accept="audio/*"
+                    id="audio-upload"
+                    className="hidden"
+                    onChange={handleSimulatedUpload}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5 mt-1 border-purple/30 text-purple hover:bg-purple/5"
+                    onClick={() => document.getElementById("audio-upload")?.click()}
+                  >
+                    Select Audio File
+                  </Button>
+                  {simulatedFile && (
+                    <span className="text-xs font-bold text-success">
+                      Simulated local file: {simulatedFile}
+                    </span>
+                  )}
+                  <p className="text-[10px] text-muted-foreground italic">
+                    Note: Audio file uploads require Object Storage (Cloudflare R2) connection. Real-time client-side Web Audio API oscillators are running actively in the current prototype.
+                  </p>
+                </div>
+
+                <div className="flex justify-end">
+                  <Button type="submit" className="gap-1.5 px-6">
+                    <Sliders className="h-4 w-4" />
+                    Save Audio Parameters
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </ProtectedRoute>
   );
 }
+
