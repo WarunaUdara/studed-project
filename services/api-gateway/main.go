@@ -68,7 +68,9 @@ func main() {
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.POST{})
-	srv.Use(extension.Introspection{})
+	if cfg.GraphQLPlayground {
+		srv.Use(extension.Introspection{})
+	}
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)

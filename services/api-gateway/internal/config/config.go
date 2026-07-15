@@ -28,7 +28,7 @@ func Load() (*Config, error) {
 		ProgressServiceAddr:     getEnv("PROGRESS_SERVICE_ADDR", "localhost:8086"),
 		GamificationServiceAddr: getEnv("GAMIFICATION_SERVICE_ADDR", "localhost:8088"),
 		AccessSecret:            accessSecret,
-		GraphQLPlayground:       getEnv("GRAPHQL_PLAYGROUND", "true") == "true",
+		GraphQLPlayground:       getEnv("GRAPHQL_PLAYGROUND", "false") == "true",
 	}, nil
 }
 
