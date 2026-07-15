@@ -1,33 +1,101 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { BookOpen, CheckCircle, Globe, Moon, Shield, Sun, User as UserIcon } from "lucide-react";
-import { useQuery } from "urql";
+import { BookOpen, CheckCircle, Globe, Shield, User as UserIcon, Moon, Sun, Save } from "lucide-react";
+import { useQuery, useMutation } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/Toast";
 import { COURSES_QUERY } from "@/graphql/courses";
-import type { CoursesQueryData } from "@/lib/graphqlTypes";
 import { useAuthStore } from "@/stores/auth";
 import { useUiPrefs } from "@/stores/uiPrefs";
+
+const UPDATE_ME_MUTATION = `
+  mutation UpdateMe($input: UpdateMeInput!) {
+    updateMe(input: $input) {
+      id
+      fullName
+      grade
+      preferredLanguage
+    }
+  }
+`;
 
 export const Route = createFileRoute("/educator/_layout/settings")({
   component: EducatorSettingsPage,
 });
 
 function EducatorSettingsPage() {
-  const { user } = useAuthStore();
+  const { user, setUser } = useAuthStore();
+  const { toast } = useToast();
   const theme = useUiPrefs((s) => s.theme);
   const toggleTheme = useUiPrefs((s) => s.toggleTheme);
 
-  const [{ data }] = useQuery<CoursesQueryData>({
+  const [fullName, setFullName] = useState(user?.fullName ?? "");
+  const [preferredLanguage, setPreferredLanguage] = useState(user?.preferredLanguage ?? "en");
+  const [isSaving, setIsSaving] = useState(false);
+
+  const [{ data }] = useQuery({
     query: COURSES_QUERY,
     variables: { filter: {} },
   });
 
-  const courses = data?.courses?.edges?.map((edge) => edge.node) ?? [];
-  const publishedCoursesCount = courses.filter((course) => course.isPublished).length;
+  const [, updateProfile] = useMutation(UPDATE_ME_MUTATION);
+
+  const courses = data?.courses?.edges?.map((edge: any) => edge.node) ?? [];
+  const publishedCoursesCount = courses.filter((c: any) => c.isPublished).length;
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!fullName.trim()) {
+      toast({
+        type: "error",
+        title: "Validation Error",
+        message: "Full name cannot be empty.",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const res = await updateProfile({
+        input: {
+          fullName: fullName.trim(),
+          preferredLanguage: preferredLanguage,
+        },
+      });
+
+      if (res.error) {
+        toast({
+          type: "error",
+          title: "Update Failed",
+          message: res.error.message,
+        });
+      } else if (res.data?.updateMe) {
+        setUser({
+          ...user!,
+          fullName: res.data.updateMe.fullName,
+          preferredLanguage: res.data.updateMe.preferredLanguage,
+        });
+        toast({
+          type: "success",
+          title: "Settings Saved",
+          message: "Your profile details have been successfully updated.",
+        });
+      }
+    } catch (err: any) {
+      toast({
+        type: "error",
+        title: "Error",
+        message: err.message || "An unexpected error occurred.",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <ProtectedRoute allowedRoles={["EDUCATOR", "HEAD_EDUCATOR", "ADMIN"]}>
@@ -78,7 +146,7 @@ function EducatorSettingsPage() {
           </Card>
         </motion.div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <form onSubmit={handleSave} className="grid gap-6 md:grid-cols-2">
           {/* Account Profile details */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -96,32 +164,42 @@ function EducatorSettingsPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-1.5">
                   <Label className="text-muted-foreground">Full Name</Label>
-                  <Input value={user?.fullName ?? "Educator"} disabled className="bg-muted/50" />
+                  <Input
+                    id="fullName"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="bg-background focus:border-primary/50"
+                  />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-muted-foreground">Email Address</Label>
-                  <Input value={user?.email ?? ""} disabled className="bg-muted/50" />
+                  <Label className="text-muted-foreground">Email Address (Read-only)</Label>
+                  <Input value={user?.email ?? ""} disabled className="bg-muted/50 cursor-not-allowed" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <Label className="text-muted-foreground flex items-center gap-1">
                       <Globe className="h-3.5 w-3.5" /> Language
                     </Label>
-                    <Input
-                      value={user?.preferredLanguage?.toUpperCase() ?? "EN"}
-                      disabled
-                      className="bg-muted/50"
-                    />
+                    <select
+                      id="preferredLanguage"
+                      value={preferredLanguage}
+                      onChange={(e) => setPreferredLanguage(e.target.value)}
+                      className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none transition-all focus:border-primary/50"
+                    >
+                      <option value="en">English</option>
+                      <option value="si">Sinhala (සිංහල)</option>
+                      <option value="ta">Tamil (தமிழ்)</option>
+                    </select>
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-muted-foreground">Role Account</Label>
-                    <Input
-                      value={user?.role ?? "EDUCATOR"}
-                      disabled
-                      className="bg-muted/50 font-semibold text-primary"
-                    />
+                    <Input value={user?.role ?? "EDUCATOR"} disabled className="bg-muted/50 font-semibold text-primary cursor-not-allowed" />
                   </div>
                 </div>
+                <Button type="submit" disabled={isSaving} className="w-full gap-1.5 mt-2">
+                  <Save className="h-4 w-4" />
+                  {isSaving ? "Saving changes..." : "Save Profile Details"}
+                </Button>
               </CardContent>
             </Card>
           </motion.div>
@@ -150,6 +228,7 @@ function EducatorSettingsPage() {
                     </p>
                   </div>
                   <Button
+                    type="button"
                     variant="outline"
                     size="icon"
                     onClick={toggleTheme}
@@ -175,13 +254,13 @@ function EducatorSettingsPage() {
                   <Input
                     value={user?.id ?? "—"}
                     disabled
-                    className="bg-muted/50 font-mono text-xs text-muted-foreground"
+                    className="bg-muted/50 font-mono text-xs text-muted-foreground cursor-not-allowed"
                   />
                 </div>
               </CardContent>
             </Card>
           </motion.div>
-        </div>
+        </form>
       </div>
     </ProtectedRoute>
   );
