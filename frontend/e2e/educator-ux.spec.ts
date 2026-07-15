@@ -47,7 +47,7 @@ test.describe("Educator Portal UX & Page Navigation Flow", () => {
     await page.getByRole("link", { name: "Settings", exact: true }).click();
     await expect(page).toHaveURL(/\/educator\/settings/);
     await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
-    await expect(page.getByText("Educator Profile")).toBeVisible();
-    await expect(page.getByText("Portal Preferences")).toBeVisible();
+    await expect(page.getByText("Educator Profile", { exact: true })).toBeVisible();
+    await expect(page.getByText("Portal Preferences", { exact: true })).toBeVisible();
   });
 });
