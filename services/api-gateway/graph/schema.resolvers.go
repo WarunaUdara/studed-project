@@ -261,18 +261,11 @@ func (r *mutationResolver) EnrollInCourse(ctx context.Context, courseID string) 
 		return nil, err
 	}
 
+	// Allow student enrollment in any course, removing restrictive grade mismatch check
 	if userCtx.Role == "STUDENT" {
-		authUser, err := r.AuthClient.GetUser(ctx, userCtx.UserID)
+		_, err := r.AuthClient.GetUser(ctx, userCtx.UserID)
 		if err != nil {
 			return nil, fmt.Errorf("failed to verify student profile: %w", err)
-		}
-
-		if authUser.Grade == nil || *authUser.Grade != course.GradeLevel {
-			gradeStr := "unspecified"
-			if authUser.Grade != nil {
-				gradeStr = string(*authUser.Grade)
-			}
-			return nil, fmt.Errorf("grade mismatch: course is for %s, but student is in %s", course.GradeLevel, gradeStr)
 		}
 	}
 
