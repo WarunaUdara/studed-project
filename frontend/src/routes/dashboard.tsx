@@ -13,17 +13,15 @@ import { useMemo, useState } from "react";
 import { useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PomodoroTimer } from "@/components/gamification/PomodoroTimer";
+import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { XPBar } from "@/components/gamification/XPBar";
 import { StudentShell } from "@/components/layout/StudentShell";
 import { AchievementBadge, type UserAchievement } from "@/components/ui/achievement-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
-import { LeaderboardRankings } from "@/components/ui/leaderboard-rankings";
 import { ProgressRing } from "@/components/ui/ProgressRing";
-import { PointsBadge } from "@/components/ui/points-badge";
 import { PointsLevelsTimeline } from "@/components/ui/points-levels-timeline";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { StreakBadge } from "@/components/ui/streak-badge";
 import { useToast } from "@/components/ui/Toast";
 import { ACHIEVEMENTS_QUERY, LEADERBOARD_QUERY, MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
 import { sanitizeGraphQLError } from "@/lib/errors";
@@ -64,14 +62,13 @@ function DashboardPage() {
     achievementsData?.achievements ?? [];
 
   const totalXp = user?.totalXp ?? 0;
-  const { level } = levelFromXp(totalXp);
+  const { level, xpIntoLevel, xpForNextLevel } = levelFromXp(totalXp);
 
   const badgeInputs = computeBadgeInputsFromEnrollments(enrollments, totalXp);
 
   const completedWaves = badgeInputs.completedWaves;
   const completedCourses = badgeInputs.completedCourses;
 
-  const myRankEntry = leaderboard.find((e) => e.user.id === user?.id);
   const continueCourse = enrollments.find(
     (c) =>
       (c.myProgress?.completedWaves ?? 0) > 0 &&
@@ -87,14 +84,6 @@ function DashboardPage() {
             100,
         )
       : 0;
-
-  const trophyRankings = leaderboard.map((e) => ({
-    userId: e.user.id,
-    userName: e.user.fullName,
-    rank: e.rank,
-    value: e.totalXp,
-    byline: `${e.totalXp.toLocaleString()} XP`,
-  }));
 
   const unlockedMap = new Map<string, string>(
     serverUnlockedAchievements.map((a) => [a.id, a.unlockedAt]),
@@ -146,86 +135,246 @@ function DashboardPage() {
     });
   };
 
+  // Dynamic calculations
+  const xpToNextLevel = xpForNextLevel - xpIntoLevel;
+
+  // Find the current active lesson and wave
+  const resumeInfo = useMemo(() => {
+    if (!resumeCourse) return null;
+    const lessons = resumeCourse.lessons ?? [];
+    for (const l of lessons) {
+      const waves = l.waves ?? [];
+      for (let wIdx = 0; wIdx < waves.length; wIdx++) {
+        const wave = waves[wIdx];
+        if (wave.myProgress?.status !== "COMPLETED") {
+          return {
+            lessonTitle: l.title,
+            waveName: `Wave ${wIdx + 1}`,
+            note: "Resume your learning journey",
+            waveId: wave.id,
+          };
+        }
+      }
+    }
+    // Fallback if everything is completed or no waves
+    return {
+      lessonTitle: lessons[0]?.title ?? "Introductory",
+      waveName: "Wave 1",
+      note: "Review your completed waves",
+      waveId: lessons[0]?.waves?.[0]?.id ?? "",
+    };
+  }, [resumeCourse]);
+
   return (
     <ProtectedRoute allowedRoles={["STUDENT"]}>
       <StudentShell>
-        <div className="space-y-6">
-          {/* Hero header */}
-          <div className="flex flex-col gap-4 rounded-2xl border bg-gradient-to-br from-primary/10 via-card to-card p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-8">
+          {/* 1. Greeting band (Dawn gradient, no border, Instrument Serif) */}
+          <div className="rounded-[24px] bg-gradient-dawn p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-1">
-              <h1 className="text-3xl font-bold tracking-tight">
-                Welcome back, {user?.fullName?.split(" ")[0] ?? "Learner"}!
+              <h1 className="text-4xl font-normal font-serif text-foreground sm:text-5xl">
+                Good evening, {user?.fullName?.split(" ")[0] ?? "Learner"}.
               </h1>
-              <p className="text-muted-foreground">
-                You're on{" "}
-                <span className="font-semibold text-foreground">
-                  Level {level} — {levelName(level)}
-                </span>{" "}
-                with{" "}
-                <span className="font-semibold text-foreground">{totalXp.toLocaleString()} XP</span>
+              <p className="text-muted-foreground text-sm">
+                You're {xpToNextLevel} XP from Level {level + 1}. ({totalXp.toLocaleString()} XP
+                total)
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <PointsBadge name="XP" total={totalXp} size="lg" icon={Zap} />
-              <XPBar totalXp={totalXp} className="min-w-[180px]" />
+            <div className="flex items-center gap-3 shrink-0">
+              <StreakFlame dayCount={user?.streak ?? 0} size="md" />
+              <XPBar totalXp={totalXp} className="min-w-[140px]" compact />
             </div>
           </div>
 
+          {/* AI Nudge (Conditional) */}
+          <div className="relative overflow-hidden rounded-[24px] border-l-4 border-l-purple border-t border-r border-b bg-card p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="space-y-1">
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-purple">
+                <Sparkles className="h-3 w-3" /> AI Tutor Nudge
+              </span>
+              <p className="text-sm text-foreground">
+                You stumbled on quadratic factorization twice this week. Want a 5-minute refresher?
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Button variant="ai" size="sm">
+                Review with AI
+              </Button>
+            </div>
+          </div>
+
+          {/* 2. Continue Learning — Hero Card spanning full width */}
+          <Card className="rounded-[24px] overflow-hidden">
+            <CardContent className="p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              {enrollmentsFetching ? (
+                <Skeleton className="h-24 w-full" />
+              ) : resumeCourse ? (
+                <>
+                  <div className="space-y-2 flex-1">
+                    <span className="text-xs font-bold uppercase tracking-widest text-primary/80 block">
+                      {resumeCourse.title}
+                    </span>
+                    <h2 className="text-3xl font-normal font-serif text-foreground">
+                      {resumeInfo?.lessonTitle}
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      {resumeInfo?.waveName} · {resumeInfo?.note}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-6 shrink-0 w-full md:w-auto justify-between md:justify-end">
+                    <ProgressRing
+                      value={resumePct}
+                      size={72}
+                      strokeWidth={6}
+                      className="text-primary"
+                    >
+                      <span className="text-sm font-bold">{resumePct}%</span>
+                    </ProgressRing>
+                    {resumeInfo?.waveId ? (
+                      <Link to="/waves/$waveId" params={{ waveId: resumeInfo.waveId }}>
+                        <Button size="lg" className="rounded-full px-8 gap-2">
+                          <ArrowRight className="h-5 w-5" /> Continue
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Link to="/courses/$courseId" params={{ courseId: resumeCourse.id }}>
+                        <Button size="lg" className="rounded-full px-8 gap-2">
+                          <ArrowRight className="h-5 w-5" /> Continue
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center gap-3 py-6 text-center w-full">
+                  <BookOpen className="h-10 w-10 text-muted-foreground" />
+                  <h3 className="text-2xl font-serif font-normal text-foreground">
+                    Your first lesson is waiting
+                  </h3>
+                  <p className="text-muted-foreground text-sm">
+                    Explore our courses and start learning today.
+                  </p>
+                  <Link to="/courses">
+                    <Button className="rounded-full px-6">Browse Courses</Button>
+                  </Link>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* 3. Up Next row */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              Up next for you
+            </h3>
+            <div className="grid gap-4 md:grid-cols-3">
+              {/* Card 1: Next Wave */}
+              <Card className="p-5 flex flex-col justify-between min-h-[140px] lift-on-hover">
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary/70">
+                    Next Wave
+                  </span>
+                  <h4 className="text-base font-semibold truncate">
+                    {resumeInfo?.lessonTitle
+                      ? `${resumeInfo.lessonTitle} — Next Steps`
+                      : "Ready to study"}
+                  </h4>
+                  <p className="text-xs text-muted-foreground line-clamp-2">
+                    Move forward to build solid concepts step by step.
+                  </p>
+                </div>
+                {resumeInfo?.waveId ? (
+                  <Link to="/waves/$waveId" params={{ waveId: resumeInfo.waveId }} className="mt-3">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="gap-1.5 text-primary p-0 hover:bg-transparent"
+                    >
+                      Study Now <ArrowRight className="h-3.5 w-3.5" />
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/courses" className="mt-3">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="gap-1.5 text-primary p-0 hover:bg-transparent"
+                    >
+                      Browse courses <ArrowRight className="h-3.5 w-3.5" />
+                    </Button>
+                  </Link>
+                )}
+              </Card>
+
+              {/* Card 2: Revision (AI suggested) */}
+              <Card className="p-5 flex flex-col justify-between min-h-[140px] border-l-2 border-l-purple lift-on-hover">
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-purple">
+                      Revision
+                    </span>
+                    <span className="inline-flex items-center gap-0.5 rounded-full bg-purple/10 px-2 py-0.5 text-[9px] font-bold text-purple uppercase tracking-wider">
+                      <Sparkles className="h-2 w-2" /> AI Suggested
+                    </span>
+                  </div>
+                  <h4 className="text-base font-semibold">Spaced Repetition</h4>
+                  <p className="text-xs text-muted-foreground line-clamp-2">
+                    Strengthen neural paths: refresh topics decaying from memory.
+                  </p>
+                </div>
+                <Link to="/dashboard" className="mt-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-1.5 text-purple p-0 hover:bg-transparent"
+                  >
+                    Refresh Memory <ArrowRight className="h-3.5 w-3.5" />
+                  </Button>
+                </Link>
+              </Card>
+
+              {/* Card 3: New Course Suggestion */}
+              <Card className="p-5 flex flex-col justify-between min-h-[140px] lift-on-hover">
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Suggestion
+                  </span>
+                  <h4 className="text-base font-semibold">Explore New Horizon</h4>
+                  <p className="text-xs text-muted-foreground line-clamp-2">
+                    Broaden your understanding by trying subjects outside your grade.
+                  </p>
+                </div>
+                <Link to="/courses" className="mt-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-1.5 text-muted-foreground p-0 hover:bg-transparent"
+                  >
+                    Browse All <ArrowRight className="h-3.5 w-3.5" />
+                  </Button>
+                </Link>
+              </Card>
+            </div>
+          </div>
+
+          {/* Grid Layout for Courses, Stats, activity, and Leaderboard */}
           <div className="grid gap-6 lg:grid-cols-3">
             {/* Left column (2/3) */}
             <div className="space-y-6 lg:col-span-2">
-              {/* Continue Learning */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Sparkles className="h-5 w-5 text-orange" />
-                    Continue Learning
-                  </CardTitle>
-                  <CardDescription>Pick up where you left off.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {enrollmentsFetching ? (
-                    <Skeleton className="h-24 w-full" />
-                  ) : resumeCourse ? (
-                    <Link
-                      to="/courses/$courseId"
-                      params={{ courseId: resumeCourse.id }}
-                      className="group flex items-center gap-4 rounded-xl border p-4 transition-all hover:border-primary/40 hover:shadow-md"
-                    >
-                      <ProgressRing value={resumePct} size={64} className="text-primary">
-                        <span className="text-sm font-bold">{resumePct}%</span>
-                      </ProgressRing>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-semibold group-hover:text-primary">
-                          {resumeCourse.title}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {resumeCourse.myProgress?.completedWaves ?? 0} of{" "}
-                          {resumeCourse.myProgress?.totalWaves ?? 0} waves completed
-                        </p>
-                      </div>
-                      <Button size="sm" className="shrink-0">
-                        Resume
-                      </Button>
-                    </Link>
-                  ) : (
-                    <div className="flex flex-col items-center gap-3 py-6 text-center">
-                      <BookOpen className="h-8 w-8 text-muted-foreground" />
-                      <p className="text-muted-foreground">You haven't started a course yet.</p>
-                      <Link to="/courses">
-                        <Button>Browse courses</Button>
-                      </Link>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
               {/* My Courses */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <BookOpen className="h-5 w-5" />
-                    My Courses
+                  <CardTitle className="flex items-center justify-between text-xl">
+                    <span className="flex items-center gap-2">
+                      <BookOpen className="h-5 w-5" />
+                      My Courses
+                    </span>
+                    <Link
+                      to="/courses"
+                      className="text-xs text-primary font-semibold hover:underline"
+                    >
+                      View all
+                    </Link>
                   </CardTitle>
                   <CardDescription>
                     {enrollments.length} enrolled
@@ -252,16 +401,18 @@ function DashboardPage() {
                     </div>
                   ) : enrollments.length === 0 ? (
                     <div className="flex flex-col items-center gap-3 py-6 text-center">
-                      <p className="text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         You are not enrolled in any courses yet.
                       </p>
                       <Link to="/courses">
-                        <Button variant="outline">Browse courses</Button>
+                        <Button variant="outline" className="rounded-full">
+                          Browse courses
+                        </Button>
                       </Link>
                     </div>
                   ) : (
                     <div className="grid gap-4 sm:grid-cols-2">
-                      {enrollments.map((course) => {
+                      {enrollments.slice(0, 6).map((course) => {
                         const completed = course.myProgress?.completedWaves ?? 0;
                         const total = course.myProgress?.totalWaves ?? 0;
                         const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
@@ -271,7 +422,7 @@ function DashboardPage() {
                             key={course.id}
                             to="/courses/$courseId"
                             params={{ courseId: course.id }}
-                            className="group flex items-center gap-4 rounded-xl border p-4 transition-all hover:border-primary/40 hover:shadow-md"
+                            className="group flex items-center gap-4 rounded-xl border p-4 transition-all hover:border-primary/40 hover:shadow-md bg-card"
                           >
                             <ProgressRing
                               value={percent}
@@ -298,34 +449,77 @@ function DashboardPage() {
                 </CardContent>
               </Card>
 
-              {/* Leaderboard — Trophy UI component */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <TrophyIcon className="h-5 w-5 text-gold" />
-                    Global Leaderboard
-                  </CardTitle>
-                  <CardDescription>
-                    {myRankEntry
-                      ? `You're ranked #${myRankEntry.rank} — ${myRankEntry.totalXp.toLocaleString()} XP`
-                      : "Climb the ranks by completing waves!"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {leaderboardFetching ? (
-                    <div className="space-y-2">
-                      <Skeleton className="h-10 w-full" />
-                      <Skeleton className="h-10 w-full" />
-                      <Skeleton className="h-10 w-full" />
-                    </div>
-                  ) : (
-                    <LeaderboardRankings rankings={trophyRankings} currentUserId={user?.id} />
-                  )}
-                </CardContent>
-              </Card>
+              {/* 5. This Week strip */}
+              <div className="grid gap-6 md:grid-cols-2">
+                {/* Weekly activity */}
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">Weekly Activity</CardTitle>
+                    <CardDescription>Keep active to grow your streak</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex items-center justify-between py-4">
+                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((dayName, i) => {
+                      const completed = i < 3; // Mocking activity: Mon-Wed completed
+                      const isToday = i === 4; // Mocking Friday today
+                      return (
+                        <div key={dayName} className="flex flex-col items-center gap-2">
+                          <span className="text-[10px] font-bold text-muted-foreground">
+                            {dayName[0]}
+                          </span>
+                          <span
+                            className={cn(
+                              "h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all",
+                              completed
+                                ? "bg-primary text-primary-foreground"
+                                : isToday
+                                  ? "bg-primary/20 text-primary animate-pulse ring-2 ring-primary/40"
+                                  : "bg-muted text-muted-foreground",
+                            )}
+                          >
+                            {completed ? "✓" : i + 1}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </CardContent>
+                </Card>
+
+                {/* Leaderboard Peek */}
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center justify-between">
+                      <span>Leaderboard Peek</span>
+                      <Link
+                        to="/leaderboard"
+                        className="text-xs text-primary font-semibold hover:underline"
+                      >
+                        View board
+                      </Link>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2.5">
+                    {leaderboardFetching ? (
+                      <Skeleton className="h-20 w-full" />
+                    ) : (
+                      leaderboard.slice(0, 3).map((e) => (
+                        <div
+                          key={e.user.id}
+                          className="flex items-center justify-between text-xs border-b pb-1.5 last:border-0 last:pb-0"
+                        >
+                          <span className="flex items-center gap-2 font-medium">
+                            <span className="text-muted-foreground w-4">#{e.rank}</span>
+                            <span className="truncate max-w-[100px]">{e.user.fullName}</span>
+                          </span>
+                          <span className="tabular-nums text-muted-foreground">{e.totalXp} XP</span>
+                        </div>
+                      ))
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </div>
 
-            {/* Right column (1/3) — Decluttered Curriculum Selection, Streaks and Consolidated Gamification Hub */}
+            {/* Right column (1/3) */}
             <div className="space-y-6">
               {/* Exam & Curriculum Tracker Card */}
               <Card>
@@ -337,11 +531,9 @@ function DashboardPage() {
                   <CardDescription>Track your national study milestone</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Curriculum Toggle */}
                   <div className="flex rounded-lg bg-muted p-1">
                     <button
                       type="button"
-                      data-testid="curriculum-local"
                       onClick={() => setCurriculum("LOCAL")}
                       className={cn(
                         "flex flex-1 items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-semibold transition-all",
@@ -355,7 +547,6 @@ function DashboardPage() {
                     </button>
                     <button
                       type="button"
-                      data-testid="curriculum-global"
                       onClick={() => setCurriculum("GLOBAL")}
                       className={cn(
                         "flex flex-1 items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-semibold transition-all",
@@ -365,31 +556,18 @@ function DashboardPage() {
                       )}
                     >
                       <Globe className="h-3.5 w-3.5" />
-                      Global (Edexcel/CIE)
+                      Global
                     </button>
                   </div>
 
-                  {/* Countdown display */}
                   <div className="rounded-xl border bg-muted/40 p-3.5 text-center">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
                       {examInfo.name}
                     </p>
-                    <p
-                      className="mt-1.5 text-3xl font-black text-primary tabular-nums"
-                      data-testid="exam-countdown"
-                    >
+                    <p className="mt-1.5 text-3xl font-black text-primary tabular-nums">
                       {examInfo.daysRemaining}
                     </p>
                     <p className="text-xs text-muted-foreground">days remaining</p>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>
-                      Target: {curriculum === "LOCAL" ? "SL Syllabus" : "UK Pearson/Edexcel"}
-                    </span>
-                    <span className="flex items-center gap-0.5 text-primary hover:underline cursor-pointer">
-                      View syllabus <ArrowRight className="h-3 w-3" />
-                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -397,16 +575,7 @@ function DashboardPage() {
               {/* Pomodoro Focus Timer */}
               <PomodoroTimer onXpEarned={handleXpEarned} />
 
-              {/* Streak flame badge */}
-              <div className="flex justify-center">
-                <StreakBadge
-                  length={user?.streak ?? 0}
-                  subtitle={(user?.streak ?? 0) > 0 ? "Keep it up!" : "Start your streak!"}
-                  size="sm"
-                />
-              </div>
-
-              {/* Gamification Hub Card - Consolidating Stats, Badges, and Level Progression */}
+              {/* Gamification Hub Card */}
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg">Gamification Hub</CardTitle>
@@ -416,7 +585,6 @@ function DashboardPage() {
                       <button
                         key={t}
                         type="button"
-                        data-testid={`tab-${t}`}
                         onClick={() => setGamifyTab(t)}
                         className={cn(
                           "flex-1 pb-2 text-xs font-medium border-b-2 capitalize transition-all",
