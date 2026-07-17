@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { BookOpen, CheckCircle, Globe, Shield, User as UserIcon, Moon, Sun, Save, Volume2, Upload, Sliders, Settings as SettingsIcon } from "lucide-react";
+import { BookOpen, CheckCircle, Globe, Shield, User as UserIcon, Moon, Sun, Save, Volume2, Upload, Sliders } from "lucide-react";
 import { useQuery, useMutation } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
