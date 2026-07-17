@@ -3,6 +3,8 @@ module github.com/studed/course-service
 go 1.22
 
 require (
+	github.com/elastic/go-elasticsearch/v8 v8.14.0
+	github.com/joho/godotenv v1.5.1
 	github.com/studed/shared/go v0.0.0-00010101000000-000000000000
 	github.com/studed/shared/proto/gen/go v0.0.0
 	google.golang.org/grpc v1.64.0
@@ -11,13 +13,18 @@ require (
 )
 
 require (
+	github.com/elastic/elastic-transport-go/v8 v8.6.0 // indirect
+	github.com/go-logr/logr v1.4.1 // indirect
+	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/pgx/v5 v5.6.0 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/joho/godotenv v1.5.1 // indirect
+	go.opentelemetry.io/otel v1.24.0 // indirect
+	go.opentelemetry.io/otel/metric v1.24.0 // indirect
+	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect

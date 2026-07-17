@@ -56,6 +56,16 @@ func (r *fakeCourseRepo) List(ctx context.Context, filters repository.ListFilter
 	return out, nil
 }
 
+func (r *fakeCourseRepo) ListByIDs(ctx context.Context, ids []string) ([]*model.Course, error) {
+	out := make([]*model.Course, 0, len(ids))
+	for _, id := range ids {
+		if c, ok := r.courses[id]; ok {
+			out = append(out, c)
+		}
+	}
+	return out, nil
+}
+
 func (r *fakeCourseRepo) Update(ctx context.Context, c *model.Course) error {
 	r.courses[c.ID] = c
 	return nil

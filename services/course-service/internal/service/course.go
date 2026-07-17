@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -11,6 +12,13 @@ import (
 	"github.com/studed/course-service/internal/repository"
 	coursepb "github.com/studed/shared/proto/gen/go/course"
 )
+
+// CourseSearchIndex abstracts the Elasticsearch-backed course index so the
+// service degrades to SQL search when no index is configured or reachable.
+type CourseSearchIndex interface {
+	IndexCourse(ctx context.Context, c *model.Course) error
+	SearchCourses(ctx context.Context, query string, filters repository.ListFilters) ([]string, error)
+}
 
 type CourseService interface {
 	CreateCourse(ctx context.Context, req *coursepb.CreateCourseRequest) (*coursepb.CourseResponse, error)
@@ -37,14 +45,44 @@ type courseService struct {
 	courseRepo  repository.CourseRepository
 	lessonRepo  repository.LessonRepository
 	waveRepo    repository.WaveRepository
+	searchIndex CourseSearchIndex
 }
 
-func NewCourseService(courseRepo repository.CourseRepository, lessonRepo repository.LessonRepository, waveRepo repository.WaveRepository) CourseService {
-	return &courseService{
-		courseRepo:  courseRepo,
-		lessonRepo:  lessonRepo,
-		waveRepo:    waveRepo,
+type Option func(*courseService)
+
+// WithSearchIndex enables Elasticsearch-backed indexing and search.
+func WithSearchIndex(idx CourseSearchIndex) Option {
+	return func(s *courseService) {
+		s.searchIndex = idx
 	}
+}
+
+func NewCourseService(courseRepo repository.CourseRepository, lessonRepo repository.LessonRepository, waveRepo repository.WaveRepository, opts ...Option) CourseService {
+	s := &courseService{
+		courseRepo: courseRepo,
+		lessonRepo: lessonRepo,
+		waveRepo:   waveRepo,
+	}
+	for _, opt := range opts {
+		opt(s)
+	}
+	return s
+}
+
+// indexCourse pushes a course to the search index in the background;
+// indexing failures never fail the write path.
+func (s *courseService) indexCourse(course *model.Course) {
+	if s.searchIndex == nil {
+		return
+	}
+	snapshot := *course
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := s.searchIndex.IndexCourse(ctx, &snapshot); err != nil {
+			slog.Warn("failed to index course", slog.String("course_id", snapshot.ID), slog.Any("error", err))
+		}
+	}()
 }
 
 // --- Course methods ---
@@ -79,6 +117,8 @@ func (s *courseService) CreateCourse(ctx context.Context, req *coursepb.CreateCo
 		return nil, fmt.Errorf("failed to create course: %w", err)
 	}
 
+	s.indexCourse(course)
+
 	return &coursepb.CourseResponse{Course: course.ToProto()}, nil
 }
 
@@ -110,17 +150,36 @@ func (s *courseService) ListCourses(ctx context.Context, req *coursepb.ListCours
 		filters.EducatorID = req.EducatorId
 	}
 
+	searchQuery := strings.TrimSpace(req.SearchQuery)
+
+	if searchQuery != "" && s.searchIndex != nil {
+		ids, err := s.searchIndex.SearchCourses(ctx, searchQuery, filters)
+		if err == nil {
+			courses, err := s.courseRepo.ListByIDs(ctx, ids)
+			if err != nil {
+				return nil, err
+			}
+			return coursesToListResponse(courses), nil
+		}
+		slog.Warn("elasticsearch unavailable, falling back to SQL search", slog.Any("error", err))
+	}
+
+	filters.SearchQuery = searchQuery
+
 	courses, err := s.courseRepo.List(ctx, filters)
 	if err != nil {
 		return nil, err
 	}
 
+	return coursesToListResponse(courses), nil
+}
+
+func coursesToListResponse(courses []*model.Course) *coursepb.CourseListResponse {
 	protoCourses := make([]*coursepb.Course, len(courses))
 	for i, c := range courses {
 		protoCourses[i] = c.ToProto()
 	}
-
-	return &coursepb.CourseListResponse{Courses: protoCourses}, nil
+	return &coursepb.CourseListResponse{Courses: protoCourses}
 }
 
 func (s *courseService) UpdateCourse(ctx context.Context, req *coursepb.UpdateCourseRequest) (*coursepb.CourseResponse, error) {
@@ -160,6 +219,8 @@ func (s *courseService) UpdateCourse(ctx context.Context, req *coursepb.UpdateCo
 		return nil, fmt.Errorf("failed to update course: %w", err)
 	}
 
+	s.indexCourse(course)
+
 	return &coursepb.CourseResponse{Course: course.ToProto()}, nil
 }
 
@@ -191,6 +252,8 @@ func (s *courseService) PublishCourse(ctx context.Context, req *coursepb.Publish
 	if err := s.courseRepo.Update(ctx, course); err != nil {
 		return nil, fmt.Errorf("failed to publish course: %w", err)
 	}
+
+	s.indexCourse(course)
 
 	return &coursepb.CourseResponse{Course: course.ToProto()}, nil
 }

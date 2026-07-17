@@ -1,16 +1,19 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/studed/course-service/internal/config"
 	"github.com/studed/course-service/internal/handler"
 	"github.com/studed/course-service/internal/model"
 	"github.com/studed/course-service/internal/repository"
+	"github.com/studed/course-service/internal/search"
 	"github.com/studed/course-service/internal/service"
 	"github.com/studed/shared/go/logger"
 	coursepb "github.com/studed/shared/proto/gen/go/course"
@@ -44,7 +47,34 @@ func main() {
 	courseRepo := repository.NewCourseRepository(db)
 	lessonRepo := repository.NewLessonRepository(db)
 	waveRepo := repository.NewWaveRepository(db)
-	courseSvc := service.NewCourseService(courseRepo, lessonRepo, waveRepo)
+
+	var svcOpts []service.Option
+	if cfg.ElasticsearchURL != "" {
+		courseIndex, err := search.New(cfg.ElasticsearchURL, log)
+		if err != nil {
+			log.Warn("failed to create elasticsearch client, search falls back to SQL", slog.Any("error", err))
+		} else {
+			svcOpts = append(svcOpts, service.WithSearchIndex(courseIndex))
+			// Elasticsearch boots slower than this service; retry index setup
+			// in the background while searches fall back to SQL.
+			go func() {
+				for attempt := 1; attempt <= 30; attempt++ {
+					ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+					err := courseIndex.EnsureIndex(ctx)
+					cancel()
+					if err == nil {
+						log.Info("elasticsearch course index ready", slog.String("url", cfg.ElasticsearchURL))
+						backfillCourseIndex(log, courseRepo, courseIndex)
+						return
+					}
+					log.Warn("elasticsearch not ready, search falls back to SQL", slog.Int("attempt", attempt), slog.Any("error", err))
+					time.Sleep(10 * time.Second)
+				}
+			}()
+		}
+	}
+
+	courseSvc := service.NewCourseService(courseRepo, lessonRepo, waveRepo, svcOpts...)
 	grpcHandler := handler.NewCourseGRPCHandler(courseSvc)
 
 	grpcListener, err := net.Listen("tcp", cfg.ServiceAddr)
@@ -87,4 +117,24 @@ func main() {
 		log.Error("grpc server failed", slog.Any("error", err))
 		os.Exit(1)
 	}
+}
+
+// backfillCourseIndex reindexes every course so the search index stays
+// consistent with Postgres after downtime or a fresh Elasticsearch volume.
+func backfillCourseIndex(log *slog.Logger, courseRepo repository.CourseRepository, courseIndex *search.CourseIndex) {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+
+	courses, err := courseRepo.List(ctx, repository.ListFilters{})
+	if err != nil {
+		log.Warn("course index backfill failed to list courses", slog.Any("error", err))
+		return
+	}
+	for _, c := range courses {
+		if err := courseIndex.IndexCourse(ctx, c); err != nil {
+			log.Warn("course index backfill failed", slog.String("course_id", c.ID), slog.Any("error", err))
+			return
+		}
+	}
+	log.Info("course index backfill complete", slog.Int("count", len(courses)))
 }
