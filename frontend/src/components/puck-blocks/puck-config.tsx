@@ -1,4 +1,5 @@
 import type { Config, Data } from "@puckeditor/core";
+import { MathFormula } from "@/components/ui/MathFormula";
 
 // Define the component props types
 export interface TextBlockProps {
@@ -102,8 +103,8 @@ export const puckConfig: Config = {
               Learn · Formula
             </span>
           </div>
-          <div className="py-4 bg-muted/30 rounded-md font-mono text-lg select-all">
-            {formula || "Provide formula"}
+          <div className="overflow-x-auto py-4 bg-muted/30 rounded-md text-lg">
+            <MathFormula formula={formula || "\\text{Provide formula}"} />
           </div>
         </div>
       ),

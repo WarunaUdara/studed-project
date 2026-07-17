@@ -1,3 +1,5 @@
+import { MathFormula } from "@/components/ui/MathFormula";
+
 interface LearnBlock {
   id: string;
   type: string;
@@ -39,8 +41,8 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
       );
     case "formula":
       return (
-        <div className="rounded-lg border bg-muted p-4 text-center font-mono text-lg">
-          {block.content}
+        <div className="overflow-x-auto rounded-lg border bg-muted/40 p-4 text-center text-lg">
+          <MathFormula formula={block.content} />
         </div>
       );
     default:

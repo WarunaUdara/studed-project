@@ -7,6 +7,7 @@ import { AuthInitializer } from "./components/auth/AuthInitializer";
 import { GlobalErrorBoundary } from "./components/error/GlobalErrorBoundary";
 import { graphqlClient } from "./lib/graphql";
 import { routeTree } from "./routeTree.gen";
+import "katex/dist/katex.min.css";
 import "./styles/index.css";
 
 const queryClient = new QueryClient();
