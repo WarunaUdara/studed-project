@@ -1,23 +1,23 @@
-import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  CheckCircle2,
+  Coffee,
+  Flame,
+  Minimize2,
   Pause,
   Play,
   RotateCcw,
-  SkipForward,
   Settings,
-  X,
+  SkipForward,
   Volume2,
   VolumeX,
-  Minimize2,
-  Flame,
-  CheckCircle2,
-  Coffee,
+  X,
 } from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { usePomodoroStore } from "@/stores/pomodoro";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
-import { cn } from "@/lib/utils";
 
 export function FloatingPomodoro() {
   const {
@@ -92,7 +92,7 @@ export function FloatingPomodoro() {
               "flex cursor-pointer items-center gap-3 rounded-full border px-4 py-2.5 shadow-lg backdrop-blur-md",
               mode === "focus"
                 ? "border-primary/30 bg-primary/10 hover:bg-primary/15"
-                : "border-success/30 bg-success/10 hover:bg-success/15"
+                : "border-success/30 bg-success/10 hover:bg-success/15",
             )}
           >
             <div className="relative h-6 w-6">
@@ -110,7 +110,7 @@ export function FloatingPomodoro() {
                   r="9"
                   className={cn(
                     "fill-transparent transition-all duration-300",
-                    mode === "focus" ? "stroke-primary" : "stroke-success"
+                    mode === "focus" ? "stroke-primary" : "stroke-success",
                   )}
                   strokeWidth="2.5"
                   strokeDasharray={56.5}
@@ -149,7 +149,11 @@ export function FloatingPomodoro() {
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="flex items-center gap-2 text-sm font-bold">
                   <Flame className={cn("h-4 w-4", isActive && "animate-pulse text-primary")} />
-                  {mode === "focus" ? "Focus Interval" : mode === "short" ? "Short Break" : "Long Break"}
+                  {mode === "focus"
+                    ? "Focus Interval"
+                    : mode === "short"
+                      ? "Short Break"
+                      : "Long Break"}
                   {sessionsCompleted > 0 && (
                     <span className="flex items-center gap-0.5 text-[10px] text-success">
                       <CheckCircle2 className="h-3 w-3" />
@@ -201,7 +205,9 @@ export function FloatingPomodoro() {
                     >
                       <div className="grid grid-cols-3 gap-2">
                         <div>
-                          <label className="mb-1 block font-semibold text-muted-foreground">Focus</label>
+                          <label className="mb-1 block font-semibold text-muted-foreground">
+                            Focus
+                          </label>
                           <input
                             type="number"
                             min="1"
@@ -212,7 +218,9 @@ export function FloatingPomodoro() {
                           />
                         </div>
                         <div>
-                          <label className="mb-1 block font-semibold text-muted-foreground">Break</label>
+                          <label className="mb-1 block font-semibold text-muted-foreground">
+                            Break
+                          </label>
                           <input
                             type="number"
                             min="1"
@@ -223,7 +231,9 @@ export function FloatingPomodoro() {
                           />
                         </div>
                         <div>
-                          <label className="mb-1 block font-semibold text-muted-foreground">Long</label>
+                          <label className="mb-1 block font-semibold text-muted-foreground">
+                            Long
+                          </label>
                           <input
                             type="number"
                             min="1"
@@ -306,7 +316,7 @@ export function FloatingPomodoro() {
                               r="21"
                               className={cn(
                                 "fill-transparent transition-all duration-300",
-                                mode === "focus" ? "stroke-primary" : "stroke-success"
+                                mode === "focus" ? "stroke-primary" : "stroke-success",
                               )}
                               strokeWidth="3"
                               strokeDasharray={131.95}
@@ -329,7 +339,11 @@ export function FloatingPomodoro() {
                       {/* Ambient noise settings in-place */}
                       <div className="flex items-center justify-between rounded-lg bg-muted/40 p-2 text-[10px] text-muted-foreground">
                         <span className="flex items-center gap-1">
-                          {ambientNoise === "none" ? <VolumeX className="h-3 w-3" /> : <Volume2 className="h-3 w-3 text-primary" />}
+                          {ambientNoise === "none" ? (
+                            <VolumeX className="h-3 w-3" />
+                          ) : (
+                            <Volume2 className="h-3 w-3 text-primary" />
+                          )}
                           Sound Ambient
                         </span>
                         <div className="flex gap-1">
@@ -340,10 +354,20 @@ export function FloatingPomodoro() {
                               onClick={() => setAmbientNoise(n)}
                               className={cn(
                                 "rounded px-1 py-0.5 font-bold uppercase transition-all",
-                                ambientNoise === n ? "bg-primary text-primary-foreground" : "hover:text-foreground"
+                                ambientNoise === n
+                                  ? "bg-primary text-primary-foreground"
+                                  : "hover:text-foreground",
                               )}
                             >
-                              {n === "none" ? "off" : n === "brown" ? "rain" : n === "pink" ? "ocean" : n === "white" ? "white" : "adhd"}
+                              {n === "none"
+                                ? "off"
+                                : n === "brown"
+                                  ? "rain"
+                                  : n === "pink"
+                                    ? "ocean"
+                                    : n === "white"
+                                      ? "white"
+                                      : "adhd"}
                             </button>
                           ))}
                         </div>
@@ -360,7 +384,7 @@ export function FloatingPomodoro() {
                           onClick={() => {
                             if (isActive && mode === "focus") {
                               const confirmReset = window.confirm(
-                                "Warning: Resetting the timer now will discard your current progress towards +10 XP. Continue?"
+                                "Warning: Resetting the timer now will discard your current progress towards +10 XP. Continue?",
                               );
                               if (!confirmReset) return;
                             }

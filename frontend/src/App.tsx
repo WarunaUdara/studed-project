@@ -1,9 +1,9 @@
 import { Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { PomodoroInitializer } from "@/components/gamification/PomodoroInitializer";
 import { Navbar } from "@/components/layout/Navbar";
 import { ToastProvider } from "@/components/ui/Toast";
 import { useUiPrefs } from "@/stores/uiPrefs";
-import { PomodoroInitializer } from "@/components/gamification/PomodoroInitializer";
 
 /** Routes that own their full-screen layout (no global Navbar / Footer). */
 const SPLIT_SCREEN_ROUTES = new Set(["/login", "/register"]);

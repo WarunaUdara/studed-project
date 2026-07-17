@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Award,
   CheckCircle2,
@@ -6,17 +5,18 @@ import {
   Pause,
   Play,
   RotateCcw,
-  SkipForward,
   Settings,
-  Volume2,
-  VolumeX,
+  SkipForward,
   ToggleLeft,
   ToggleRight,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { usePomodoroStore } from "@/stores/pomodoro";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/Card";
-import { cn } from "@/lib/utils";
 
 interface PomodoroTimerProps {
   onXpEarned?: (xp: number) => void;
@@ -84,7 +84,7 @@ export function PomodoroTimer(_props: PomodoroTimerProps) {
             <Flame
               className={cn(
                 "h-5 w-5",
-                isActive ? "animate-pulse text-primary" : "text-muted-foreground"
+                isActive ? "animate-pulse text-primary" : "text-muted-foreground",
               )}
             />
             Focus Session Hub
@@ -101,7 +101,7 @@ export function PomodoroTimer(_props: PomodoroTimerProps) {
               onClick={() => setShowSettings(!showSettings)}
               className={cn(
                 "rounded-lg p-1.5 text-muted-foreground transition-all hover:bg-muted hover:text-foreground",
-                showSettings && "bg-muted text-primary"
+                showSettings && "bg-muted text-primary",
               )}
               title="Customize intervals & preset options"
             >
@@ -110,7 +110,9 @@ export function PomodoroTimer(_props: PomodoroTimerProps) {
           </div>
         </CardTitle>
         <CardDescription>
-          {showSettings ? "Customize durations and system preferences" : "Follow focus intervals to train your brain"}
+          {showSettings
+            ? "Customize durations and system preferences"
+            : "Follow focus intervals to train your brain"}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -256,7 +258,7 @@ export function PomodoroTimer(_props: PomodoroTimerProps) {
                     "flex-1 rounded-md py-1.5 text-[11px] font-bold transition-all capitalize",
                     mode === m
                       ? "bg-card text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   {m === "focus" ? "focus" : m === "short" ? "short break" : "long break"}
@@ -280,7 +282,7 @@ export function PomodoroTimer(_props: PomodoroTimerProps) {
                   r="66"
                   className={cn(
                     "fill-transparent transition-all duration-300",
-                    mode === "focus" ? "stroke-primary" : "stroke-success"
+                    mode === "focus" ? "stroke-primary" : "stroke-success",
                   )}
                   strokeWidth="6"
                   strokeDasharray={414.69}
@@ -338,10 +340,18 @@ export function PomodoroTimer(_props: PomodoroTimerProps) {
                       "rounded-md px-2 py-0.5 text-[10px] font-bold uppercase transition-all",
                       ambientNoise === n
                         ? "bg-primary text-primary-foreground shadow-sm"
-                        : "hover:text-foreground hover:bg-muted"
+                        : "hover:text-foreground hover:bg-muted",
                     )}
                   >
-                    {n === "none" ? "off" : n === "brown" ? "rain" : n === "pink" ? "ocean" : n === "white" ? "white" : "adhd"}
+                    {n === "none"
+                      ? "off"
+                      : n === "brown"
+                        ? "rain"
+                        : n === "pink"
+                          ? "ocean"
+                          : n === "white"
+                            ? "white"
+                            : "adhd"}
                   </button>
                 ))}
               </div>
@@ -367,7 +377,7 @@ export function PomodoroTimer(_props: PomodoroTimerProps) {
                 onClick={() => {
                   if (isActive && mode === "focus") {
                     const confirmReset = window.confirm(
-                      "Warning: Resetting the timer now will discard your current progress towards +10 XP. Continue?"
+                      "Warning: Resetting the timer now will discard your current progress towards +10 XP. Continue?",
                     );
                     if (!confirmReset) return;
                   }

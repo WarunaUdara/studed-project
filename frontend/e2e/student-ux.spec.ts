@@ -51,7 +51,7 @@ test.describe("Student Dashboard UX & Flow Simulation", () => {
 
     // 4. Reset timer
     const resetButton = page.locator("[data-testid='pomodoro-reset']");
-    
+
     // Set up dialog handler to accept the confirmation dialog
     page.once("dialog", async (dialog) => {
       await dialog.accept();

@@ -1,19 +1,28 @@
-import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Award, BookOpen, CheckCircle, Globe, Shield, User as UserIcon, Zap, Save } from "lucide-react";
-import { useQuery, useMutation } from "urql";
+import {
+  Award,
+  BookOpen,
+  CheckCircle,
+  Globe,
+  Save,
+  Shield,
+  User as UserIcon,
+  Zap,
+} from "lucide-react";
+import { useState } from "react";
+import { useMutation, useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { XPBar } from "@/components/gamification/XPBar";
 import { StudentShell } from "@/components/layout/StudentShell";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/Toast";
 import { MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
 import { levelFromXp } from "@/lib/gamification";
-import { useAuthStore, type Grade } from "@/stores/auth";
+import { type Grade, useAuthStore } from "@/stores/auth";
 
 const LEVEL_NAMES = [
   "Rookie",
@@ -121,11 +130,11 @@ function SettingsPage() {
           message: "Your profile details have been successfully updated.",
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         type: "error",
         title: "Error",
-        message: err.message || "An unexpected error occurred.",
+        message: err instanceof Error ? err.message : "An unexpected error occurred.",
       });
     } finally {
       setIsSaving(false);
@@ -232,7 +241,11 @@ function SettingsPage() {
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-muted-foreground">Email Address (Read-only)</Label>
-                    <Input value={user?.email ?? ""} disabled className="bg-muted/50 cursor-not-allowed" />
+                    <Input
+                      value={user?.email ?? ""}
+                      disabled
+                      className="bg-muted/50 cursor-not-allowed"
+                    />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">

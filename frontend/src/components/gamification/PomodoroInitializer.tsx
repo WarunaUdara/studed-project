@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { usePomodoroStore } from "@/stores/pomodoro";
-import { useAuthStore } from "@/stores/auth";
 import { useToast } from "@/components/ui/Toast";
+import { useAuthStore } from "@/stores/auth";
+import { usePomodoroStore } from "@/stores/pomodoro";
 import { Confetti } from "./Confetti";
 import { FloatingPomodoro } from "./FloatingPomodoro";
 

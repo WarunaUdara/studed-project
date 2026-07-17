@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { playAmbientNoise, stopAmbientNoise, playSuccessSound } from "@/lib/sounds";
+import { playAmbientNoise, playSuccessSound, stopAmbientNoise } from "@/lib/sounds";
 
 export type PomodoroMode = "focus" | "short" | "long";
 export type AmbientNoiseType = "none" | "brown" | "pink" | "white" | "adhd";
@@ -7,7 +7,7 @@ export type AmbientNoiseType = "none" | "brown" | "pink" | "white" | "adhd";
 export interface PomodoroDurations {
   focus: number; // in seconds
   short: number; // in seconds
-  long: number;  // in seconds
+  long: number; // in seconds
 }
 
 export interface PomodoroState {
@@ -169,7 +169,7 @@ export const usePomodoroStore = create<PomodoroState>((set, get) => ({
     const s = get();
     set({ isActive: false });
     stopAmbientNoise();
-    
+
     // Trigger completion sound
     playSuccessSound();
 
@@ -222,7 +222,7 @@ export const usePomodoroStore = create<PomodoroState>((set, get) => ({
           timeLeft: s.durations[nextMode],
           isActive: s.autoStartBreaks,
         });
-        
+
         // Award XP!
         onXpEarned?.(10);
 

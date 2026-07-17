@@ -1,13 +1,25 @@
-import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { BookOpen, CheckCircle, Globe, Shield, User as UserIcon, Moon, Sun, Save, Volume2, Upload, Sliders } from "lucide-react";
-import { useQuery, useMutation } from "urql";
+import {
+  BookOpen,
+  CheckCircle,
+  Globe,
+  Moon,
+  Save,
+  Shield,
+  Sliders,
+  Sun,
+  Upload,
+  User as UserIcon,
+  Volume2,
+} from "lucide-react";
+import { useState } from "react";
+import { useMutation, useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/Toast";
 import { COURSES_QUERY } from "@/graphql/courses";
 import { useAuthStore } from "@/stores/auth";
@@ -40,9 +52,30 @@ function EducatorSettingsPage() {
 
   // Focus sound configuration states
   const [soundConfigs, setSoundConfigs] = useState([
-    { id: "adhd", name: "ADHD Binaural Flow", leftFreq: 140, rightFreq: 150, gain: 0.04, desc: "Binaural alpha-wave beat + brown noise hum." },
-    { id: "brown", name: "Brownian Rain Waterfall", leftFreq: 0, rightFreq: 0, gain: 0.04, desc: "Deep rumbling frequency masking for environmental blockout." },
-    { id: "pink", name: "Ocean Breeze", leftFreq: 0, rightFreq: 0, gain: 0.04, desc: "Gentle natural wind simulations." }
+    {
+      id: "adhd",
+      name: "ADHD Binaural Flow",
+      leftFreq: 140,
+      rightFreq: 150,
+      gain: 0.04,
+      desc: "Binaural alpha-wave beat + brown noise hum.",
+    },
+    {
+      id: "brown",
+      name: "Brownian Rain Waterfall",
+      leftFreq: 0,
+      rightFreq: 0,
+      gain: 0.04,
+      desc: "Deep rumbling frequency masking for environmental blockout.",
+    },
+    {
+      id: "pink",
+      name: "Ocean Breeze",
+      leftFreq: 0,
+      rightFreq: 0,
+      gain: 0.04,
+      desc: "Gentle natural wind simulations.",
+    },
   ]);
   const [simulatedFile, setSimulatedFile] = useState<string | null>(null);
 
@@ -53,8 +86,11 @@ function EducatorSettingsPage() {
 
   const [, updateProfile] = useMutation(UPDATE_ME_MUTATION);
 
-  const courses = data?.courses?.edges?.map((edge: any) => edge.node) ?? [];
-  const publishedCoursesCount = courses.filter((c: any) => c.isPublished).length;
+  const courses =
+    data?.courses?.edges?.map((edge: { node: { isPublished: boolean } }) => edge.node) ?? [];
+  const publishedCoursesCount = courses.filter(
+    (c: { isPublished: boolean }) => c.isPublished,
+  ).length;
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,11 +130,11 @@ function EducatorSettingsPage() {
           message: "Your profile details have been successfully updated.",
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         type: "error",
         title: "Error",
-        message: err.message || "An unexpected error occurred.",
+        message: err instanceof Error ? err.message : "An unexpected error occurred.",
       });
     } finally {
       setIsSaving(false);
@@ -106,9 +142,7 @@ function EducatorSettingsPage() {
   };
 
   const handleSoundConfigChange = (id: string, field: string, val: number | string) => {
-    setSoundConfigs(prev =>
-      prev.map(c => (c.id === id ? { ...c, [field]: val } : c))
-    );
+    setSoundConfigs((prev) => prev.map((c) => (c.id === id ? { ...c, [field]: val } : c)));
   };
 
   const handleSaveSoundConfigs = (e: React.FormEvent) => {
@@ -121,7 +155,7 @@ function EducatorSettingsPage() {
   };
 
   const handleSimulatedUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files?.[0]) {
       setSimulatedFile(e.target.files[0].name);
       toast({
         type: "warning",
@@ -207,7 +241,11 @@ function EducatorSettingsPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-muted-foreground">Email Address (Read-only)</Label>
-                  <Input value={user?.email ?? ""} disabled className="bg-muted/50 cursor-not-allowed" />
+                  <Input
+                    value={user?.email ?? ""}
+                    disabled
+                    className="bg-muted/50 cursor-not-allowed"
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
@@ -227,7 +265,11 @@ function EducatorSettingsPage() {
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-muted-foreground">Role Account</Label>
-                    <Input value={user?.role ?? "EDUCATOR"} disabled className="bg-muted/50 font-semibold text-primary cursor-not-allowed" />
+                    <Input
+                      value={user?.role ?? "EDUCATOR"}
+                      disabled
+                      className="bg-muted/50 font-semibold text-primary cursor-not-allowed"
+                    />
                   </div>
                 </div>
                 <Button type="submit" disabled={isSaving} className="w-full gap-1.5 mt-2">
@@ -309,7 +351,8 @@ function EducatorSettingsPage() {
                 Focus Sounds Control Room
               </CardTitle>
               <CardDescription>
-                Configure synthesized focus noise frequencies, binaural beat alpha-waves, and simulate uploads.
+                Configure synthesized focus noise frequencies, binaural beat alpha-waves, and
+                simulate uploads.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -319,26 +362,36 @@ function EducatorSettingsPage() {
                     <div key={cfg.id} className="rounded-xl border p-4 space-y-3 bg-muted/20">
                       <div>
                         <span className="font-bold text-sm text-foreground block">{cfg.name}</span>
-                        <span className="text-[10px] text-muted-foreground block leading-tight mt-1">{cfg.desc}</span>
+                        <span className="text-[10px] text-muted-foreground block leading-tight mt-1">
+                          {cfg.desc}
+                        </span>
                       </div>
 
                       {cfg.id === "adhd" && (
                         <div className="grid grid-cols-2 gap-2">
                           <div className="space-y-1">
-                            <Label className="text-[10px] text-muted-foreground uppercase font-bold">Left (Hz)</Label>
+                            <Label className="text-[10px] text-muted-foreground uppercase font-bold">
+                              Left (Hz)
+                            </Label>
                             <Input
                               type="number"
                               value={cfg.leftFreq}
-                              onChange={(e) => handleSoundConfigChange(cfg.id, "leftFreq", Number(e.target.value))}
+                              onChange={(e) =>
+                                handleSoundConfigChange(cfg.id, "leftFreq", Number(e.target.value))
+                              }
                               className="bg-background text-xs py-1 h-8 text-center"
                             />
                           </div>
                           <div className="space-y-1">
-                            <Label className="text-[10px] text-muted-foreground uppercase font-bold">Right (Hz)</Label>
+                            <Label className="text-[10px] text-muted-foreground uppercase font-bold">
+                              Right (Hz)
+                            </Label>
                             <Input
                               type="number"
                               value={cfg.rightFreq}
-                              onChange={(e) => handleSoundConfigChange(cfg.id, "rightFreq", Number(e.target.value))}
+                              onChange={(e) =>
+                                handleSoundConfigChange(cfg.id, "rightFreq", Number(e.target.value))
+                              }
                               className="bg-background text-xs py-1 h-8 text-center"
                             />
                           </div>
@@ -356,7 +409,9 @@ function EducatorSettingsPage() {
                           max="0.1"
                           step="0.01"
                           value={cfg.gain}
-                          onChange={(e) => handleSoundConfigChange(cfg.id, "gain", Number(e.target.value))}
+                          onChange={(e) =>
+                            handleSoundConfigChange(cfg.id, "gain", Number(e.target.value))
+                          }
                           className="w-full accent-purple"
                         />
                       </div>
@@ -370,8 +425,12 @@ function EducatorSettingsPage() {
                     <Upload className="h-5 w-5" />
                   </div>
                   <div>
-                    <span className="font-semibold text-sm block">Upload custom ADHD / White Noise sound file</span>
-                    <span className="text-xs text-muted-foreground block mt-0.5">Supports MP3, WAV or FLAC up to 15MB</span>
+                    <span className="font-semibold text-sm block">
+                      Upload custom ADHD / White Noise sound file
+                    </span>
+                    <span className="text-xs text-muted-foreground block mt-0.5">
+                      Supports MP3, WAV or FLAC up to 15MB
+                    </span>
                   </div>
                   <input
                     type="file"
@@ -395,7 +454,9 @@ function EducatorSettingsPage() {
                     </span>
                   )}
                   <p className="text-[10px] text-muted-foreground italic">
-                    Note: Audio file uploads require Object Storage (Cloudflare R2) connection. Real-time client-side Web Audio API oscillators are running actively in the current prototype.
+                    Note: Audio file uploads require Object Storage (Cloudflare R2) connection.
+                    Real-time client-side Web Audio API oscillators are running actively in the
+                    current prototype.
                   </p>
                 </div>
 
@@ -413,4 +474,3 @@ function EducatorSettingsPage() {
     </ProtectedRoute>
   );
 }
-
