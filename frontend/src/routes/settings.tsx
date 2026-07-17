@@ -1,9 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
   Award,
   BookOpen,
   CheckCircle,
+  Crown,
   Globe,
   Save,
   Shield,
@@ -20,9 +21,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { useToast } from "@/components/ui/Toast";
+import { MY_SUBSCRIPTION_QUERY } from "@/graphql/billing";
 import { MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
 import { levelFromXp } from "@/lib/gamification";
+import { cn } from "@/lib/utils";
 import { type Grade, useAuthStore } from "@/stores/auth";
+
+const TIER_LABELS: Record<string, string> = {
+  BASIC: "Basic",
+  STANDARD: "Standard",
+  PREMIUM: "Premium",
+  SCHOOL: "School License",
+};
 
 const LEVEL_NAMES = [
   "Rookie",
@@ -80,7 +90,14 @@ function SettingsPage() {
   const levelName = LEVEL_NAMES[Math.min(level - 1, LEVEL_NAMES.length - 1)] ?? "Learner";
 
   const [{ data }] = useQuery({ query: MY_ENROLLMENTS_QUERY });
+  const [{ data: subData }] = useQuery({ query: MY_SUBSCRIPTION_QUERY });
   const [, updateProfile] = useMutation(UPDATE_ME_MUTATION);
+
+  const subscription = subData?.me?.subscription as
+    | { tier: string; status: string; endDate: string }
+    | null
+    | undefined;
+  const isActive = subscription?.status === "ACTIVE";
 
   const enrollments = data?.myEnrollments ?? [];
   const completedCourses = enrollments.filter(
@@ -311,11 +328,26 @@ function SettingsPage() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-muted-foreground">Account Status</Label>
-                    <div className="flex items-center gap-2 rounded-lg border border-success/30 bg-success/5 px-3 py-2.5 text-sm text-success">
-                      <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
-                      Active subscription &amp; verified
-                    </div>
+                    <Label className="text-muted-foreground">Subscription</Label>
+                    <Link
+                      to="/subscription"
+                      className={cn(
+                        "flex items-center justify-between gap-2 rounded-lg border px-3 py-2.5 text-sm transition-colors hover:opacity-90",
+                        isActive
+                          ? "border-success/30 bg-success/5 text-success"
+                          : "border-border bg-muted/50 text-muted-foreground",
+                      )}
+                    >
+                      <span className="flex items-center gap-2">
+                        <Crown className="h-3.5 w-3.5" />
+                        {isActive
+                          ? `${TIER_LABELS[subscription?.tier ?? ""] ?? subscription?.tier} · Active`
+                          : "Free Preview · Manage plan"}
+                      </span>
+                      <span className="text-xs underline underline-offset-2">
+                        {isActive ? "Manage" : "Upgrade"}
+                      </span>
+                    </Link>
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-muted-foreground">User ID</Label>

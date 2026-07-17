@@ -28,6 +28,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: "/courses", label: "My Courses", icon: BookOpen, matchPrefix: "/courses" },
   { to: "/leaderboard", label: "Leaderboard", icon: Users, matchPrefix: "/leaderboard" },
   { to: "/achievements", label: "Achievements", icon: TrendingUp, matchPrefix: "/achievements" },
+  { to: "/subscription", label: "Subscription", icon: Crown, matchPrefix: "/subscription" },
   { to: "/settings", label: "Settings", icon: SettingsIcon, matchPrefix: "/settings" },
 ];
 
@@ -151,7 +152,7 @@ export function StudentShell({ children, banner, className }: StudentShellProps)
 export function PaywallBanner({
   title,
   message,
-  ctaTo = "/settings",
+  ctaTo = "/subscription",
 }: {
   title: string;
   message: string;
