@@ -612,6 +612,7 @@ type ListCoursesRequest struct {
 	GradeLevel    auth.Grade             `protobuf:"varint,1,opt,name=grade_level,json=gradeLevel,proto3,enum=auth.Grade" json:"grade_level,omitempty"`
 	PublishedOnly bool                   `protobuf:"varint,2,opt,name=published_only,json=publishedOnly,proto3" json:"published_only,omitempty"`
 	EducatorId    string                 `protobuf:"bytes,3,opt,name=educator_id,json=educatorId,proto3" json:"educator_id,omitempty"`
+	SearchQuery   string                 `protobuf:"bytes,4,opt,name=search_query,json=searchQuery,proto3" json:"search_query,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -663,6 +664,13 @@ func (x *ListCoursesRequest) GetPublishedOnly() bool {
 func (x *ListCoursesRequest) GetEducatorId() string {
 	if x != nil {
 		return x.EducatorId
+	}
+	return ""
+}
+
+func (x *ListCoursesRequest) GetSearchQuery() string {
+	if x != nil {
+		return x.SearchQuery
 	}
 	return ""
 }
@@ -1886,13 +1894,14 @@ const file_course_course_proto_rawDesc = "" +
 	"\veducator_id\x18\x06 \x01(\tR\n" +
 	"educatorId\"\"\n" +
 	"\x10GetCourseRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\x8a\x01\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xad\x01\n" +
 	"\x12ListCoursesRequest\x12,\n" +
 	"\vgrade_level\x18\x01 \x01(\x0e2\v.auth.GradeR\n" +
 	"gradeLevel\x12%\n" +
 	"\x0epublished_only\x18\x02 \x01(\bR\rpublishedOnly\x12\x1f\n" +
 	"\veducator_id\x18\x03 \x01(\tR\n" +
-	"educatorId\"G\n" +
+	"educatorId\x12!\n" +
+	"\fsearch_query\x18\x04 \x01(\tR\vsearchQuery\"G\n" +
 	"\x14PublishCourseRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\veducator_id\x18\x02 \x01(\tR\n" +

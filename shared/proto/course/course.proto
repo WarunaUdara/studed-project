@@ -75,6 +75,7 @@ message ListCoursesRequest {
   auth.Grade grade_level = 1;
   bool published_only = 2;
   string educator_id = 3;
+  string search_query = 4;
 }
 
 message PublishCourseRequest {
