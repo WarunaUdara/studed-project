@@ -10,10 +10,9 @@ interface FooterColumn {
 }
 
 /**
- * PublicFooter — multi-column site footer used on the public home/pricing/
- * catalog pages. Bilingual via the public i18n helper.
- * Sit stickily behind the scrolling page cover content (relative z-10 bg-background).
- * Contains scroll-reactive bottom glow animation.
+ * PublicFooter — multi-column site footer on public pages.
+ * Has an atmospheric bottom glow that intensifies when scrolled to the very bottom.
+ * The CTA section above sits on top of the footer and "peels away" as you scroll down.
  */
 export function PublicFooter() {
   const { t } = usePublicI18n();
@@ -26,14 +25,11 @@ export function PublicFooter() {
       const scrollTop = window.scrollY;
       const maxScroll = docHeight - winHeight;
       if (maxScroll <= 0) return;
-
-      // Glow intensifies in the last 120px of scroll
       const diff = maxScroll - scrollTop;
-      const intensity = diff < 120 ? Math.max(0, Math.min(1, (120 - diff) / 120)) : 0;
+      const intensity = diff < 180 ? Math.max(0, Math.min(1, (180 - diff) / 180)) : 0;
       setBottomGlow(intensity);
     };
-
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -66,22 +62,24 @@ export function PublicFooter() {
   ];
 
   return (
-    <footer className="fixed bottom-0 left-0 w-full -z-10 bg-card/65 border-t backdrop-blur-md overflow-hidden">
-      {/* Dynamic bottom glow that intensifies at rock bottom */}
+    <footer className="relative overflow-hidden border-t bg-background">
+      {/* Scroll-reactive bottom glow — intensifies when reader reaches rock bottom */}
       <div
-        className="absolute inset-0 pointer-events-none transition-opacity duration-150"
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 transition-opacity duration-200"
         style={{
           opacity: bottomGlow,
           background:
-            "radial-gradient(circle 50vw at 50% 130%, rgba(255, 143, 0, 0.3) 0%, rgba(147, 197, 253, 0.35) 60%, transparent 100%)",
+            "radial-gradient(ellipse 120% 80% at 50% 120%, rgba(249,115,22,0.35) 0%, rgba(147,197,253,0.3) 45%, transparent 75%)",
         }}
       />
-      {/* Static subtle background glow */}
+      {/* Ambient footer glow — always visible, subtle */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-40"
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-40"
         style={{
           background:
-            "radial-gradient(circle 50vw at 50% 150%, rgba(255, 143, 0, 0.1) 0%, rgba(147, 197, 253, 0.15) 60%, transparent 100%)",
+            "radial-gradient(ellipse 100% 60% at 50% 130%, rgba(249,115,22,0.15) 0%, rgba(147,197,253,0.12) 55%, transparent 85%)",
         }}
       />
 
@@ -117,7 +115,9 @@ export function PublicFooter() {
 
           {columns.map((col) => (
             <div key={col.heading} className="space-y-3">
-              <h3 className="text-sm font-semibold text-foreground">{col.heading}</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">
+                {col.heading}
+              </h3>
               <ul className="space-y-2 text-sm">
                 {col.links.map((link) => (
                   <li key={`${col.heading}-${link.label}`}>
