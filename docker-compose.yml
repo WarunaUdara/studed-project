@@ -23,15 +23,22 @@ services:
       - "6379:6379"
 
   elasticsearch:
-    image: elasticsearch:8.14.0
+    build:
+      context: infra/docker/elasticsearch
     container_name: studed-elasticsearch
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
       - "9200:9200"
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
 
   auth-service:
     build:
@@ -66,6 +73,7 @@ services:
       COURSE_SERVICE_ADDR: :8083
       DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
       AUTH_SERVICE_ADDR: auth-service:8081
+      ELASTICSEARCH_URL: http://elasticsearch:9200
     ports:
       - "8083:8083"
       - "8084:8084"
@@ -74,6 +82,8 @@ services:
         condition: service_healthy
       auth-service:
         condition: service_healthy
+      elasticsearch:
+        condition: service_started
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8084/health"]
       interval: 5s
