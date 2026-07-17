@@ -139,6 +139,23 @@ services:
       timeout: 3s
       retries: 10
 
+  ai-service:
+    build:
+      context: .
+      dockerfile: services/ai-service/Dockerfile
+    container_name: studed-ai-service
+    environment:
+      AI_SERVICE_ADDR: :8090
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+    ports:
+      - "8090:8090"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8090/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   api-gateway:
     build:
       context: .
@@ -150,6 +167,7 @@ services:
       COURSE_SERVICE_ADDR: course-service:8083
       PROGRESS_SERVICE_ADDR: progress-service:8086
       GAMIFICATION_SERVICE_ADDR: gamification-service:8088
+      AI_SERVICE_URL: http://ai-service:8090
       REDIS_ADDR: redis:6379
       JWT_ACCESS_SECRET: change-me-access-secret-min-32-bytes-long
       GRAPHQL_PLAYGROUND: "true"

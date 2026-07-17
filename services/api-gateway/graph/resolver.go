@@ -11,5 +11,6 @@ type Resolver struct {
 	CourseClient       *client.CourseClient
 	ProgressClient     *client.ProgressClient
 	GamificationClient *client.GamificationClient
+	AIClient           *client.AIClient
 	Events             *events.Bus
 }

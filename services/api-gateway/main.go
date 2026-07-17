@@ -62,12 +62,14 @@ func main() {
 	defer gamificationClient.Close()
 
 	eventBus := events.NewBus(cfg.RedisAddr, log)
+	aiClient := client.NewAIClient(cfg.AIServiceURL)
 
 	resolver := &graph.Resolver{
 		AuthClient:         authClient,
 		CourseClient:       courseClient,
 		ProgressClient:     progressClient,
 		GamificationClient: gamificationClient,
+		AIClient:           aiClient,
 		Events:             eventBus,
 	}
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))

@@ -344,17 +344,46 @@ func (r *mutationResolver) EnrollInCourse(ctx context.Context, courseID string) 
 
 // GenerateLearnBlocks is the resolver for the generateLearnBlocks field.
 func (r *mutationResolver) GenerateLearnBlocks(ctx context.Context, prompt string, language *string, grade *model.Grade) ([]*model.LearnBlock, error) {
-	return nil, errors.New("not implemented")
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return nil, err
+	}
+	if r.AIClient == nil {
+		return nil, errors.New("AI service is not configured")
+	}
+
+	return r.AIClient.GenerateLearnBlocks(ctx, prompt, language, grade)
 }
 
 // GenerateEvaluateBlocks is the resolver for the generateEvaluateBlocks field.
 func (r *mutationResolver) GenerateEvaluateBlocks(ctx context.Context, content string, count *int) ([]*model.EvaluateBlock, error) {
-	return nil, errors.New("not implemented")
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return nil, err
+	}
+	if r.AIClient == nil {
+		return nil, errors.New("AI service is not configured")
+	}
+
+	return r.AIClient.GenerateEvaluateBlocks(ctx, content, count)
 }
 
 // TranslateContent is the resolver for the translateContent field.
 func (r *mutationResolver) TranslateContent(ctx context.Context, content string, targetLanguage string) (string, error) {
-	return "", errors.New("not implemented")
+	if _, err := requireUser(ctx); err != nil {
+		return "", err
+	}
+	if r.AIClient == nil {
+		return "", errors.New("AI service is not configured")
+	}
+
+	return r.AIClient.TranslateContent(ctx, content, targetLanguage)
 }
 
 // CreateSubscription is the resolver for the createSubscription field.
