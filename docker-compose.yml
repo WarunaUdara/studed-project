@@ -178,6 +178,25 @@ services:
       timeout: 3s
       retries: 10
 
+  notification-service:
+    build:
+      context: .
+      dockerfile: services/notification-service/Dockerfile
+    container_name: studed-notification-service
+    environment:
+      NOTIFICATION_SERVICE_ADDR: :8092
+      DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
+    ports:
+      - "8092:8092"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8092/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   api-gateway:
     build:
       context: .
