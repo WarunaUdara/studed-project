@@ -27,10 +27,10 @@ These services are wired and running in `docker-compose.yml`:
 
 ### C. Unimplemented Services
 These services are planned in the architecture but are **NOT YET** wired into Docker Compose or fully implemented:
-- `services/payment-service`
-- `services/ai-service`
-- `services/notification-service`
-- `services/upload-service`
+- `payment-service`
+- `ai-service`
+- `notification-service`
+- `upload-service`
 
 ---
 
@@ -39,47 +39,67 @@ These services are planned in the architecture but are **NOT YET** wired into Do
 Through code analysis, several major gaps have been identified that require your immediate attention.
 
 ### A. The Elasticsearch Integration Gap (Phase 1)
-* **Current State**: `docker-compose.yml` provisions an **Elasticsearch 8.14.0** container on port `9200`. However, **none** of the Go microservices (specifically `course-service`) have Elasticsearch client code or dependencies configured in their `go.mod`.
-* **The gRPC Schema Break**: The API Gateway's GraphQL schema supports a `search` string filter inside `CourseFilter`. However, the internal `course-service` protobuf (`shared/proto/course/course.proto` -> `ListCoursesRequest`) does not define a search query field, causing the search intent to be lost entirely.
+* **Current State**: `docker-compose.yml` provisions an **Elasticsearch 8.14.0** container on port `9200` (`xpack.security.enabled=false`, which is good for dev). However, **NO Go client exists in any service** (`course-service go.mod` only has GORM + Postgres + gRPC).
+* **The gRPC Schema Break**: The API Gateway's GraphQL schema supports a `search` string filter inside `CourseFilter` (`grade`, `subject`, `search`, `isPublished`). However, the internal `course-service` protobuf (`ListCoursesRequest`) has `grade_level`, `published_only`, and `educator_id`, but is **Missing: `string search_query = 4;`**, causing the search intent to be lost entirely.
 * **Implementation Plan**:
   1. Modify `shared/proto/course/course.proto` to add `string search_query = 4;` to `ListCoursesRequest`.
   2. Regenerate proto files by running `make proto-gen` at the repository root.
   3. Update `services/course-service/go.mod` to import the official client `github.com/elastic/go-elasticsearch/v8`.
   4. Implement repository indexers in `course-service`: When a course is created/updated/published, index it in Elasticsearch.
   5. Update `services/course-service/internal/repository/course.go` and `internal/service/course.go` to handle `search_query` using Elasticsearch full-text fuzzy matching, with a GORM SQL `LIKE` fallback if Elasticsearch is unreachable.
-  6. **Sinhala Language Support**: Ensure Elasticsearch is configured with the `analysis-icu` plugin for proper Sinhala text tokenisation, as Sinhala is a critical requirement.
+  6. **Sinhala Language Support**: The architecture doc specifies the `analysis-icu` plugin for proper Sinhala text tokenization. Ensure Elasticsearch is configured with this.
 
-### B. AI & Payment Stub Resolvers
-* **Current State**: If you look at `services/api-gateway/graph/schema.resolvers.go`, you will find multiple critical mutations returning `errors.New("not implemented")`:
-  - `generateLearnBlocks`, `generateEvaluateBlocks`, `translateContent`
-  - `createSubscription`, `cancelSubscription`
-* **Implementation Plan**:
-  1. For AI: Implement client calls in `api-gateway` to communicate with the `ai-service` (you may need to build out `ai-service` first) or call Gemini 3.5 Flash / Qwen 2.5 APIs directly. Map prompts to the visual Puck editor MDX JSON structure.
-  2. For Payments: Wire up Stripe or PayHere checkout APIs for `createSubscription` and store access tiers (`BASIC`, `STANDARD`, `PREMIUM`) in the database.
+### B. GraphQL Resolver Implementation Status (`schema.resolvers.go`)
+**IMPLEMENTED (real logic):**
+- `register`, `login`, `refreshToken`, `logout`
+- `createCourse`, `updateCourse`, `publishCourse`
+- `createLesson`, `updateLesson`, `publishLesson`
+- `createWave`, `updateWave`, `publishWave`
+- `submitWaveAnswers` (with leaderboard update)
+- `enrollInCourse` (with progress)
+- `me`, `courses`, `myEnrollments`, `course`, `lesson`, `wave`
+- `progress`, `waveProgress`
+- `leaderboard`, `myRank`, `achievements`
+- `updateMe`
 
-### C. Real-Time GraphQL Subscriptions
-* **Current State**: The GraphQL subscriptions (`leaderboardUpdated`, `xpGained`, `achievementUnlocked`, `waveCompleted`) all return `fmt.Errorf("not implemented")` in the API Gateway.
-* **Implementation Plan**: Set up a Redis Pub/Sub client in `api-gateway/main.go` and implement the subscription resolvers to push real-time events to connected React clients via WebSockets.
+**STUB (returns not implemented error):**
+- `generateLearnBlocks` → `return nil, errors.New("not implemented")`
+- `generateEvaluateBlocks` → `return nil, errors.New("not implemented")`
+- `translateContent` → `return "", errors.New("not implemented")`
+- `createSubscription` → `return nil, errors.New("not implemented")`
+- `cancelSubscription` → `return nil, errors.New("not implemented")`
+- `leaderboardUpdated` → `return nil, fmt.Errorf("not implemented")`
+- `xpGained` → `return nil, fmt.Errorf("not implemented")`
+- `achievementUnlocked` → `return nil, fmt.Errorf("not implemented")`
+- `waveCompleted` → `return nil, fmt.Errorf("not implemented")`
 
-### D. Advanced Grading & Math Parity
-* **Current State**: In `services/progress-service/internal/service/progress.go`, the `scoreAnswers` function relies on a simple `normalizeAnswer()` string/float comparison. It fails on fractions (e.g., `1/2` vs `0.5`) and symbolic math.
-* **Implementation Plan**: Implement symbolic math checking (e.g., leveraging algebraic comparison or KaTeX/LaTeX normalization) to strictly adhere to the "Almost Right is Catastrophically Wrong" principle.
+**Your Task for Stubs**: 
+- **AI**: Implement client calls to `ai-service` or call Gemini/Qwen APIs directly. 
+- **Payments**: Wire up Stripe or PayHere. 
+- **Subscriptions**: Set up a Redis Pub/Sub client in `api-gateway/main.go` and push real-time events to React clients via WebSockets.
+
+### C. Advanced Grading & Gamification Parity
+* **Grading State**: `scoreAnswers()` in `progress-service` normalizes answers via `normalizeAnswer()` which handles basic float/string comparison. **BUT**: There is no fraction handling (e.g., `1/2`), no LaTeX, and no symbolic math.
+* **XP Formula**: The formula in `gamification-service` is `calculateXp(score, xpReward, passingThreshold)`. It scales by score tier.
+* **Streak Tracking**: `GetUserStreak()` exists, but daily-login streak tracking is **NOT wired** yet.
 
 ---
 
 ## 3. Pedagogical Design: The "Brilliant.org" Standard
 
-StudEd must evolve from a standard LMS into an interactive, high-revenue educational product. You must integrate "winning features" analyzed from Brilliant.org:
+StudEd must evolve from a standard LMS into an interactive, high-revenue educational product. You must integrate these **Winning features from Brilliant.org analysis**:
+- Interactive problem-solving (not just reading)
+- Spaced repetition
+- AI-guided learning paths
+- Math rendering (KaTeX/MathJax)
+- Interactive simulations
+- Progress visualization
+- Collaborative features
 
 ### The Core Principle: "Almost Right is Catastrophically Wrong"
-As described in [Brilliant's AI Eval Blog Post](https://blog.brilliant.org/when-almost-right-is-catastrophically-wrong-evals-for-ai-learning-games/), educational platforms cannot afford false grading outcomes.
-1. **Mathematical Equivalence**: A naive string match of `0.5` will reject correct answers like `.5` or `1/2`. You must implement robust normalization.
-2. **AI Content Evals**: When using AI to generate lessons/questions, we must test the generator. Design automated evaluation tests (evals) that run mock responses against the AI service to check JSON schema validity, correctness of target answers, and pedagogical progression.
-3. **Structured Interactive Playgrounds**: Utilize visual sandbox submodules (which exist in `submodules/`):
-   - **Matter.js** for physics simulations (gravity, collisions).
-   - **tscircuit** for interactive electronics schematic design.
-   - **3Dmol.js** for biological and molecular structure rotation.
-   - Ensure evaluate blocks can register precise student interactions (e.g., closing a circuit) rather than just multiple-choice clicks.
+1. **Mathematical Equivalence**: A naive string match of `0.5` will reject correct answers like `.5` or `1/2`. You must implement robust symbolic normalization.
+2. **AI Content Evals**: When using AI to generate lessons, test the generator. Design automated evaluation tests that run mock responses against the AI service to check JSON schema validity and pedagogical progression.
+3. **Structured Interactive Playgrounds**: Utilize visual sandbox submodules (`Matter.js` for physics, `tscircuit` for electronics, `3Dmol.js` for molecular structures). Ensure evaluate blocks can register precise student interactions.
 
 ---
 
@@ -87,28 +107,64 @@ As described in [Brilliant's AI Eval Blog Post](https://blog.brilliant.org/when-
 
 To prevent rebuilding what already works, here is the verified state of the platform:
 
-### Frontend Routes & UI Coverage
-**Student Portal**: 
-- Fully functional `/login`, `/register`, and `/dashboard` (featuring a draggable, hover-scaling Pomodoro timer with ADHD binaural beats, curriculum trackers, and tabbed Gamification Hub).
-- `/courses` browsing, `/waves/$waveId` player, `/leaderboard`, and `/achievements`.
-**Educator Portal** (`/educator/_layout/`):
-- Full CRUD UI for Courses, Lessons, and Waves. Includes settings, leaderboards, and an achievements gallery view.
-**Theming**: Dark mode is implemented and defaults to a light OKLCH theme.
+### Frontend Routes Coverage
+**Student Portal**:
+- `/index.tsx` (landing)
+- `/login.tsx`
+- `/register.tsx`
+- `/dashboard.tsx` (with Pomodoro, curriculum tracker, gamification hub)
+- `/courses/index.tsx` (course browse)
+- `/courses/$courseId.tsx`
+- `/waves/$waveId.tsx` (wave player)
+- `/leaderboard.tsx`
+- `/achievements.tsx`
+- `/settings.tsx`
+
+**Educator Portal** (under `/educator/_layout/`):
+- `index.tsx` (educator dashboard)
+- `courses.index.tsx`
+- `courses.new.tsx`
+- `courses.$courseId.index.tsx`
+- `courses.$courseId.edit.tsx`
+- `courses.$courseId.lessons.$lessonId.index.tsx`
+- `courses.$courseId.lessons.$lessonId.waves.$waveId.tsx`
+- `leaderboard.tsx`
+- `achievements.tsx`
+- `settings.tsx`
 
 ### E2E Testing Suite (Playwright)
-The `frontend/e2e/` directory contains 12 active test files ensuring zero regressions:
-- Flow tests: `auth-flow.spec.ts`, `educator-flow.spec.ts`, `student-flow.spec.ts`
-- Component tests: `educator-ux.spec.ts`, `student-ux.spec.ts`, `leaderboard.spec.ts`, `profile-pages.spec.ts`
-- *Rule*: Never commit without running `make frontend-e2e`.
-
-### Gamification Engine
-- XP calculation and wave scoring are wired via gRPC between `progress-service` and `gamification-service`.
-- **Gap**: `GetUserStreak()` exists, but daily-login streak persistence is not actively tracking chronologically.
+There are exactly 12 active test files ensuring zero regressions:
+- `auth-flow.spec.ts`
+- `educator-flow.spec.ts`
+- `educator-ux.spec.ts`
+- `global-setup.ts` (seed)
+- `leaderboard.spec.ts`
+- `login.spec.ts`
+- `profile-pages.spec.ts`
+- `register.spec.ts`
+- `student-complete-wave.spec.ts`
+- `student-enrollment.spec.ts`
+- `student-flow.spec.ts`
+- `student-ux.spec.ts`
 
 ---
 
 ## 5. Git & Team Collaboration Workflow (Strict)
 
+### Recent Git History Context (Last 30 Commits)
+- `667746f`: docs - prompt update
+- `f2aad9e`: docs - prompt add
+- `41b3c5e`: feat(frontend) - pomodoro timer with drag, binaural sounds, admin config
+- `28a04f4`: fix(gateway) - relax enrollment grade check
+- `b072e3d`: feat(seed) - Python course addition
+- `f12c02f`: fix(progress) - normalize numeric answers
+- `d385889`: feat(backend) - UpdateUser/updateMe mutation
+- `9e51b82`: fix(frontend) - restore quality checks
+- `7f718cc-d3ab439`: educator portal pages
+- `9770f62`: feat(frontend) - default light theme
+- `b93894d`: feat(frontend) - dark mode switcher
+
+### Workflow Rules:
 Because multiple development agents work on this repository concurrently, you MUST follow the Trunk-Based workflow:
 
 ```bash
@@ -128,12 +184,6 @@ git pull origin main
 git push origin main
 gh issue close <issue-number>
 ```
-
-### Commit Guidelines:
-- **Keep commits small and focused.** Do not push monolithic commits containing frontend and backend refactors mixed together.
-- **Never force push to `main`.** Always resolve conflicts locally.
-- **Commit prefix types**: `feat` (new features), `fix` (bug fixes), `docs` (documentation), `test` (tests), `refactor` (code refactoring).
-- **Use `bun`**: For frontend tasks, exclusively use `bun run`, `bun install`, etc.
 
 ---
 
