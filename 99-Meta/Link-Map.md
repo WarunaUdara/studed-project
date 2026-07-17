@@ -71,6 +71,7 @@ graph TD
     G --> G1[Design System]
     G --> G2[User Journeys]
     G --> G3[Component Library]
+    G --> G4[Screen Designs]
 
     H --> H1[Tech Stack]
     H --> H2[API Specifications]
