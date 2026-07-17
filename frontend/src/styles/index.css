@@ -268,6 +268,20 @@
   .bg-gradient-dawn {
     background: radial-gradient(120% 120% at 50% 0%, oklch(0.546 0.215 262.9 / 0.08), transparent 60%);
   }
+  .bg-gradient-sarvam-hero {
+    background: 
+      radial-gradient(ellipse 70% 50% at 50% -10%, rgba(255, 143, 0, 0.4) 0%, rgba(255, 143, 0, 0.15) 35%, rgba(255, 143, 0, 0) 70%),
+      radial-gradient(circle 50vw at 0vw 15vh, rgba(221, 190, 252, 0.4) 0%, rgba(221, 190, 252, 0.15) 40%, rgba(221, 190, 252, 0) 80%),
+      radial-gradient(circle 50vw at 100vw 15vh, rgba(147, 197, 253, 0.4) 0%, rgba(147, 197, 253, 0.15) 40%, rgba(147, 197, 253, 0) 80%),
+      var(--background);
+  }
+  .dark .bg-gradient-sarvam-hero {
+    background: 
+      radial-gradient(ellipse 70% 50% at 50% -10%, rgba(230, 81, 0, 0.35) 0%, rgba(230, 81, 0, 0.1) 35%, rgba(230, 81, 0, 0) 70%),
+      radial-gradient(circle 50vw at 0vw 15vh, rgba(107, 33, 168, 0.3) 0%, rgba(107, 33, 168, 0.08) 40%, rgba(107, 33, 168, 0) 80%),
+      radial-gradient(circle 50vw at 100vw 15vh, rgba(30, 58, 138, 0.3) 0%, rgba(30, 58, 138, 0.08) 40%, rgba(30, 58, 138, 0) 80%),
+      var(--background);
+  }
   .bg-gradient-intelligence {
     background: linear-gradient(135deg, oklch(0.546 0.215 262.9 / 0.06), oklch(0.541 0.281 293 / 0.06));
   }

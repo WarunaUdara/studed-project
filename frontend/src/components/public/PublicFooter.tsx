@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Code, Send } from "lucide-react";
+import { useEffect, useState } from "react";
 import { LanguageToggle } from "@/components/public/LanguageToggle";
 import { usePublicI18n } from "@/lib/i18n";
 
@@ -11,9 +12,31 @@ interface FooterColumn {
 /**
  * PublicFooter — multi-column site footer used on the public home/pricing/
  * catalog pages. Bilingual via the public i18n helper.
+ * Sit stickily behind the scrolling page cover content (relative z-10 bg-background).
+ * Contains scroll-reactive bottom glow animation.
  */
 export function PublicFooter() {
   const { t } = usePublicI18n();
+  const [bottomGlow, setBottomGlow] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const docHeight = document.documentElement.scrollHeight;
+      const winHeight = window.innerHeight;
+      const scrollTop = window.scrollY;
+      const maxScroll = docHeight - winHeight;
+      if (maxScroll <= 0) return;
+
+      // Glow intensifies in the last 120px of scroll
+      const diff = maxScroll - scrollTop;
+      const intensity = diff < 120 ? Math.max(0, Math.min(1, (120 - diff) / 120)) : 0;
+      setBottomGlow(intensity);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const columns: FooterColumn[] = [
     {
@@ -43,8 +66,26 @@ export function PublicFooter() {
   ];
 
   return (
-    <footer className="mt-20 border-t bg-card/50">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <footer className="sticky bottom-0 -z-10 w-full bg-card/65 border-t backdrop-blur-md relative overflow-hidden">
+      {/* Dynamic bottom glow that intensifies at rock bottom */}
+      <div
+        className="absolute inset-0 pointer-events-none transition-opacity duration-150"
+        style={{
+          opacity: bottomGlow,
+          background:
+            "radial-gradient(circle 50vw at 50% 130%, rgba(255, 143, 0, 0.3) 0%, rgba(147, 197, 253, 0.35) 60%, transparent 100%)",
+        }}
+      />
+      {/* Static subtle background glow */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-40"
+        style={{
+          background:
+            "radial-gradient(circle 50vw at 50% 150%, rgba(255, 143, 0, 0.1) 0%, rgba(147, 197, 253, 0.15) 60%, transparent 100%)",
+        }}
+      />
+
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-3">
             <Link to="/" className="text-2xl font-extrabold tracking-tight hover:text-primary">

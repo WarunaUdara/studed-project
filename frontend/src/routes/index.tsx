@@ -37,6 +37,7 @@ import { FEATURED_COURSES, type FeaturedCourse } from "@/lib/demoData";
 import { type ProficiencyLevel, proficiencyMeta } from "@/lib/gamification";
 import { usePublicI18n } from "@/lib/i18n";
 import { playLevelUpSound, playSuccessSound } from "@/lib/sounds";
+import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
 
 export const Route = createFileRoute("/")({
@@ -56,17 +57,23 @@ function IndexPage() {
         : "/courses";
 
   return (
-    <div className={isSinhala ? "font-sinhala" : undefined}>
-      <Hero ctaLink={ctaLink} authed={isAuthenticated} />
-      <StatsBar />
-      <HowItWorks />
-      <GamificationShowcase />
-      <CatalogPreview />
-      <AudienceSegments />
-      <PricingPreview authed={isAuthenticated} />
-      <Testimonials />
-      <FinalCta authed={isAuthenticated} />
+    <div className={cn("relative min-h-screen", isSinhala && "font-sinhala")}>
+      {/* Main scrolling cover with solid background and shadow to reveal the sticky footer */}
+      <div className="relative z-10 bg-background shadow-[0_15px_40px_rgba(0,0,0,0.05)] border-b">
+        <Hero ctaLink={ctaLink} authed={isAuthenticated} />
+        <StatsBar />
+        <HowItWorks />
+        <GamificationShowcase />
+        <CatalogPreview />
+        <AudienceSegments />
+        <PricingPreview authed={isAuthenticated} />
+        <Testimonials />
+        <FinalCta authed={isAuthenticated} />
+      </div>
+
+      {/* Reveal footer sticky behind the cover */}
       <PublicFooter />
+
       {/* keep `reduce` referenced so the reduce-motion signal is honoured */}
       <ReduceGuard reduce={reduce} />
     </div>
@@ -85,7 +92,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
   const { t } = usePublicI18n();
 
   return (
-    <section className="relative overflow-hidden px-4 pb-20 pt-12 sm:px-6 sm:pt-20 lg:pb-28 bg-gradient-dawn">
+    <section className="relative overflow-hidden px-4 pb-20 pt-12 sm:px-6 sm:pt-20 lg:pb-28 bg-gradient-sarvam-hero">
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
         {/* Left: copy */}
         <div className="flex flex-col items-start gap-6">
