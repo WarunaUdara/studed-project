@@ -85,7 +85,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
   const { t } = usePublicI18n();
 
   return (
-    <section className="relative overflow-hidden px-4 pb-20 pt-12 sm:px-6 sm:pt-20 lg:pb-28">
+    <section className="relative overflow-hidden px-4 pb-20 pt-12 sm:px-6 sm:pt-20 lg:pb-28 bg-gradient-dawn">
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
         {/* Left: copy */}
         <div className="flex flex-col items-start gap-6">
@@ -106,13 +106,11 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.05 }}
-            className="text-balance text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl"
+            className="text-balance text-5xl font-normal font-serif leading-tight sm:text-7xl text-foreground"
           >
             {t("heroTitleA")}
             <br />
-            <span className="bg-gradient-to-r from-primary via-purple to-gold bg-clip-text text-transparent">
-              {t("heroTitleB")}
-            </span>
+            <span className="text-primary italic">{t("heroTitleB")}</span>
           </motion.h1>
 
           <motion.p
@@ -132,7 +130,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
           >
             {authed ? (
               <Link to={ctaLink}>
-                <Button size="lg" className="gap-2">
+                <Button size="lg" className="gap-2 rounded-full px-8">
                   <Zap className="h-5 w-5" />
                   {t("ctaPortal")}
                 </Button>
@@ -140,13 +138,17 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             ) : (
               <>
                 <Link to="/register">
-                  <Button size="lg" className="gap-2" onClick={() => playSuccessSound()}>
+                  <Button
+                    size="lg"
+                    className="gap-2 rounded-full px-8"
+                    onClick={() => playSuccessSound()}
+                  >
                     <Sparkles className="h-5 w-5" />
                     {t("ctaGetStarted")}
                   </Button>
                 </Link>
                 <Link to="/courses">
-                  <Button size="lg" variant="outline">
+                  <Button size="lg" variant="outline" className="gap-2 rounded-full px-8">
                     <Compass className="h-5 w-5" />
                     {t("ctaBrowseCourses")}
                   </Button>
@@ -847,7 +849,9 @@ function SectionHeading({ title, subhead }: { title: string; subhead?: string })
       transition={{ duration: 0.4 }}
       className="text-center"
     >
-      <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
+      <h2 className="text-balance text-4xl font-normal font-serif sm:text-5xl text-foreground">
+        {title}
+      </h2>
       {subhead ? (
         <p className="mx-auto mt-3 max-w-2xl text-pretty text-sm text-muted-foreground sm:text-base">
           {subhead}

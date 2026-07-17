@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Noto+Serif+Sinhala:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
 /* Dark mode is toggled via `.dark` class on <html> (same as v3 `darkMode: ["class"]`). */
@@ -7,89 +7,93 @@
 @layer base {
   :root {
     /* Core surface tokens (oklch) */
-    --background: oklch(0.995 0.002 250);
-    --foreground: oklch(0.18 0.02 260);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.18 0.02 260);
+    --background: oklch(0.984 0.003 95);        /* Parchment #FAFAF7 */
+    --foreground: oklch(0.21 0.034 264.7);      /* Ink #111827 */
+    --card: oklch(1 0 0);                       /* white cards on parchment */
+    --card-foreground: oklch(0.21 0.034 264.7);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.18 0.02 260);
+    --popover-foreground: oklch(0.21 0.034 264.7);
 
     /* Action tokens */
-    --primary: oklch(0.55 0.22 264);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.5 0.02 260);
-    --accent: oklch(0.96 0.01 264);
-    --accent-foreground: oklch(0.3 0.05 264);
-    --destructive: oklch(0.58 0.22 25);
-    --destructive-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.546 0.215 262.9);        /* Intelligent Blue #2563EB */
+    --primary-foreground: oklch(0.985 0.002 95);
+    --secondary: oklch(0.962 0.004 95);
+    --secondary-foreground: oklch(0.21 0.034 264.7);
+    --muted: oklch(0.962 0.004 95);
+    --muted-foreground: oklch(0.47 0.02 264);
+    --accent: oklch(0.95 0.014 262);
+    --accent-foreground: oklch(0.37 0.13 262.9);
+    --destructive: oklch(0.577 0.245 27.3);
+    --destructive-foreground: oklch(0.985 0.002 95);
 
-    --border: oklch(0.92 0.005 260);
-    --input: oklch(0.92 0.005 260);
-    --ring: oklch(0.55 0.22 264);
-    --radius: 0.75rem;
+    --border: oklch(0.92 0.005 264);
+    --input: oklch(0.92 0.005 264);
+    --ring: oklch(0.546 0.215 262.9);           /* blue focus ring */
+    --radius: 1.5rem;                           /* 24px rounded corners */
 
     /* Feedback tokens */
-    --success: oklch(0.64 0.18 145);
-    --success-foreground: oklch(0.985 0 0);
-    --warning: oklch(0.73 0.17 65);
-    --warning-foreground: oklch(0.2 0.02 65);
-    --info: oklch(0.63 0.16 250);
-    --info-foreground: oklch(0.985 0 0);
+    --success: oklch(0.696 0.17 162.5);         /* Growth Green #10B981 */
+    --success-foreground: oklch(0.985 0.002 95);
+    --warning: oklch(0.769 0.188 70.1);
+    --warning-foreground: oklch(0.26 0.05 70);
+    --info: oklch(0.546 0.215 262.9);
+    --info-foreground: oklch(0.985 0.002 95);
 
-    /* Gamification tokens */
-    --gold: oklch(0.76 0.18 75);
-    --gold-foreground: oklch(0.2 0.02 75);
-    --purple: oklch(0.58 0.24 290);
-    --purple-foreground: oklch(0.985 0 0);
-    --orange: oklch(0.7 0.19 50);
-    --orange-foreground: oklch(0.2 0.02 50);
-    --achievement: oklch(0.58 0.24 290);
-    --achievement-foreground: oklch(0.985 0 0);
-    --rank-1: oklch(0.83 0.17 92);
-    --rank-1-foreground: oklch(0.2 0.02 92);
-    --rank-2: oklch(0.71 0.02 250);
-    --rank-2-foreground: oklch(0.985 0 0);
-    --rank-3: oklch(0.64 0.14 66);
-    --rank-3-foreground: oklch(0.985 0 0);
+    /* Gamification & Intelligence */
+    --gold: oklch(0.769 0.188 70.1);            /* Amber */
+    --gold-foreground: oklch(0.26 0.05 70);
+    --purple: oklch(0.541 0.281 293);           /* Knowledge Violet */
+    --purple-foreground: oklch(0.985 0.002 95);
+    --orange: oklch(0.769 0.188 70.1);
+    --orange-foreground: oklch(0.26 0.05 70);
+    --achievement: oklch(0.769 0.188 70.1);     /* Amber */
+    --achievement-foreground: oklch(0.26 0.05 70);
+    
+    --ai: oklch(0.541 0.281 293);               /* Knowledge Violet */
+    --ai-foreground: oklch(0.985 0.002 95);
+
+    --rank-1: oklch(0.769 0.188 70.1);          /* Gold */
+    --rank-1-foreground: oklch(0.26 0.05 70);
+    --rank-2: oklch(0.75 0.01 264);             /* Silver */
+    --rank-2-foreground: oklch(0.21 0.034 264.7);
+    --rank-3: oklch(0.62 0.09 55);              /* Bronze */
+    --rank-3-foreground: oklch(0.985 0.002 95);
 
     /* Sidebar / shell surfaces */
-    --sidebar: oklch(0.985 0.004 260);
-    --sidebar-foreground: oklch(0.25 0.02 260);
-    --sidebar-border: oklch(0.92 0.006 260);
-    --sidebar-accent: oklch(0.95 0.02 264);
+    --sidebar: oklch(0.984 0.003 95);
+    --sidebar-foreground: oklch(0.21 0.034 264.7);
+    --sidebar-border: oklch(0.92 0.005 264);
+    --sidebar-accent: oklch(0.95 0.014 262);
 
     /* Chart palette (Recharts) */
-    --chart-xp: oklch(0.55 0.22 264);
-    --chart-xp-soft: oklch(0.7 0.18 264);
-    --chart-streak: oklch(0.7 0.19 50);
-    --chart-proficient: oklch(0.76 0.18 75);
+    --chart-xp: oklch(0.546 0.215 262.9);
+    --chart-xp-soft: oklch(0.546 0.215 262.9 / 0.5);
+    --chart-streak: oklch(0.769 0.188 70.1);
+    --chart-proficient: oklch(0.769 0.188 70.1);
   }
 
   .dark {
-    --background: oklch(0.16 0.015 260);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.21 0.02 260);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.269 0.02 260);
-    --popover-foreground: oklch(0.985 0 0);
+    --background: oklch(0.17 0.01 264);         /* warm near-black */
+    --foreground: oklch(0.985 0.002 95);
+    --card: oklch(0.21 0.015 264);
+    --card-foreground: oklch(0.985 0.002 95);
+    --popover: oklch(0.21 0.015 264);
+    --popover-foreground: oklch(0.985 0.002 95);
 
-    --primary: oklch(0.7 0.18 264);
+    --primary: oklch(0.62 0.19 262.9);
     --primary-foreground: oklch(0.12 0.02 264);
-    --secondary: oklch(0.269 0.02 260);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0.02 260);
-    --muted-foreground: oklch(0.72 0.02 260);
-    --accent: oklch(0.32 0.05 264);
-    --accent-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.25 0.015 264);
+    --secondary-foreground: oklch(0.985 0.002 95);
+    --muted: oklch(0.25 0.015 264);
+    --muted-foreground: oklch(0.72 0.015 264);
+    --accent: oklch(0.28 0.03 262);
+    --accent-foreground: oklch(0.985 0.002 95);
     --destructive: oklch(0.704 0.19 22);
     --destructive-foreground: oklch(0.12 0.02 22);
 
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.7 0.18 264);
+    --ring: oklch(0.62 0.19 262.9);
 
     --success: oklch(0.72 0.16 145);
     --success-foreground: oklch(0.12 0.02 145);
@@ -104,8 +108,12 @@
     --purple-foreground: oklch(0.12 0 0);
     --orange: oklch(0.78 0.17 50);
     --orange-foreground: oklch(0.2 0.02 50);
-    --achievement: oklch(0.72 0.2 290);
-    --achievement-foreground: oklch(0.985 0 0);
+    --achievement: oklch(0.86 0.16 92);
+    --achievement-foreground: oklch(0.2 0.02 92);
+
+    --ai: oklch(0.72 0.2 290);
+    --ai-foreground: oklch(0.12 0 0);
+
     --rank-1: oklch(0.86 0.16 92);
     --rank-1-foreground: oklch(0.2 0.02 92);
     --rank-2: oklch(0.78 0.02 250);
@@ -113,15 +121,15 @@
     --rank-3: oklch(0.75 0.12 66);
     --rank-3-foreground: oklch(0.985 0 0);
 
-    --sidebar: oklch(0.19 0.02 260);
-    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar: oklch(0.19 0.015 264);
+    --sidebar-foreground: oklch(0.985 0.002 95);
     --sidebar-border: oklch(1 0 0 / 8%);
-    --sidebar-accent: oklch(0.28 0.05 264);
+    --sidebar-accent: oklch(0.28 0.03 262);
 
-    --chart-xp: oklch(0.7 0.18 264);
-    --chart-xp-soft: oklch(0.55 0.16 264);
-    --chart-streak: oklch(0.78 0.17 50);
-    --chart-proficient: oklch(0.86 0.16 92);
+    --chart-xp: oklch(0.62 0.19 262.9);
+    --chart-xp-soft: oklch(0.62 0.19 262.9 / 0.5);
+    --chart-streak: oklch(0.8 0.16 75);
+    --chart-proficient: oklch(0.8 0.16 75);
   }
 }
 
@@ -129,8 +137,6 @@
  * Tailwind v4 CSS-first config: register shadcn-style design tokens as theme keys.
  * `inline` makes generated utilities resolve `var(--xxx)` at runtime so dark-mode
  * overrides of the raw --xxx tokens take effect.
- * All color tokens use OKLCH — the modern color space for perceptual uniformity,
- * wide gamut (P3), and consistent lightness across hues.
  */
 @theme inline {
   --color-background: var(--background);
@@ -161,7 +167,7 @@
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
 
-  /* Gamification colors */
+  /* Gamification & Intelligence */
   --color-gold: var(--gold);
   --color-gold-foreground: var(--gold-foreground);
   --color-purple: var(--purple);
@@ -170,6 +176,8 @@
   --color-orange-foreground: var(--orange-foreground);
   --color-achievement: var(--achievement);
   --color-achievement-foreground: var(--achievement-foreground);
+  --color-ai: var(--ai);
+  --color-ai-foreground: var(--ai-foreground);
   --color-rank-1: var(--rank-1);
   --color-rank-1-foreground: var(--rank-1-foreground);
   --color-rank-2: var(--rank-2);
@@ -191,13 +199,15 @@
 
   /* Fonts */
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-sinhala: "Noto Sans Sinhala", "Iskoola Pota", "Iskoola Pota B", sans-serif;
+  --font-serif: "Instrument Serif", Georgia, serif;
+  --font-sinhala: "Noto Sans Sinhala", "Iskoola Pota", sans-serif;
+  --font-sinhala-serif: "Noto Serif Sinhala", Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 8px);
+  --radius-md: calc(var(--radius) - 4px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 8px);
 
   /* Custom keyframes used by gamification components */
   --animate-flame-pulse: flame-pulse 2.4s ease-in-out infinite;
@@ -243,11 +253,40 @@
   .font-sinhala {
     font-family: var(--font-sinhala);
   }
+  .font-sinhala-serif {
+    font-family: var(--font-sinhala-serif);
+  }
   /* Subtle elevated card lift on hover */
   .lift-on-hover {
     transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
   }
   .lift-on-hover:hover {
     transform: translateY(-2px);
+  }
+  
+  /* Atmospheric Gradients */
+  .bg-gradient-dawn {
+    background: radial-gradient(120% 120% at 50% 0%, oklch(0.546 0.215 262.9 / 0.08), transparent 60%);
+  }
+  .bg-gradient-intelligence {
+    background: linear-gradient(135deg, oklch(0.546 0.215 262.9 / 0.06), oklch(0.541 0.281 293 / 0.06));
+  }
+  .bg-gradient-growth {
+    background: linear-gradient(to top, oklch(0.696 0.17 162.5 / 0.06), transparent);
+  }
+  .bg-gradient-amber {
+    background: radial-gradient(circle at center, oklch(0.769 0.188 70.1 / 0.08), transparent 70%);
+  }
+  
+  /* Glassmorphism */
+  .glass {
+    background: oklch(1 0 0 / 0.72);
+    backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid oklch(1 0 0 / 0.6);
+  }
+  .dark .glass {
+    background: oklch(0.21 0.015 264 / 0.72);
+    backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid oklch(1 0 0 / 0.1);
   }
 }
