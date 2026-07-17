@@ -211,7 +211,7 @@ func (c *CourseClient) GetLesson(ctx context.Context, id string) (*model.Lesson,
 
 func (c *CourseClient) UpdateLesson(ctx context.Context, educatorID, id string, input model.UpdateLessonInput) (*model.Lesson, error) {
 	req := &coursepb.UpdateLessonRequest{
-		Id:        id,
+		Id:         id,
 		EducatorId: educatorID,
 	}
 	if input.Title != nil {

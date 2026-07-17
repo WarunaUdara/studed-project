@@ -13,6 +13,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 	"github.com/studed/gamification-service/internal/config"
+	"github.com/studed/gamification-service/internal/events"
 	"github.com/studed/gamification-service/internal/handler"
 	"github.com/studed/gamification-service/internal/repository"
 	"github.com/studed/gamification-service/internal/service"
@@ -82,7 +83,8 @@ func main() {
 	xpRepo := repository.NewXpRepository(db)
 	leaderboardRepo := repository.NewLeaderboardRepository(redisClient)
 	achievementRepo := repository.NewAchievementRepository(db)
-	gamificationSvc := service.NewGamificationService(xpRepo, leaderboardRepo, achievementRepo)
+	eventPublisher := events.NewPublisher(redisClient)
+	gamificationSvc := service.NewGamificationService(xpRepo, leaderboardRepo, achievementRepo, service.WithEventPublisher(eventPublisher))
 	grpcHandler := handler.NewGamificationGRPCHandler(gamificationSvc)
 
 	grpcListener, err := net.Listen("tcp", cfg.ServiceAddr)

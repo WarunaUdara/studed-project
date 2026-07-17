@@ -87,4 +87,3 @@ func (h *GamificationGRPCHandler) GetUserStreak(ctx context.Context, req *gampb.
 	}
 	return resp, nil
 }
-

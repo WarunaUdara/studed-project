@@ -11,6 +11,7 @@ type Config struct {
 	CourseServiceAddr       string
 	ProgressServiceAddr     string
 	GamificationServiceAddr string
+	RedisAddr               string
 	AccessSecret            string
 	GraphQLPlayground       bool
 }
@@ -27,6 +28,7 @@ func Load() (*Config, error) {
 		CourseServiceAddr:       getEnv("COURSE_SERVICE_ADDR", "localhost:8083"),
 		ProgressServiceAddr:     getEnv("PROGRESS_SERVICE_ADDR", "localhost:8086"),
 		GamificationServiceAddr: getEnv("GAMIFICATION_SERVICE_ADDR", "localhost:8088"),
+		RedisAddr:               getEnv("REDIS_ADDR", "localhost:6379"),
 		AccessSecret:            accessSecret,
 		GraphQLPlayground:       getEnv("GRAPHQL_PLAYGROUND", "false") == "true",
 	}, nil

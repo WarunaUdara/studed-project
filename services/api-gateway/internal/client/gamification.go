@@ -67,8 +67,8 @@ func (c *GamificationClient) GetLeaderboard(ctx context.Context, scope model.Lea
 	entries := make([]*model.LeaderboardEntry, len(resp.Entries))
 	for i, e := range resp.Entries {
 		entries[i] = &model.LeaderboardEntry{
-			Rank:   int(e.Rank),
-			User:   &model.User{ID: e.UserId, FullName: e.FullName},
+			Rank:    int(e.Rank),
+			User:    &model.User{ID: e.UserId, FullName: e.FullName},
 			TotalXp: int(e.TotalXp),
 		}
 	}
@@ -157,4 +157,3 @@ func (c *GamificationClient) GetAchievements(ctx context.Context, userID string)
 	}
 	return achievements, nil
 }
-

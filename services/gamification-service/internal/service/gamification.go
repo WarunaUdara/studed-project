@@ -5,10 +5,18 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/studed/gamification-service/internal/events"
 	"github.com/studed/gamification-service/internal/model"
 	"github.com/studed/gamification-service/internal/repository"
 	gampb "github.com/studed/shared/proto/gen/go/gamification"
 )
+
+// EventPublisher pushes real-time gamification events to Redis pub/sub for
+// the api-gateway's GraphQL subscriptions.
+type EventPublisher interface {
+	PublishXpAwarded(ctx context.Context, e events.XpAwardedEvent) error
+	PublishAchievementUnlocked(ctx context.Context, e events.AchievementUnlockedEvent) error
+}
 
 type GamificationService interface {
 	CalculateAndAwardXp(ctx context.Context, userID, waveID string, score, xpReward, passingThreshold int32) (*gampb.XpCalculationResponse, error)
@@ -17,7 +25,7 @@ type GamificationService interface {
 	GetLeaderboard(ctx context.Context, scope, courseID string, grade int32, limit int32) (*gampb.GetLeaderboardResponse, error)
 	UpdateLeaderboard(ctx context.Context, userID, fullName string, totalXp int32, scope, courseID string, grade int32) (*gampb.UpdateLeaderboardResponse, error)
 	GetRank(ctx context.Context, userID string, scope, courseID string, grade int32) (*gampb.GetRankResponse, error)
-	
+
 	GetAchievements(ctx context.Context, userID string) (*gampb.GetAchievementsResponse, error)
 	UnlockAchievement(ctx context.Context, userID, achievementID string) (*gampb.UnlockAchievementResponse, error)
 	GetUserStreak(ctx context.Context, userID string) (*gampb.GetUserStreakResponse, error)
@@ -27,17 +35,48 @@ type gamificationService struct {
 	xpRepo          repository.XpRepository
 	leaderboardRepo repository.LeaderboardRepository
 	achievementRepo repository.AchievementRepository
+	publisher       EventPublisher
+}
+
+type Option func(*gamificationService)
+
+// WithEventPublisher enables real-time event publishing over Redis pub/sub.
+func WithEventPublisher(p EventPublisher) Option {
+	return func(s *gamificationService) {
+		s.publisher = p
+	}
 }
 
 func NewGamificationService(
 	xpRepo repository.XpRepository,
 	leaderboardRepo repository.LeaderboardRepository,
 	achievementRepo repository.AchievementRepository,
+	opts ...Option,
 ) GamificationService {
-	return &gamificationService{
+	s := &gamificationService{
 		xpRepo:          xpRepo,
 		leaderboardRepo: leaderboardRepo,
 		achievementRepo: achievementRepo,
+	}
+	for _, opt := range opts {
+		opt(s)
+	}
+	return s
+}
+
+// publishXpAwarded emits an XP event; publish failures never fail the award.
+func (s *gamificationService) publishXpAwarded(ctx context.Context, userID, sourceID string, amount, totalXp int32, reason string) {
+	if s.publisher == nil || amount == 0 {
+		return
+	}
+	if err := s.publisher.PublishXpAwarded(ctx, events.XpAwardedEvent{
+		UserID:   userID,
+		SourceID: sourceID,
+		Amount:   amount,
+		TotalXp:  totalXp,
+		Reason:   reason,
+	}); err != nil {
+		fmt.Printf("failed to publish xp event: %v\n", err)
 	}
 }
 
@@ -59,6 +98,8 @@ func (s *gamificationService) CalculateAndAwardXp(ctx context.Context, userID, w
 	if err != nil {
 		return nil, fmt.Errorf("failed to award xp: %w", err)
 	}
+
+	s.publishXpAwarded(ctx, userID, waveID, xpEarned, totalXp, "wave_completed")
 
 	// Trigger achievement evaluation
 	if xpEarned > 0 {
@@ -120,6 +161,8 @@ func (s *gamificationService) AwardXp(ctx context.Context, userID string, amount
 	if err != nil {
 		return nil, fmt.Errorf("failed to award xp: %w", err)
 	}
+
+	s.publishXpAwarded(ctx, userID, sourceID, amount, totalXp, reason)
 
 	// Trigger achievement checks based on total XP after manually awarding XP as well
 	if totalXp >= 500 {
@@ -235,6 +278,28 @@ func (s *gamificationService) UnlockAchievement(ctx context.Context, userID, ach
 	}
 
 	if unlocked {
+		if s.publisher != nil {
+			event := events.AchievementUnlockedEvent{
+				UserID:         userID,
+				ID:             achievementID,
+				Name:           achievementID,
+				UnlockedAtUnix: time.Now().Unix(),
+			}
+			if metadata, err := s.achievementRepo.GetAchievementsMetadata(ctx); err == nil {
+				for _, m := range metadata {
+					if m.ID == achievementID {
+						event.Name = m.Name
+						event.Description = m.Description
+						event.IconURL = m.IconUrl
+						break
+					}
+				}
+			}
+			if err := s.publisher.PublishAchievementUnlocked(ctx, event); err != nil {
+				fmt.Printf("failed to publish achievement event: %v\n", err)
+			}
+		}
+
 		var bonusXp int32
 		switch achievementID {
 		case "lesson_complete":

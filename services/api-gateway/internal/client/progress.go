@@ -117,11 +117,11 @@ func (c *ProgressClient) GetWaveProgress(ctx context.Context, userID, waveID str
 
 	highestScore := int(resp.HighestScore)
 	return &model.WaveProgress{
-		Status:            model.ProgressStatus(resp.Status),
-		AttemptsCount:     int(resp.AttemptsCount),
-		HighestScore:      &highestScore,
-		CompletedAt:       completedAt,
-		LastAttemptedAt:   lastAttemptedAt,
+		Status:          model.ProgressStatus(resp.Status),
+		AttemptsCount:   int(resp.AttemptsCount),
+		HighestScore:    &highestScore,
+		CompletedAt:     completedAt,
+		LastAttemptedAt: lastAttemptedAt,
 	}, nil
 }
 

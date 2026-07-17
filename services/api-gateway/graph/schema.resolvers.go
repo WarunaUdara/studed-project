@@ -10,8 +10,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/studed/api-gateway/graph/model"
+	"github.com/studed/api-gateway/internal/events"
 	"github.com/studed/api-gateway/internal/middleware"
 )
 
@@ -252,9 +254,58 @@ func (r *mutationResolver) SubmitWaveAnswers(ctx context.Context, waveID string,
 				return nil, fmt.Errorf("failed to update grade leaderboard: %w", err)
 			}
 		}
+
+		r.publishWaveEvents(ctx, userCtx, waveID, courseID, result)
 	}
 
 	return result, nil
+}
+
+// publishWaveEvents emits real-time wave/leaderboard events; publish
+// failures never fail the submission.
+func (r *mutationResolver) publishWaveEvents(ctx context.Context, userCtx middleware.UserContext, waveID, courseID string, result *model.WaveResult) {
+	if r.Events == nil {
+		return
+	}
+
+	_ = r.Events.Publish(ctx, events.ChannelWaveCompleted, events.WaveCompletedEvent{
+		UserID:          userCtx.UserID,
+		WaveID:          waveID,
+		Score:           int32(result.Score),
+		CompletedAtUnix: time.Now().Unix(),
+	})
+
+	scopes := []struct {
+		scope    model.LeaderboardScope
+		courseID string
+	}{
+		{model.LeaderboardScopeGlobal, ""},
+	}
+	if courseID != "" {
+		scopes = append(scopes, struct {
+			scope    model.LeaderboardScope
+			courseID string
+		}{model.LeaderboardScopeCourse, courseID})
+	}
+	for _, sc := range scopes {
+		var cid *string
+		if sc.courseID != "" {
+			c := sc.courseID
+			cid = &c
+		}
+		rank, err := r.GamificationClient.GetMyRank(ctx, userCtx.UserID, sc.scope, cid, nil)
+		if err != nil {
+			rank = 0
+		}
+		_ = r.Events.Publish(ctx, events.ChannelLeaderboard, events.LeaderboardUpdatedEvent{
+			Scope:    string(sc.scope),
+			CourseID: sc.courseID,
+			UserID:   userCtx.UserID,
+			FullName: userCtx.FullName,
+			TotalXp:  int32(result.TotalXp),
+			Rank:     int32(rank),
+		})
+	}
 }
 
 // EnrollInCourse is the resolver for the enrollInCourse field.
@@ -644,22 +695,125 @@ func (r *queryResolver) Achievements(ctx context.Context) ([]*model.Achievement,
 
 // LeaderboardUpdated is the resolver for the leaderboardUpdated field.
 func (r *subscriptionResolver) LeaderboardUpdated(ctx context.Context, scope model.LeaderboardScope, courseID *string) (<-chan *model.LeaderboardEntry, error) {
-	return nil, fmt.Errorf("not implemented")
+	if r.Events == nil {
+		return nil, errors.New("real-time events are not configured")
+	}
+	if _, err := requireUser(ctx); err != nil {
+		return nil, err
+	}
+
+	source := events.SubscribeJSON[events.LeaderboardUpdatedEvent](ctx, r.Events, events.ChannelLeaderboard)
+	out := make(chan *model.LeaderboardEntry, 1)
+	go func() {
+		defer close(out)
+		for e := range source {
+			if e.Scope != string(scope) {
+				continue
+			}
+			if scope == model.LeaderboardScopeCourse && (courseID == nil || e.CourseID != *courseID) {
+				continue
+			}
+			out <- &model.LeaderboardEntry{
+				Rank:    int(e.Rank),
+				User:    &model.User{ID: e.UserID, FullName: e.FullName},
+				TotalXp: int(e.TotalXp),
+			}
+		}
+	}()
+	return out, nil
 }
 
 // XpGained is the resolver for the xpGained field.
 func (r *subscriptionResolver) XpGained(ctx context.Context) (<-chan *model.XpEvent, error) {
-	return nil, fmt.Errorf("not implemented")
+	if r.Events == nil {
+		return nil, errors.New("real-time events are not configured")
+	}
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	source := events.SubscribeJSON[events.XpAwardedEvent](ctx, r.Events, events.ChannelXp)
+	out := make(chan *model.XpEvent, 1)
+	go func() {
+		defer close(out)
+		for e := range source {
+			if e.UserID != userCtx.UserID {
+				continue
+			}
+			out <- &model.XpEvent{
+				WaveID:  e.SourceID,
+				Amount:  int(e.Amount),
+				TotalXp: int(e.TotalXp),
+				Reason:  e.Reason,
+			}
+		}
+	}()
+	return out, nil
 }
 
 // AchievementUnlocked is the resolver for the achievementUnlocked field.
 func (r *subscriptionResolver) AchievementUnlocked(ctx context.Context) (<-chan *model.Achievement, error) {
-	return nil, fmt.Errorf("not implemented")
+	if r.Events == nil {
+		return nil, errors.New("real-time events are not configured")
+	}
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	source := events.SubscribeJSON[events.AchievementUnlockedEvent](ctx, r.Events, events.ChannelAchievement)
+	out := make(chan *model.Achievement, 1)
+	go func() {
+		defer close(out)
+		for e := range source {
+			if e.UserID != userCtx.UserID {
+				continue
+			}
+			achievement := &model.Achievement{
+				ID:          e.ID,
+				Name:        e.Name,
+				Description: e.Description,
+				UnlockedAt:  time.Unix(e.UnlockedAtUnix, 0),
+			}
+			if e.IconURL != "" {
+				iconURL := e.IconURL
+				achievement.IconURL = &iconURL
+			}
+			out <- achievement
+		}
+	}()
+	return out, nil
 }
 
 // WaveCompleted is the resolver for the waveCompleted field.
 func (r *subscriptionResolver) WaveCompleted(ctx context.Context) (<-chan *model.WaveProgress, error) {
-	return nil, fmt.Errorf("not implemented")
+	if r.Events == nil {
+		return nil, errors.New("real-time events are not configured")
+	}
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	source := events.SubscribeJSON[events.WaveCompletedEvent](ctx, r.Events, events.ChannelWaveCompleted)
+	out := make(chan *model.WaveProgress, 1)
+	go func() {
+		defer close(out)
+		for e := range source {
+			if e.UserID != userCtx.UserID {
+				continue
+			}
+			score := int(e.Score)
+			completedAt := time.Unix(e.CompletedAtUnix, 0)
+			out <- &model.WaveProgress{
+				Status:       model.ProgressStatusCompleted,
+				HighestScore: &score,
+				CompletedAt:  &completedAt,
+			}
+		}
+	}()
+	return out, nil
 }
 
 // Mutation returns MutationResolver implementation.

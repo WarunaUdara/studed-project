@@ -2,6 +2,7 @@ package graph
 
 import (
 	"github.com/studed/api-gateway/internal/client"
+	"github.com/studed/api-gateway/internal/events"
 )
 
 // Resolver serves as dependency injection for the GraphQL server.
@@ -10,4 +11,5 @@ type Resolver struct {
 	CourseClient       *client.CourseClient
 	ProgressClient     *client.ProgressClient
 	GamificationClient *client.GamificationClient
+	Events             *events.Bus
 }

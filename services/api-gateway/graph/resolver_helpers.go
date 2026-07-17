@@ -73,4 +73,3 @@ func (r *Resolver) populateWavesProgress(ctx context.Context, userID string, cou
 		}
 	}
 }
-

@@ -150,11 +150,14 @@ services:
       COURSE_SERVICE_ADDR: course-service:8083
       PROGRESS_SERVICE_ADDR: progress-service:8086
       GAMIFICATION_SERVICE_ADDR: gamification-service:8088
+      REDIS_ADDR: redis:6379
       JWT_ACCESS_SECRET: change-me-access-secret-min-32-bytes-long
       GRAPHQL_PLAYGROUND: "true"
     ports:
       - "8080:8080"
     depends_on:
+      redis:
+        condition: service_started
       auth-service:
         condition: service_healthy
       course-service:

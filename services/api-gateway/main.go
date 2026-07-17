@@ -4,17 +4,20 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/joho/godotenv"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
+	coderws "github.com/coder/websocket"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/joho/godotenv"
 	"github.com/studed/api-gateway/graph"
 	"github.com/studed/api-gateway/internal/client"
 	"github.com/studed/api-gateway/internal/config"
+	"github.com/studed/api-gateway/internal/events"
 	authmiddleware "github.com/studed/api-gateway/internal/middleware"
 	"github.com/studed/shared/go/logger"
 )
@@ -58,16 +61,28 @@ func main() {
 	}
 	defer gamificationClient.Close()
 
+	eventBus := events.NewBus(cfg.RedisAddr, log)
+
 	resolver := &graph.Resolver{
 		AuthClient:         authClient,
 		CourseClient:       courseClient,
 		ProgressClient:     progressClient,
 		GamificationClient: gamificationClient,
+		Events:             eventBus,
 	}
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.POST{})
+	srv.AddTransport(transport.Websocket{
+		KeepAlivePingInterval: 10 * time.Second,
+		// Auth is enforced per subscription via the session cookie the Auth
+		// middleware parsed during the HTTP upgrade; origins are not
+		// restricted because the gateway is fronted by CORS middleware.
+		Implementation: transport.CoderWebsocketImplementation{
+			AcceptOptions: coderws.AcceptOptions{InsecureSkipVerify: true},
+		},
+	})
 	if cfg.GraphQLPlayground {
 		srv.Use(extension.Introspection{})
 	}
