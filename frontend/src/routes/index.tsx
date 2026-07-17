@@ -20,7 +20,7 @@ import {
   Waves,
   Zap,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ProficiencyBadge } from "@/components/gamification/ProficiencyBadge";
 import { RankBadge } from "@/components/gamification/RankBadge";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
@@ -48,6 +48,23 @@ function IndexPage() {
   const { isAuthenticated, user } = useAuthStore();
   const { isSinhala } = usePublicI18n();
   const reduce = useReducedMotion();
+  const [footerHeight, setFooterHeight] = useState(0);
+
+  useEffect(() => {
+    const measure = () => {
+      const footer = document.querySelector("footer");
+      if (footer) {
+        setFooterHeight(footer.offsetHeight);
+      }
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    const timer = setTimeout(measure, 100);
+    return () => {
+      window.removeEventListener("resize", measure);
+      clearTimeout(timer);
+    };
+  }, []);
 
   const ctaLink =
     user?.role === "STUDENT"
@@ -71,6 +88,9 @@ function IndexPage() {
         <FinalCta authed={isAuthenticated} />
       </div>
 
+      {/* Spacer that uncovers the fixed footer underneath it */}
+      <div style={{ height: `${footerHeight}px` }} className="pointer-events-none" />
+
       {/* Reveal footer sticky behind the cover */}
       <PublicFooter />
 
@@ -92,7 +112,19 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
   const { t } = usePublicI18n();
 
   return (
-    <section className="relative overflow-hidden px-4 pb-20 pt-12 sm:px-6 sm:pt-20 lg:pb-28 bg-gradient-sarvam-hero">
+    <section className="relative overflow-hidden px-4 pb-20 pt-12 sm:px-6 sm:pt-20 lg:pb-28 bg-background">
+      {/* High-fidelity, highly saturated Sarvam-style atmospheric blur elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10 select-none">
+        {/* Top Centered Giant Orange core arch */}
+        <div className="absolute top-[-320px] left-1/2 -translate-x-1/2 w-[180vw] h-[650px] bg-[radial-gradient(ellipse_at_center,rgba(249,115,22,0.9)_0%,rgba(249,115,22,0.45)_35%,rgba(249,115,22,0.1)_55%,transparent_75%)] blur-[100px]" />
+
+        {/* Left Side Sky Blue Core */}
+        <div className="absolute top-[-150px] left-[-30%] w-[100vw] h-[750px] bg-[radial-gradient(circle_at_center,rgba(147,197,253,0.6)_0%,rgba(147,197,253,0.2)_45%,transparent_85%)] blur-[120px]" />
+
+        {/* Right Side Lavender/Purple Core */}
+        <div className="absolute top-[-150px] right-[-30%] w-[100vw] h-[750px] bg-[radial-gradient(circle_at_center,rgba(221,190,252,0.6)_0%,rgba(221,190,252,0.2)_45%,transparent_85%)] blur-[120px]" />
+      </div>
+
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
         {/* Left: copy */}
         <div className="flex flex-col items-start gap-6">

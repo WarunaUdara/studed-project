@@ -66,7 +66,7 @@ export function PublicFooter() {
   ];
 
   return (
-    <footer className="sticky bottom-0 -z-10 w-full bg-card/65 border-t backdrop-blur-md relative overflow-hidden">
+    <footer className="fixed bottom-0 left-0 w-full -z-10 bg-card/65 border-t backdrop-blur-md overflow-hidden">
       {/* Dynamic bottom glow that intensifies at rock bottom */}
       <div
         className="absolute inset-0 pointer-events-none transition-opacity duration-150"
