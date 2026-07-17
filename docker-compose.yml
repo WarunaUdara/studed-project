@@ -156,6 +156,28 @@ services:
       timeout: 3s
       retries: 10
 
+  payment-service:
+    build:
+      context: .
+      dockerfile: services/payment-service/Dockerfile
+    container_name: studed-payment-service
+    environment:
+      PAYMENT_SERVICE_ADDR: :8091
+      DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
+      PAYHERE_MERCHANT_ID: ${PAYHERE_MERCHANT_ID:-}
+      PAYHERE_MERCHANT_SECRET: ${PAYHERE_MERCHANT_SECRET:-}
+      PAYHERE_NOTIFY_URL: ${PAYHERE_NOTIFY_URL:-}
+    ports:
+      - "8091:8091"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8091/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   api-gateway:
     build:
       context: .
@@ -168,6 +190,7 @@ services:
       PROGRESS_SERVICE_ADDR: progress-service:8086
       GAMIFICATION_SERVICE_ADDR: gamification-service:8088
       AI_SERVICE_URL: http://ai-service:8090
+      PAYMENT_SERVICE_URL: http://payment-service:8091
       REDIS_ADDR: redis:6379
       JWT_ACCESS_SECRET: change-me-access-secret-min-32-bytes-long
       GRAPHQL_PLAYGROUND: "true"

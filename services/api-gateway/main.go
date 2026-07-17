@@ -63,6 +63,7 @@ func main() {
 
 	eventBus := events.NewBus(cfg.RedisAddr, log)
 	aiClient := client.NewAIClient(cfg.AIServiceURL)
+	paymentClient := client.NewPaymentClient(cfg.PaymentServiceURL)
 
 	resolver := &graph.Resolver{
 		AuthClient:         authClient,
@@ -70,6 +71,7 @@ func main() {
 		ProgressClient:     progressClient,
 		GamificationClient: gamificationClient,
 		AIClient:           aiClient,
+		PaymentClient:      paymentClient,
 		Events:             eventBus,
 	}
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))

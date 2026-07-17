@@ -388,12 +388,28 @@ func (r *mutationResolver) TranslateContent(ctx context.Context, content string,
 
 // CreateSubscription is the resolver for the createSubscription field.
 func (r *mutationResolver) CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput) (*model.UserSubscription, error) {
-	return nil, errors.New("not implemented")
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if r.PaymentClient == nil {
+		return nil, errors.New("payments are not configured")
+	}
+
+	return r.PaymentClient.CreateSubscription(ctx, userCtx.UserID, input.Tier)
 }
 
 // CancelSubscription is the resolver for the cancelSubscription field.
 func (r *mutationResolver) CancelSubscription(ctx context.Context) (*model.UserSubscription, error) {
-	return nil, errors.New("not implemented")
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if r.PaymentClient == nil {
+		return nil, errors.New("payments are not configured")
+	}
+
+	return r.PaymentClient.CancelSubscription(ctx, userCtx.UserID)
 }
 
 // UpdateMe is the resolver for the updateMe field.
