@@ -138,6 +138,9 @@ func (c *CourseClient) ListCourses(ctx context.Context, filter *model.CourseFilt
 		if filter.IsPublished != nil {
 			req.PublishedOnly = *filter.IsPublished
 		}
+		if filter.Search != nil {
+			req.SearchQuery = *filter.Search
+		}
 	}
 
 	resp, err := c.client.ListCourses(ctx, req)
