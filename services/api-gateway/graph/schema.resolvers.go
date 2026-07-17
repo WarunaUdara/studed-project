@@ -448,6 +448,14 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 		grade = authUser.Grade
 	}
 
+	var subscription *model.UserSubscription
+	if r.PaymentClient != nil {
+		// A "not found" response just means the user never subscribed — not a hard error.
+		if sub, err := r.PaymentClient.GetSubscription(ctx, userCtx.UserID); err == nil {
+			subscription = sub
+		}
+	}
+
 	return &model.User{
 		ID:                userCtx.UserID,
 		Email:             userCtx.Email,
@@ -457,6 +465,7 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 		PreferredLanguage: userCtx.PreferredLanguage,
 		TotalXp:           totalXp,
 		Streak:            streak,
+		Subscription:      subscription,
 	}, nil
 }
 
