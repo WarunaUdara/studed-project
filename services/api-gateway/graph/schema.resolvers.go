@@ -32,6 +32,14 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*
 		return nil, err
 	}
 	setAuthCookies(ctx, payload.AccessToken, payload.RefreshToken)
+
+	// Advance the daily-login streak; streak failures never block login.
+	if payload.User != nil {
+		if streak, err := r.GamificationClient.GetUserStreak(ctx, payload.User.ID); err == nil {
+			payload.User.Streak = streak
+		}
+	}
+
 	return payload, nil
 }
 
