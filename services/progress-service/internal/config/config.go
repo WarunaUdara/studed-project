@@ -6,9 +6,9 @@ import (
 )
 
 type Config struct {
-	ServiceAddr          string
-	DatabaseURL          string
-	CourseServiceAddr    string
+	ServiceAddr             string
+	DatabaseURL             string
+	CourseServiceAddr       string
 	GamificationServiceAddr string
 }
 

@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -231,7 +233,6 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 			totalXp = xpResp.TotalXp
 		}
 	}
-
 
 	remainingAttempts := wave.MaxReattempts - int32(len(attempts)) - 1
 	if remainingAttempts < 0 {
@@ -510,7 +511,7 @@ func scoreAnswers(blocks []evaluateBlock, answers []*progresspb.Answer) (int32, 
 
 	for i, block := range blocks {
 		given := answerMap[block.ID]
-		correct := normalizeAnswer(given) == normalizeAnswer(block.CorrectAnswer)
+		correct := answersEquivalent(given, block.CorrectAnswer)
 		if correct {
 			correctCount++
 		}
@@ -532,4 +533,94 @@ func normalizeAnswer(s string) string {
 		return fmt.Sprintf("%g", f)
 	}
 	return cleaned
+}
+
+// answersEquivalent reports whether a student answer matches the expected
+// answer, accepting mathematically equivalent forms such as "0.5", ".5",
+// "1/2", "1 1/2", "50%", and "\frac{1}{2}".
+func answersEquivalent(given, expected string) bool {
+	if normalizeAnswer(given) == normalizeAnswer(expected) {
+		return true
+	}
+
+	gv, gok := parseNumeric(given)
+	ev, eok := parseNumeric(expected)
+	if !gok || !eok {
+		return false
+	}
+	return numbersEqual(gv, ev)
+}
+
+func numbersEqual(a, b float64) bool {
+	if a == b {
+		return true
+	}
+	diff := math.Abs(a - b)
+	scale := math.Max(math.Abs(a), math.Abs(b))
+	return diff <= 1e-9*scale
+}
+
+var latexFracRe = regexp.MustCompile(`^\\d?frac\{([^{}]+)\}\{([^{}]+)\}$`)
+
+// parseNumeric evaluates a numeric answer in decimal, fraction, mixed-number,
+// percentage, or simple LaTeX \frac form.
+func parseNumeric(s string) (float64, bool) {
+	cleaned := strings.TrimSpace(strings.ToLower(s))
+	cleaned = strings.TrimPrefix(cleaned, "$")
+	cleaned = strings.TrimSuffix(cleaned, "$")
+	cleaned = strings.ReplaceAll(strings.TrimSpace(cleaned), ",", "")
+
+	percent := false
+	if strings.HasSuffix(cleaned, "%") {
+		percent = true
+		cleaned = strings.TrimSpace(strings.TrimSuffix(cleaned, "%"))
+	}
+
+	if m := latexFracRe.FindStringSubmatch(cleaned); m != nil {
+		cleaned = m[1] + "/" + m[2]
+	}
+
+	value, ok := parseFractionOrFloat(cleaned)
+	if !ok {
+		return 0, false
+	}
+	if percent {
+		value /= 100
+	}
+	return value, true
+}
+
+func parseFractionOrFloat(s string) (float64, bool) {
+	s = strings.TrimSpace(s)
+
+	// Mixed number, e.g. "1 1/2" or "-2 3/4".
+	if parts := strings.Fields(s); len(parts) == 2 && strings.Contains(parts[1], "/") {
+		whole, err := strconv.ParseFloat(parts[0], 64)
+		if err != nil {
+			return 0, false
+		}
+		frac, ok := parseFractionOrFloat(parts[1])
+		if !ok {
+			return 0, false
+		}
+		if strings.HasPrefix(s, "-") {
+			return whole - frac, true
+		}
+		return whole + frac, true
+	}
+
+	if num, den, found := strings.Cut(s, "/"); found {
+		n, errN := strconv.ParseFloat(strings.TrimSpace(num), 64)
+		d, errD := strconv.ParseFloat(strings.TrimSpace(den), 64)
+		if errN != nil || errD != nil || d == 0 {
+			return 0, false
+		}
+		return n / d, true
+	}
+
+	f, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		return 0, false
+	}
+	return f, true
 }

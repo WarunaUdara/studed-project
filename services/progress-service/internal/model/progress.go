@@ -20,17 +20,17 @@ func (Enrollment) TableName() string {
 }
 
 type WaveAttempt struct {
-	ID             string `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	UserID         string `gorm:"index:idx_attempt_user_wave"`
-	WaveID         string `gorm:"index:idx_attempt_user_wave"`
-	LessonID       string
-	CourseID       string
-	AnswersJSON    string
-	Score          int32
-	Passed         bool
-	XPAwarded      int32
-	AttemptNumber  int32
-	CreatedAt      time.Time
+	ID            string `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
+	UserID        string `gorm:"index:idx_attempt_user_wave"`
+	WaveID        string `gorm:"index:idx_attempt_user_wave"`
+	LessonID      string
+	CourseID      string
+	AnswersJSON   string
+	Score         int32
+	Passed        bool
+	XPAwarded     int32
+	AttemptNumber int32
+	CreatedAt     time.Time
 }
 
 func (WaveAttempt) TableName() string {
@@ -47,11 +47,11 @@ const (
 )
 
 type WaveProgress struct {
-	Status           ProgressStatus
-	AttemptsCount    int32
-	HighestScore     int32
-	CompletedAt      *time.Time
-	LastAttemptedAt  *time.Time
+	Status          ProgressStatus
+	AttemptsCount   int32
+	HighestScore    int32
+	CompletedAt     *time.Time
+	LastAttemptedAt *time.Time
 }
 
 func AutoMigrate(db *gorm.DB) error {
