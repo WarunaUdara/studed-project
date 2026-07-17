@@ -1,9 +1,10 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Moon, Sun, Zap } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { XPBar } from "@/components/gamification/XPBar";
 import { Button } from "@/components/ui/button";
 import { PointsBadge } from "@/components/ui/points-badge";
+import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
 import { useUiPrefs } from "@/stores/uiPrefs";
 
@@ -13,8 +14,18 @@ export function Navbar() {
   const theme = useUiPrefs((s) => s.theme);
   const toggleTheme = useUiPrefs((s) => s.toggleTheme);
 
+  const pathname = useRouterState().location.pathname;
+  const isHome = pathname === "/";
+
   return (
-    <header className="sticky top-0 z-40 glass border-x-0 border-t-0 border-b border-border/40">
+    <header
+      className={cn(
+        "z-40 transition-all",
+        isHome
+          ? "absolute top-0 left-0 right-0 bg-transparent border-none shadow-none"
+          : "sticky top-0 glass border-x-0 border-t-0 border-b border-border/40",
+      )}
+    >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link to="/" className="text-2xl font-serif font-normal tracking-tight hover:text-primary">
           Stud<span className="text-primary italic">Ed</span>
