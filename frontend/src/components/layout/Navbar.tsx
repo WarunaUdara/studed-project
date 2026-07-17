@@ -14,10 +14,10 @@ export function Navbar() {
   const toggleTheme = useUiPrefs((s) => s.toggleTheme);
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+    <header className="sticky top-0 z-40 glass border-x-0 border-t-0 border-b border-border/40">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Link to="/" className="text-xl font-bold tracking-tight hover:text-primary">
-          Stud<span className="text-primary">Ed</span>
+        <Link to="/" className="text-2xl font-serif font-normal tracking-tight hover:text-primary">
+          Stud<span className="text-primary italic">Ed</span>
         </Link>
 
         <nav className="flex items-center gap-2 sm:gap-4">
