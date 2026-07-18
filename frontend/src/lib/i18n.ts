@@ -28,19 +28,27 @@ export function pick(pair: StringPair, lang: Lang): string {
 export const PUBLIC_STRINGS = {
   heroBadge: {
     EN: "Premium learning for Sri Lankan schools",
-    SI: "၁ Sri Lankan පාසල් සඳහා ප්‍රිමියම් අධ්‍යාපනය",
+    SI: "Sri Lankan පාසල් සඳහා ප්‍රිමියම් අධ්‍යාපනය",
   },
   heroTitleA: {
-    EN: "Learn smarter,",
-    SI: "නුඹන් දැනුම වඩා",
+    EN: "School, rewritten as",
+    SI: "පාසල, නැවත ලියන ලද්දේ",
   },
   heroTitleB: {
-    EN: "level up faster",
-    SI: "වේගයෙන් ඉහළ යන්න",
+    EN: "a game you can win",
+    SI: "ජයගත හැකි ක්‍රීඩාවක් ලෙස",
   },
   heroSubtitle: {
-    EN: "Structured courses, interactive lessons, and gamified practice tests for Grade 1–11, O/L and A/L. Earn XP, climb leaderboards, and master every subject — in English and Sinhala.",
-    SI: "කලාප 1–11, O/L සහ A/L සඳහා ව්‍යුහගත පාඨමාලා, අන්තර්ක්‍රීයාකාරී පාඩම් සහ ක්‍රීඩාමය පුහුණු අත්හදා බැලීම්. XP අත්පත් කරගෙන, ලීඩර්බෝඩ් නඟින්න, සෑම විෂයයක්ම ප්‍රාඵල්‍ය කරන්න — ඉංග්‍රීසි සහ සිංහලෙන්.",
+    EN: "StudEd turns the Sri Lankan curriculum into a world of waves — structured courses, bite-sized lessons and game-grade evaluation. Earn XP, hold your streak and climb the leaderboard, in English and Sinhala.",
+    SI: "StudEd ශ්‍රී ලාංකික විෂය නිර්දේශය තරංග ලෝකයක් බවට හරවයි — ව්‍යුහගත පාඨමාලා, කුඩා පාඩම් සහ ක්‍රීඩා මට්ටමේ ඇගයීම්. XP උපයාගෙන, ඔබේ දිගට රැකගෙන, ලීඩර්බෝඩ් නඟින්න — ඉංග්‍රීසි සහ සිංහලෙන්.",
+  },
+  heroLiveChip: {
+    EN: "1,240 learners riding the wave right now",
+    SI: "මේ මොහොතේම සිසුන් 1,240ක් තරංගය අසබඩ",
+  },
+  heroScrollHint: {
+    EN: "Scroll to earn Explorer XP",
+    SI: "Explorer XP උපයා ගැනීමට අනුචලනය කරන්න",
   },
   ctaGetStarted: {
     EN: "Get started free",
@@ -60,7 +68,7 @@ export const PUBLIC_STRINGS = {
   },
   trustRow: {
     EN: "Trusted by students across Sri Lankan schools",
-    SI: "၁ Sri Lankan පාසල්වල සිසුන් විසින් විශ්වාස කරන ලද",
+    SI: "Sri Lankan පාසල්වල සිසුන් විසින් විශ්වාස කරන ලද",
   },
 
   statsGradeLevels: { EN: "Grade levels", SI: "ශ්‍රේණි මට්ටම්" },
@@ -79,7 +87,7 @@ export const PUBLIC_STRINGS = {
   howStep1: { EN: "Course", SI: "පාඨමාලාව" },
   howStep1Copy: {
     EN: "A full subject mapped to your grade — Mathematics, Science, Sinhala and more.",
-    SI: "၁ ඔබගේ ශ්‍රේණියට ගැලපෙන සම්පූර්ණ විෂයයක් — ගණිත, විද්‍යාව, සිංහල යනාදී.",
+    SI: "ඔබගේ ශ්‍රේණියට ගැලපෙන සම්පූර්ණ විෂයයක් — ගණිත, විද්‍යාව, සිංහල යනාදී.",
   },
   howStep2: { EN: "Lesson", SI: "පාඩම" },
   howStep2Copy: {
@@ -91,6 +99,79 @@ export const PUBLIC_STRINGS = {
     EN: "A Learn phase teaches the concept, then an Evaluate phase tests mastery — and awards XP.",
     SI: "ඉගෙනීම් අදියරය මතපහදාරය උගන්වා, ඇගයීම් අදියරය ප්‍රාඵල්‍යතාව මැන බලයි — XP ද පිරිනමයි.",
   },
+
+  /* Wave map (hero visual) */
+  waveMapTitle: { EN: "The Wave Map", SI: "තරංග සිතියම" },
+  waveMapLesson: { EN: "Lesson 4 · Circle Theorems", SI: "පාඩම 4 · වෘත්ත ප්‍රමේය" },
+  waveMapFooter: {
+    EN: "Every node is a wave. Every wave pays XP.",
+    SI: "සෑම නෝඩයක්ම තරංගයකි. සෑම තරංගයක්ම XP ගෙවයි.",
+  },
+  waveStatusCompleted: { EN: "Completed", SI: "සම්පූර්ණයි" },
+  waveStatusCurrent: { EN: "In progress", SI: "දැන් ක්‍රියාත්මකයි" },
+  waveStatusLocked: { EN: "Locked", SI: "අගුළු ලා ඇත" },
+  waveNode1: { EN: "Angles in the Same Segment", SI: "එකම කොටසේ කෝණ" },
+  waveNode2: { EN: "Cyclic Quadrilaterals", SI: "චක්‍රීය චතුරස්‍ර" },
+  waveNode3: { EN: "Tangents & Chords", SI: "ස්පර්ශක සහ ජ්‍යා" },
+  waveNode4: { EN: "The Alternate Segment", SI: "විකල්ප කොටස" },
+  waveNode5: { EN: "Secants from a Point", SI: "ලක්ෂ්‍යයකින් ඡේදක" },
+  waveNode6: { EN: "Theorem Mastery", SI: "ප්‍රමේය ප්‍රාඵල්‍යතාව" },
+  waveNode7: { EN: "Boss Wave: Full Proof", SI: "Boss තරංගය: සම්පූර්ණ ඔප්පු කිරීම" },
+
+  /* Playable wave (live demo) */
+  playHeading: {
+    EN: "Don't take our word for it. Play a wave.",
+    SI: "අපේ වචනය විශ්වාස නොකරන්න. තරංගයක් අත්හදා බලන්න.",
+  },
+  playSubhead: {
+    EN: "Every wave pairs a Learn phase with an Evaluate phase. Here is a real one — no account needed.",
+    SI: "සෑම තරංගයක්ම Learn අදියරක් Evaluate අදියරක් සමඟ යුගල කරයි. මෙන්න සැබෑ එකක් — ගිණුමක් අවශ්‍ය නැත.",
+  },
+  playWaveTag: { EN: "Wave 4 of 6 · Circle Theorems", SI: "තරංගය 4 / 6 · වෘත්ත ප්‍රමේය" },
+  playLearnLabel: { EN: "Learn phase", SI: "Learn අදියර" },
+  playLearnTitle: { EN: "Areas scale with the square", SI: "ප්‍රදේශ වර්ගය අනුව වර්ධනය වේ" },
+  playLearnCopy: {
+    EN: "Double a circle's radius and its area does not double — it quadruples. Area always scales with r².",
+    SI: "වෘත්තයක අරය දෙගුණ කළ විට එහි ප්‍රදේශය දෙගුණ නොවේ — සිව්ගුණ වේ. ප්‍රදේශය සෑම විට r² අනුව වර්ධනය වේ.",
+  },
+  playEvaluateLabel: { EN: "Evaluate phase", SI: "Evaluate අදියර" },
+  playQuestion: {
+    EN: "A circle's radius is doubled. What happens to its area?",
+    SI: "වෘත්තයක අරය දෙගුණ කළ විට එහි ප්‍රදේශයට සිදුවන්නේ කුමක්ද?",
+  },
+  playOptA: { EN: "It stays the same", SI: "එය එලෙසම රැඳේ" },
+  playOptB: { EN: "It doubles", SI: "එය දෙගුණ වේ" },
+  playOptC: { EN: "It triples", SI: "එය තුන්ගුණ වේ" },
+  playOptD: { EN: "It quadruples", SI: "එය සිව්ගුණ වේ" },
+  playHint: {
+    EN: "Area scales with r² — so what is (2r)²?",
+    SI: "ප්‍රදේශය r² අනුව වර්ධනය වේ — එසේනම් (2r)² යනු කුමක්ද?",
+  },
+  playHintLabel: { EN: "AI tutor hint", SI: "AI උපදේශක ඉඟිය" },
+  playCorrectTitle: { EN: "Wave complete.", SI: "තරංගය සම්පූර්ණයි." },
+  playCorrectCopy: {
+    EN: "That is the whole loop — learn, answer, earn. Courses hold hundreds of waves like this one.",
+    SI: "එයයි සම්පූර්ණ චක්‍රය — ඉගෙනීම, පිළිතුර, උපයාගැනීම. පාඨමාලාවල මේ වැනි තරංග සිය ගණනක් ඇත.",
+  },
+  playCta: { EN: "Start your real journey", SI: "ඔබේ සැබෑ ගමන අරඹන්න" },
+  playReplay: { EN: "Replay wave", SI: "තරංගය නැවත" },
+
+  /* Explorer XP meter (scroll reward) */
+  explorerLabel: { EN: "Explorer XP", SI: "ගවේෂක XP" },
+  explorerHint: { EN: "Scroll to earn", SI: "උපයා ගැනීමට අනුචලනය" },
+  explorerUnlocked: { EN: "Explorer badge unlocked", SI: "ගවේෂක පදක්කම විවෘත විය" },
+  explorerUnlockedBody: {
+    EN: "You earned 250 XP just by scrolling. Imagine what a real wave pays.",
+    SI: "ඔබ අනුචලනයෙන්ම XP 250ක් උපයා ගත්තා. සැබෑ තරංගයක් ගෙවන්නේ කොච්චරද කියලා සිතන්න.",
+  },
+
+  /* Live leaderboard (mechanics section) */
+  liveLbTitle: { EN: "Live leaderboard", SI: "සජීවී ලීඩර්බෝඩ්" },
+  liveLbNote: {
+    EN: "Ranks shift as XP flows in",
+    SI: "XP ලැබෙන විට ස්ථාන වෙනස් වේ",
+  },
+  liveLbYou: { EN: "You", SI: "ඔබ" },
 
   gamificationHeading: {
     EN: "Built like the games you already love",
@@ -118,7 +199,7 @@ export const PUBLIC_STRINGS = {
   mechanicStreakTitle: { EN: "Daily streaks", SI: "දෛනික දිගට" },
   mechanicStreakCopy: {
     EN: "Practice every day to keep your flame alive — bonus XP when you hit 7 days.",
-    SI: "၁ දිනපතා පුහුණු වීමෙන් ඔබගේ ගිනි දලවා තබාගන්න — 7 දිනක් වූ විට bonus XP.",
+    SI: "දිනපතා පුහුණු වීමෙන් ඔබගේ ගිනි දලවා තබාගන්න — 7 දිනක් වූ විට bonus XP.",
   },
 
   catalogHeading: {
@@ -127,7 +208,7 @@ export const PUBLIC_STRINGS = {
   },
   catalogSubhead: {
     EN: "A taste of what your subscription unlocks. New waves every week.",
-    SI: "၁ ඔබගේ දායකත්වයෙන් විවෘත වන දේ ගැන රස බැලීමක්. සතිපතා නව තරංග.",
+    SI: "ඔබගේ දායකත්වයෙන් විවෘත වන දේ ගැන රස බැලීමක්. සතිපතා නව තරංග.",
   },
   catalogViewAll: { EN: "View all courses", SI: "සියලු පාඨමාලා බලන්න" },
 
@@ -139,13 +220,13 @@ export const PUBLIC_STRINGS = {
   audiencePrimarySub: { EN: "Grade 1–5", SI: "1–5 ශ්‍රේණි" },
   audiencePrimaryCopy: {
     EN: "Playful Learn phases that build strong foundations in Maths, Sinhala and English.",
-    SI: "၁ ගණිත, සිංහල සහ ඉංග්‍රීසි හි ශක්තිමත් අඩිතාලම් සපයන සිත්ගන්නාසුතූ ඉගෙනීම් අදියර.",
+    SI: "ගණිත, සිංහල සහ ඉංග්‍රීසි හි ශක්තිමත් අඩිතාලම් සපයන සිත්ගන්නාසුතූ ඉගෙනීම් අදියර.",
   },
   audienceJuniorTitle: { EN: "Junior Secondary", SI: "කනිෂ්ඨ ද්විතීයක" },
   audienceJuniorSub: { EN: "Grade 6–9", SI: "6–9 ශ්‍රේණි" },
   audienceJuniorCopy: {
     EN: "Concept-driven waves with visualisations and quick MCQ feedback loops.",
-    SI: "၁ දෘශ්‍යකරණ සහ වේගවත් MCQ ප්‍රතිපෝෂණ ලූප සහිත මතපහදාර තරංග.",
+    SI: "දෘශ්‍යකරණ සහ වේගවත් MCQ ප්‍රතිපෝෂණ ලූප සහිත මතපහදාර තරංග.",
   },
   audienceSeniorTitle: { EN: "Senior Secondary", SI: "ජ්‍යෙෂ්ඨ ද්විතීයක" },
   audienceSeniorSub: { EN: "Grade 10–11 · O/L", SI: "10–11 ශ්‍රේණි · O/L" },
@@ -157,7 +238,7 @@ export const PUBLIC_STRINGS = {
   audienceALSub: { EN: "A/L", SI: "A/L" },
   audienceALCopy: {
     EN: "Stream-aligned courses for Physical Science, Bioscience, Commerce and Arts.",
-    SI: "၁ භෞතික විද්‍යා, ජීව විද්‍යා, වාණිජ සහ කලා අංශ සඳහා අංශගත පාඨමාලා.",
+    SI: "භෞතික විද්‍යා, ජීව විද්‍යා, වාණිජ සහ කලා අංශ සඳහා අංශගත පාඨමාලා.",
   },
 
   pricingHeading: {
@@ -166,7 +247,7 @@ export const PUBLIC_STRINGS = {
   },
   pricingSubhead: {
     EN: "Cancel anytime. Sinhala-language support included on every plan.",
-    SI: "၁ ඕනෑම විට අවලංගු කරන්න. සෑම සැලසුමකටම සිංහල භාෂා සහාය ඇතුළත්.",
+    SI: "ඕනෑම විට අවලංගු කරන්න. සෑම සැලසුමකටම සිංහල භාෂා සහාය ඇතුළත්.",
   },
   pricingMostPopular: { EN: "Most popular", SI: "වඩාත් ජනප්‍රිය" },
   pricingMonthly: { EN: "/month", SI: "/මස" },
@@ -184,14 +265,14 @@ export const PUBLIC_STRINGS = {
   },
   finalCtaSubhead: {
     EN: "Join StudEd today and unlock structured courses, interactive waves, and gamified progress tracking.",
-    SI: "၁ අදම StudEd හ එක්වී ව්‍යුහගත පාඨමාලා, අන්තර්ක්‍රීයාකාරී තරංග සහ ක්‍රීඩාමය ප්‍රගති නිරීක්ෂණය විවෘත කරගන්න.",
+    SI: "අදම StudEd හ එක්වී ව්‍යුහගත පාඨමාලා, අන්තර්ක්‍රීයාකාරී තරංග සහ ක්‍රීඩාමය ප්‍රගති නිරීක්ෂණය විවෘත කරගන්න.",
   },
   finalCtaCreate: { EN: "Create your account", SI: "ඔබගේ ගිණුම සාදන්න" },
   finalCtaSignin: { EN: "Sign in", SI: "පිවිසෙන්න" },
 
   footerTagline: {
     EN: "Premium learning for Sri Lankan schools",
-    SI: "၁ Sri Lankan පාසල් සඳහා ප්‍රිමියම් අධ්‍යාපනය",
+    SI: "Sri Lankan පාසල් සඳහා ප්‍රිමියම් අධ්‍යාපනය",
   },
   footerProduct: { EN: "Product", SI: "නිෂ්පාදනය" },
   footerLearn: { EN: "Learn", SI: "ඉගෙනීම" },
@@ -217,49 +298,49 @@ export const PUBLIC_STRINGS = {
   registerHaveAccount: { EN: "Already have an account?", SI: "වර්තමානයේ ගිණුමක් ඇතිද?" },
   brandTaglineLogin: {
     EN: "Premium learning for Sri Lankan schools",
-    SI: "၁ Sri Lankan පාසල් සඳහා ප්‍රිමියම් අධ්‍යාපනය",
+    SI: "Sri Lankan පාසල් සඳහා ප්‍රිමියම් අධ්‍යාපනය",
   },
   brandTaglineRegister: { EN: "Learn smarter, level up faster", SI: "නුඹන් දැනුම වඩා වේගයෙන් ඉහළ යන්න" },
 
   brandFeature1: {
     EN: "Structured Course → Lesson → Wave learning",
-    SI: "၁ ව්‍යුහගත Course → Lesson → Wave ඉගෙනීම",
+    SI: "ව්‍යුහගත Course → Lesson → Wave ඉගෙනීම",
   },
   brandFeature2: {
     EN: "Earn XP and level up as you learn",
-    SI: "၁ ඉගෙනීමේදී XP අත්පත් කර මට්ටම් නඟින්න",
+    SI: "ඉගෙනීමේදී XP අත්පත් කර මට්ටම් නඟින්න",
   },
   brandFeature3: {
     EN: "Compete on global & course leaderboards",
-    SI: "၁ ගෝලීය සහ පාඨමාලා ලීඩර්බෝඩ් තරඟ කරන්න",
+    SI: "ගෝලීය සහ පාඨමාලා ලීඩර්බෝඩ් තරඟ කරන්න",
   },
   brandFeature4: {
     EN: "AI-assisted content with Sinhala support",
-    SI: "၁ AI සහාය ඇති අන්තර්ගතය, සිංහල සහාය සමඟ",
+    SI: "AI සහාය ඇති අන්තර්ගතය, සිංහල සහාය සමඟ",
   },
 
   brandFeature1R: {
     EN: "Interactive Learn + Evaluate phases",
-    SI: "၁ අන්තර්ක්‍රීයාකාරී Learn + Evaluate අදියර",
+    SI: "අන්තර්ක්‍රීයාකාරී Learn + Evaluate අදියර",
   },
   brandFeature2R: {
     EN: "Grade 1–11, O/L & A/L aligned content",
-    SI: "၁ 1–11, O/L සහ A/L ශ්‍රේණි සඳහා ගැලපෙන අන්තර්ගතය",
+    SI: "1–11, O/L සහ A/L ශ්‍රේණි සඳහා ගැලපෙන අන්තර්ගතය",
   },
   brandFeature3R: {
     EN: "Track proficiency and unlock badges",
-    SI: "၁ ප්‍රාඵල්‍යතා නිරීක්ෂණය සහ පටි විවෘත කරන්න",
+    SI: "ප්‍රාඵල්‍යතා නිරීක්ෂණය සහ පටි විවෘත කරන්න",
   },
   brandFeature4R: {
     EN: "Gamified XP system with leaderboards",
-    SI: "၁ ලීඩර්බෝඩ් සහිත ක්‍රීඩාමය XP පද්ධතිය",
+    SI: "ලීඩර්බෝඩ් සහිත ක්‍රීඩාමය XP පද්ධතිය",
   },
 
   /* Catalog */
   catalogExplore: { EN: "Explore courses", SI: "පාඨමාලා ගවේෂණය" },
   catalogExploreSub: {
     EN: "Browse published courses for Sri Lankan schools.",
-    SI: "၁ Sri Lankan පාසල් සඳහා ප්‍රකාශිත පාඨමාලා බලන්න.",
+    SI: "Sri Lankan පාසල් සඳහා ප්‍රකාශිත පාඨමාලා බලන්න.",
   },
   catalogSubscribeToUnlock: {
     EN: "Subscribe to unlock",

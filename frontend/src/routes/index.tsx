@@ -5,6 +5,7 @@ import {
   Brain,
   CalendarClock,
   Check,
+  ChevronDown,
   Compass,
   Gamepad2,
   Globe2,
@@ -17,19 +18,22 @@ import {
   Sparkles,
   Star,
   Trophy,
+  Users,
   Waves,
   Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { ProficiencyBadge } from "@/components/gamification/ProficiencyBadge";
-import { RankBadge } from "@/components/gamification/RankBadge";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { XPBar } from "@/components/gamification/XPBar";
 import { XPToast } from "@/components/gamification/XPToast";
 import { CountUp } from "@/components/public/CountUp";
-import { GamifiedPreview } from "@/components/public/GamifiedPreview";
 import { LanguageToggle } from "@/components/public/LanguageToggle";
+import { LiveLeaderboard } from "@/components/public/LiveLeaderboard";
+import { PlayableWave } from "@/components/public/PlayableWave";
 import { PublicFooter } from "@/components/public/PublicFooter";
+import { ScrollXpMeter } from "@/components/public/ScrollXpMeter";
+import { WaveMapHero } from "@/components/public/WaveMapHero";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/Card";
 import { ProgressRing } from "@/components/ui/ProgressRing";
@@ -47,7 +51,6 @@ export const Route = createFileRoute("/")({
 function IndexPage() {
   const { isAuthenticated, user } = useAuthStore();
   const { isSinhala } = usePublicI18n();
-  const reduce = useReducedMotion();
 
   const ctaLink =
     user?.role === "STUDENT"
@@ -61,6 +64,7 @@ function IndexPage() {
       <Hero ctaLink={ctaLink} authed={isAuthenticated} />
       <StatsBar />
       <HowItWorks />
+      <PlayableWaveSection />
       <GamificationShowcase />
       <CatalogPreview />
       <AudienceSegments />
@@ -68,41 +72,38 @@ function IndexPage() {
       <Testimonials />
       <FinalCta authed={isAuthenticated} />
       <PublicFooter />
-      {/* keep `reduce` referenced so the reduce-motion signal is honoured */}
-      <ReduceGuard reduce={reduce} />
+      <ScrollXpMeter />
     </div>
   );
-}
-
-function ReduceGuard({ reduce }: { reduce: boolean | null }) {
-  // no-op: keep the static analyser aware the value is used.
-  void reduce;
-  return null;
 }
 
 /* ---------------------------------- Hero ---------------------------------- */
 
 function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
   const { t } = usePublicI18n();
+  const reduce = useReducedMotion();
 
   return (
-    // No bg here — let parchment show through so the absolute blurs are visible
-    <section className="relative overflow-hidden px-4 pb-20 pt-28 sm:px-6 sm:pt-36 lg:pb-28">
-      {/* Atmospheric blur layers — placed BEFORE content, content has relative z-10 to stack on top */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 overflow-hidden pointer-events-none select-none"
-      >
-        {/* Top Centered Giant Orange core arch */}
-        <div className="absolute top-[-320px] left-1/2 -translate-x-1/2 w-[180vw] h-[700px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(249,115,22,1)_0%,rgba(249,115,22,0.55)_30%,rgba(249,115,22,0.1)_55%,transparent_72%)] blur-[90px]" />
-        {/* Left Side Sky Blue */}
-        <div className="absolute top-0 left-[-20%] w-[80vw] h-[600px] rounded-full bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.75)_0%,rgba(96,165,250,0.25)_50%,transparent_85%)] blur-[110px]" />
-        {/* Right Side Lavender */}
-        <div className="absolute top-0 right-[-20%] w-[80vw] h-[600px] rounded-full bg-[radial-gradient(circle_at_center,rgba(192,132,252,0.75)_0%,rgba(192,132,252,0.25)_50%,transparent_85%)] blur-[110px]" />
+    <section className="relative overflow-hidden px-4 pb-24 pt-32 sm:px-6 sm:pt-40">
+      {/* Atmosphere: graph-paper dots + soft brand washes */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 select-none">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(oklch(0.546 0.215 262.9 / 0.07) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+            maskImage: "linear-gradient(to bottom, black 0%, transparent 80%)",
+            WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 80%)",
+          }}
+        />
+        <div className="absolute -top-40 left-[-15%] h-[560px] w-[70vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.546_0.215_262.9_/_0.16)_0%,transparent_70%)] blur-[100px]" />
+        <div className="absolute -top-32 right-[-15%] h-[520px] w-[60vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.541_0.281_293_/_0.14)_0%,transparent_70%)] blur-[100px]" />
+        <div className="absolute bottom-[-20%] left-1/2 h-[420px] w-[70vw] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,oklch(0.696_0.17_162.5_/_0.08)_0%,transparent_70%)] blur-[110px]" />
       </div>
 
-      <div className="relative z-10 mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
-        {/* Left: copy */}
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+        {/* Copy */}
         <div className="flex flex-col items-start gap-6">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -114,33 +115,41 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
               <Sparkles className="h-3.5 w-3.5" />
               {t("heroBadge")}
             </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-success/25 bg-success/5 px-3 py-1.5 text-xs font-medium text-success">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+              </span>
+              {t("heroLiveChip")}
+            </span>
             <LanguageToggle />
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.05 }}
-            className="text-balance text-5xl font-normal font-serif leading-tight sm:text-7xl text-foreground"
+            transition={{ duration: 0.55, delay: 0.06 }}
+            className="text-balance font-serif text-5xl leading-[1.05] text-foreground sm:text-6xl lg:text-7xl"
           >
             {t("heroTitleA")}
             <br />
-            <span className="text-primary italic">{t("heroTitleB")}</span>
+            <span className="italic text-primary">{t("heroTitleB")}</span>
+            <span className="text-primary">.</span>
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="max-w-xl text-pretty text-base text-muted-foreground sm:text-lg"
+            transition={{ duration: 0.55, delay: 0.16 }}
+            className="max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg"
           >
             {t("heroSubtitle")}
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.25 }}
+            transition={{ duration: 0.55, delay: 0.26 }}
             className="flex flex-wrap gap-3"
           >
             {authed ? (
@@ -155,10 +164,10 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
                 <Link to="/register">
                   <Button
                     size="lg"
-                    className="gap-2 rounded-full px-8"
+                    className="gap-2 rounded-full px-8 shadow-lg shadow-primary/25"
                     onClick={() => playSuccessSound()}
                   >
-                    <Sparkles className="h-5 w-5" />
+                    <Zap className="h-5 w-5" />
                     {t("ctaGetStarted")}
                   </Button>
                 </Link>
@@ -175,7 +184,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.35 }}
+            transition={{ duration: 0.55, delay: 0.38 }}
             className="mt-2 flex items-center gap-3 text-xs text-muted-foreground"
           >
             <div className="flex -space-x-2">
@@ -197,15 +206,34 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
           </motion.div>
         </div>
 
-        {/* Right: live gamified preview */}
+        {/* Interactive wave map */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 32, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.2 }}
         >
-          <GamifiedPreview />
+          <WaveMapHero />
         </motion.div>
       </div>
+
+      {/* Scroll cue — feeds the Explorer XP meter */}
+      {!reduce && (
+        <motion.div
+          aria-hidden
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 0.6 }}
+          className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1 text-muted-foreground sm:flex"
+        >
+          <span className="text-[11px] font-medium">{t("heroScrollHint")}</span>
+          <motion.span
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 1.8, repeat: Number.POSITIVE_INFINITY }}
+          >
+            <ChevronDown className="h-4 w-4" />
+          </motion.span>
+        </motion.div>
+      )}
     </section>
   );
 }
@@ -215,16 +243,16 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
 function StatsBar() {
   const { t } = usePublicI18n();
 
-  const stats: { to: number; suffix?: string; label: string }[] = [
-    { to: 13, label: t("statsGradeLevels") },
-    { to: 24, label: t("statsSubjects") },
-    { to: 12500, label: t("statsLearners") },
-    { to: 1840000, label: t("statsXpAwarded") },
+  const stats: { to: number; label: string; icon: LucideIcon }[] = [
+    { to: 13, label: t("statsGradeLevels"), icon: GraduationCap },
+    { to: 24, label: t("statsSubjects"), icon: BookOpen },
+    { to: 12500, label: t("statsLearners"), icon: Users },
+    { to: 1840000, label: t("statsXpAwarded"), icon: Zap },
   ];
 
   return (
     <section className="border-y bg-card/50">
-      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-4 py-10 sm:grid-cols-4 sm:px-6">
+      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-4 py-12 sm:grid-cols-4 sm:px-6">
         {stats.map((s) => (
           <motion.div
             key={s.label}
@@ -232,12 +260,15 @@ function StatsBar() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
-            className="text-center"
+            className="flex flex-col items-center gap-2 text-center"
           >
-            <p className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-              <CountUp to={s.to} suffix={s.suffix ?? ""} />
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/15">
+              <s.icon className="h-4.5 w-4.5" />
+            </span>
+            <p className="text-3xl font-extrabold tabular-nums tracking-tight text-foreground sm:text-4xl">
+              <CountUp to={s.to} />
             </p>
-            <p className="mt-1 text-xs font-medium text-muted-foreground sm:text-sm">{s.label}</p>
+            <p className="text-xs font-medium text-muted-foreground sm:text-sm">{s.label}</p>
           </motion.div>
         ))}
       </div>
@@ -251,19 +282,19 @@ function HowItWorks() {
   const { t } = usePublicI18n();
   const reduce = useReducedMotion();
 
-  const steps: { icon: LucideIcon; heading: string; copy: string }[] = [
-    { icon: BookOpen, heading: t("howStep1"), copy: t("howStep1Copy") },
-    { icon: Layers, heading: t("howStep2"), copy: t("howStep2Copy") },
-    { icon: Waves, heading: t("howStep3"), copy: t("howStep3Copy") },
+  const steps: { icon: LucideIcon; heading: string; copy: string; num: string }[] = [
+    { icon: BookOpen, heading: t("howStep1"), copy: t("howStep1Copy"), num: "01" },
+    { icon: Layers, heading: t("howStep2"), copy: t("howStep2Copy"), num: "02" },
+    { icon: Waves, heading: t("howStep3"), copy: t("howStep3Copy"), num: "03" },
   ];
 
   return (
-    <section className="px-4 py-20 sm:px-6">
+    <section className="px-4 py-24 sm:px-6">
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("howHeading")} subhead={t("howSubhead")} />
 
         <div className="relative mt-14 grid gap-6 sm:grid-cols-3">
-          {/* Animated connector line */}
+          {/* Connector line with a travelling packet */}
           <motion.div
             aria-hidden
             initial={{ scaleX: 0 }}
@@ -273,28 +304,51 @@ function HowItWorks() {
             style={{ transformOrigin: "left" }}
             className="absolute left-0 right-0 top-10 hidden h-px bg-gradient-to-r from-primary/40 via-purple/40 to-gold/40 sm:block"
           />
-          {steps.map(({ icon: Icon, heading, copy }, i) => (
+          {!reduce && (
+            <motion.span
+              aria-hidden
+              className="absolute top-10 hidden h-2 w-2 -translate-y-1/2 rounded-full bg-primary shadow-md shadow-primary/40 sm:block"
+              animate={{ left: ["2%", "98%"], opacity: [0, 1, 1, 0] }}
+              transition={{ duration: 5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+            />
+          )}
+          {steps.map(({ icon: Icon, heading, copy, num }, i) => (
             <motion.div
               key={heading}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: i * 0.15 }}
-              className="relative rounded-2xl border bg-card p-6 shadow-sm lift-on-hover hover:shadow-md"
+              className="relative rounded-3xl border bg-card p-7 shadow-sm lift-on-hover hover:shadow-md"
             >
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
-                <Icon className="h-6 w-6" />
+              <div className="flex items-start justify-between">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                  <Icon className="h-6 w-6" />
+                </div>
+                <span className="font-serif text-3xl italic text-primary/30">{num}</span>
               </div>
-              <h3 className="text-lg font-semibold">{heading}</h3>
+              <h3 className="mt-5 text-lg font-semibold">{heading}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{copy}</p>
-              <span className="mt-4 inline-flex text-xs font-bold uppercase tracking-wide text-primary/80">
-                Step {i + 1}
-              </span>
             </motion.div>
           ))}
         </div>
       </div>
-      <ReduceGuard reduce={reduce} />
+    </section>
+  );
+}
+
+/* ----------------------------- Playable wave ------------------------------ */
+
+function PlayableWaveSection() {
+  const { t } = usePublicI18n();
+  return (
+    <section className="border-y bg-gradient-intelligence px-4 py-24 sm:px-6">
+      <div className="mx-auto max-w-6xl">
+        <SectionHeading title={t("playHeading")} subhead={t("playSubhead")} />
+        <div className="mt-12">
+          <PlayableWave />
+        </div>
+      </div>
     </section>
   );
 }
@@ -311,11 +365,11 @@ function GamificationShowcase() {
   };
 
   return (
-    <section className="border-y bg-card/30 px-4 py-20 sm:px-6">
+    <section className="px-4 py-24 sm:px-6">
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("gamificationHeading")} subhead={t("gamificationSubhead")} />
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {/* XP & Levels */}
           <ShowcaseCard
             icon={Zap}
@@ -326,18 +380,13 @@ function GamificationShowcase() {
             <XPBar totalXp={1750} />
           </ShowcaseCard>
 
-          {/* Leaderboards */}
+          {/* Live leaderboard */}
           <ShowcaseCard
             icon={Trophy}
             title={t("mechanicLeaderboardTitle")}
             copy={t("mechanicLeaderboardCopy")}
           >
-            <div className="flex items-center gap-3">
-              <RankBadge rank={1} size="lg" />
-              <RankBadge rank={2} />
-              <RankBadge rank={3} />
-              <RankBadge rank={7} size="sm" total={100} />
-            </div>
+            <LiveLeaderboard />
           </ShowcaseCard>
 
           {/* Proficiency ladder */}
@@ -346,19 +395,7 @@ function GamificationShowcase() {
             title={t("mechanicProficiencyTitle")}
             copy={t("mechanicProficiencyCopy")}
           >
-            <div className="flex flex-wrap items-center gap-2">
-              {(
-                [
-                  "NOT_STARTED",
-                  "IN_PROGRESS",
-                  "COMPLETED",
-                  "PROFICIENT",
-                  "EXPERT",
-                ] as ProficiencyLevel[]
-              ).map((lvl) => (
-                <ProficiencyBadge key={lvl} level={lvl} size="sm" showLabel />
-              ))}
-            </div>
+            <ProficiencyLadder />
           </ShowcaseCard>
 
           {/* Streaks */}
@@ -367,7 +404,7 @@ function GamificationShowcase() {
             title={t("mechanicStreakTitle")}
             copy={t("mechanicStreakCopy")}
           >
-            <StreakFlame dayCount={7} size="lg" />
+            <StreakWeek />
           </ShowcaseCard>
         </div>
       </div>
@@ -378,6 +415,85 @@ function GamificationShowcase() {
         onDismiss={() => setXpToastAmount(0)}
       />
     </section>
+  );
+}
+
+/** Five-step proficiency ladder with an animated fill up to Proficient. */
+function ProficiencyLadder() {
+  const levels: ProficiencyLevel[] = [
+    "NOT_STARTED",
+    "IN_PROGRESS",
+    "COMPLETED",
+    "PROFICIENT",
+    "EXPERT",
+  ];
+
+  return (
+    <div className="pt-1">
+      <div className="relative flex items-center justify-between">
+        <div
+          aria-hidden
+          className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-border"
+        />
+        <motion.div
+          aria-hidden
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 0.75 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.4, ease: "easeOut", delay: 0.3 }}
+          style={{ transformOrigin: "left" }}
+          className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-border via-success to-gold"
+        />
+        {levels.map((lvl) => (
+          <div
+            key={lvl}
+            className="relative z-10 bg-card px-0.5"
+            title={proficiencyMeta(lvl).label}
+          >
+            <ProficiencyBadge level={lvl} size="sm" showLabel={false} />
+          </div>
+        ))}
+      </div>
+      <div className="mt-2 flex items-center justify-between text-[9px] font-medium text-muted-foreground">
+        <span>Start</span>
+        <span className="text-gold">Proficient</span>
+        <span className="text-purple">Expert</span>
+      </div>
+    </div>
+  );
+}
+
+/** Seven-day streak strip: flame + checked weekday dots. */
+function StreakWeek() {
+  const days = [
+    { id: "mon", label: "M" },
+    { id: "tue", label: "T" },
+    { id: "wed", label: "W" },
+    { id: "thu", label: "T" },
+    { id: "fri", label: "F" },
+    { id: "sat", label: "S" },
+    { id: "sun", label: "S" },
+  ];
+  return (
+    <div className="flex flex-col gap-3 pt-1">
+      <StreakFlame dayCount={7} size="lg" />
+      <div className="flex items-center gap-1.5">
+        {days.map((day, i) => (
+          <div key={day.id} className="flex flex-col items-center gap-1">
+            <motion.span
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 + i * 0.07, type: "spring", stiffness: 300, damping: 16 }}
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-success/15 text-success ring-1 ring-success/30"
+            >
+              <Check className="h-3.5 w-3.5" strokeWidth={3} />
+            </motion.span>
+            <span className="text-[9px] font-medium text-muted-foreground">{day.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -402,9 +518,9 @@ function ShowcaseCard({
       transition={{ duration: 0.45 }}
       whileHover={{ y: -4 }}
       onMouseEnter={onMouseEnter}
-      className="group flex flex-col gap-4 rounded-2xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+      className="group flex flex-col gap-4 rounded-3xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
     >
-      <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/20">
+      <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
         <Icon className="h-5 w-5" />
       </div>
       <div>
@@ -425,11 +541,18 @@ const SUBJECT_ICON: Record<FeaturedCourse["subjectIcon"], LucideIcon> = {
   sinhala: BookOpen,
 };
 
+const SUBJECT_COVER: Record<FeaturedCourse["subjectIcon"], string> = {
+  math: "from-primary/20 via-primary/8 to-transparent",
+  science: "from-success/20 via-success/8 to-transparent",
+  english: "from-purple/20 via-purple/8 to-transparent",
+  sinhala: "from-gold/20 via-gold/8 to-transparent",
+};
+
 function CatalogPreview() {
   const { t } = usePublicI18n();
 
   return (
-    <section className="px-4 py-20 sm:px-6">
+    <section className="border-y bg-card/30 px-4 py-24 sm:px-6">
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("catalogHeading")} subhead={t("catalogSubhead")} />
 
@@ -441,7 +564,7 @@ function CatalogPreview() {
 
         <div className="mt-10 flex justify-center">
           <Link to="/courses">
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2 rounded-full">
               <Compass className="h-4 w-4" />
               {t("catalogViewAll")}
             </Button>
@@ -466,11 +589,16 @@ function FeaturedCourseCard({ course, delay }: { course: FeaturedCourse; delay: 
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay }}
       whileHover={{ y: -4 }}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition-shadow hover:shadow-md"
+      className="group flex h-full flex-col overflow-hidden rounded-3xl border bg-card shadow-sm transition-shadow hover:shadow-md"
     >
-      <div className="relative h-24 overflow-hidden bg-gradient-to-br from-primary/15 via-purple/10 to-gold/10">
+      <div
+        className={cn(
+          "relative h-24 overflow-hidden bg-gradient-to-br",
+          SUBJECT_COVER[course.subjectIcon],
+        )}
+      >
         <div className="absolute inset-0 flex items-center justify-center">
-          <Icon className="h-10 w-10 text-primary/40 transition-transform group-hover:scale-110" />
+          <Icon className="h-10 w-10 text-foreground/25 transition-transform group-hover:scale-110" />
         </div>
         <span className="absolute right-3 top-3 rounded-full bg-background/80 px-2 py-0.5 text-[10px] font-semibold backdrop-blur">
           {course.gradeLevel}
@@ -537,7 +665,7 @@ function AudienceSegments() {
   ];
 
   return (
-    <section className="border-y bg-card/30 px-4 py-20 sm:px-6">
+    <section className="px-4 py-24 sm:px-6">
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("audienceHeading")} />
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -549,14 +677,17 @@ function AudienceSegments() {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
               whileHover={{ y: -4 }}
-              className="relative overflow-hidden rounded-2xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+              className="relative overflow-hidden rounded-3xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
             >
               <div
                 aria-hidden
-                className={`absolute -right-8 -top-8 h-28 w-28 rounded-full bg-gradient-to-br ${item.accent} blur-2xl`}
+                className={cn(
+                  "absolute -right-8 -top-8 h-28 w-28 rounded-full bg-gradient-to-br blur-2xl",
+                  item.accent,
+                )}
               />
               <div className="relative">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-background/60 text-primary ring-1 ring-primary/20 backdrop-blur">
+                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-background/60 text-primary ring-1 ring-primary/20 backdrop-blur">
                   <item.icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-base font-semibold">{item.title}</h3>
@@ -589,7 +720,6 @@ const PRICING_TIERS: PricingTier[] = [
     id: "free",
     name: "Free Preview",
     price: "LKR 0",
-    period: "",
     description: "Explore the first wave of every course — no card required.",
     features: ["Browse full catalog", "Sample Wave 1 of any course", "Daily streak tracking"],
     cta: "Get started free",
@@ -604,7 +734,7 @@ const PRICING_TIERS: PricingTier[] = [
       "Unlimited waves in your grade",
       "Global & course leaderboards",
       "Proficiency ladder + badges",
-      "Bilingual interface (EN / සිං)",
+      "Bilingual interface (EN / SI)",
     ],
     cta: "Choose Student plan",
     highlighted: true,
@@ -613,7 +743,6 @@ const PRICING_TIERS: PricingTier[] = [
     id: "school",
     name: "School License",
     price: "Custom",
-    period: "",
     description: "Bulk enrollment, admin dashboards and progress reports for schools.",
     features: [
       "Bulk student enrollment",
@@ -629,7 +758,7 @@ function PricingPreview({ authed }: { authed: boolean }) {
   const { t } = usePublicI18n();
 
   return (
-    <section id="pricing" className="scroll-mt-20 px-4 py-20 sm:px-6">
+    <section id="pricing" className="scroll-mt-20 border-y bg-card/30 px-4 py-24 sm:px-6">
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("pricingHeading")} subhead={t("pricingSubhead")} />
 
@@ -637,14 +766,6 @@ function PricingPreview({ authed }: { authed: boolean }) {
           {PRICING_TIERS.map((tier, i) => (
             <PricingTierCard key={tier.id} tier={tier} authed={authed} delay={i * 0.1} />
           ))}
-        </div>
-
-        <div className="mt-10 flex justify-center">
-          <a href="#pricing">
-            <Button variant="ghost" className="gap-2">
-              {t("ctaSeePricing")}
-            </Button>
-          </a>
         </div>
       </div>
     </section>
@@ -660,6 +781,8 @@ function PricingTierCard({
   authed: boolean;
   delay: number;
 }) {
+  const { t } = usePublicI18n();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -669,20 +792,20 @@ function PricingTierCard({
       whileHover={{ y: -4 }}
       className={
         tier.highlighted
-          ? "relative overflow-hidden rounded-2xl border-2 border-purple/60 bg-card p-7 shadow-lg ring-2 ring-purple/20"
-          : "relative overflow-hidden rounded-2xl border bg-card p-7 shadow-sm transition-shadow hover:shadow-md"
+          ? "relative overflow-hidden rounded-3xl border-2 border-purple/60 bg-card p-7 shadow-xl shadow-purple/10 ring-2 ring-purple/20"
+          : "relative overflow-hidden rounded-3xl border bg-card p-7 shadow-sm transition-shadow hover:shadow-md"
       }
     >
       {tier.highlighted && (
         <span className="absolute right-5 top-5 inline-flex items-center gap-1 rounded-full bg-purple px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-purple-foreground">
           <Star className="h-3 w-3 fill-white" />
-          Most popular
+          {t("pricingMostPopular")}
         </span>
       )}
       <h3 className="text-lg font-semibold">{tier.name}</h3>
       <p className="mt-1 text-sm text-muted-foreground">{tier.description}</p>
       <div className="mt-4 flex items-baseline gap-1">
-        <span className="text-3xl font-extrabold tracking-tight">{tier.price}</span>
+        <span className="text-3xl font-extrabold tabular-nums tracking-tight">{tier.price}</span>
         {tier.period && <span className="text-sm text-muted-foreground">{tier.period}</span>}
       </div>
 
@@ -698,7 +821,7 @@ function PricingTierCard({
       <div className="mt-7">
         <Link to={authed ? "/dashboard" : "/register"}>
           <Button
-            className="w-full"
+            className="w-full rounded-full"
             variant={tier.highlighted ? "default" : "outline"}
             onClick={() => playSuccessSound()}
           >
@@ -751,7 +874,7 @@ function Testimonials() {
   const { t, isSinhala } = usePublicI18n();
 
   return (
-    <section className="border-y bg-card/30 px-4 py-20 sm:px-6">
+    <section className="px-4 py-24 sm:px-6">
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("testimonialsHeading")} />
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -762,7 +885,7 @@ function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="flex flex-col gap-3 rounded-2xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+              className="flex flex-col gap-3 rounded-3xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
             >
               <Quote className="h-6 w-6 text-primary/40" />
               <div className="flex items-center gap-1">
@@ -792,19 +915,19 @@ function FinalCta({ authed }: { authed: boolean }) {
   const reduce = useReducedMotion();
 
   return (
-    <section className="px-4 py-20 sm:px-6">
+    <section className="px-4 pb-24 pt-4 sm:px-6">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.96 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl border bg-gradient-to-br from-primary via-primary/80 to-purple/60 p-10 text-center shadow-xl sm:p-14"
+        className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border bg-gradient-to-br from-primary via-primary/85 to-purple/70 p-10 text-center shadow-2xl sm:p-16"
       >
         {!reduce && (
           <>
             <span
               aria-hidden
-              className="pointer-events-none absolute -left-12 -top-12 h-48 w-48 rounded-full bg-gold/30 blur-3xl motion"
+              className="pointer-events-none absolute -left-12 -top-12 h-48 w-48 rounded-full bg-gold/30 blur-3xl"
             />
             <span
               aria-hidden
@@ -813,14 +936,16 @@ function FinalCta({ authed }: { authed: boolean }) {
           </>
         )}
         <div className="relative space-y-6">
-          <h2 className="bg-gradient-to-br from-white to-white/80 bg-clip-text text-3xl font-extrabold text-transparent sm:text-5xl">
-            {t("finalCtaHeading")}
-          </h2>
+          <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-white/90 ring-1 ring-white/20">
+            <Zap className="h-3.5 w-3.5 fill-gold text-gold" />
+            +250 XP
+          </p>
+          <h2 className="font-serif text-4xl text-white sm:text-6xl">{t("finalCtaHeading")}</h2>
           <p className="mx-auto max-w-xl text-pretty text-white/80">{t("finalCtaSubhead")}</p>
           <div className="flex flex-wrap justify-center gap-3">
             {authed ? (
               <Link to="/dashboard">
-                <Button size="lg" className="bg-white text-primary hover:bg-white/90">
+                <Button size="lg" className="rounded-full bg-white text-primary hover:bg-white/90">
                   {t("ctaPortal")}
                 </Button>
               </Link>
@@ -829,7 +954,7 @@ function FinalCta({ authed }: { authed: boolean }) {
                 <Link to="/register">
                   <Button
                     size="lg"
-                    className="bg-white text-primary hover:bg-white/90"
+                    className="rounded-full bg-white text-primary hover:bg-white/90"
                     onClick={() => playSuccessSound()}
                   >
                     {t("finalCtaCreate")}
@@ -839,7 +964,7 @@ function FinalCta({ authed }: { authed: boolean }) {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-white/30 bg-white/10 text-white hover:bg-white/20"
+                    className="rounded-full border-white/30 bg-white/10 text-white hover:bg-white/20"
                   >
                     {t("finalCtaSignin")}
                   </Button>
@@ -864,11 +989,9 @@ function SectionHeading({ title, subhead }: { title: string; subhead?: string })
       transition={{ duration: 0.4 }}
       className="text-center"
     >
-      <h2 className="text-balance text-4xl font-normal font-serif sm:text-5xl text-foreground">
-        {title}
-      </h2>
+      <h2 className="text-balance font-serif text-4xl text-foreground sm:text-5xl">{title}</h2>
       {subhead ? (
-        <p className="mx-auto mt-3 max-w-2xl text-pretty text-sm text-muted-foreground sm:text-base">
+        <p className="mx-auto mt-4 max-w-2xl text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
           {subhead}
         </p>
       ) : null}
