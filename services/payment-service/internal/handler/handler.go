@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/studed/payment-service/internal/model"
 	"github.com/studed/payment-service/internal/payhere"
 	"gorm.io/gorm"
@@ -82,6 +83,7 @@ func (h *Handler) createSubscription(w http.ResponseWriter, r *http.Request) {
 
 	now := time.Now()
 	sub := model.Subscription{
+		ID:        uuid.New().String(),
 		UserID:    req.UserID,
 		Tier:      req.Tier,
 		Status:    model.SubscriptionStatusActive,
