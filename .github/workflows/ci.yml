@@ -61,5 +61,5 @@ jobs:
           version: 'v3.14.0'
       - name: Helm Chart Lint
         run: helm lint infra/helm/studed
-      - name: K8s Manifest Dry Run
-        run: kubectl apply --dry-run=client -f infra/k8s/namespace.yaml -f infra/k8s/configmap.yaml -f infra/k8s/postgres-deployment.yaml -f infra/k8s/redis-deployment.yaml -f infra/k8s/elasticsearch-deployment.yaml -f infra/k8s/services/ -f infra/k8s/ingress.yaml
+      - name: Helm Offline Render Validation
+        run: helm template studed-ci-release infra/helm/studed > /dev/null
