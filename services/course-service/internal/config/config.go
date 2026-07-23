@@ -13,7 +13,7 @@ type Config struct {
 
 func Load() (*Config, error) {
 	return &Config{
-		ServiceAddr:      getEnv("COURSE_SERVICE_ADDR", ":8083"),
+		ServiceAddr:      getEnv("LISTEN_ADDR", ":8083"),
 		DatabaseURL:      getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable"),
 		AuthServiceAddr:  getEnv("AUTH_SERVICE_ADDR", "localhost:8081"),
 		ElasticsearchURL: getEnv("ELASTICSEARCH_URL", "http://localhost:9200"),

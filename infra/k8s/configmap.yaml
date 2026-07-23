@@ -4,6 +4,7 @@ metadata:
   name: studed-config
   namespace: studed
 data:
+  DATABASE_URL: "postgres://studed_user:CHANGE_ME_IN_PRODUCTION@postgres:5432/studed?sslmode=disable"
   POSTGRES_HOST: "postgres"
   POSTGRES_PORT: "5432"
   POSTGRES_DB: "studed"

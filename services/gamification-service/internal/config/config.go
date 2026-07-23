@@ -13,7 +13,7 @@ type Config struct {
 
 func Load() (*Config, error) {
 	cfg := &Config{
-		ServiceAddr: getEnv("GAMIFICATION_SERVICE_ADDR", ":8088"),
+		ServiceAddr: getEnv("LISTEN_ADDR", ":8088"),
 		DatabaseURL: getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable"),
 		RedisAddr:   getEnv("REDIS_ADDR", "localhost:6379"),
 	}
