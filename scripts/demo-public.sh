@@ -26,11 +26,13 @@ fi
 if [ "${IS_K8S_ACTIVE}" = "true" ]; then
   echo "[demo] ✅ Detected active Kubernetes (k3d/K3s) deployment mode!"
 else
-  echo "[demo] Detected Docker Compose deployment mode..."
-  # Pre-flight check: ensure port 8080 isn't blocked by another process
-  if lsof -i :8080 >/dev/null 2>&1 && ! docker ps --format '{{.Names}}' | grep -q "api-gateway"; then
-    echo "⚠️ Warning: Port 8080 is currently occupied by a non-compose process."
-    echo "If you have a local k3d cluster running, stop it with 'make k8s-down' or use Kubernetes mode."
+  # Pre-flight check: auto-free port 8080 if occupied by k3d
+  if lsof -i :8080 >/dev/null 2>&1; then
+    if command -v k3d >/dev/null 2>&1 && k3d cluster list 2>&1 | grep -q "studed-local"; then
+      echo "[demo] Port 8080 is held by local k3d cluster. Stopping k3d cluster to free port..."
+      k3d cluster stop studed-local || true
+      sleep 2
+    fi
   fi
   
   # Start Compose microservice stack
