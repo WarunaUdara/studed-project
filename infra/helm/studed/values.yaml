@@ -1,0 +1,104 @@
+# Default values for StudEd Helm Chart
+
+global:
+  environment: dev
+  namespace: studed
+  domain: mumps-lapel-rinsing.ngrok-free.dev
+
+config:
+  postgresHost: "postgres"
+  postgresPort: "5432"
+  postgresDb: "studed"
+  redisAddr: "redis:6379"
+  elasticsearchUrl: "http://elasticsearch:9200"
+
+secrets:
+  postgresUser: "studed_user"
+  postgresPassword: "CHANGE_ME_IN_PRODUCTION"
+  jwtAccessSecret: "CHANGE_ME_SUPER_SECRET_JWT_ACCESS_KEY_32_BYTES"
+  jwtRefreshSecret: "CHANGE_ME_SUPER_SECRET_JWT_REFRESH_KEY_32_BYTES"
+  stripeSecretKey: "sk_test_mock_key"
+  geminiApiKey: "AIzaSyMockKey"
+
+services:
+  apiGateway:
+    image: studed-doc-api-gateway:latest
+    replicas: 1
+    port: 8080
+    resources:
+      requests:
+        cpu: 10m
+        memory: 20Mi
+      limits:
+        cpu: 150m
+        memory: 64Mi
+
+  authService:
+    image: studed-doc-auth-service:latest
+    replicas: 1
+    grpcPort: 8081
+    httpPort: 8085
+    resources:
+      requests:
+        cpu: 10m
+        memory: 15Mi
+      limits:
+        cpu: 100m
+        memory: 48Mi
+
+  courseService:
+    image: studed-doc-course-service:latest
+    replicas: 1
+    grpcPort: 8083
+    httpPort: 8084
+    resources:
+      requests:
+        cpu: 10m
+        memory: 15Mi
+      limits:
+        cpu: 100m
+        memory: 48Mi
+
+  progressService:
+    image: studed-doc-progress-service:latest
+    replicas: 1
+    grpcPort: 8086
+    httpPort: 8087
+    resources:
+      requests:
+        cpu: 10m
+        memory: 15Mi
+      limits:
+        cpu: 100m
+        memory: 48Mi
+
+  gamificationService:
+    image: studed-doc-gamification-service:latest
+    replicas: 1
+    grpcPort: 8088
+    httpPort: 8089
+    resources:
+      requests:
+        cpu: 10m
+        memory: 15Mi
+      limits:
+        cpu: 100m
+        memory: 48Mi
+
+  frontend:
+    image: studed-doc-frontend:latest
+    replicas: 1
+    port: 80
+    resources:
+      requests:
+        cpu: 10m
+        memory: 20Mi
+      limits:
+        cpu: 100m
+        memory: 64Mi
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"

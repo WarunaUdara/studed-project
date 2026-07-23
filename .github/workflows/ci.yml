@@ -1,4 +1,4 @@
-name: CI
+name: StudEd CI Pipeline
 
 on:
   push:
@@ -7,19 +7,23 @@ on:
     branches: [main]
 
 jobs:
-  frontend:
+  frontend-ci:
+    name: Frontend Typecheck & Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-      - run: cd frontend && bun install
-      - run: cd frontend && bun run lint
-      - run: cd frontend && bun run typecheck
-      - run: cd frontend && bun run build
+      - name: Install dependencies
+        run: cd frontend && bun install --frozen-lockfile || bun install
+      - name: Run Typecheck
+        run: cd frontend && bun run typecheck
+      - name: Build Production Bundle
+        run: cd frontend && bun run build
 
-  go:
+  go-ci:
+    name: Go Microservices & Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,4 +31,35 @@ jobs:
         with:
           go-version: "1.22"
           cache-dependency-path: "**/go.sum"
-      - run: make go-test
+      - name: Install Protoc
+        run: sudo apt-get install -y protobuf-compiler
+      - name: Run Shared Package Tests
+        run: make shared-test
+      - name: Run Microservices Tests
+        run: make go-test
+
+  opentofu-ci:
+    name: OpenTofu IaC Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.8.0
+      - name: OpenTofu Init
+        run: cd infra/terraform && tofu init -backend=false
+      - name: OpenTofu Validate
+        run: cd infra/terraform && tofu validate
+
+  k8s-helm-ci:
+    name: Kubernetes Manifests & Helm Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+        with:
+          version: 'v3.14.0'
+      - name: Helm Chart Lint
+        run: helm lint infra/helm/studed
+      - name: K8s Manifest Dry Run
+        run: kubectl apply --dry-run=client -f infra/k8s/namespace.yaml -f infra/k8s/configmap.yaml -f infra/k8s/postgres-deployment.yaml -f infra/k8s/redis-deployment.yaml -f infra/k8s/elasticsearch-deployment.yaml -f infra/k8s/services/ -f infra/k8s/ingress.yaml

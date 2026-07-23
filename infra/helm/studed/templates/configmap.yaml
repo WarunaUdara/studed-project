@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "studed.name" . }}-config
+  labels:
+    {{- include "studed.labels" . | nindent 4 }}
+data:
+  DATABASE_URL: "postgres://{{ .Values.secrets.postgresUser }}:{{ .Values.secrets.postgresPassword }}@{{ .Values.config.postgresHost }}:{{ .Values.config.postgresPort }}/{{ .Values.config.postgresDb }}?sslmode=disable"
+  POSTGRES_HOST: {{ .Values.config.postgresHost | quote }}
+  POSTGRES_PORT: {{ .Values.config.postgresPort | quote }}
+  POSTGRES_DB: {{ .Values.config.postgresDb | quote }}
+  REDIS_ADDR: {{ .Values.config.redisAddr | quote }}
+  ELASTICSEARCH_URL: {{ .Values.config.elasticsearchUrl | quote }}
+  AUTH_SERVICE_ADDR: "auth-service:{{ .Values.services.authService.grpcPort }}"
+  COURSE_SERVICE_ADDR: "course-service:{{ .Values.services.courseService.grpcPort }}"
+  PROGRESS_SERVICE_ADDR: "progress-service:{{ .Values.services.progressService.grpcPort }}"
+  GAMIFICATION_SERVICE_ADDR: "gamification-service:{{ .Values.services.gamificationService.grpcPort }}"

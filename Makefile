@@ -38,6 +38,12 @@
  iac-apply:
 	cd infra/terraform && tofu apply -auto-approve
 
+ helm-lint:
+	/opt/homebrew/bin/helm lint infra/helm/studed || helm lint infra/helm/studed
+
+ ci-local: frontend-typecheck frontend-build go-test shared-test helm-lint iac-plan
+	@echo "✅ All local CI pre-flight checks passed!"
+
  dev:
 	./scripts/dev.sh
 

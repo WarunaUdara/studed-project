@@ -1,0 +1,9 @@
+apiVersion: v2
+name: studed
+description: Helm chart for StudEd microservices, API Gateway, frontend, and infrastructure
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+maintainers:
+  - name: StudEd DevOps Team
+    email: devops@studed.lk
