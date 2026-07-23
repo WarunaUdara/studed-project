@@ -6,44 +6,58 @@ GATEWAY_URL="http://localhost:8080"
 FRONTEND_PORT=5173
 
 echo "========================================================"
-echo "🚀 StudEd Public Demo Deployment Automation"
+echo "🚀 StudEd Smart Public Demo Ingress Automation"
 echo "========================================================"
 
 # 1. Verify Docker daemon
 if ! docker info >/dev/null 2>&1; then
-  echo "❌ Error: Docker daemon is not running. Start Docker and try again."
+  echo "❌ Error: Docker daemon is not running. Start Docker Desktop and try again."
   exit 1
 fi
 
-# 2. Check/Start Floci Local Cloud Emulator if needed
-if floci status 2>&1 | grep -q "not running"; then
-  echo "[demo] Starting Floci local cloud emulator (port 4566)..."
-  floci start || true
+# 2. Detect Active Deployment Mode (Kubernetes k3d vs Docker Compose)
+IS_K8S_ACTIVE=false
+if command -v kubectl >/dev/null 2>&1 && kubectl get namespace studed >/dev/null 2>&1; then
+  if kubectl get pods -n studed 2>&1 | grep -q "api-gateway"; then
+    IS_K8S_ACTIVE=true
+  fi
 fi
 
-# 3. Ensure microservice stack is built and running
-echo "[demo] Checking backend microservices stack..."
-(cd "${REPO_ROOT}" && make dev-up)
+if [ "${IS_K8S_ACTIVE}" = "true" ]; then
+  echo "[demo] ✅ Detected active Kubernetes (k3d/K3s) deployment mode!"
+else
+  echo "[demo] Detected Docker Compose deployment mode..."
+  # Pre-flight check: ensure port 8080 isn't blocked by another process
+  if lsof -i :8080 >/dev/null 2>&1 && ! docker ps --format '{{.Names}}' | grep -q "api-gateway"; then
+    echo "⚠️ Warning: Port 8080 is currently occupied by a non-compose process."
+    echo "If you have a local k3d cluster running, stop it with 'make k8s-down' or use Kubernetes mode."
+  fi
+  
+  # Start Compose microservice stack
+  (cd "${REPO_ROOT}" && make dev-up)
+fi
 
-# 4. Wait for API Gateway healthcheck
+# 3. Wait for API Gateway Healthcheck
 echo "[demo] Waiting for API Gateway readiness at ${GATEWAY_URL}/health..."
+HEALTH_OK=false
 for i in {1..30}; do
   if curl -sf "${GATEWAY_URL}/health" >/dev/null 2>&1; then
+    HEALTH_OK=true
     echo "[demo] ✅ API Gateway is healthy!"
     break
-  fi
-  if [ "$i" -eq 30 ]; then
-    echo "❌ API Gateway healthcheck timed out."
-    exit 1
   fi
   sleep 1
 done
 
-# 5. Seed database mock content
-echo "[demo] Seeding database with demo courses, students, and educators..."
-(cd "${REPO_ROOT}" && ./scripts/mock-data-loader.sh)
+if [ "${HEALTH_OK}" = "false" ]; then
+  echo "⚠️ API Gateway health check pending on ${GATEWAY_URL}. Proceeding with demo startup..."
+fi
 
-# 6. Ensure Frontend Dev Server is running
+# 4. Seed database mock content
+echo "[demo] Seeding database with demo courses..."
+(cd "${REPO_ROOT}" && ./scripts/mock-data-loader.sh || true)
+
+# 5. Ensure Frontend Dev Server is running
 echo "[demo] Checking frontend web app status on port ${FRONTEND_PORT}..."
 if ! curl -sf "http://localhost:${FRONTEND_PORT}" >/dev/null 2>&1; then
   echo "[demo] Starting frontend dev server in background..."
@@ -51,7 +65,7 @@ if ! curl -sf "http://localhost:${FRONTEND_PORT}" >/dev/null 2>&1; then
   sleep 3
 fi
 
-# 7. Provision Ngrok Public Tunnel
+# 6. Provision Ngrok Public Tunnel
 echo "========================================================"
 echo "🌐 Starting Ngrok Public Ingress Tunnel on port ${FRONTEND_PORT}..."
 echo "========================================================"

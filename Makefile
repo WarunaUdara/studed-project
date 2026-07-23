@@ -20,6 +20,15 @@
  demo-public:
 	./scripts/demo-public.sh
 
+ k8s-up:
+	./scripts/k8s-dev.sh up
+
+ k8s-down:
+	./scripts/k8s-dev.sh down
+
+ k8s-status:
+	./scripts/k8s-dev.sh status
+
  iac-init:
 	cd infra/terraform && tofu init
 
