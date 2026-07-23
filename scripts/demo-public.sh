@@ -67,14 +67,16 @@ if ! curl -sf "http://localhost:${FRONTEND_PORT}" >/dev/null 2>&1; then
   sleep 3
 fi
 
+NGROK_DOMAIN="${NGROK_DOMAIN:-mumps-lapel-rinsing.ngrok-free.dev}"
+
 # 6. Provision Ngrok Public Tunnel
 echo "========================================================"
 echo "🌐 Starting Ngrok Public Ingress Tunnel on port ${FRONTEND_PORT}..."
 echo "========================================================"
 
 if command -v ngrok >/dev/null 2>&1; then
-  echo "[demo] Launching ngrok tunnel. Press Ctrl+C to stop demo."
-  exec ngrok http ${FRONTEND_PORT}
+  echo "[demo] Launching ngrok tunnel on domain: https://${NGROK_DOMAIN}"
+  exec ngrok http --url="${NGROK_DOMAIN}" ${FRONTEND_PORT}
 else
   echo "⚠️ Warning: ngrok CLI not found. Access local demo at http://localhost:${FRONTEND_PORT}"
 fi
