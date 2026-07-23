@@ -59,13 +59,15 @@ fi
 echo "[demo] Seeding database with demo courses..."
 (cd "${REPO_ROOT}" && ./scripts/mock-data-loader.sh || true)
 
-# 5. Ensure Frontend Dev Server is running
-echo "[demo] Checking frontend web app status on port ${FRONTEND_PORT}..."
-if ! curl -sf "http://localhost:${FRONTEND_PORT}" >/dev/null 2>&1; then
-  echo "[demo] Starting frontend dev server in background..."
-  (cd "${REPO_ROOT}/frontend" && bun run dev --port ${FRONTEND_PORT} >/tmp/studed-frontend.log 2>&1 &)
-  sleep 3
-fi
+# 5. Build and Serve Optimized Frontend Bundle
+echo "[demo] Building production frontend bundle for high-speed tunnel performance..."
+(cd "${REPO_ROOT}/frontend" && bun run build)
+
+echo "[demo] Starting frontend preview server on port ${FRONTEND_PORT}..."
+# Stop any existing dev server on port 5173 if running
+lsof -ti :${FRONTEND_PORT} | xargs kill -9 >/dev/null 2>&1 || true
+(cd "${REPO_ROOT}/frontend" && bun run preview --host --port ${FRONTEND_PORT} >/tmp/studed-frontend.log 2>&1 &)
+sleep 2
 
 NGROK_DOMAIN="${NGROK_DOMAIN:-mumps-lapel-rinsing.ngrok-free.dev}"
 
