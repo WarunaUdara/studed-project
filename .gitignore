@@ -53,3 +53,8 @@ services/*/*-service
 
 # macOS aliases / symlinks at project root
 Macintosh HD
+
+# OpenTofu / Terraform
+infra/terraform/.terraform/
+infra/terraform/*.tfstate
+infra/terraform/*.tfstate.backup

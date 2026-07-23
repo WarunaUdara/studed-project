@@ -1,0 +1,12 @@
+# StudEd OpenTofu Environment Configuration Example
+# Copy to terraform.tfvars for custom overrides
+
+environment     = "dev"
+use_floci       = true
+floci_endpoint  = "http://localhost:4566"
+aws_region      = "us-east-1"
+s3_bucket_name  = "studed-assets-dev"
+db_name         = "studed"
+db_username     = "studed_dev_user"
+db_password     = "studed_secure_pass_123"
+redis_port      = 6379

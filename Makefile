@@ -17,6 +17,18 @@
  seed:
 	./scripts/mock-data-loader.sh
 
+ demo-public:
+	./scripts/demo-public.sh
+
+ iac-init:
+	cd infra/terraform && tofu init
+
+ iac-plan:
+	cd infra/terraform && tofu plan
+
+ iac-apply:
+	cd infra/terraform && tofu apply -auto-approve
+
  dev:
 	./scripts/dev.sh
 
