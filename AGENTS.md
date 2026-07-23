@@ -278,6 +278,14 @@ The frontend uses the **Web Audio API** (no audio files) for subtle UI sounds:
 - Platform: macOS arm64 (Apple Silicon).
 - All commands must work on macOS arm64.
 
+## Multi-Agent Collaboration & Execution Rules
+
+When working concurrently with other AI agents (Claude Code, Cursor, Antigravity, Gemini), adhere to [.agents/MULTI_AGENT_WORKFLOW.md](.agents/MULTI_AGENT_WORKFLOW.md):
+1. **Task Ownership**: Check `gh issue list` and comment to claim an issue before starting work. Never modify `.agents/LOCKS.md` or git lock files.
+2. **Contract First**: Update gRPC Protobuf schemas (`shared/proto/`) or GraphQL schemas (`services/api-gateway/graph/`) before implementing frontend/backend code.
+3. **Branch Isolation**: Work on a dedicated `feature/<domain>` branch. Respect service directory scopes (`services/auth-service/`, `frontend/`, `infra/`).
+4. **Local Verification**: Run `make ci-local` to verify all pre-flight checks (Bun typechecks, Go tests, Helm linting, OpenTofu validation) pass before pushing.
+
 ## Questions?
 
 If something is unclear, ask before implementing. Prefer clarification over assumption.
