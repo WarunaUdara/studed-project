@@ -47,64 +47,47 @@ graph TB
     end
 
     subgraph "Edge / Gateway"
-        B[CDN / WAF]
-        C[API Gateway<br/>GraphQL + REST]
+        B[API Gateway (Go + gqlgen)<br/>Port 8080]
     end
 
-    subgraph "Go Microservices"
-        D[Auth Service]
-        E[User Service]
-        F[Course Service]
-        G[Content Service]
-        H[Progress Service]
-        I[Gamification Service]
-        J[Payment Service]
-        K[AI Service]
-        L[Notification Service]
-        M[Upload Service]
+    subgraph "Go Microservices (gRPC)"
+        D[Auth Service (Port 8081/8085)]
+        F[Course Service (Port 8083/8084)]
+        H[Progress Service (Port 8086/8087)]
+        I[Gamification Service (Port 8088/8089)]
+        J[Payment Service (Port 8091)]
+        K[AI Service (Port 8090)]
+        L[Notification Service (Port 8092)]
+        M[Upload Service (Port 8096)]
     end
 
     subgraph "Data Layer"
-        N[(PostgreSQL)]
-        O[(Redis)]
-        P[(Elasticsearch)]
+        N[(PostgreSQL 15)]
+        O[(Redis 7 Cache & Leaderboard)]
+        P[(Elasticsearch 8)]
     end
 
-    subgraph "External"
+    subgraph "External Integration"
         Q[PayHere / Stripe]
-        R[Gemini / Qwen / DeepSeek]
+        R[Gemini 3.5 Flash]
         S[Resend / Twilio]
-        T[Cloudflare R2]
+        T[Cloudflare R2 / S3]
     end
 
-    A -->|GraphQL Queries / Mutations / Subscriptions| B
-    B -->|gRPC + HTTP| D
-    B -->|gRPC + HTTP| E
-    B -->|gRPC + HTTP| F
-    B -->|gRPC + HTTP| G
-    B -->|gRPC + HTTP| H
-    B -->|gRPC + HTTP| I
-    B -->|REST Webhooks| J
-    B -->|gRPC + HTTP| K
-    B -->|gRPC + HTTP| L
-    B -->|REST Multipart| M
+    A -->|GraphQL Queries / Mutations| B
+    B -->|gRPC| D
+    B -->|gRPC| F
+    B -->|gRPC| H
+    B -->|gRPC| I
+    B -->|gRPC| J
+    B -->|gRPC| K
 
     D --> N
-    E --> N
     F --> N
-    G --> N
+    F --> P
     H --> N
     I --> N
-    J --> N
-    K --> N
-    L --> N
-    M --> T
-
-    D --> O
     I --> O
-    H --> O
-    L --> O
-
     F -.-> P
     G -.-> P
 

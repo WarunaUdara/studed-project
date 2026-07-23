@@ -40,8 +40,8 @@ To create an interactive, gamified learning environment where students master su
 | Advanced Level | A/L | Subject specialization, rigorous evaluation |
 
 > [!tip] See also
-> - [[Target Audience]] — Detailed personas and user segments.
-> - [[Monetization Strategy]] — Pricing models and subscription tiers.
+> - [Target Audience](Target-Audience.md) — Detailed personas and user segments.
+> - [Monetization Strategy](Monetization-Strategy.md) — Pricing models and subscription tiers.
 
 ## Platform Hierarchy at a Glance
 
@@ -59,19 +59,19 @@ graph TD
 
 ## Key Modules
 
-1. **[[02-Content-Hierarchy/Course-Lesson-Wave-Hierarchy|Content Hierarchy]]** — How Courses, Lessons, and Waves are structured.
-2. **[[03-Educator-Portal/Educator-Dashboard|Educator Portal]]** — Content creation, AI-assisted editing, and Sinhala support.
-3. **[[04-Student-Portal/Student-Dashboard|Student Portal]]** — Learning experience, progress tracking, and gamification.
-4. **[[05-Gamification/XP-System|Gamification]]** — XP, leaderboards, reattempt mechanics, and proficiency.
-5. **[[01-Architecture/System-Architecture|System Architecture]]** — Frontend, backend, and database design.
+1. **[Content Hierarchy](../02-Content-Hierarchy/Course-Lesson-Wave-Hierarchy.md)** — How Courses, Lessons, and Waves are structured.
+2. **[Educator Portal](../03-Educator-Portal/Educator-Dashboard.md)** — Content creation, AI-assisted editing, and Sinhala support.
+3. **[Student Portal](../04-Student-Portal/Student-Dashboard.md)** — Learning experience, progress tracking, and gamification.
+4. **[Gamification](../05-Gamification/XP-System.md)** — XP, leaderboards, reattempt mechanics, and proficiency.
+5. **[System Architecture](../01-Architecture/System-Architecture.md)** — Frontend, backend, and database design.
 
 ## Quick Links
 
-- [[Tech Stack]]
-- [[Database Schema]]
-- [[Design System]]
-- [[API Specifications]]
-- [[Glossary]]
+- [System Architecture](../01-Architecture/System-Architecture.md)
+- [Tech Stack](../07-Technical-Specs/Tech-Stack.md)
+- [Database Schema](../01-Architecture/Database-Schema.md)
+- [API Specifications](../07-Technical-Specs/API-Specifications.md)
+- [Root README](../README.md)
 
 ---
 
