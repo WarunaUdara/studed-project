@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gamification-service
+  namespace: studed
+  labels:
+    app: gamification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gamification-service
+  template:
+    metadata:
+      labels:
+        app: gamification-service
+    spec:
+      containers:
+        - name: gamification-service
+          image: studed-doc-gamification-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8088
+            - containerPort: 8089
+          envFrom:
+            - configMapRef:
+                name: studed-config
+            - secretRef:
+                name: studed-secrets
+          resources:
+            requests:
+              memory: "15Mi"
+              cpu: "10m"
+            limits:
+              memory: "48Mi"
+              cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gamification-service
+  namespace: studed
+spec:
+  ports:
+    - port: 8088
+      targetPort: 8088
+      name: grpc
+    - port: 8089
+      targetPort: 8089
+      name: http
+  selector:
+    app: gamification-service

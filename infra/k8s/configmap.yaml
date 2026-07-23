@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: studed-config
+  namespace: studed
+data:
+  POSTGRES_HOST: "postgres"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "studed"
+  REDIS_ADDR: "redis:6379"
+  ELASTICSEARCH_URL: "http://elasticsearch:9200"
+  AUTH_SERVICE_ADDR: "auth-service:8081"
+  COURSE_SERVICE_ADDR: "course-service:8083"
+  PROGRESS_SERVICE_ADDR: "progress-service:8086"
+  GAMIFICATION_SERVICE_ADDR: "gamification-service:8088"
+  PAYMENT_SERVICE_ADDR: "payment-service:8090"
+  AI_SERVICE_ADDR: "ai-service:8092"
+  NOTIFICATION_SERVICE_ADDR: "notification-service:8094"
+  UPLOAD_SERVICE_ADDR: "upload-service:8096"

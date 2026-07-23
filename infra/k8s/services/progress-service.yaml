@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: progress-service
+  namespace: studed
+  labels:
+    app: progress-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: progress-service
+  template:
+    metadata:
+      labels:
+        app: progress-service
+    spec:
+      containers:
+        - name: progress-service
+          image: studed-doc-progress-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8086
+            - containerPort: 8087
+          envFrom:
+            - configMapRef:
+                name: studed-config
+            - secretRef:
+                name: studed-secrets
+          resources:
+            requests:
+              memory: "15Mi"
+              cpu: "10m"
+            limits:
+              memory: "48Mi"
+              cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: progress-service
+  namespace: studed
+spec:
+  ports:
+    - port: 8086
+      targetPort: 8086
+      name: grpc
+    - port: 8087
+      targetPort: 8087
+      name: http
+  selector:
+    app: progress-service

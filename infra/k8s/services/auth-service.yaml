@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: studed
+  labels:
+    app: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: studed-doc-auth-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+            - containerPort: 8085
+          envFrom:
+            - configMapRef:
+                name: studed-config
+            - secretRef:
+                name: studed-secrets
+          resources:
+            requests:
+              memory: "15Mi"
+              cpu: "10m"
+            limits:
+              memory: "48Mi"
+              cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: studed
+spec:
+  ports:
+    - port: 8081
+      targetPort: 8081
+      name: grpc
+    - port: 8085
+      targetPort: 8085
+      name: http
+  selector:
+    app: auth-service

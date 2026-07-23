@@ -58,3 +58,6 @@ Macintosh HD
 infra/terraform/.terraform/
 infra/terraform/*.tfstate
 infra/terraform/*.tfstate.backup
+
+# Kubernetes Secrets
+infra/k8s/secret.yaml
