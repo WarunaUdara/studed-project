@@ -44,6 +44,12 @@
  ci-local: frontend-typecheck frontend-build go-test shared-test helm-lint iac-plan
 	@echo "✅ All local CI pre-flight checks passed!"
 
+ graph-refresh:
+	@/Users/warunaudarasampath/Library/Python/3.14/bin/graphify extract . --code-only --force
+
+ graph-query:
+	@/Users/warunaudarasampath/Library/Python/3.14/bin/graphify query "$(Q)"
+
  dev:
 	./scripts/dev.sh
 

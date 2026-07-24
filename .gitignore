@@ -7,6 +7,7 @@ frontend/dist/
 frontend/src/routeTree.gen.ts
 services/*/bin/
 services/*/tmp/
+graphify-out/
 
 # Environment
 .env

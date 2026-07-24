@@ -1,0 +1,9 @@
+# Exclude Obsidian vault metadata and vendor plugins
+.obsidian/
+.git/
+node_modules/
+dist/
+build/
+*.gen.ts
+*.pb.go
+graphify-out/
