@@ -117,9 +117,7 @@ export function Navbar() {
 
         {/* Mobile Header Quick Actions & Menu Toggle */}
         <div className="flex md:hidden items-center gap-1.5 sm:gap-2">
-          {isStudent && user && (
-            <PointsBadge name="XP" total={user.totalXp} size="sm" icon={Zap} />
-          )}
+          {isStudent && user && <PointsBadge name="XP" total={user.totalXp} size="sm" icon={Zap} />}
 
           <Button
             variant="ghost"
@@ -233,4 +231,3 @@ export function Navbar() {
     </header>
   );
 }
-
