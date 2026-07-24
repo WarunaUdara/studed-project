@@ -121,14 +121,14 @@ function LeaderboardPage() {
 
           {/* Scope and Period segment selectors */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-4">
-            <div className="flex flex-wrap gap-1 rounded-full bg-muted/60 p-1">
+            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar rounded-full bg-muted/60 p-1 shrink-0">
               {SCOPE_TABS.map((t) => (
                 <button
                   key={t.value}
                   type="button"
                   onClick={() => setScope(t.value)}
                   className={cn(
-                    "rounded-full px-4 py-1.5 text-xs font-semibold transition-all",
+                    "rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all shrink-0 min-h-[36px]",
                     scope === t.value
                       ? "bg-card text-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground",
