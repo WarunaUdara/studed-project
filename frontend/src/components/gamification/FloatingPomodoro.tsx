@@ -45,6 +45,7 @@ export function FloatingPomodoro() {
   } = usePomodoroStore();
 
   const [showSettings, setShowSettings] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [focusMin, setFocusMin] = useState(Math.round(durations.focus / 60));
   const [shortMin, setShortMin] = useState(Math.round(durations.short / 60));
   const [longMin, setLongMin] = useState(Math.round(durations.long / 60));
@@ -76,7 +77,9 @@ export function FloatingPomodoro() {
       <motion.div
         drag
         dragMomentum={false}
-        whileHover={{ scale: 1.04 }}
+        onDragStart={() => setIsDragging(true)}
+        onDragEnd={() => setTimeout(() => setIsDragging(false), 150)}
+        whileHover={{ scale: 1.03 }}
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -87,15 +90,19 @@ export function FloatingPomodoro() {
           /* MINIMIZED VIEW */
           <motion.div
             layoutId="pomodoro-expanded"
-            onClick={() => setIsMinimized(false)}
+            onClick={() => {
+              if (!isDragging) {
+                setIsMinimized(false);
+              }
+            }}
             className={cn(
-              "flex cursor-pointer items-center gap-3 rounded-full border px-4 py-2.5 shadow-lg backdrop-blur-md",
+              "flex items-center gap-2.5 rounded-full border px-3.5 py-2 shadow-xl backdrop-blur-md transition-colors",
               mode === "focus"
                 ? "border-primary/30 bg-primary/10 hover:bg-primary/15"
                 : "border-success/30 bg-success/10 hover:bg-success/15",
             )}
           >
-            <div className="relative h-6 w-6">
+            <div className="relative h-6 w-6 shrink-0">
               <svg aria-hidden="true" className="h-6 w-6 -rotate-90">
                 <circle
                   cx="12"
@@ -125,22 +132,36 @@ export function FloatingPomodoro() {
                 )}
               </div>
             </div>
-            <span className="text-sm font-bold tabular-nums tracking-tight">
+            <span className="text-xs font-black tabular-nums tracking-tight">
               {formatTime(timeLeft)}
             </span>
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               {mode}
             </span>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                togglePlay();
-              }}
-              className="ml-auto rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
-            >
-              {isActive ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
-            </button>
+            <div className="ml-auto flex items-center gap-1">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  togglePlay();
+                }}
+                className="rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                title={isActive ? "Pause" : "Start"}
+              >
+                {isActive ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMinimized(false);
+                }}
+                className="rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                title="Expand Timer"
+              >
+                <Settings className="h-3.5 w-3.5" />
+              </button>
+            </div>
           </motion.div>
         ) : (
           /* EXPANDED VIEW */
@@ -337,8 +358,8 @@ export function FloatingPomodoro() {
                       )}
 
                       {/* Ambient noise settings in-place */}
-                      <div className="flex items-center justify-between rounded-lg bg-muted/40 p-2 text-[10px] text-muted-foreground">
-                        <span className="flex items-center gap-1">
+                      <div className="flex flex-col gap-1.5 rounded-lg bg-muted/40 p-2 text-[10px] text-muted-foreground">
+                        <span className="flex items-center gap-1 font-semibold">
                           {ambientNoise === "none" ? (
                             <VolumeX className="h-3 w-3" />
                           ) : (
@@ -346,17 +367,17 @@ export function FloatingPomodoro() {
                           )}
                           Sound Ambient
                         </span>
-                        <div className="flex gap-1">
+                        <div className="flex flex-wrap gap-1">
                           {(["none", "brown", "pink", "white", "adhd"] as const).map((n) => (
                             <button
                               key={n}
                               type="button"
                               onClick={() => setAmbientNoise(n)}
                               className={cn(
-                                "rounded px-1 py-0.5 font-bold uppercase transition-all",
+                                "rounded px-1.5 py-0.5 font-bold uppercase transition-all",
                                 ambientNoise === n
                                   ? "bg-primary text-primary-foreground"
-                                  : "hover:text-foreground",
+                                  : "hover:text-foreground hover:bg-muted",
                               )}
                             >
                               {n === "none"

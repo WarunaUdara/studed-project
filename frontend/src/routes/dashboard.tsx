@@ -187,17 +187,17 @@ function DashboardPage() {
           </div>
 
           {/* AI Nudge (Conditional) */}
-          <div className="relative overflow-hidden rounded-[24px] border-l-4 border-l-purple border-t border-r border-b bg-card p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="relative overflow-hidden rounded-[24px] border border-primary/20 bg-card/90 backdrop-blur-sm p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm">
             <div className="space-y-1">
-              <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-purple">
-                <Sparkles className="h-3 w-3" /> AI Tutor Nudge
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-primary">
+                <Sparkles className="h-3 w-3 text-primary" /> AI Tutor Nudge
               </span>
-              <p className="text-sm text-foreground">
+              <p className="text-sm text-foreground font-medium">
                 You stumbled on quadratic factorization twice this week. Want a 5-minute refresher?
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <Button variant="ai" size="sm">
+              <Button variant="outline" size="sm" className="rounded-full border-primary/30 text-primary hover:bg-primary/10">
                 Review with AI
               </Button>
             </div>
@@ -307,14 +307,14 @@ function DashboardPage() {
               </Card>
 
               {/* Card 2: Revision (AI suggested) */}
-              <Card className="p-5 flex flex-col justify-between min-h-[140px] border-l-2 border-l-purple lift-on-hover">
+              <Card className="p-5 flex flex-col justify-between min-h-[140px] border-primary/20 bg-primary/5 lift-on-hover">
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-purple">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
                       Revision
                     </span>
-                    <span className="inline-flex items-center gap-0.5 rounded-full bg-purple/10 px-2 py-0.5 text-[9px] font-bold text-purple uppercase tracking-wider">
-                      <Sparkles className="h-2 w-2" /> AI Suggested
+                    <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-bold text-primary uppercase tracking-wider">
+                      <Sparkles className="h-2.5 w-2.5" /> AI Suggested
                     </span>
                   </div>
                   <h4 className="text-base font-semibold">Spaced Repetition</h4>
@@ -326,7 +326,7 @@ function DashboardPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="gap-1.5 text-purple p-0 hover:bg-transparent"
+                    className="gap-1.5 text-primary p-0 hover:bg-transparent"
                   >
                     Refresh Memory <ArrowRight className="h-3.5 w-3.5" />
                   </Button>

@@ -321,8 +321,8 @@ export function PomodoroTimer(_props: PomodoroTimerProps) {
             )}
 
             {/* Ambient Focus Sounds Selector */}
-            <div className="flex items-center justify-between rounded-lg bg-muted/40 p-2.5 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5 font-medium">
+            <div className="flex flex-col gap-2 rounded-lg bg-muted/40 p-2.5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+              <span className="flex items-center gap-1.5 font-medium shrink-0">
                 {ambientNoise === "none" ? (
                   <VolumeX className="h-4 w-4" />
                 ) : (
@@ -330,7 +330,7 @@ export function PomodoroTimer(_props: PomodoroTimerProps) {
                 )}
                 Ambient Noise
               </span>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {(["none", "brown", "pink", "white", "adhd"] as const).map((n) => (
                   <button
                     key={n}
