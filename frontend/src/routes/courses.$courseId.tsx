@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowLeft, BookOpen, CheckCircle, Clock, Lock, PlayCircle, Zap } from "lucide-react";
-import { useMemo } from "react";
+import { ArrowLeft, BookOpen, CheckCircle, Clock, Compass, Layers, Lock, PlayCircle, Zap } from "lucide-react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
+import { CourseJourneyMap } from "@/components/gamification/CourseJourneyMap";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ProgressRing } from "@/components/ui/ProgressRing";
@@ -50,6 +51,8 @@ export const Route = createFileRoute("/courses/$courseId")({
 
 function CoursePlayerPage() {
   const { courseId } = Route.useParams();
+  const [viewMode, setViewMode] = useState<"map" | "list">("map");
+
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: COURSE_PLAYER_QUERY,
     variables: { id: courseId },
@@ -117,12 +120,41 @@ function CoursePlayerPage() {
 
   return (
     <div className="mx-auto max-w-6xl p-4 pt-6 sm:p-6 sm:pt-8">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <Link to="/courses">
           <Button variant="ghost" size="sm" className="gap-1">
             <ArrowLeft className="h-4 w-4" /> Back to Courses
           </Button>
         </Link>
+
+        {/* View mode switcher tabs */}
+        <div className="flex rounded-full bg-muted/80 p-1 border">
+          <button
+            type="button"
+            onClick={() => setViewMode("map")}
+            className={cn(
+              "flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold transition-all",
+              viewMode === "map"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <Compass className="h-3.5 w-3.5" /> Map Journey
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("list")}
+            className={cn(
+              "flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold transition-all",
+              viewMode === "list"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <Layers className="h-3.5 w-3.5" /> Classic List
+          </button>
+        </div>
+
         {!isEnrolled && (
           <Button onClick={handleEnroll} disabled={enrollResult.fetching}>
             {enrollResult.fetching ? "Enrolling..." : "Enroll Free"}
@@ -130,13 +162,25 @@ function CoursePlayerPage() {
         )}
       </div>
 
-      {/* Course header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="mb-8 overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-card to-card p-6"
-      >
+      {viewMode === "map" ? (
+        <CourseJourneyMap
+          courseId={course.id}
+          courseTitle={course.title}
+          gradeLevel={course.gradeLevel}
+          lessons={lessons}
+          isEnrolled={isEnrolled}
+          onEnroll={handleEnroll}
+          isEnrolling={enrollResult.fetching}
+        />
+      ) : (
+        <>
+          {/* Course header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="mb-8 overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-card to-card p-6"
+          >
         <div className="flex flex-wrap items-start gap-6">
           <ProgressRing
             value={progress}
@@ -302,7 +346,9 @@ function CoursePlayerPage() {
             </Card>
           </motion.div>
         ))}
-      </div>
+        </div>
+      </>
+      )}
     </div>
   );
 }
