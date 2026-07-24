@@ -142,11 +142,11 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
       </aside>
 
       {/* Content */}
-      <div className="min-w-0 flex-1 space-y-6 pb-24 lg:pb-0">{children}</div>
+      <div className="min-w-0 flex-1 space-y-6 pb-28 sm:pb-24 lg:pb-0">{children}</div>
 
       {/* Mobile bottom tab bar */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background/95 backdrop-blur lg:hidden"
+        className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background/95 backdrop-blur pb-[env(safe-area-inset-bottom,0px)] lg:hidden"
         aria-label="Primary mobile navigation"
       >
         <div className="mx-auto flex max-w-3xl items-stretch justify-between">
@@ -161,12 +161,12 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
                 key={item.to}
                 to={item.to}
                 className={cn(
-                  "flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-xs transition-colors",
-                  active ? "text-primary" : "text-muted-foreground",
+                  "flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 min-h-[48px] text-xs transition-colors active:bg-accent/50 touch-manipulation",
+                  active ? "text-primary font-semibold" : "text-muted-foreground",
                 )}
               >
                 <Icon className="h-5 w-5" />
-                <span className="tabular-nums">{item.label}</span>
+                <span className="tabular-nums text-[11px] leading-tight">{item.label}</span>
               </Link>
             );
           })}
