@@ -235,14 +235,14 @@ function CoursesCatalogPage() {
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Grade Level
                   </p>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 no-scrollbar sm:flex-wrap">
                     {GRADE_OPTIONS.map((g) => (
                       <button
                         type="button"
                         key={g}
                         onClick={() => setGradeFilter(g)}
                         className={cn(
-                          "rounded-full px-3 py-1 text-xs font-medium transition-all border",
+                          "rounded-full px-3.5 py-1.5 text-xs font-medium transition-all border shrink-0 min-h-[36px]",
                           gradeFilter === g
                             ? "bg-primary text-primary-foreground border-primary shadow-sm"
                             : "bg-background text-muted-foreground border-border hover:bg-muted/80",
@@ -258,14 +258,14 @@ function CoursesCatalogPage() {
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Subject
                   </p>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 no-scrollbar sm:flex-wrap">
                     {SUBJECT_OPTIONS.map((s) => (
                       <button
                         type="button"
                         key={s}
                         onClick={() => setSubjectFilter(s)}
                         className={cn(
-                          "rounded-full px-3 py-1 text-xs font-medium transition-all border",
+                          "rounded-full px-3.5 py-1.5 text-xs font-medium transition-all border shrink-0 min-h-[36px]",
                           subjectFilter === s
                             ? "bg-primary text-primary-foreground border-primary shadow-sm"
                             : "bg-background text-muted-foreground border-border hover:bg-muted/80",
@@ -281,14 +281,14 @@ function CoursesCatalogPage() {
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Language
                   </p>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 no-scrollbar sm:flex-wrap">
                     {LANGUAGE_OPTIONS.map((l) => (
                       <button
                         type="button"
                         key={l}
                         onClick={() => setLangFilter(l)}
                         className={cn(
-                          "rounded-full px-3 py-1 text-xs font-medium transition-all border",
+                          "rounded-full px-3.5 py-1.5 text-xs font-medium transition-all border shrink-0 min-h-[36px]",
                           langFilter === l
                             ? "bg-primary text-primary-foreground border-primary shadow-sm"
                             : "bg-background text-muted-foreground border-border hover:bg-muted/80",
