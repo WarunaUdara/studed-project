@@ -23,7 +23,7 @@ export function CodeBlock({ content }: CodeBlockProps) {
         <button
           type="button"
           onClick={handleCopyCode}
-          className="flex items-center gap-1 text-[11px] hover:text-white transition-colors"
+          className="flex items-center gap-1.5 text-[11px] hover:text-white transition-colors p-1.5 rounded-lg active:bg-slate-800 min-h-[36px] touch-manipulation"
         >
           {copied ? (
             <Check className="h-3.5 w-3.5 text-emerald-400" />
@@ -33,7 +33,7 @@ export function CodeBlock({ content }: CodeBlockProps) {
           {copied ? "Copied!" : "Copy"}
         </button>
       </div>
-      <pre className="overflow-x-auto leading-relaxed">{content}</pre>
+      <pre className="overflow-x-auto leading-relaxed pb-2 text-[11px] sm:text-xs">{content}</pre>
     </div>
   );
 }

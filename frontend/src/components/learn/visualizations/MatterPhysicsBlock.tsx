@@ -34,13 +34,13 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
   const title = meta.title ?? "Elastic Collision & Gravitational Acceleration";
 
   useEffect(() => {
-    // Initialize bouncing physics particles
-    const initial = Array.from({ length: 6 }, (_, i) => ({
+    // Initialize bouncing physics particles with responsive percentage positioning
+    const initial = Array.from({ length: 5 }, (_, i) => ({
       id: i,
-      x: 30 + i * 45,
-      y: 20 + (i % 3) * 30,
+      x: 12 + i * 18,
+      y: 20 + (i % 3) * 25,
       vy: 0,
-      color: ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4"][i % 6],
+      color: ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"][i % 5],
     }));
     setObjects(initial);
   }, []);
@@ -109,7 +109,7 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
               key={obj.id}
               className="absolute h-7 w-7 rounded-full shadow-lg transition-all duration-75 flex items-center justify-center text-[10px] font-bold text-white"
               style={{
-                left: `${obj.x}px`,
+                left: `${obj.x}%`,
                 top: `${obj.y}px`,
                 backgroundColor: obj.color,
               }}
@@ -119,10 +119,10 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
           ))}
         </div>
 
-        <div className="flex items-center justify-between gap-4 mt-3 px-1 text-xs text-slate-300">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-3 px-1 text-xs text-slate-300">
           <div className="flex items-center gap-3">
             <label className="flex items-center gap-1.5 font-mono">
-              <Sliders className="h-3.5 w-3.5 text-orange-400" /> Gravity:
+              <Sliders className="h-3.5 w-3.5 text-orange-400 shrink-0" /> Gravity:
               <input
                 type="range"
                 min="0"
@@ -136,11 +136,11 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
             </label>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-end gap-2">
             <Button
               size="sm"
               variant="outline"
-              className="h-7 text-xs border-slate-700 bg-slate-800 text-white hover:bg-slate-700"
+              className="h-8 text-xs border-slate-700 bg-slate-800 text-white hover:bg-slate-700"
               onClick={() => setIsRunning(!isRunning)}
             >
               {isRunning ? (
@@ -153,7 +153,7 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
             <Button
               size="icon"
               variant="ghost"
-              className="h-7 w-7 text-slate-400 hover:text-white hover:bg-slate-800"
+              className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800"
               onClick={handleReset}
               title="Reset Simulation"
             >

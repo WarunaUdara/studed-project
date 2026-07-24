@@ -40,12 +40,12 @@ export function QuizBlock({ block, index, answer, onAnswerChange, feedback }: Qu
       </div>
 
       {block.options && block.options.length > 0 ? (
-        <div className="space-y-2 pl-9">
+        <div className="space-y-2 pl-0 sm:pl-9">
           {block.options.map((option) => (
             <label
               key={option}
-              className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted ${
-                answer === option ? "border-primary bg-primary/5" : ""
+              className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3.5 min-h-[48px] touch-manipulation transition-colors hover:bg-muted active:bg-muted/80 ${
+                answer === option ? "border-primary bg-primary/5 font-medium" : ""
               }`}
             >
               <input
@@ -54,21 +54,21 @@ export function QuizBlock({ block, index, answer, onAnswerChange, feedback }: Qu
                 value={option}
                 checked={answer === option}
                 onChange={(e) => onAnswerChange(e.target.value)}
-                className="h-4 w-4"
+                className="h-4.5 w-4.5 text-primary"
               />
-              <span className="text-foreground">{option}</span>
+              <span className="text-foreground text-sm sm:text-base leading-snug">{option}</span>
             </label>
           ))}
         </div>
       ) : (
-        <div className="pl-9">
+        <div className="pl-0 sm:pl-9">
           <input
             type="text"
             value={textAnswer}
             onChange={(e) => setTextAnswer(e.target.value)}
             onBlur={handleTextBlur}
-            placeholder="Type your answer"
-            className="w-full rounded-md border bg-background px-3 py-2 text-foreground"
+            placeholder="Type your answer..."
+            className="w-full rounded-xl border bg-background px-3.5 py-3 text-base sm:text-sm text-foreground outline-none focus:ring-2 focus:ring-primary/40"
           />
         </div>
       )}
@@ -76,15 +76,15 @@ export function QuizBlock({ block, index, answer, onAnswerChange, feedback }: Qu
       {feedback && (
         <div
           className={cn(
-            "mt-3 rounded-lg p-3 pl-9",
+            "mt-3 rounded-xl p-3.5 pl-3 sm:pl-9",
             feedback.correct ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive",
           )}
         >
-          <p className="font-medium">{feedback.correct ? "Correct" : "Incorrect"}</p>
+          <p className="font-medium">{feedback.correct ? "Correct!" : "Incorrect"}</p>
           {!feedback.correct && feedback.correctAnswer && (
             <p className="text-sm">Correct answer: {feedback.correctAnswer}</p>
           )}
-          {feedback.explanation && <p className="text-sm">{feedback.explanation}</p>}
+          {feedback.explanation && <p className="text-sm mt-1">{feedback.explanation}</p>}
         </div>
       )}
     </div>
