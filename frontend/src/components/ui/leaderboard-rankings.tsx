@@ -108,7 +108,7 @@ const LeaderboardRankings = React.forwardRef<HTMLDivElement, LeaderboardRankings
     return (
       <div ref={ref} className={cn("bg-card w-full rounded-xl border", className)} {...props}>
         <div role="list" aria-label="Leaderboard rankings" className="divide-border divide-y">
-          {rows.map((row) => {
+          {rows.map((row, index) => {
             if (row.type === "ellipsis") {
               return (
                 <div
@@ -130,7 +130,7 @@ const LeaderboardRankings = React.forwardRef<HTMLDivElement, LeaderboardRankings
 
             return (
               <div
-                key={ranking.userId}
+                key={`${ranking.userId}-${ranking.rank}-${index}`}
                 role="listitem"
                 tabIndex={onUserClick ? 0 : undefined}
                 onClick={() => onUserClick?.(ranking)}

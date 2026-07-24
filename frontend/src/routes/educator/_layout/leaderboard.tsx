@@ -214,7 +214,10 @@ function EducatorLeaderboardPage() {
                   </p>
                 </div>
               ) : (
-                <LeaderboardRankings rankings={trophyRankings} />
+                <LeaderboardRankings
+                  key={`${scope}-${selectedGrade}-${selectedCourseId}`}
+                  rankings={trophyRankings}
+                />
               )}
             </CardContent>
           </Card>
