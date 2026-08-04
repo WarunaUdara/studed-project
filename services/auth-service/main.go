@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/studed/auth-service/internal/config"
@@ -31,10 +32,18 @@ func main() {
 		os.Exit(1)
 	}
 
-	db, err := gorm.Open(postgres.Open(cfg.DatabaseURL), &gorm.Config{})
-	if err != nil {
-		log.Error("failed to connect to database", slog.Any("error", err))
-		os.Exit(1)
+	var db *gorm.DB
+	for attempt := 1; attempt <= 15; attempt++ {
+		db, err = gorm.Open(postgres.Open(cfg.DatabaseURL), &gorm.Config{})
+		if err == nil {
+			break
+		}
+		if attempt == 15 {
+			log.Error("failed to connect to database after 15 attempts", slog.Any("error", err))
+			os.Exit(1)
+		}
+		log.Warn("database connection pending, retrying...", slog.Int("attempt", attempt), slog.Any("error", err))
+		time.Sleep(1 * time.Second)
 	}
 
 	if err := db.AutoMigrate(&model.User{}); err != nil {

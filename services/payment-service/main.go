@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/studed/payment-service/internal/handler"
@@ -22,10 +23,19 @@ func main() {
 	databaseURL := getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable")
 	serviceAddr := getEnv("PAYMENT_SERVICE_ADDR", ":8091")
 
-	db, err := gorm.Open(postgres.Open(databaseURL), &gorm.Config{})
-	if err != nil {
-		log.Error("failed to connect to database", slog.Any("error", err))
-		os.Exit(1)
+	var db *gorm.DB
+	var err error
+	for attempt := 1; attempt <= 15; attempt++ {
+		db, err = gorm.Open(postgres.Open(databaseURL), &gorm.Config{})
+		if err == nil {
+			break
+		}
+		if attempt == 15 {
+			log.Error("failed to connect to database after 15 attempts", slog.Any("error", err))
+			os.Exit(1)
+		}
+		log.Warn("database connection pending, retrying...", slog.Int("attempt", attempt), slog.Any("error", err))
+		time.Sleep(1 * time.Second)
 	}
 
 	if err := db.AutoMigrate(&model.Subscription{}); err != nil {
