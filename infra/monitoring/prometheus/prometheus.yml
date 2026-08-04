@@ -1,0 +1,90 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: "studed-production"
+    environment: "production"
+
+rule_files:
+  - "/etc/prometheus/rules/*.yml"
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "studed-api-gateway"
+    metrics_path: "/health"
+    static_configs:
+      - targets: ["api-gateway:8080"]
+        labels:
+          tier: "gateway"
+          service: "api-gateway"
+
+  - job_name: "studed-auth-service"
+    metrics_path: "/health"
+    static_configs:
+      - targets: ["auth-service:8085"]
+        labels:
+          tier: "backend"
+          service: "auth-service"
+
+  - job_name: "studed-course-service"
+    metrics_path: "/health"
+    static_configs:
+      - targets: ["course-service:8084"]
+        labels:
+          tier: "backend"
+          service: "course-service"
+
+  - job_name: "studed-progress-service"
+    metrics_path: "/health"
+    static_configs:
+      - targets: ["progress-service:8087"]
+        labels:
+          tier: "backend"
+          service: "progress-service"
+
+  - job_name: "studed-gamification-service"
+    metrics_path: "/health"
+    static_configs:
+      - targets: ["gamification-service:8089"]
+        labels:
+          tier: "backend"
+          service: "gamification-service"
+
+  - job_name: "studed-ai-service"
+    metrics_path: "/health"
+    static_configs:
+      - targets: ["ai-service:8090"]
+        labels:
+          tier: "ai"
+          service: "ai-service"
+
+  - job_name: "studed-payment-service"
+    metrics_path: "/health"
+    static_configs:
+      - targets: ["payment-service:8091"]
+        labels:
+          tier: "payment"
+          service: "payment-service"
+
+  - job_name: "studed-notification-service"
+    metrics_path: "/health"
+    static_configs:
+      - targets: ["notification-service:8092"]
+        labels:
+          tier: "messaging"
+          service: "notification-service"
+
+  - job_name: "postgres-exporter"
+    static_configs:
+      - targets: ["postgres-exporter:9187"]
+        labels:
+          db: "postgresql"
+
+  - job_name: "redis-exporter"
+    static_configs:
+      - targets: ["redis-exporter:9121"]
+        labels:
+          db: "redis"

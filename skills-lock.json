@@ -72,6 +72,18 @@
       "sourceType": "github",
       "skillPath": ".agents/skills/graphify/SKILL.md",
       "computedHash": "custom-studed-graphify-v1"
+    },
+    "grafana-dashboards": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/grafana-dashboards/SKILL.md",
+      "computedHash": "custom-studed-grafana-v1"
+    },
+    "prometheus-configuration": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/prometheus-configuration/SKILL.md",
+      "computedHash": "custom-studed-prometheus-v1"
     }
   }
 }

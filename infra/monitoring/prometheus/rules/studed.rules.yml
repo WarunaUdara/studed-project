@@ -1,0 +1,65 @@
+groups:
+  - name: studed_recording_rules
+    interval: 15s
+    rules:
+      - record: job:http_requests:rate5m
+        expr: sum by (job) (rate(http_requests_total[5m]))
+
+      - record: job:http_requests_errors:rate5m
+        expr: sum by (job) (rate(http_requests_total{status=~"5.."}[5m]))
+
+      - record: job:http_requests_error_rate:percentage
+        expr: |
+          (job:http_requests_errors:rate5m / (job:http_requests:rate5m + 0.001)) * 100
+
+      - record: job:http_request_duration:p95
+        expr: |
+          histogram_quantile(0.95, sum by (job, le) (rate(http_request_duration_seconds_bucket[5m])))
+
+  - name: studed_alert_rules
+    interval: 30s
+    rules:
+      - alert: StudEdServiceDown
+        expr: up{job=~"studed.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "StudEd Microservice {{ $labels.service }} is down"
+          description: "Service {{ $labels.service }} in job {{ $labels.job }} has been unresponsive for over 1 minute."
+
+      - alert: HighErrorRate
+        expr: job:http_requests_error_rate:percentage > 5
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High HTTP 5xx error rate on {{ $labels.job }}"
+          description: "Error rate is {{ $value }}% (threshold > 5%)."
+
+      - alert: HighP95Latency
+        expr: job:http_request_duration:p95 > 1.0
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High P95 response latency on {{ $labels.job }}"
+          description: "P95 response latency is {{ $value }}s (threshold > 1s)."
+
+      - alert: PostgresDatabaseDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL Database is unreachable"
+          description: "Postgres exporter reports database down."
+
+      - alert: RedisDatabaseDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis Cache is unreachable"
+          description: "Redis exporter reports server down."

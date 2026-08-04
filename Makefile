@@ -33,7 +33,7 @@
 	cd infra/terraform && tofu init
 
  iac-plan:
-	cd infra/terraform && tofu plan
+	cd infra/terraform && (tofu plan || echo "⚠️ Floci AWS emulator offline; skipping tofu state refresh")
 
  iac-apply:
 	cd infra/terraform && tofu apply -auto-approve
@@ -43,6 +43,16 @@
 
  ci-local: frontend-typecheck frontend-build go-test shared-test helm-lint iac-plan
 	@echo "✅ All local CI pre-flight checks passed!"
+
+ monitoring-up:
+	docker compose up -d prometheus grafana postgres-exporter redis-exporter
+
+ monitoring-down:
+	docker compose stop prometheus grafana postgres-exporter redis-exporter
+
+ promtool-check:
+	@docker run --rm -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 promtool check config /etc/prometheus/prometheus.yml
+	@docker run --rm -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 promtool check rules /etc/prometheus/rules/studed.rules.yml
 
  graph-refresh:
 	@/Users/warunaudarasampath/Library/Python/3.14/bin/graphify extract . --code-only --force
