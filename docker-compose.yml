@@ -232,6 +232,19 @@ services:
       timeout: 3s
       retries: 10
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: studed-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/src:/app/src
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+
   prometheus:
     image: prom/prometheus:v3.2.1
     container_name: studed-prometheus
