@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
     env.VITE_PROXY_TARGET ||
     process.env.VITE_API_URL ||
     env.VITE_API_URL ||
-    "http://api-gateway:8080";
+    "http://localhost:8080";
 
   console.log("[vite.config] Proxy target resolved to:", target);
 

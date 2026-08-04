@@ -232,22 +232,6 @@ services:
       timeout: 3s
       retries: 10
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: studed-frontend
-    environment:
-      VITE_PROXY_TARGET: http://api-gateway:8080
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend/src:/app/src
-      - ./frontend/vite.config.ts:/app/vite.config.ts
-    depends_on:
-      api-gateway:
-        condition: service_healthy
-
   prometheus:
     image: prom/prometheus:v3.2.1
     container_name: studed-prometheus
