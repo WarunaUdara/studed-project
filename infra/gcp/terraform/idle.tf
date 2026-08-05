@@ -37,8 +37,9 @@ resource "google_project_iam_member" "idle_scout_monitoring" {
 
 # --- Cloud Run job that performs the check ---
 resource "google_cloud_run_v2_job" "studed_idle_scout" {
-  name     = "studed-idle-scout"
-  location = var.region
+  name                = "studed-idle-scout"
+  location            = var.region
+  deletion_protection = false
 
   template {
     template {
