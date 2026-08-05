@@ -124,3 +124,30 @@
  lint: frontend-lint
 
  build: frontend-build go-build
+
+# ---- Production (GCP + Cloudflare) ----
+# One-command lifecycle for the live deployment. See DEPLOYMENT.md for details.
+.PHONY: prod-deploy prod-start prod-stop prod-status prod-destroy prod-teardown-audit prod-seed
+
+ prod-deploy:
+	./scripts/gcp/deploy.sh
+
+ prod-start:
+	@echo "Waking backend: scaling node pool back up..."
+	cd infra/gcp/terraform && tofu apply -auto-approve -var "node_count=2" | tail -5
+
+ prod-stop:
+	@echo "Standby: scaling node pool to 0 (stops ~all node charges)..."
+	cd infra/gcp/terraform && tofu apply -auto-approve -var "node_count=0" | tail -5
+
+ prod-status:
+	./scripts/gcp/status.sh
+
+ prod-destroy:
+	./scripts/gcp/destroy.sh $(DESTROY_FLAGS)
+
+ prod-teardown-audit:
+	./scripts/gcp/verify-teardown.sh
+
+ prod-seed:
+	STUDED_API_URL="$${STUDED_API_URL:-https://api.34.149.224.124.sslip.io}" ./scripts/mock-data-loader.sh

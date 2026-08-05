@@ -5,8 +5,8 @@ region     = "us-central1"
 zone       = "us-central1-a"
 
 cluster_name       = "studed-backend"
-node_machine_type  = "e2-medium"
-node_count         = 1
+node_machine_type  = "e2-standard-2"
+node_count         = 2
 node_disk_size_gb  = 30
 
 # Only these CIDRs may reach the Kubernetes control plane.

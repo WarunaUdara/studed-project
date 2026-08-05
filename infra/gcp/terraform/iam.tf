@@ -9,11 +9,11 @@ resource "google_service_account" "gke_node_sa" {
 
 resource "google_project_iam_member" "gke_node_roles" {
   for_each = toset([
-    "roles/storage.objectViewer",        # pull GKE system images from gcr.io
-    "roles/artifactregistry.reader",     # pull images from Artifact Registry if used
-    "roles/logging.logWriter",           # node + container logs
-    "roles/monitoring.metricWriter",     # pod/cadvisor metrics
-    "roles/monitoring.viewer",           # read back metrics
+    "roles/storage.objectViewer",    # pull GKE system images from gcr.io
+    "roles/artifactregistry.reader", # pull images from Artifact Registry if used
+    "roles/logging.logWriter",       # node + container logs
+    "roles/monitoring.metricWriter", # pod/cadvisor metrics
+    "roles/monitoring.viewer",       # read back metrics
   ])
   project = local.project_id
   role    = each.value

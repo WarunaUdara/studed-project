@@ -22,11 +22,21 @@ set +u
 source "$ENV_FILE"
 set -u
 
+has_version() {
+  local name="$1"
+  gcloud secrets versions list "$name" --project="$PROJECT_ID" \
+    --filter="state.enabled:true" --format="value(name)" 2>/dev/null | grep -q .
+}
+
 put_secret() {
   local name="$1"
   local value="$2"
   if [[ -z "$value" ]]; then
     echo "skip $name (empty)"
+    return
+  fi
+  if has_version "$name"; then
+    echo "skip $name (already populated - not rotating)"
     return
   fi
   printf '%s' "$value" | gcloud secrets versions add "$name" --data-file=- --project="$PROJECT_ID" >/dev/null

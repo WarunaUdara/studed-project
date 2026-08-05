@@ -38,7 +38,7 @@ resource "google_compute_router_nat" "studed_nat" {
 
 # Global static IP for the L7 external ingress (GCE Ingress uses global forwarding rules).
 resource "google_compute_global_address" "studed_ingress_ip" {
-  name       = "studed-ingress-ip"
+  name         = "studed-ingress-ip"
   address_type = "EXTERNAL"
-  ip_version  = "IPV4"
+  ip_version   = "IPV4"
 }

@@ -1,8 +1,8 @@
 locals {
-  ingress_ip      = google_compute_global_address.studed_ingress_ip.address
-  api_hostname    = "${var.sslip_api_hostname}.${local.ingress_ip}.sslip.io"
-  api_url         = "https://${local.api_hostname}"
-  workflow_pool   = "${local.project_id}.svc.id.goog"
+  ingress_ip    = google_compute_global_address.studed_ingress_ip.address
+  api_hostname  = "${var.sslip_api_hostname}.${local.ingress_ip}.sslip.io"
+  api_url       = "https://${local.api_hostname}"
+  workflow_pool = "${local.project_id}.svc.id.goog"
 }
 
 output "gke_cluster_name" {

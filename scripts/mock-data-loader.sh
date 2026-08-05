@@ -2,7 +2,7 @@
 set -eu
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-GATEWAY="http://localhost:8080"
+GATEWAY="${STUDED_API_URL:-http://localhost:8080}"
 EDUCATOR_JAR="${REPO_ROOT}/.mock-educator-cookies"
 STUDENT_JAR="${REPO_ROOT}/.mock-student-cookies"
 
@@ -220,6 +220,15 @@ enroll() {
     "{\"courseId\":\"${course_id}\"}" >/dev/null
 }
 
+grant_subscription() {
+  local jar="$1"
+  local tier="${2:-STANDARD}"
+
+  graphql "${jar}" \
+    'mutation CreateSubscription($input: CreateSubscriptionInput!) { createSubscription(input: $input) { id tier status endDate } }' \
+    "{\"input\":{\"tier\":\"${tier}\"}}" >/dev/null
+}
+
 submit_answer() {
   local jar="$1"
   local wave_id="$2"
@@ -310,6 +319,7 @@ main() {
   echo "[mock] published Python 10 Challenges"
 
   echo "[mock] enrolling student and completing a wave..."
+  grant_subscription "${STUDENT_JAR}" "STANDARD"
   enroll "${STUDENT_JAR}" "${science_id}"
   enroll "${STUDENT_JAR}" "${math_id}"
   enroll "${STUDENT_JAR}" "${python_id}"

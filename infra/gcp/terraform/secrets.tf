@@ -4,7 +4,7 @@
 
 resource "google_secret_manager_secret" "studed_secrets" {
   for_each = toset([
-    "database-url",        # Neon Postgres connection string (sslmode=require)
+    "database-url", # Neon Postgres connection string (sslmode=require)
     "jwt-access-secret",
     "jwt-refresh-secret",
     "gemini-api-key",      # empty placeholder until a real key is provided
