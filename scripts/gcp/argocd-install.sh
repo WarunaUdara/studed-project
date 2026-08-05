@@ -28,6 +28,21 @@ if kubectl -n "${NAMESPACE}" get deployment argocd-repo-server >/dev/null 2>&1; 
   kubectl -n "${NAMESPACE}" rollout restart deployment/argocd-repo-server >/dev/null
 fi
 
+PROJECT_ID="${PROJECT_ID:-studed-prod}"
+
+if kubectl get ns external-secrets >/dev/null 2>&1; then
+  echo "[external-secrets] already installed"
+else
+  echo "[external-secrets] installing via Helm..."
+  helm repo add external-secrets https://charts.external-secrets.io >/dev/null 2>&1 || true
+  helm repo update >/dev/null
+  helm upgrade --install external-secrets external-secrets/external-secrets \
+    -n external-secrets --create-namespace \
+    --set installCRDs=true \
+    --set serviceAccount.annotations."iam\.gke\.io/gcp-service-account"="studed-external-secrets@${PROJECT_ID}.iam.gserviceaccount.com" \
+    --wait
+fi
+
 echo "[argocd] applying GitOps Application..."
 kubectl apply -f "${REPO_ROOT}/infra/k8s/argocd/application-production.yaml"
 
