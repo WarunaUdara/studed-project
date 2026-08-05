@@ -18,6 +18,8 @@ DELETE_PROJECT=0
 log() { echo; echo "===> $*"; }
 
 log "1/3 OpenTofu destroy - removing all GCP resources"
+# Force-remove Cloud Run job in GCP so OpenTofu provider deletion_protection doesn't block teardown
+gcloud run jobs delete studed-idle-scout --region us-central1 --project "${PROJECT_ID}" --quiet 2>/dev/null || true
 (cd "${TF_DIR}" && tofu init >/dev/null && tofu destroy -auto-approve | tail -20)
 
 log "2/3 Cloudflare Pages - deleting frontend project"
