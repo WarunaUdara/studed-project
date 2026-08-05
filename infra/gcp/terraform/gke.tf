@@ -40,6 +40,14 @@ resource "google_container_cluster" "studed" {
     workload_pool = "${local.project_id}.svc.id.goog"
   }
 
+  addons_config {
+    # Calico network policy enforcement - required for the default-deny
+    # NetworkPolicies in infra/k8s/production/network-policies.yaml.
+    network_policy_config {
+      disabled = false
+    }
+  }
+
   release_channel {
     channel = "STABLE"
   }
