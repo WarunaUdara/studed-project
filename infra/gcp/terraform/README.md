@@ -15,7 +15,7 @@ security + operational excellence pillars.
 | `google_service_account` `studed-gke-node` | GKE node identity | storage.objectViewer + artifactregistry.reader + logging/monitoring writer/viewer only |
 | `google_service_account` `studed-external-secrets` | external-secrets identity | roles/secretmanager.secretAccessor scoped per-secret |
 | `google_container_cluster` | GKE Standard zonal cluster | private nodes, public endpoint locked to `authorized_cidrs`, Workload Identity, Shielded VMs |
-| `google_container_node_pool` | 1x `e2-medium` node | auto-repair/upgrade, secure boot, vTPM, integrity monitoring |
+| `google_container_node_pool` | 2x `e2-standard-2` nodes | auto-repair/upgrade, secure boot, vTPM, integrity monitoring |
 | `google_secret_manager_secret` | Runtime secrets | versions populated via `gcloud` (never in git) |
 | `google_compute_security_policy` `studed-waf` | Cloud Armor WAF | OWASP SQLi/XSS/LFI/protocol-attack rules + per-IP rate limit |
 
