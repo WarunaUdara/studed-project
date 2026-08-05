@@ -14,7 +14,7 @@ metadata:
     networking.gke.io/managed-certificates: studed-api-cert
 spec:
   rules:
-    - host: api.34.149.224.124.sslip.io
+    - host: api.8.232.85.250.sslip.io
       http:
         paths:
           - path: /graphql
