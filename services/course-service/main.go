@@ -50,8 +50,12 @@ func main() {
 	}
 
 	if err := db.AutoMigrate(&model.Course{}, &model.Lesson{}, &model.Wave{}); err != nil {
-		log.Error("failed to run migrations", slog.Any("error", err))
-		os.Exit(1)
+		if db.Migrator().HasTable(&model.Wave{}) && db.Migrator().HasTable(&model.Course{}) && db.Migrator().HasTable(&model.Lesson{}) {
+			log.Warn("auto-migration schema update skipped (tables exist)", slog.Any("error", err))
+		} else {
+			log.Error("failed to run migrations", slog.Any("error", err))
+			os.Exit(1)
+		}
 	}
 
 	courseRepo := repository.NewCourseRepository(db)
