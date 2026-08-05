@@ -37,10 +37,9 @@ has_version() {
 
 put_secret() {
   local name="$1"
-  local value="$2"
+  local value="${2:-unconfigured}"
   if [[ -z "$value" ]]; then
-    echo "skip $name (empty)"
-    return
+    value="unconfigured"
   fi
   if [[ "$ROTATE" != "true" ]] && has_version "$name"; then
     echo "skip $name (already populated - use --rotate to add a new version)"
