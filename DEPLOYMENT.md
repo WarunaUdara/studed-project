@@ -8,7 +8,7 @@ Deployment guide for the StudEd platform: GKE backend (GCP) + Cloudflare Workers
 | :--- | :--- |
 | Backend GraphQL API | `https://api.34.149.224.124.sslip.io/graphql` |
 | Backend health | `https://api.34.149.224.124.sslip.io/health` |
-| Frontend | `https://studed-project-frontend.<ACCOUNT_SUBDOMAIN>.workers.dev` |
+| Frontend | `https://studed-project-frontend.pages.dev` |
 | ArgoCD (port-forward) | `http://localhost:8080` |
 
 ## Architecture summary
@@ -41,16 +41,16 @@ kubectl -n studed logs -f deploy/api-gateway
 
 ## Frontend deploy
 
-The frontend is a React SPA on Cloudflare Workers with static assets. A Worker
-(`frontend/worker.ts`) proxies `/graphql` to the backend and serves assets with
-SPA fallback.
+The frontend is a React SPA on Cloudflare Pages. A Pages Function
+(`functions/graphql.ts`) proxies `/graphql` to the backend, and a `_redirects`
+rule (`/* /index.html 200`) provides SPA fallback for client-side routing.
 
 ```bash
-# one-time auth (opens browser)
-bunx wrangler login
+# one-time auth (requires a Pages-scoped API token in CLOUDFLARE_API_TOKEN)
+bunx wrangler login   # or export CLOUDFLARE_API_TOKEN=<pages-only token>
 
-bun run build            # tsr generate + tsc + vite build
-bunx wrangler deploy
+bun run build                 # tsr generate + tsc + vite build
+bunx wrangler pages deploy frontend/dist --project-name studed-project-frontend
 ```
 
 The proxy forwards cookies both ways (HttpOnly `access_token` / `refresh_token`
@@ -81,8 +81,8 @@ cd infra/gcp/terraform && tofu destroy -auto-approve
 # 2. Delete the project entirely (cleanest - kills every GCP resource)
 gcloud projects delete studed-prod --quiet
 
-# 3. (Optional) delete the Cloudflare Worker
-bunx wrangler delete studed-project-frontend
+# 3. (Optional) delete the Cloudflare Pages project
+bunx wrangler pages project delete studed-project-frontend
 ```
 
 Steps 1-2 stop every GCP charge immediately. The Cloudflare free plan and Neon
