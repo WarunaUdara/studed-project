@@ -1,6 +1,11 @@
 # StudEd Production Deployment
 
-Deployment guide for the StudEd platform: GKE backend (GCP) + Cloudflare Workers frontend + Neon Postgres.
+Deployment, cost control, and teardown for the live StudEd platform
+(GKE backend + Cloudflare Pages frontend + Neon Postgres).
+
+Deep dives: [ARCHITECTURE.md](docs/ARCHITECTURE.md) (component diagram),
+[COSTS.md](docs/COSTS.md) (billing risk analysis), [DECISIONS.md](docs/DECISIONS.md)
+(journey + gotchas + git workflow).
 
 ## Live endpoints
 
@@ -11,88 +16,122 @@ Deployment guide for the StudEd platform: GKE backend (GCP) + Cloudflare Workers
 | Frontend | `https://studed-project-frontend.pages.dev` |
 | ArgoCD (port-forward) | `http://localhost:8080` |
 
-## Architecture summary
+## One-command lifecycle
 
-- **GKE Standard** zonal cluster `studed-backend` (us-central1-a), 2x `e2-standard-2` private nodes, Workload Identity (no service-account keys).
-- **10 workloads** in namespace `studed`: 8 Go microservices (api-gateway, auth, course, progress, gamification, ai, notification, payment) + Redis + Elasticsearch, images from `ghcr.io/warunaudara/studed-*`.
-- **Secrets**: Secret Manager (`studed-database-url`, `studed-jwt-access-secret`, `studed-jwt-refresh-secret`) synced in-cluster by external-secrets via Workload Identity.
-- **Ingress**: L7 GCE ingress on static IP `34.149.224.124`, Google-managed TLS cert, Cloud Armor WAF (OWASP CRS + rate limit; `/graphql` allow-listed).
-- **GitOps**: ArgoCD syncs `infra/k8s/production` from `main` (auto-sync, prune, self-heal).
-- **CI**: `.github/workflows/ci.yml` builds all 8 images to GHCR on tag / workflow_dispatch / service path changes.
-- **DB**: Neon Postgres (costless tier), migrated by each service on startup.
+Everything is driven from the repo root Makefile. Each command is idempotent.
 
-## Access commands
+| Command | What it does | Resulting cost |
+| :--- | :--- | :--- |
+| `make prod-deploy` | Full deploy: OpenTofu apply -> secrets -> ArgoCD -> wait healthy -> ingress/cert -> Pages -> demo seed | running (~$0.13/h) |
+| `make prod-status` | Snapshot: nodes, pods, ArgoCD, frontend, idle-scout, static IP | - |
+| `make prod-stop` | Standby: node pool -> 0 (Terraform keeps state consistent) | ~$23/mo (LB + WAF only) |
+| `make prod-start` | Wake: node pool -> 2 | running |
+| `make prod-seed` | Re-run the demo data loader against the live backend | - |
+| `make prod-destroy` | `tofu destroy` + delete Cloudflare Pages project | $0 |
+| `make prod-destroy DESTROY_FLAGS=--delete-project` | Above + `gcloud projects delete studed-prod` (nuclear) | $0 |
+| `make prod-teardown-audit` | Lists any remaining billable GCP resources | - |
+
+### Auto scale-down (cost cutter)
+
+Cloud Scheduler runs the `studed-idle-scout` Cloud Run job **hourly**. If the
+load balancer saw no traffic for **2 hours**, it scales the node pool to **0**
+(stops the ~$75/mo node charge). Wake it up with `make prod-start`. See
+[COSTS.md](docs/COSTS.md) for the residual LB/WAF charges during standby.
+
+## Prerequisites (one-time)
+
+```bash
+# Tools
+brew install tofu google-cloud-sdk kubernetes-cli helm   # jq, bun already present
+
+# GCP auth + project bootstrap (first run only)
+gcloud auth login
+gcloud projects create studed-prod
+gcloud billing projects link studed-prod --billing-account=<BILLING_ID>
+gcloud config set project studed-prod
+
+# Local files
+cp infra/gcp/terraform/terraform.tfvars.example infra/gcp/terraform/terraform.tfvars
+#   - set authorized_cidrs to your current public IP (curl ifconfig.me)
+#   - node_count=2, node_machine_type="e2-standard-2" (already the example)
+
+# Secrets source (gitignored) - must contain DATABASE_CONNECTION_STRING
+#   1. create the .env file and add DATABASE_CONNECTION_STRING from Neon
+#   2. optionally GEMINI_API_KEY / PAYHERE_* when real keys exist
+echo 'DATABASE_CONNECTION_STRING="postgresql://..."' > .env
+```
+
+## Deploy
+
+```bash
+make prod-deploy
+```
+
+The script prints the backend URL, frontend URL and demo credentials when done.
+
+If `CLOUDFLARE_API_TOKEN` (Pages-scoped token) is not exported, the frontend
+step is skipped with the exact `wrangler pages deploy` command to run manually.
+Deploying the frontend again by hand:
+
+```bash
+bun run build
+bunx wrangler pages deploy frontend/dist --project-name studed-project-frontend
+```
+
+## Access
 
 ```bash
 # Kubernetes
 gcloud container clusters get-credentials studed-backend \
   --zone us-central1-a --project studed-prod
 
-# ArgoCD UI
+# ArgoCD UI + admin password
 kubectl -n argocd port-forward svc/argocd-server 8080:443
-# Admin password
 kubectl -n argocd get secret argocd-initial-admin-secret \
   -o jsonpath="{.data.password}" | base64 -d
-# (login: admin / <password>)
 
-# Tail logs for a service
+# Logs
 kubectl -n studed logs -f deploy/api-gateway
 ```
 
-## Frontend deploy
-
-The frontend is a React SPA on Cloudflare Pages. A Pages Function
-(`functions/graphql.ts`) proxies `/graphql` to the backend, and a `_redirects`
-rule (`/* /index.html 200`) provides SPA fallback for client-side routing.
+## Demo data
 
 ```bash
-# one-time auth (requires a Pages-scoped API token in CLOUDFLARE_API_TOKEN)
-bunx wrangler login   # or export CLOUDFLARE_API_TOKEN=<pages-only token>
-
-bun run build                 # tsr generate + tsc + vite build
-bunx wrangler pages deploy frontend/dist --project-name studed-project-frontend
+make prod-seed    # idempotent: registers/logs in demo accounts, creates
+                  # courses/lessons/waves, grants the student a STANDARD
+                  # subscription, enrolls, completes one wave for XP
 ```
 
-The proxy forwards cookies both ways (HttpOnly `access_token` / `refresh_token`
-set by the gateway pass through unchanged), so the SPA authenticates exactly as
-in dev.
-
-## Costs (GCP free trial, USD / mo, approx)
-
-| Resource | Config | Cost |
-| :--- | :--- | :--- |
-| GKE nodes | 2x `e2-standard-2` (~40h total demo) | ~$0.10/h both, ~$4 for a weekend |
-| Static IP | 1x global | $0 (free tier if IP unused); ingress uses it, ~$0.01/h if not deleted |
-| Cloud Armor | 1 policy | $5/mo if kept longer term |
-| Secret Manager | 3 secrets, low access | free tier |
-| Cloud NAT | small | ~$0.5/mo if kept |
-| Neon Postgres | costless tier | $0 |
-| Cloudflare Workers | free plan | $0 |
-
-> To stay free: run the demo a few hours, then teardown (below). The free trial
-> ($300 credit) also absorbs the GKE hours.
+Accounts: `demo.educator@studed.lk` / `password123` and
+`demo.student@studed.lk` / `password123`.
 
 ## Teardown (stop ALL billing)
 
 ```bash
-# 1. Delete GCP infra (cluster, IP, NAT, WAF, secrets) - most cost is here
-cd infra/gcp/terraform && tofu destroy -auto-approve
-
-# 2. Delete the project entirely (cleanest - kills every GCP resource)
-gcloud projects delete studed-prod --quiet
-
-# 3. (Optional) delete the Cloudflare Pages project
-bunx wrangler pages project delete studed-project-frontend
+make prod-destroy                      # GCP + Cloudflare Pages
+make prod-destroy DESTROY_FLAGS=--delete-project   # also deletes the GCP project
+make prod-teardown-audit               # confirm nothing is left billing
 ```
 
-Steps 1-2 stop every GCP charge immediately. The Cloudflare free plan and Neon
-costless tier cost nothing to leave running, but delete them if you want a
-fully clean slate.
+Neon (costless) and the Cloudflare free plan cost nothing to leave running; the
+audit focuses on GCP. Full cost analysis: [COSTS.md](docs/COSTS.md).
+
+## Architecture & security
+
+Full component diagram and security posture: [ARCHITECTURE.md](docs/ARCHITECTURE.md).
+Highlights: GKE Standard private nodes, Workload Identity (zero SA keys),
+Secret Manager + external-secrets, Cloud Armor WAF, managed TLS cert, ArgoCD
+GitOps, GHCR CI, and the hourly idle-scout.
 
 ## Notes / watch-outs
 
-- Backend cookies are `Secure: false` (set over HTTPS anyway). Works because the
-  browser only talks to the frontend origin; the proxy is same-origin.
-- `terraform.tfvars` is gitignored; re-create from `terraform.tfvars.example`.
-- State is local (`terraform.tfstate`, gitignored). For a long-lived env migrate
-  to a GCS bucket backend.
+- **Git workflow**: commit to the `dev` branch and merge via `gh pr` - every
+  push to `main` re-builds Cloudflare Pages and can exhaust free build minutes.
+  See [DECISIONS.md](docs/DECISIONS.md).
+- Backend cookies are `Secure: false` but work over HTTPS; the proxy keeps the
+  browser same-origin, so SameSite=Lax auth works.
+- `terraform.tfvars` + `terraform.tfstate` are gitignored; re-create from the
+  example file. State is local.
+- ArgoCD syncs from `main`; a merge triggers a roll-out automatically.
+- After the idle-scout scales down, `make prod-start` reconciles Terraform
+  state (see COSTS.md bill-raiser #2).
