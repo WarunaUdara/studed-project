@@ -68,3 +68,4 @@ infra/gcp/terraform/*.plan
 
 # Kubernetes Secrets
 infra/k8s/secret.yaml
+.audit/
