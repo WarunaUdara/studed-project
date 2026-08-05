@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -78,7 +81,9 @@ func main() {
 		log.Warn("SERVICE_TOKEN not set; internal routes are unprotected")
 	}
 
-	log.Info("payment-service listening", slog.String("addr", serviceAddr))
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
 	server := &http.Server{
 		Addr: serviceAddr,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -93,9 +98,24 @@ func main() {
 		WriteTimeout:      15 * time.Second,
 		IdleTimeout:       60 * time.Second,
 	}
-	if err := server.ListenAndServe(); err != nil {
-		log.Error("server failed", slog.Any("error", err))
-		os.Exit(1)
+
+	go func() {
+		log.Info("payment-service listening", slog.String("addr", serviceAddr))
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Error("server failed", slog.Any("error", err))
+		}
+	}()
+
+	<-ctx.Done()
+	log.Info("shutting down payment-service gracefully...")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(shutdownCtx); err != nil {
+		log.Error("payment-service forced to shutdown", slog.Any("error", err))
+	} else {
+		log.Info("payment-service shutdown complete")
 	}
 }
 

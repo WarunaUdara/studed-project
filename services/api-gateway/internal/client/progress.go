@@ -19,9 +19,15 @@ type ProgressClient struct {
 }
 
 func NewProgressClient(addr string, courseClient *CourseClient, serviceToken string) (*ProgressClient, error) {
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	interceptors := []grpc.UnaryClientInterceptor{
+		grpcauth.UnaryClientTimeoutInterceptor(5 * time.Second),
+	}
 	if serviceToken != "" {
-		opts = append(opts, grpc.WithChainUnaryInterceptor(grpcauth.UnaryClientInterceptor(serviceToken)))
+		interceptors = append(interceptors, grpcauth.UnaryClientInterceptor(serviceToken))
+	}
+	opts := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithChainUnaryInterceptor(interceptors...),
 	}
 	conn, err := grpc.NewClient(addr, opts...)
 	if err != nil {

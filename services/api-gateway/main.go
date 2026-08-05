@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -120,9 +123,34 @@ func main() {
 	}
 	r.Handle("/graphql", srv)
 
-	log.Info("api-gateway listening", slog.String("addr", cfg.ServiceAddr))
-	if err := http.ListenAndServe(cfg.ServiceAddr, r); err != nil {
-		log.Error("server failed", slog.Any("error", err))
-		os.Exit(1)
+	server := &http.Server{
+		Addr:              cfg.ServiceAddr,
+		Handler:           r,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       30 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       120 * time.Second,
+	}
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	go func() {
+		log.Info("api-gateway listening", slog.String("addr", cfg.ServiceAddr))
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Error("server failed", slog.Any("error", err))
+		}
+	}()
+
+	<-ctx.Done()
+	log.Info("shutting down api-gateway gracefully...")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(shutdownCtx); err != nil {
+		log.Error("api-gateway forced to shutdown", slog.Any("error", err))
+	} else {
+		log.Info("api-gateway shutdown complete")
 	}
 }

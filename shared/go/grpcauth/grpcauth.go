@@ -7,6 +7,7 @@ import (
 	"context"
 	"crypto/subtle"
 	"strings"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -45,3 +46,18 @@ func UnaryClientInterceptor(token string) grpc.UnaryClientInterceptor {
 		return invoker(ctx, method, req, reply, cc, opts...)
 	}
 }
+
+// UnaryClientTimeoutInterceptor sets a maximum timeout on outbound RPCs if
+// the context does not already have a deadline (or if its deadline exceeds defaultTimeout).
+func UnaryClientTimeoutInterceptor(defaultTimeout time.Duration) grpc.UnaryClientInterceptor {
+	return func(ctx context.Context, method string, req, reply any, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+		if deadline, ok := ctx.Deadline(); !ok || time.Until(deadline) > defaultTimeout {
+			var cancel context.CancelFunc
+			ctx, cancel = context.WithTimeout(ctx, defaultTimeout)
+			defer cancel()
+			return invoker(ctx, method, req, reply, cc, opts...)
+		}
+		return invoker(ctx, method, req, reply, cc, opts...)
+	}
+}
+
