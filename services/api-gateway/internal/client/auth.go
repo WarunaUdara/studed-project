@@ -51,7 +51,7 @@ func (c *AuthClient) Register(ctx context.Context, input model.RegisterInput) (*
 		Email:             input.Email,
 		Password:          input.Password,
 		FullName:          input.FullName,
-		Role:              modelRoleToProto(input.Role),
+		Role:              authpb.Role_ROLE_STUDENT,
 		Grade:             grade,
 		PreferredLanguage: preferredLanguage,
 	})

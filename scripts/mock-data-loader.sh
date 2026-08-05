@@ -49,7 +49,7 @@ register_or_login() {
   local response
   response=$(graphql "${jar}" \
     'mutation Register($input: RegisterInput!) { register(input: $input) { user { id email role } } }' \
-    "{\"input\":{\"email\":\"${email}\",\"password\":\"${password}\",\"fullName\":\"${full_name}\",\"role\":\"${role}\"${grade_field},\"preferredLanguage\":\"en\"}}")
+    "{\"input\":{\"email\":\"${email}\",\"password\":\"${password}\",\"fullName\":\"${full_name}\"${grade_field},\"preferredLanguage\":\"en\"}}")
 
   if echo "${response}" | jq -e '.errors' >/dev/null 2>&1; then
     response=$(graphql "${jar}" \
@@ -63,7 +63,21 @@ register_or_login() {
     exit 1
   fi
 
-  echo "${response}" | jq -r '.data.register.user.id // .data.login.user.id'
+  local user_id
+  user_id=$(echo "${response}" | jq -r '.data.register.user.id // .data.login.user.id')
+  local registered_role
+  registered_role=$(echo "${response}" | jq -r '.data.register.user.role // .data.login.user.role')
+
+  # Public registration is locked to STUDENT. If the seed requested an elevated
+  # role and the account was freshly created, promote it via direct DB access
+  # (operator credential). Existing accounts keep whatever role they have.
+  if [ -n "${role}" ] && [ "${role}" != "STUDENT" ] && [ "${registered_role}" != "${role}" ] && [ -n "${STUDED_DATABASE_URL:-}" ]; then
+    echo "[mock] promoting ${email} to ${role} via direct DB update"
+    (cd "${REPO_ROOT}/scripts/tools/promote-user" && go run . \
+      -db-url "${STUDED_DATABASE_URL}" -email "${email}" -role "${role}")
+  fi
+
+  echo "${user_id}"
 }
 
 find_course_by_slug() {

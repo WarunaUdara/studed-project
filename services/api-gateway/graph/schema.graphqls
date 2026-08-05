@@ -193,7 +193,6 @@ input RegisterInput {
   email: String!
   password: String!
   fullName: String!
-  role: Role!
   grade: Grade
   preferredLanguage: String
 }

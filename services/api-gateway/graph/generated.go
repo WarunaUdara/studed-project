@@ -8023,7 +8023,7 @@ func (ec *executionContext) unmarshalInputRegisterInput(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"email", "password", "fullName", "role", "grade", "preferredLanguage"}
+	fieldsInOrder := [...]string{"email", "password", "fullName", "grade", "preferredLanguage"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8051,13 +8051,6 @@ func (ec *executionContext) unmarshalInputRegisterInput(ctx context.Context, obj
 				return it, err
 			}
 			it.FullName = data
-		case "role":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
-			data, err := ec.unmarshalNRole2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐRole(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Role = data
 		case "grade":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("grade"))
 			data, err := ec.unmarshalOGrade2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐGrade(ctx, v)
