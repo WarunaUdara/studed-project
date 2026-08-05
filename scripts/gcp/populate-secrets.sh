@@ -58,4 +58,8 @@ put_secret "studed-payhere-merchant-id" "${PAYHERE_MERCHANT_ID:-}"
 put_secret "studed-payhere-merchant-secret" "${PAYHERE_MERCHANT_SECRET:-}"
 put_secret "studed-payhere-notify-url" "${PAYHERE_NOTIFY_URL:-}"
 
+# Shared service-to-service token (gateway -> internal services)
+SERVICE_TOKEN="${SERVICE_TOKEN:-$(openssl rand -base64 32 | tr -d '\n')}"
+put_secret "studed-service-token" "$SERVICE_TOKEN"
+
 echo "done. Secrets stored in Secret Manager ($PROJECT_ID)."

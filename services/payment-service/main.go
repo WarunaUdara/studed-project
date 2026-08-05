@@ -24,7 +24,7 @@ func main() {
 
 	databaseURL := getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable")
 	serviceAddr := getEnv("PAYMENT_SERVICE_ADDR", ":8091")
-	serviceToken := os.Getenv("PAYMENT_SERVICE_TOKEN")
+	serviceToken := os.Getenv("SERVICE_TOKEN")
 
 	var db *gorm.DB
 	var err error
@@ -75,7 +75,7 @@ func main() {
 	if serviceToken != "" {
 		handler = httpauth.ServiceTokenMiddleware(serviceToken)(mux)
 	} else {
-		log.Warn("PAYMENT_SERVICE_TOKEN not set; internal routes are unprotected")
+		log.Warn("SERVICE_TOKEN not set; internal routes are unprotected")
 	}
 
 	log.Info("payment-service listening", slog.String("addr", serviceAddr))

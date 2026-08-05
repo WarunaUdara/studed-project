@@ -23,7 +23,7 @@ func main() {
 
 	databaseURL := getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable")
 	serviceAddr := getEnv("NOTIFICATION_SERVICE_ADDR", ":8092")
-	serviceToken := os.Getenv("NOTIFICATION_SERVICE_TOKEN")
+	serviceToken := os.Getenv("SERVICE_TOKEN")
 
 	var db *gorm.DB
 	var err error
@@ -58,7 +58,7 @@ func main() {
 	if serviceToken != "" {
 		protected = httpauth.ServiceTokenMiddleware(serviceToken)(mux)
 	} else {
-		log.Warn("NOTIFICATION_SERVICE_TOKEN not set; internal routes are unprotected")
+		log.Warn("SERVICE_TOKEN not set; internal routes are unprotected")
 	}
 
 	log.Info("notification-service listening", slog.String("addr", serviceAddr))

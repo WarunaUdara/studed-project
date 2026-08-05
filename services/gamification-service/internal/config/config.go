@@ -17,7 +17,7 @@ func Load() (*Config, error) {
 		ServiceAddr:  getEnv("LISTEN_ADDR", ":8088"),
 		DatabaseURL:  getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable"),
 		RedisAddr:    getEnv("REDIS_ADDR", "localhost:6379"),
-		ServiceToken: os.Getenv("GAMIFICATION_SERVICE_TOKEN"),
+		ServiceToken: os.Getenv("SERVICE_TOKEN"),
 	}
 
 	if cfg.DatabaseURL == "" {
