@@ -5,6 +5,7 @@ vendor/
 # Build outputs
 frontend/dist/
 frontend/src/routeTree.gen.ts
+.wrangler/
 services/*/bin/
 services/*/tmp/
 graphify-out/
