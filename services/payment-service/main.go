@@ -4,12 +4,14 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/studed/payment-service/internal/handler"
 	"github.com/studed/payment-service/internal/model"
 	"github.com/studed/payment-service/internal/payhere"
+	"github.com/studed/shared/go/httpauth"
 	"github.com/studed/shared/go/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -22,6 +24,7 @@ func main() {
 
 	databaseURL := getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable")
 	serviceAddr := getEnv("PAYMENT_SERVICE_ADDR", ":8091")
+	serviceToken := os.Getenv("SERVICE_TOKEN")
 
 	var db *gorm.DB
 	var err error
@@ -59,10 +62,38 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("payment-service ok"))
 	})
+	// The PayHere webhook is a server-to-server callback authenticated by its
+	// own signature; every other route is internal and requires the shared
+	// service token.
+	publicPaths := map[string]bool{
+		"/health":            true,
+		"/v1/payhere/notify": true,
+	}
 	h.Register(mux)
 
+	var handler http.Handler = mux
+	if serviceToken != "" {
+		handler = httpauth.ServiceTokenMiddleware(serviceToken)(mux)
+	} else {
+		log.Warn("SERVICE_TOKEN not set; internal routes are unprotected")
+	}
+
 	log.Info("payment-service listening", slog.String("addr", serviceAddr))
-	if err := http.ListenAndServe(serviceAddr, mux); err != nil {
+	server := &http.Server{
+		Addr: serviceAddr,
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if publicPaths[strings.TrimRight(r.URL.Path, "/")] {
+				mux.ServeHTTP(w, r)
+				return
+			}
+			handler.ServeHTTP(w, r)
+		}),
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      15 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+	if err := server.ListenAndServe(); err != nil {
 		log.Error("server failed", slog.Any("error", err))
 		os.Exit(1)
 	}

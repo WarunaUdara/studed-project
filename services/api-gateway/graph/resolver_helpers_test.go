@@ -78,8 +78,14 @@ func TestSetAuthCookies_SetsHttpOnlySecureCookies(t *testing.T) {
 	if !access.HttpOnly {
 		t.Fatal("expected access_token cookie to be HttpOnly")
 	}
+	if !access.Secure {
+		t.Fatal("expected access_token cookie to be Secure")
+	}
 	if refresh == nil || refresh.Value != "refresh-token-value" {
 		t.Fatalf("expected a refresh_token cookie with the right value, got %+v", refresh)
+	}
+	if !refresh.Secure {
+		t.Fatal("expected refresh_token cookie to be Secure")
 	}
 	if refresh.MaxAge <= access.MaxAge {
 		t.Fatalf("expected refresh token to outlive access token, got access=%d refresh=%d", access.MaxAge, refresh.MaxAge)

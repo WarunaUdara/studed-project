@@ -24,7 +24,7 @@ func New(db *gorm.DB, log *slog.Logger) *Handler {
 
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /v1/notifications", h.create)
-	mux.HandleFunc("GET /v1/notifications/{userID}", h.list)
+	mux.HandleFunc("GET /v1/notifications", h.list)
 	mux.HandleFunc("POST /v1/notifications/read", h.markRead)
 }
 
@@ -63,9 +63,9 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) list(w http.ResponseWriter, r *http.Request) {
-	userID := r.PathValue("userID")
+	userID := strings.TrimSpace(r.Header.Get("X-Authenticated-User-ID"))
 	if userID == "" {
-		writeError(w, http.StatusBadRequest, "user id is required")
+		writeError(w, http.StatusUnauthorized, "unauthenticated")
 		return
 	}
 
@@ -83,20 +83,25 @@ func (h *Handler) list(w http.ResponseWriter, r *http.Request) {
 }
 
 type markReadRequest struct {
-	UserID         string `json:"user_id"`
 	NotificationID string `json:"notification_id"`
 }
 
 func (h *Handler) markRead(w http.ResponseWriter, r *http.Request) {
+	userID := strings.TrimSpace(r.Header.Get("X-Authenticated-User-ID"))
+	if userID == "" {
+		writeError(w, http.StatusUnauthorized, "unauthenticated")
+		return
+	}
+
 	var req markReadRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.UserID == "" {
-		writeError(w, http.StatusBadRequest, "user_id is required")
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
 
 	query := h.db.WithContext(r.Context()).
 		Model(&model.Notification{}).
-		Where("user_id = ?", req.UserID)
+		Where("user_id = ?", userID)
 	if req.NotificationID != "" {
 		query = query.Where("id = ?", req.NotificationID)
 	}

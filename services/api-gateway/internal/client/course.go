@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/studed/api-gateway/graph/model"
+	"github.com/studed/shared/go/grpcauth"
 	coursepb "github.com/studed/shared/proto/gen/go/course"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -16,8 +17,12 @@ type CourseClient struct {
 	conn   *grpc.ClientConn
 }
 
-func NewCourseClient(addr string) (*CourseClient, error) {
-	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+func NewCourseClient(addr, serviceToken string) (*CourseClient, error) {
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	if serviceToken != "" {
+		opts = append(opts, grpc.WithChainUnaryInterceptor(grpcauth.UnaryClientInterceptor(serviceToken)))
+	}
+	conn, err := grpc.NewClient(addr, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to course service: %w", err)
 	}

@@ -18,6 +18,7 @@ import (
 	"github.com/studed/gamification-service/internal/handler"
 	"github.com/studed/gamification-service/internal/repository"
 	"github.com/studed/gamification-service/internal/service"
+	"github.com/studed/shared/go/grpcauth"
 	"github.com/studed/shared/go/logger"
 	gampb "github.com/studed/shared/proto/gen/go/gamification"
 	"google.golang.org/grpc"
@@ -102,7 +103,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(grpcauth.UnaryServerInterceptor(cfg.ServiceToken)),
+	)
 	gampb.RegisterGamificationServiceServer(grpcServer, grpcHandler)
 
 	go func() {

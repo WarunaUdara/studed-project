@@ -33,28 +33,28 @@ func main() {
 		os.Exit(1)
 	}
 
-	authClient, err := client.NewAuthClient(cfg.AuthServiceAddr)
+	authClient, err := client.NewAuthClient(cfg.AuthServiceAddr, cfg.ServiceToken)
 	if err != nil {
 		log.Error("failed to connect to auth service", slog.Any("error", err))
 		os.Exit(1)
 	}
 	defer authClient.Close()
 
-	courseClient, err := client.NewCourseClient(cfg.CourseServiceAddr)
+	courseClient, err := client.NewCourseClient(cfg.CourseServiceAddr, cfg.ServiceToken)
 	if err != nil {
 		log.Error("failed to connect to course service", slog.Any("error", err))
 		os.Exit(1)
 	}
 	defer courseClient.Close()
 
-	progressClient, err := client.NewProgressClient(cfg.ProgressServiceAddr, courseClient)
+	progressClient, err := client.NewProgressClient(cfg.ProgressServiceAddr, courseClient, cfg.ServiceToken)
 	if err != nil {
 		log.Error("failed to connect to progress service", slog.Any("error", err))
 		os.Exit(1)
 	}
 	defer progressClient.Close()
 
-	gamificationClient, err := client.NewGamificationClient(cfg.GamificationServiceAddr)
+	gamificationClient, err := client.NewGamificationClient(cfg.GamificationServiceAddr, cfg.ServiceToken)
 	if err != nil {
 		log.Error("failed to connect to gamification service", slog.Any("error", err))
 		os.Exit(1)
@@ -63,7 +63,7 @@ func main() {
 
 	eventBus := events.NewBus(cfg.RedisAddr, log)
 	aiClient := client.NewAIClient(cfg.AIServiceURL)
-	paymentClient := client.NewPaymentClient(cfg.PaymentServiceURL)
+	paymentClient := client.NewPaymentClient(cfg.PaymentServiceURL, cfg.ServiceToken)
 
 	resolver := &graph.Resolver{
 		AuthClient:         authClient,
@@ -76,17 +76,26 @@ func main() {
 	}
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
 	srv.AddTransport(transport.Options{})
-	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.Websocket{
 		KeepAlivePingInterval: 10 * time.Second,
 		// Auth is enforced per subscription via the session cookie the Auth
-		// middleware parsed during the HTTP upgrade; origins are not
-		// restricted because the gateway is fronted by CORS middleware.
+		// middleware parsed during the HTTP upgrade. Cross-origin sockets are
+		// rejected: only the frontend origin may open a websocket.
 		Implementation: transport.CoderWebsocketImplementation{
-			AcceptOptions: coderws.AcceptOptions{InsecureSkipVerify: true},
+			AcceptOptions: coderws.AcceptOptions{
+				OriginPatterns: []string{
+					"https://studed-project-frontend.pages.dev",
+					"https://*.pages.dev",
+					"http://localhost:*",
+					"https://localhost:*",
+					"http://127.0.0.1:*",
+				},
+			},
 		},
 	})
+	// Bound query breadth so a single request cannot exhaust gateway CPU.
+	srv.Use(extension.FixedComplexityLimit(200))
 	if cfg.GraphQLPlayground {
 		srv.Use(extension.Introspection{})
 	}

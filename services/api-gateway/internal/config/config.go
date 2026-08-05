@@ -16,6 +16,7 @@ type Config struct {
 	PaymentServiceURL       string
 	AccessSecret            string
 	GraphQLPlayground       bool
+	ServiceToken            string
 }
 
 func Load() (*Config, error) {
@@ -35,6 +36,7 @@ func Load() (*Config, error) {
 		PaymentServiceURL:       getEnv("PAYMENT_SERVICE_URL", "http://localhost:8091"),
 		AccessSecret:            accessSecret,
 		GraphQLPlayground:       getEnv("GRAPHQL_PLAYGROUND", "false") == "true",
+		ServiceToken:            os.Getenv("SERVICE_TOKEN"),
 	}, nil
 }
 

@@ -17,7 +17,7 @@ data:
   ELASTICSEARCH_URL: "http://elasticsearch:9200"
   # Gateway
   API_GATEWAY_ADDR: ":8080"
-  GRAPHQL_PLAYGROUND: "true"
+  GRAPHQL_PLAYGROUND: "false"
   # Auth token lifetimes
   JWT_ACCESS_TTL: "15m"
   JWT_REFRESH_TTL: "168h"
