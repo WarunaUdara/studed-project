@@ -7,6 +7,7 @@ resource "google_secret_manager_secret" "studed_secrets" {
     "database-url", # Neon Postgres connection string (sslmode=require)
     "jwt-access-secret",
     "jwt-refresh-secret",
+    "service-token",
     "gemini-api-key",      # empty placeholder until a real key is provided
     "payhere-merchant-id", # empty placeholder
     "payhere-merchant-secret",
