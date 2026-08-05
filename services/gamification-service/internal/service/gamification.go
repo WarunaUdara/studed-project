@@ -94,6 +94,22 @@ func (s *gamificationService) CalculateAndAwardXp(ctx context.Context, userID, w
 
 	xpEarned := calculateXp(score, xpReward, passingThreshold)
 
+	// Award-once: re-passing an already-completed wave grants no additional XP.
+	alreadyAwarded, err := s.xpRepo.HasAwardedXp(ctx, userID, "wave_completed", waveID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check previous award: %w", err)
+	}
+	if alreadyAwarded {
+		totalXp, err := s.xpRepo.GetUserXp(ctx, userID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get user xp: %w", err)
+		}
+		return &gampb.XpCalculationResponse{
+			XpEarned: 0,
+			TotalXp:  totalXp,
+		}, nil
+	}
+
 	totalXp, err := s.xpRepo.AddXp(ctx, userID, xpEarned, "wave_completed", waveID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to award xp: %w", err)

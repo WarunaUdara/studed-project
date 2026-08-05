@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -12,10 +13,11 @@ import (
 
 type fakeXpRepo struct {
 	totalXp map[string]int32
+	awarded map[string]bool
 }
 
 func newFakeXpRepo() *fakeXpRepo {
-	return &fakeXpRepo{totalXp: make(map[string]int32)}
+	return &fakeXpRepo{totalXp: make(map[string]int32), awarded: make(map[string]bool)}
 }
 
 func (r *fakeXpRepo) GetOrCreateUserXp(ctx context.Context, userID string) (*model.UserXp, error) {
@@ -23,12 +25,25 @@ func (r *fakeXpRepo) GetOrCreateUserXp(ctx context.Context, userID string) (*mod
 }
 
 func (r *fakeXpRepo) AddXp(ctx context.Context, userID string, amount int32, reason, sourceID string) (int32, error) {
+	if reason == "wave_completed" && r.awarded[userID+":"+sourceID] {
+		return r.totalXp[userID], nil
+	}
+	if reason == "wave_completed" {
+		r.awarded[userID+":"+sourceID] = true
+	}
 	r.totalXp[userID] += amount
 	return r.totalXp[userID], nil
 }
 
 func (r *fakeXpRepo) GetUserXp(ctx context.Context, userID string) (int32, error) {
 	return r.totalXp[userID], nil
+}
+
+func (r *fakeXpRepo) HasAwardedXp(ctx context.Context, userID, reason, sourceID string) (bool, error) {
+	if reason != "wave_completed" {
+		return false, nil
+	}
+	return r.awarded[userID+":"+sourceID], nil
 }
 
 type fakeLeaderboardRepo struct{}
@@ -189,9 +204,11 @@ func TestCalculateAndAwardXp_UnlocksPerfectScoreAchievementOnlyAt100(t *testing.
 func TestCalculateAndAwardXp_UnlocksXpMilestoneAchievements(t *testing.T) {
 	svc, _, achievementRepo := newTestService()
 
-	// 5 waves of 100 xp reward each get the user to 500 total xp.
+	// 5 distinct waves of 100 xp reward each get the user to 500 total xp.
+	// Re-passing the same wave awards no XP, so each wave must be distinct.
 	for i := 0; i < 5; i++ {
-		if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w", 100, 100, 70); err != nil {
+		waveID := fmt.Sprintf("w%d", i)
+		if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", waveID, 100, 100, 70); err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 	}
@@ -200,6 +217,32 @@ func TestCalculateAndAwardXp_UnlocksXpMilestoneAchievements(t *testing.T) {
 	}
 	if achievementRepo.unlocked["u1"]["scholar"] {
 		t.Fatalf("scholar should not unlock before 2000 total xp")
+	}
+}
+
+func TestCalculateAndAwardXp_RepassingWaveGrantsNoAdditionalXp(t *testing.T) {
+	svc, xpRepo, _ := newTestService()
+
+	first, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 100, 100, 70)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if first.XpEarned != 100 || first.TotalXp != 100 {
+		t.Fatalf("expected 100 xp on first completion, got %+v", first)
+	}
+
+	second, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 100, 100, 70)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if second.XpEarned != 0 {
+		t.Fatalf("re-passing a completed wave should award 0 xp, got %d", second.XpEarned)
+	}
+	if second.TotalXp != 100 {
+		t.Fatalf("total xp should stay at 100 on re-pass, got %d", second.TotalXp)
+	}
+	if xpRepo.totalXp["u1"] != 100 {
+		t.Fatalf("xp repo should remain at 100 on re-pass, got %d", xpRepo.totalXp["u1"])
 	}
 }
 
