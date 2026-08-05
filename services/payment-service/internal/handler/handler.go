@@ -27,6 +27,12 @@ type Handler struct {
 	log     *slog.Logger
 }
 
+// authenticatedUserID returns the caller identity as verified by the API
+// gateway. Internal endpoints never trust a client-supplied user_id.
+func authenticatedUserID(r *http.Request) string {
+	return strings.TrimSpace(r.Header.Get("X-Authenticated-User-ID"))
+}
+
 func New(db *gorm.DB, ph payhere.Config, log *slog.Logger) *Handler {
 	return &Handler{db: db, payhere: ph, log: log}
 }
@@ -34,23 +40,26 @@ func New(db *gorm.DB, ph payhere.Config, log *slog.Logger) *Handler {
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /v1/subscriptions", h.createSubscription)
 	mux.HandleFunc("POST /v1/subscriptions/cancel", h.cancelSubscription)
-	mux.HandleFunc("GET /v1/subscriptions/{userID}", h.getSubscription)
+	mux.HandleFunc("GET /v1/subscriptions", h.getSubscription)
 	mux.HandleFunc("POST /v1/payhere/notify", h.payhereNotify)
 }
 
 type createRequest struct {
-	UserID string `json:"user_id"`
-	Tier   string `json:"tier"`
+	Tier string `json:"tier"`
 }
 
-type cancelRequest struct {
-	UserID string `json:"user_id"`
-}
+type cancelRequest struct{}
 
 func (h *Handler) createSubscription(w http.ResponseWriter, r *http.Request) {
+	userID := authenticatedUserID(r)
+	if userID == "" {
+		writeError(w, http.StatusUnauthorized, "unauthenticated")
+		return
+	}
+
 	var req createRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.UserID == "" {
-		writeError(w, http.StatusBadRequest, "user_id is required")
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
 	req.Tier = strings.ToUpper(strings.TrimSpace(req.Tier))
@@ -62,32 +71,27 @@ func (h *Handler) createSubscription(w http.ResponseWriter, r *http.Request) {
 	// Reuse an active subscription instead of stacking duplicates.
 	var existing model.Subscription
 	err := h.db.WithContext(r.Context()).
-		Where("user_id = ? AND status = ?", req.UserID, model.SubscriptionStatusActive).
+		Where("user_id = ? AND status = ?", userID, model.SubscriptionStatusActive).
 		Where("end_date > ?", time.Now()).
 		First(&existing).Error
 	if err == nil {
-		if existing.Tier == req.Tier {
-			writeJSON(w, http.StatusOK, existing)
-			return
-		}
-		// Tier change: cancel the old subscription, then create the new one.
-		existing.Status = model.SubscriptionStatusCanceled
-		if err := h.db.WithContext(r.Context()).Save(&existing).Error; err != nil {
-			writeError(w, http.StatusInternalServerError, "failed to replace subscription")
-			return
-		}
+		writeJSON(w, http.StatusOK, existing)
+		return
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		writeError(w, http.StatusInternalServerError, "failed to check existing subscription")
 		return
 	}
 
+	// New subscriptions start PENDING; they are only activated once a verified
+	// PayHere notification confirms the payment. This prevents a caller from
+	// granting themselves premium access through the API.
 	now := time.Now()
 	sub := model.Subscription{
 		ID:        uuid.New().String(),
-		UserID:    req.UserID,
+		UserID:    userID,
 		Tier:      req.Tier,
-		Status:    model.SubscriptionStatusActive,
-		Provider:  "manual",
+		Status:    model.SubscriptionStatusPending,
+		Provider:  "payhere",
 		StartDate: now,
 		EndDate:   now.AddDate(0, 1, 0),
 	}
@@ -99,15 +103,15 @@ func (h *Handler) createSubscription(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) cancelSubscription(w http.ResponseWriter, r *http.Request) {
-	var req cancelRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.UserID == "" {
-		writeError(w, http.StatusBadRequest, "user_id is required")
+	userID := authenticatedUserID(r)
+	if userID == "" {
+		writeError(w, http.StatusUnauthorized, "unauthenticated")
 		return
 	}
 
 	var sub model.Subscription
 	err := h.db.WithContext(r.Context()).
-		Where("user_id = ? AND status = ?", req.UserID, model.SubscriptionStatusActive).
+		Where("user_id = ? AND status = ?", userID, model.SubscriptionStatusActive).
 		Order("created_at DESC").
 		First(&sub).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -128,9 +132,9 @@ func (h *Handler) cancelSubscription(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getSubscription(w http.ResponseWriter, r *http.Request) {
-	userID := r.PathValue("userID")
+	userID := authenticatedUserID(r)
 	if userID == "" {
-		writeError(w, http.StatusBadRequest, "user id is required")
+		writeError(w, http.StatusUnauthorized, "unauthenticated")
 		return
 	}
 
@@ -157,8 +161,8 @@ func (h *Handler) getSubscription(w http.ResponseWriter, r *http.Request) {
 }
 
 // payhereNotify handles PayHere's server-to-server payment notification.
-// Until merchant credentials are configured this endpoint rejects requests,
-// but the signature verification flow is production-ready.
+// The endpoint is public but only a request carrying a valid PayHere
+// signature (and matching merchant_id) can activate a subscription.
 func (h *Handler) payhereNotify(w http.ResponseWriter, r *http.Request) {
 	if !h.payhere.Enabled() {
 		writeError(w, http.StatusServiceUnavailable, "payhere is not configured")
@@ -169,8 +173,14 @@ func (h *Handler) payhereNotify(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	merchantID := r.FormValue("merchant_id")
+	if merchantID != h.payhere.MerchantID {
+		writeError(w, http.StatusForbidden, "invalid merchant")
+		return
+	}
+
 	if !h.payhere.VerifyNotification(
-		r.FormValue("merchant_id"),
+		merchantID,
 		r.FormValue("order_id"),
 		r.FormValue("payhere_amount"),
 		r.FormValue("payhere_currency"),
@@ -184,17 +194,30 @@ func (h *Handler) payhereNotify(w http.ResponseWriter, r *http.Request) {
 	// status_code 2 means a successful PayHere payment.
 	if r.FormValue("status_code") == "2" {
 		orderID := r.FormValue("order_id")
-		if err := h.db.WithContext(r.Context()).
-			Model(&model.Subscription{}).
-			Where("id = ?", orderID).
-			Updates(map[string]any{
-				"provider":             "payhere",
-				"provider_external_id": r.FormValue("payment_id"),
-				"status":               model.SubscriptionStatusActive,
-			}).Error; err != nil {
-			h.log.Error("failed to activate payhere subscription", slog.String("order_id", orderID), slog.Any("error", err))
-			writeError(w, http.StatusInternalServerError, "failed to activate subscription")
+		var sub model.Subscription
+		err := h.db.WithContext(r.Context()).Where("id = ?", orderID).First(&sub).Error
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			writeError(w, http.StatusNotFound, "unknown order")
 			return
+		}
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "failed to load order")
+			return
+		}
+		// Idempotent: a notification that already activated the order is a no-op.
+		if sub.Status != model.SubscriptionStatusActive {
+			if err := h.db.WithContext(r.Context()).
+				Model(&model.Subscription{}).
+				Where("id = ?", orderID).
+				Updates(map[string]any{
+					"provider":             "payhere",
+					"provider_external_id": r.FormValue("payment_id"),
+					"status":               model.SubscriptionStatusActive,
+				}).Error; err != nil {
+				h.log.Error("failed to activate payhere subscription", slog.String("order_id", orderID), slog.Any("error", err))
+				writeError(w, http.StatusInternalServerError, "failed to activate subscription")
+				return
+			}
 		}
 	}
 	w.WriteHeader(http.StatusOK)

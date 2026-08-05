@@ -52,11 +52,11 @@ func TestCreateSubscription_Success(t *testing.T) {
 	h.Register(mux)
 
 	body, _ := json.Marshal(map[string]string{
-		"user_id": "usr-123",
-		"tier":    "STANDARD",
+		"tier": "STANDARD",
 	})
 
 	req := httptest.NewRequest(http.MethodPost, "/v1/subscriptions", bytes.NewReader(body))
+	req.Header.Set("X-Authenticated-User-ID", "usr-123")
 	rec := httptest.NewRecorder()
 
 	mux.ServeHTTP(rec, req)
@@ -69,7 +69,7 @@ func TestCreateSubscription_Success(t *testing.T) {
 	if err := json.NewDecoder(rec.Body).Decode(&sub); err != nil {
 		t.Fatalf("failed to decode response: %v", err)
 	}
-	if sub.UserID != "usr-123" || sub.Tier != "STANDARD" || sub.Status != model.SubscriptionStatusActive {
+	if sub.UserID != "usr-123" || sub.Tier != "STANDARD" || sub.Status != model.SubscriptionStatusPending {
 		t.Fatalf("unexpected subscription data: %+v", sub)
 	}
 }
@@ -82,11 +82,11 @@ func TestCreateSubscription_InvalidTier(t *testing.T) {
 	h.Register(mux)
 
 	body, _ := json.Marshal(map[string]string{
-		"user_id": "usr-123",
-		"tier":    "INVALID_TIER",
+		"tier": "INVALID_TIER",
 	})
 
 	req := httptest.NewRequest(http.MethodPost, "/v1/subscriptions", bytes.NewReader(body))
+	req.Header.Set("X-Authenticated-User-ID", "usr-123")
 	rec := httptest.NewRecorder()
 
 	mux.ServeHTTP(rec, req)
@@ -112,11 +112,8 @@ func TestCancelSubscription_Success(t *testing.T) {
 	mux := http.NewServeMux()
 	h.Register(mux)
 
-	body, _ := json.Marshal(map[string]string{
-		"user_id": "usr-456",
-	})
-
-	req := httptest.NewRequest(http.MethodPost, "/v1/subscriptions/cancel", bytes.NewReader(body))
+	req := httptest.NewRequest(http.MethodPost, "/v1/subscriptions/cancel", nil)
+	req.Header.Set("X-Authenticated-User-ID", "usr-456")
 	rec := httptest.NewRecorder()
 
 	mux.ServeHTTP(rec, req)
@@ -139,7 +136,8 @@ func TestGetSubscription_NotFound(t *testing.T) {
 	mux := http.NewServeMux()
 	h.Register(mux)
 
-	req := httptest.NewRequest(http.MethodGet, "/v1/subscriptions/non-existent-user", nil)
+	req := httptest.NewRequest(http.MethodGet, "/v1/subscriptions", nil)
+	req.Header.Set("X-Authenticated-User-ID", "non-existent-user")
 	rec := httptest.NewRecorder()
 
 	mux.ServeHTTP(rec, req)

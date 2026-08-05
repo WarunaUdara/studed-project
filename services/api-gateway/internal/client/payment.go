@@ -13,14 +13,16 @@ import (
 
 // PaymentClient talks to the payment-service over HTTP/JSON.
 type PaymentClient struct {
-	baseURL string
-	http    *http.Client
+	baseURL      string
+	http         *http.Client
+	serviceToken string
 }
 
-func NewPaymentClient(baseURL string) *PaymentClient {
+func NewPaymentClient(baseURL, serviceToken string) *PaymentClient {
 	return &PaymentClient{
-		baseURL: baseURL,
-		http:    &http.Client{Timeout: 15 * time.Second},
+		baseURL:      baseURL,
+		http:         &http.Client{Timeout: 15 * time.Second},
+		serviceToken: serviceToken,
 	}
 }
 
@@ -33,7 +35,7 @@ type subscriptionResponse struct {
 	Error     string    `json:"error"`
 }
 
-func (c *PaymentClient) request(ctx context.Context, method, path string, reqBody any) (*model.UserSubscription, error) {
+func (c *PaymentClient) request(ctx context.Context, method, path, userID string, reqBody any) (*model.UserSubscription, error) {
 	var body *bytes.Reader
 	if reqBody != nil {
 		payload, err := json.Marshal(reqBody)
@@ -50,6 +52,10 @@ func (c *PaymentClient) request(ctx context.Context, method, path string, reqBod
 		return nil, fmt.Errorf("failed to build payment request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+c.serviceToken)
+	if userID != "" {
+		req.Header.Set("X-Authenticated-User-ID", userID)
+	}
 
 	resp, err := c.http.Do(req)
 	if err != nil {
@@ -78,18 +84,15 @@ func (c *PaymentClient) request(ctx context.Context, method, path string, reqBod
 }
 
 func (c *PaymentClient) CreateSubscription(ctx context.Context, userID string, tier model.Tier) (*model.UserSubscription, error) {
-	return c.request(ctx, http.MethodPost, "/v1/subscriptions", map[string]string{
-		"user_id": userID,
-		"tier":    string(tier),
+	return c.request(ctx, http.MethodPost, "/v1/subscriptions", userID, map[string]string{
+		"tier": string(tier),
 	})
 }
 
 func (c *PaymentClient) CancelSubscription(ctx context.Context, userID string) (*model.UserSubscription, error) {
-	return c.request(ctx, http.MethodPost, "/v1/subscriptions/cancel", map[string]string{
-		"user_id": userID,
-	})
+	return c.request(ctx, http.MethodPost, "/v1/subscriptions/cancel", userID, nil)
 }
 
 func (c *PaymentClient) GetSubscription(ctx context.Context, userID string) (*model.UserSubscription, error) {
-	return c.request(ctx, http.MethodGet, "/v1/subscriptions/"+userID, nil)
+	return c.request(ctx, http.MethodGet, "/v1/subscriptions", userID, nil)
 }

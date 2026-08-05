@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/studed/api-gateway/graph/model"
+	"github.com/studed/shared/go/grpcauth"
 	gampb "github.com/studed/shared/proto/gen/go/gamification"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -17,8 +18,12 @@ type GamificationClient struct {
 	conn   *grpc.ClientConn
 }
 
-func NewGamificationClient(addr string) (*GamificationClient, error) {
-	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+func NewGamificationClient(addr, serviceToken string) (*GamificationClient, error) {
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	if serviceToken != "" {
+		opts = append(opts, grpc.WithChainUnaryInterceptor(grpcauth.UnaryClientInterceptor(serviceToken)))
+	}
+	conn, err := grpc.NewClient(addr, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to gamification service: %w", err)
 	}

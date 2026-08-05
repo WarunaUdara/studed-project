@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/studed/api-gateway/graph/model"
+	"github.com/studed/shared/go/grpcauth"
 	authpb "github.com/studed/shared/proto/gen/go/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -20,8 +21,12 @@ type AuthClient struct {
 	conn   *grpc.ClientConn
 }
 
-func NewAuthClient(addr string) (*AuthClient, error) {
-	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+func NewAuthClient(addr, serviceToken string) (*AuthClient, error) {
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	if serviceToken != "" {
+		opts = append(opts, grpc.WithChainUnaryInterceptor(grpcauth.UnaryClientInterceptor(serviceToken)))
+	}
+	conn, err := grpc.NewClient(addr, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to auth service: %w", err)
 	}
