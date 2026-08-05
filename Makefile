@@ -30,19 +30,22 @@
 	./scripts/k8s-dev.sh status
 
  iac-init:
-	cd infra/terraform && tofu init
+	cd infra/gcp/terraform && tofu init -backend=false
 
  iac-plan:
-	cd infra/terraform && (tofu plan || echo "⚠️ Floci AWS emulator offline; skipping tofu state refresh")
+	cd infra/gcp/terraform && tofu validate
 
  iac-apply:
-	cd infra/terraform && tofu apply -auto-approve
+	cd infra/gcp/terraform && tofu apply -auto-approve
 
  helm-lint:
 	/opt/homebrew/bin/helm lint infra/helm/studed || helm lint infra/helm/studed
 
- ci-local: frontend-typecheck frontend-build go-test shared-test helm-lint iac-plan
-	@echo "✅ All local CI pre-flight checks passed!"
+ frontend-test:
+	cd frontend && bun run test --run
+
+ ci-local: frontend-typecheck frontend-test frontend-build go-test shared-test helm-lint iac-plan
+	@echo "All local CI pre-flight checks passed!"
 
  monitoring-up:
 	docker compose up -d prometheus grafana postgres-exporter redis-exporter

@@ -42,7 +42,7 @@ jobs:
           fi
 
   frontend-ci:
-    name: Frontend Typecheck & Build
+    name: Frontend Typecheck, Test & Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,6 +53,8 @@ jobs:
         run: cd frontend && bun install --frozen-lockfile || bun install
       - name: Run Typecheck
         run: cd frontend && bun run typecheck
+      - name: Run Unit Tests (Vitest)
+        run: cd frontend && bun run test --run
       - name: Build Production Bundle
         run: cd frontend && bun run build
 
@@ -81,9 +83,9 @@ jobs:
         with:
           tofu_version: 1.8.0
       - name: OpenTofu Init
-        run: cd infra/terraform && tofu init -backend=false
+        run: cd infra/gcp/terraform && tofu init -backend=false
       - name: OpenTofu Validate
-        run: cd infra/terraform && tofu validate
+        run: cd infra/gcp/terraform && tofu validate
 
   k8s-helm-ci:
     name: Kubernetes Manifests & Helm Lint
