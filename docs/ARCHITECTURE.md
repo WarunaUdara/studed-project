@@ -1,167 +1,132 @@
 # StudEd Production Architecture
 
-End-to-end architecture of the live StudEd deployment (GCP backend, Cloudflare
-frontend, Neon Postgres).
+End-to-end architecture of the live StudEd deployment (GCP backend, Cloudflare frontend, Neon Postgres).
 
-## Diagram
+## Full GCP Architecture Diagram
 
 ```mermaid
-flowchart LR
-    subgraph User["End user"]
-        U[Browser on phone / laptop]
+flowchart TB
+    subgraph Client["End User Layer"]
+        U["Browser / Mobile App<br/>(React 18 SPA)"]
     end
 
-    subgraph CF["Cloudflare (free plan)"]
-        P["Pages: React SPA<br/>studed-project-frontend.pages.dev"]
-        PF["Pages Function<br/>functions/graphql.ts<br/>/graphql proxy"]
+    subgraph CF["Cloudflare Edge"]
+        P["Pages Hosting<br/>studed-project-frontend.pages.dev"]
+        PF["Pages Function<br/>functions/graphql.ts<br/>(Server-to-Server Proxy)"]
     end
 
-    subgraph GCP["Google Cloud project studed-prod"]
-        subgraph NET["Networking"]
-            IP["Static IP 34.149.224.124"]
-            WAF["Cloud Armor WAF<br/>OWASP CRS + rate limit"]
-            CERT["Google-managed TLS cert"]
-            LB["GCE HTTPS Load Balancer"]
+    subgraph GCP["Google Cloud Platform (studed-prod)"]
+        subgraph Edge["Edge & Ingress Security"]
+            IP["Static External IP<br/>34.149.224.124"]
+            LB["GCE L7 HTTPS Load Balancer<br/>(Managed SSL Cert)"]
+            WAF["Cloud Armor WAF<br/>(OWASP CRS + Rate Limit: 100 req/min)"]
         end
-        subgraph GKE["GKE Standard - us-central1-a<br/>2x e2-standard-2 (private nodes)"]
-            GW["api-gateway :4000"]
-            AUTH["auth-service"]
-            CRS["course-service"]
-            PROG["progress-service"]
-            GAME["gamification-service"]
-            AI["ai-service"]
-            NOTIF["notification-service"]
-            PAY["payment-service"]
-            REDIS["Redis"]
-            ES["Elasticsearch"]
+
+        subgraph GKE["GKE Standard Cluster (us-central1-a)"]
+            subgraph NetSec["Network Policy Isolation (Default-Deny)"]
+                subgraph GatewayNS["Gateway Tier"]
+                    GW["api-gateway :4000<br/>(chi router + gqlgen)<br/>• Context Timeouts (5s/90s)<br/>• Complexity Limit 200<br/>• Graceful Drain (15s)"]
+                end
+
+                subgraph ServicesNS["Microservices Tier (Internal Only)"]
+                    AUTH["auth-service :8085 (gRPC)<br/>• Service Token Auth<br/>• Graceful Shutdown"]
+                    CRS["course-service :8083 (gRPC)<br/>• Service Token Auth<br/>• Graceful Shutdown"]
+                    PROG["progress-service :8086 (gRPC)<br/>• Outbound Timeouts<br/>• Graceful Shutdown"]
+                    GAME["gamification-service :8088 (gRPC)<br/>• Atomic XP & Award-Once<br/>• Service Token Auth"]
+                    AI["ai-service :8090 (HTTP)<br/>• Gemini 1.5 Flash<br/>• Graceful Shutdown"]
+                    NOTIF["notification-service :8092 (HTTP)<br/>• Bearer Auth Guard<br/>• Graceful Shutdown"]
+                    PAY["payment-service :8091 (HTTP)<br/>• PayHere Webhook + Signature<br/>• Bearer Auth Guard"]
+                    UP["upload-service :8090 (HTTP)<br/>• Media Handling"]
+                    USER["user-service :8082 (HTTP)<br/>• Profile Management"]
+                end
+
+                subgraph DataNS["In-Cluster Data Tier"]
+                    REDIS[("Redis 7.0<br/>(Leaderboard & PubSub)")]
+                    ES[("Elasticsearch 8.x<br/>(Course Search Index)")]
+                end
+            end
         end
-        subgraph GITOP["GitOps / Automation"]
-            ARGO["ArgoCD (argocd ns)"]
-            ESEC["external-secrets"]
-            SCHED["Cloud Scheduler<br/>hourly"]
-            SCOUT["Cloud Run job<br/>idle-scout"]
+
+        subgraph Security["Identity & Secrets Management"]
+            SM["GCP Secret Manager<br/>(7/7 ExternalSecrets:<br/>Database, JWT, PayHere, Gemini, Tokens)"]
+            WI["Workload Identity SA<br/>studed-external-secrets"]
+            ESEC["External Secrets Operator<br/>(In-Cluster Sync)"]
         end
-        SM["Secret Manager"]
-        SA["GKE node SA +<br/>Workload Identity (no keys)"]
+
+        subgraph Automation["Infra Automation & Idle Control"]
+            SCHED["Cloud Scheduler<br/>(Hourly Cron)"]
+            SCOUT["Cloud Run Job<br/>idle-scout<br/>(Scales nodes 2 ↔ 0 on idle)"]
+        end
     end
 
-    subgraph Neon["Neon (costless tier)"]
-        PG[("Postgres 15")]
+    subgraph ExtDB["Managed Database Tier"]
+        NEON[("Neon Postgres 15<br/>(Serverless Pooled DB)<br/>• Rotated Credential Manager")]
     end
 
-    subgraph GH["GitHub"]
-        REPO[repo: WarunaUdara/studed-project]
-        CI["Actions CI<br/>build 8 images"]
-        GHCR[("GHCR ghcr.io/warunaudara")]
+    subgraph CI["CI/CD Pipeline (GitHub Actions)"]
+        GH["GitHub Repo: WarunaUdara/studed-project"]
+        WORKFLOW["ci.yml Workflow<br/>• Vitest Unit Tests<br/>• Go Microservices Tests<br/>• Helm Lint & Template<br/>• GCP OpenTofu IaC Validate<br/>• GHCR Docker Builds"]
+        ARGO["ArgoCD GitOps<br/>(Production Auto-Sync)"]
     end
 
+    %% Flow connections
     U -->|HTTPS| P
     U -->|HTTPS| PF
     P -->|fetch /graphql| PF
-    PF -->|server-to-server HTTPS| LB
-    LB -->|Cloud Armor| GW
-    GW <--> AUTH & CRS & PROG & GAME & AI & NOTIF & PAY
+    PF -->|HTTPS / SSL| LB
+    LB --> WAF
+    WAF --> GW
+
+    %% Gateway to Internal Services (gRPC/HTTP with Service Token)
+    GW -->|gRPC + Service Token| AUTH
+    GW -->|gRPC + Service Token| CRS
+    GW -->|gRPC + Service Token| PROG
+    GW -->|gRPC + Service Token| GAME
+    GW -->|HTTP + Service Token| AI
+    GW -->|HTTP + Service Token| NOTIF
+    GW -->|HTTP + Service Token| PAY
     GW <--> REDIS
     GW --> ES
 
-    GW --> PG
+    %% Inter-service calls
+    PROG -->|gRPC + Timeout| CRS
+    PROG -->|gRPC + Service Token| GAME
 
-    ARGO -->|syncs infra/k8s/production| GKE
-    ESEC -->|Workload Identity| SM
-    ESEC -->|injects env| GKE
+    %% Database connections
+    AUTH & CRS & PROG & GAME & NOTIF & PAY -->|TLS / Pooled TCP| NEON
 
-    SCHED -->|hourly| SCOUT
-    SCOUT -->|no traffic 2h: scale pool to 0| GKE
+    %% Secrets & Workload Identity
+    WI -.->|IAM Scope| SM
+    ESEC -->|Workload Identity Sync| WI
+    ESEC -.->|Populates Secrets| GatewayNS & ServicesNS
 
-    REPO --> CI
-    CI --> GHCR
-    GHCR -->|image pull| GKE
+    %% Idle Automation
+    SCHED -->|Trigger| SCOUT
+    SCOUT -.->|gcloud container clusters resize| GKE
 
-    SA -.->|workload identity| GKE
+    %% GitOps & Build
+    GH --> WORKFLOW
+    WORKFLOW --> ARGO
+    ARGO -->|Sync k8s manifests| GKE
 ```
 
-## Component inventory
+## Component Inventory
 
-| Component | What it is | Cost (USD/mo) |
+| Component | Architecture Role | Security & Reliability Controls |
 | :--- | :--- | :--- |
-| GKE Standard cluster | Private zonal cluster, control plane free on Standard | $0 |
-| GKE nodes | 2x `e2-standard-2` (8 vCPU / 16 GB total) | ~$0.105/h (~$75/mo running 24/7) |
-| GCE HTTPS Load Balancer | L7 ingress + static IP + managed cert | ~$18/mo while provisioned |
-| Cloud Armor | OWASP CRS + rate limiting | ~$5/mo |
-| Cloud NAT | egress for private nodes | ~$0.5/mo |
-| Secret Manager | 7 secrets, low access | free tier |
-| Cloud Scheduler + Cloud Run job | idle-scout auto scale-down | ~$0 (free tier) |
-| Neon Postgres | costless tier | $0 |
-| Cloudflare Pages | SPA + GraphQL proxy function | $0 |
-| GitHub Actions + GHCR | CI image builds | $0 (public repo) |
-| Redis + Elasticsearch | in-cluster, on GKE nodes | included in node cost |
+| **GKE Standard Cluster** | Private zonal cluster (`us-central1-a`) hosting 9 microservices | NetworkPolicies default-deny, Shielded VMs, Workload Identity |
+| **GCE HTTPS Load Balancer** | Ingress termination with Google-managed TLS & static IP | Managed TLS, Cloud Armor WAF attachment, SSL redirect |
+| **Cloud Armor WAF** | Web application firewall & DDoS mitigation | OWASP CRS rules, 100 req/min IP rate limit, GraphQL pass rule |
+| **GCP Secret Manager** | Centralized secrets storage (7 ExternalSecrets) | KMS encrypted, zero hardcoded cluster credentials, Workload Identity sync |
+| **Neon Postgres 15** | Serverless PostgreSQL database | Connection pooling, rotation tooling (`rotate-neon-password`), SSL mode |
+| **Cloudflare Pages & Functions** | Front-end static distribution & same-origin GraphQL proxy | Server-to-server TLS proxying, zero public origin exposure |
+| **Idle-Scout (Cloud Run)** | Operational cost control automation | Scales node pool to 0 after 2h idle; preserves cluster state |
+| **GitHub Actions & ArgoCD** | Declarative CI/CD & GitOps engine | Vitest, Go unit tests, GCP OpenTofu IaC validation, Helm lint |
 
-## Data flow (request path)
+## Core Architectural Guarantees
 
-1. Browser loads the SPA from Cloudflare Pages (no backend involved).
-2. The SPA calls `/graphql` (same origin). The Pages Function
-   `functions/graphql.ts` forwards the request server-to-server to
-   `https://api.34.149.224.124.sslip.io/graphql`.
-3. The GCE load balancer terminates TLS (managed cert), Cloud Armor evaluates
-   the WAF policy (`/graphql` allow-listed to avoid the SQLi false positive;
-   rate limit still applies), and routes to the `api-gateway` pod.
-4. `api-gateway` (gqlgen) authenticates via the HttpOnly `access_token` cookie
-   (passed through the proxy unchanged), calls the relevant gRPC service,
-   which reads/writes Neon Postgres.
-5. Auth cookies set by the gateway flow back through the proxy to the browser.
-
-## Auth flow
-
-- `register` / `login` set two HttpOnly cookies: `access_token` (15 min) and
-  `refresh_token` (7 days), `SameSite=Lax`, `Path=/`.
-- `refreshToken` reads the refresh cookie and issues a new access cookie.
-- The frontend `authExchange` detects "unauthorized" errors and calls
-  `refreshToken` automatically.
-- Cookies are `Secure: false` but work over HTTPS; the browser only ever talks
-  to the frontend origin (the proxy is same-origin), so SameSite=Lax is fine.
-
-## Security posture
-
-- **No keys in the cluster**: GKE nodes use the attached `studed-gke-node` SA;
-  external-secrets uses Workload Identity (`studed-external-secrets`) to read
-  Secret Manager with `secretmanager.secretAccessor` scoped per secret.
-- **Least-privilege IAM**: node SA has only image-pull + logging/monitoring;
-  the idle-scout SA has a custom role limited to `container.clusters.update`
-  plus `monitoring.viewer`.
-- **Private nodes** behind Cloud NAT; control-plane API locked to
-  `authorized_cidrs` (only the admin's public IP).
-- **WAF**: OWASP CRS SQLi/XSS/LFI/protocol-attack rules + per-IP rate limit,
-  with a narrow allow rule for the GraphQL path.
-- **Shielded VMs**: secure boot, integrity monitoring on all nodes.
-- **GitOps**: nothing is applied by hand in prod; ArgoCD reconciles
-  `infra/k8s/production` from `main` (auto-sync, prune, self-heal).
-
-## CI / GitOps
-
-- **CI** (`.github/workflows/ci.yml`): on push to `main` / tags / `services/**`
-  it builds all 8 microservice images to GHCR (`ghcr.io/warunaudara/studed-*`).
-  Image tags: `latest`, `main`, and `sha-<commit>`.
-- **ArgoCD** (`infra/k8s/argocd/application-production.yaml`): points at
-  `infra/k8s/production` in the repo, auto-syncs on push. Submodule recursion
-  is disabled because a nested gitlink under `submodules/math-to-manim` breaks
-  manifest generation.
-
-## Cost-saving automation
-
-- **Idle-scout** (hourly Cloud Scheduler → Cloud Run job): queries the load
-  balancer's `https/request_count` metric; if there is no traffic for 2 hours
-  it scales the node pool to **0** (stops ~$75/mo of node cost). Wake up with
-  `make prod-start`.
-- **Manual standby**: `make prod-stop` / `make prod-start` (OpenTofu
-  `-var node_count=0/2` keeps state consistent).
-- **Full teardown**: `make prod-destroy` (`tofu destroy` + Pages project
-  delete). Audit with `make prod-teardown-audit`.
-
-## What's deliberately not here
-
-- No Cloud SQL (Neon is the DB) - no DB admin overhead.
-- No Artifact Registry for the app images (GHCR is free for public repos).
-- No regional cluster / HA (a single-zone Standard cluster is ~half the price
-  and plenty for the demo; the free-trial credit covers everything).
-- No monitoring stack inside the cluster (GKE + Cloud Monitoring free tier
-  cover the demo; Prometheus/Grafana exist for dev via docker-compose).
+1. **Defense-in-Depth Network Isolation**: Default-deny NetworkPolicies restrict pod communication so that microservices are reachable strictly via `api-gateway` or explicitly permitted inter-service gRPC paths.
+2. **Strict Service-to-Service Authentication**: All internal calls carry a cryptographically random shared service token verified via gRPC interceptors and HTTP middleware.
+3. **Outbound Resilience & Drain**: Every outbound gRPC and HTTP client call enforces a strict context timeout (3s-5s for standard RPCs, 90s for AI generation). All services implement `signal.NotifyContext` graceful SIGTERM draining.
+4. **XP & Gamification Integrity**: XP increments execute atomically (`UPDATE ... SET xp = xp + $1`), guarded by single-completion checks on wave attempts to eliminate race conditions and farming.
+5. **Continuous Verification (CI/IaC)**: The automated CI pipeline validates GCP OpenTofu IaC configurations, runs Vitest frontend unit tests, executes Go service test suites, and lints Helm manifests on every commit.
