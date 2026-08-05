@@ -59,7 +59,6 @@ async function registerOrLogin(email: string, role: string, fullName: string, gr
     email,
     password: "password123",
     fullName,
-    role,
     preferredLanguage: "en",
   };
   if (grade) {

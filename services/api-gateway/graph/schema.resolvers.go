@@ -261,53 +261,6 @@ func (r *mutationResolver) SubmitWaveAnswers(ctx context.Context, waveID string,
 	return result, nil
 }
 
-// publishWaveEvents emits real-time wave/leaderboard events; publish
-// failures never fail the submission.
-func (r *mutationResolver) publishWaveEvents(ctx context.Context, userCtx middleware.UserContext, waveID, courseID string, result *model.WaveResult) {
-	if r.Events == nil {
-		return
-	}
-
-	_ = r.Events.Publish(ctx, events.ChannelWaveCompleted, events.WaveCompletedEvent{
-		UserID:          userCtx.UserID,
-		WaveID:          waveID,
-		Score:           int32(result.Score),
-		CompletedAtUnix: time.Now().Unix(),
-	})
-
-	scopes := []struct {
-		scope    model.LeaderboardScope
-		courseID string
-	}{
-		{model.LeaderboardScopeGlobal, ""},
-	}
-	if courseID != "" {
-		scopes = append(scopes, struct {
-			scope    model.LeaderboardScope
-			courseID string
-		}{model.LeaderboardScopeCourse, courseID})
-	}
-	for _, sc := range scopes {
-		var cid *string
-		if sc.courseID != "" {
-			c := sc.courseID
-			cid = &c
-		}
-		rank, err := r.GamificationClient.GetMyRank(ctx, userCtx.UserID, sc.scope, cid, nil)
-		if err != nil {
-			rank = 0
-		}
-		_ = r.Events.Publish(ctx, events.ChannelLeaderboard, events.LeaderboardUpdatedEvent{
-			Scope:    string(sc.scope),
-			CourseID: sc.courseID,
-			UserID:   userCtx.UserID,
-			FullName: userCtx.FullName,
-			TotalXp:  int32(result.TotalXp),
-			Rank:     int32(rank),
-		})
-	}
-}
-
 // EnrollInCourse is the resolver for the enrollInCourse field.
 func (r *mutationResolver) EnrollInCourse(ctx context.Context, courseID string) (*model.Course, error) {
 	userCtx, err := requireUser(ctx)

@@ -13,7 +13,7 @@ import (
 )
 
 type AuthService interface {
-	Register(ctx context.Context, email, password, fullName string, role model.Role, grade *model.Grade, preferredLanguage string) (*authpb.AuthResponse, error)
+	Register(ctx context.Context, email, password, fullName string, grade *model.Grade, preferredLanguage string) (*authpb.AuthResponse, error)
 	Login(ctx context.Context, email, password string) (*authpb.AuthResponse, error)
 	RefreshToken(ctx context.Context, refreshToken string) (*authpb.AuthResponse, error)
 	ValidateToken(ctx context.Context, accessToken string) (*authpb.ValidateTokenResponse, error)
@@ -30,7 +30,7 @@ func NewAuthService(repo repository.UserRepository, jwtMgr *jwt.Manager) AuthSer
 	return &authService{repo: repo, jwtMgr: jwtMgr}
 }
 
-func (s *authService) Register(ctx context.Context, email, password, fullName string, role model.Role, grade *model.Grade, preferredLanguage string) (*authpb.AuthResponse, error) {
+func (s *authService) Register(ctx context.Context, email, password, fullName string, grade *model.Grade, preferredLanguage string) (*authpb.AuthResponse, error) {
 	email = strings.TrimSpace(strings.ToLower(email))
 	if email == "" || password == "" || fullName == "" {
 		return nil, fmt.Errorf("email, password, and full name are required")
@@ -57,17 +57,15 @@ func (s *authService) Register(ctx context.Context, email, password, fullName st
 		preferredLanguage = "en"
 	}
 
+	// Self-registration is always a student. Elevated roles (EDUCATOR, HEAD_EDUCATOR,
+	// ADMIN) must be provisioned by an operator, never accepted from client input.
 	user := &model.User{
 		Email:             email,
 		PasswordHash:      string(hash),
 		FullName:          strings.TrimSpace(fullName),
-		Role:              role,
+		Role:              model.RoleStudent,
 		Grade:             grade,
 		PreferredLanguage: preferredLanguage,
-	}
-
-	if user.Role == "" {
-		user.Role = model.RoleStudent
 	}
 
 	if err := s.repo.Create(ctx, user); err != nil {

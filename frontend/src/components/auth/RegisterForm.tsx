@@ -10,13 +10,12 @@ import { Label } from "@/components/ui/Label";
 import { Select } from "@/components/ui/Select";
 import { REGISTER_MUTATION } from "@/graphql/auth";
 import { sanitizeError } from "@/lib/errors";
-import { type Grade, type UserRole, useAuthStore } from "@/stores/auth";
+import { type Grade, useAuthStore } from "@/stores/auth";
 
 const registerSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   fullName: z.string().min(2, "Full name is required"),
-  role: z.enum(["STUDENT", "EDUCATOR", "HEAD_EDUCATOR", "ADMIN"]),
   grade: z
     .enum(["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "OL", "AL"])
     .optional(),
@@ -37,7 +36,6 @@ export function RegisterForm() {
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      role: "STUDENT",
       preferredLanguage: "en",
     },
   });
@@ -49,7 +47,6 @@ export function RegisterForm() {
     const input = {
       ...data,
       grade: data.grade as Grade | undefined,
-      role: data.role as UserRole,
     };
     const result = await registerMutation({ input });
     if (result.error) {
@@ -59,11 +56,8 @@ export function RegisterForm() {
     if (result.data?.register?.user) {
       const user = result.data.register.user;
       setUser(user);
-      if (user.role === "EDUCATOR" || user.role === "HEAD_EDUCATOR" || user.role === "ADMIN") {
-        navigate({ to: "/educator/courses" });
-      } else {
-        navigate({ to: "/dashboard" });
-      }
+      // Self-registration always yields a STUDENT account.
+      navigate({ to: "/dashboard" });
     }
   };
 
@@ -85,21 +79,6 @@ export function RegisterForm() {
         <Label htmlFor="password">Password</Label>
         <Input id="password" type="password" placeholder="••••••••" {...register("password")} />
         {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="role">Role</Label>
-        <Select
-          id="role"
-          options={[
-            { value: "STUDENT", label: "Student" },
-            { value: "EDUCATOR", label: "Educator" },
-            { value: "HEAD_EDUCATOR", label: "Head Educator" },
-            { value: "ADMIN", label: "Admin" },
-          ]}
-          {...register("role")}
-        />
-        {errors.role && <p className="text-sm text-destructive">{errors.role.message}</p>}
       </div>
 
       <div className="space-y-2">

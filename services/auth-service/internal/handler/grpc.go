@@ -31,7 +31,6 @@ func (h *AuthGRPCHandler) Register(ctx context.Context, req *authpb.RegisterRequ
 		req.Email,
 		req.Password,
 		req.FullName,
-		service.ProtoToModelRole(req.Role),
 		grade,
 		req.PreferredLanguage,
 	)

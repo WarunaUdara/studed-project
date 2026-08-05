@@ -113,7 +113,11 @@ deploy_frontend() {
 
 seed_demo() {
   log "Seed - inserting/refreshing demo data"
-  STUDED_API_URL="${STUDED_API_URL}" bash "${REPO_ROOT}/scripts/mock-data-loader.sh" >/dev/null
+  local db_url=""
+  if [[ -f "${REPO_ROOT}/.env" ]]; then
+    db_url="$(grep -E '^DATABASE_URL=' "${REPO_ROOT}/.env" | head -1 | cut -d= -f2- || true)"
+  fi
+  STUDED_API_URL="${STUDED_API_URL}" STUDED_DATABASE_URL="${db_url}" bash "${REPO_ROOT}/scripts/mock-data-loader.sh" >/dev/null
 }
 
 main() {

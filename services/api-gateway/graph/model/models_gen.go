@@ -184,7 +184,6 @@ type RegisterInput struct {
 	Email             string  `json:"email"`
 	Password          string  `json:"password"`
 	FullName          string  `json:"fullName"`
-	Role              Role    `json:"role"`
 	Grade             *Grade  `json:"grade,omitempty"`
 	PreferredLanguage *string `json:"preferredLanguage,omitempty"`
 }
