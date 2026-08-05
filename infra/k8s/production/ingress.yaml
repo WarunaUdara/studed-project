@@ -10,7 +10,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: gce
     kubernetes.io/ingress.global-static-ip-name: studed-ingress-ip
-    kubernetes.io/ingress.allow-http: "true"
+    kubernetes.io/ingress.allow-http: "false"
     networking.gke.io/managed-certificates: studed-api-cert
 spec:
   rules:
