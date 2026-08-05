@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  namespace: studed
+  labels:
+    app: payment-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+        - name: payment-service
+          image: ghcr.io/warunaudara/studed-payment-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8091
+          envFrom:
+            - configMapRef:
+                name: studed-config
+            - secretRef:
+                name: studed-secrets
+          resources:
+            requests:
+              memory: "30Mi"
+              cpu: "15m"
+            limits:
+              memory: "96Mi"
+              cpu: "150m"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8091
+            initialDelaySeconds: 5
+            periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  namespace: studed
+spec:
+  ports:
+    - port: 8091
+      targetPort: 8091
+      name: http
+  selector:
+    app: payment-service

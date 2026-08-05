@@ -19,6 +19,30 @@
       "skillPath": "skills/find-skills/SKILL.md",
       "computedHash": "b146008599c31057cef1c145774cea5d5afb30e8f43fa802e47a4b461419aaaf"
     },
+    "google-cloud-recipe-auth": {
+      "source": "google/skills",
+      "sourceType": "github",
+      "skillPath": "skills/cloud/google-cloud-recipe-auth/SKILL.md",
+      "computedHash": "a188e06aacfbc4f6e7935cc0642e7b831774ce3aba0a17fda8b220d458f2f9ca"
+    },
+    "google-cloud-solution-architecture": {
+      "source": "google/skills",
+      "sourceType": "github",
+      "skillPath": "skills/cloud/google-cloud-solution-architecture/SKILL.md",
+      "computedHash": "2c2cc3e486955c2986aabb182d59a811d2bcb6d59e917a5e02d673226fc9635a"
+    },
+    "grafana-dashboards": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/grafana-dashboards/SKILL.md",
+      "computedHash": "custom-studed-grafana-v1"
+    },
+    "graphify": {
+      "source": "safishamsi/graphify",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/graphify/SKILL.md",
+      "computedHash": "custom-studed-graphify-v1"
+    },
     "grill-me": {
       "source": "mattpocock/skills",
       "sourceType": "github",
@@ -43,11 +67,29 @@
       "skillPath": "plugins/developer-essentials/skills/monorepo-management/SKILL.md",
       "computedHash": "0a0f4a9860b7d12b914fa2d167c322fbe8328fe53679210439023cd5ef95bfe8"
     },
+    "neon": {
+      "source": "neondatabase/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/neon/SKILL.md",
+      "computedHash": "34714c04b6ab06adc728df602131f8c23fcbf79bf6a54c4b82e9021ad138cb72"
+    },
+    "neon-postgres": {
+      "source": "neondatabase/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/neon-postgres/SKILL.md",
+      "computedHash": "7985b983f8ae5e36d88b82bcc2f3353726d22ced9be97d438681b308afed509e"
+    },
     "obsidian-markdown": {
       "source": "kepano/obsidian-skills",
       "sourceType": "github",
       "skillPath": "skills/obsidian-markdown/SKILL.md",
       "computedHash": "cacc9058a35ad3fd4985b4c31121bff8202f1337c39808c1326ded6a19a7915f"
+    },
+    "prometheus-configuration": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/prometheus-configuration/SKILL.md",
+      "computedHash": "custom-studed-prometheus-v1"
     },
     "skill-creator": {
       "source": "anthropics/skills",
@@ -66,24 +108,6 @@
       "sourceType": "github",
       "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
       "computedHash": "f0916ca326ad6dbde1d0770b46956a213406b8ea4a19ed931bb4f2dc7d04c16d"
-    },
-    "graphify": {
-      "source": "safishamsi/graphify",
-      "sourceType": "github",
-      "skillPath": ".agents/skills/graphify/SKILL.md",
-      "computedHash": "custom-studed-graphify-v1"
-    },
-    "grafana-dashboards": {
-      "source": "wshobson/agents",
-      "sourceType": "github",
-      "skillPath": ".agents/skills/grafana-dashboards/SKILL.md",
-      "computedHash": "custom-studed-grafana-v1"
-    },
-    "prometheus-configuration": {
-      "source": "wshobson/agents",
-      "sourceType": "github",
-      "skillPath": ".agents/skills/prometheus-configuration/SKILL.md",
-      "computedHash": "custom-studed-prometheus-v1"
     }
   }
 }

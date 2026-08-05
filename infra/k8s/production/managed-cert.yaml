@@ -1,0 +1,8 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: studed-api-cert
+  namespace: studed
+spec:
+  domains:
+    - api.34.149.224.124.sslip.io

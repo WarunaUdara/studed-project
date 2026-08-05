@@ -1,0 +1,19 @@
+# Copy to terraform.tfvars (gitignored) and fill in values.
+# Copy to terraform.tfvars (gitignored) and fill in values.
+project_id = "studed-prod"
+region     = "us-central1"
+zone       = "us-central1-a"
+
+cluster_name       = "studed-backend"
+node_machine_type  = "e2-medium"
+node_count         = 1
+node_disk_size_gb  = 30
+
+# Only these CIDRs may reach the Kubernetes control plane.
+# Get your current public IP with: curl ifconfig.me
+authorized_cidrs = ["203.0.113.10/32"]
+
+# Subdomain used for the free sslip.io hostname: api.<ip>.sslip.io
+sslip_api_hostname = "api"
+
+waf_rate_limit_per_ip = 120

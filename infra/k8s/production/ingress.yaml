@@ -1,0 +1,47 @@
+# Public entrypoint for the StudEd API.
+# GCE Ingress (managed L7 LB) pinned to the static IP, TLS via GKE managed cert.
+# The api-gateway Service carries the BackendConfig annotation to attach
+# Cloud Armor (studed-waf) and tune the LB health check.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: studed-ingress
+  namespace: studed
+  annotations:
+    kubernetes.io/ingress.class: gce
+    kubernetes.io/ingress.global-static-ip-name: studed-ingress-ip
+    kubernetes.io/ingress.allow-http: "true"
+    networking.gke.io/managed-certificates: studed-api-cert
+spec:
+  rules:
+    - host: api.34.149.224.124.sslip.io
+      http:
+        paths:
+          - path: /graphql
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
+          - path: /ready
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
