@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/studed/api-gateway/graph/model"
 	"github.com/studed/shared/go/grpcauth"
@@ -18,9 +19,15 @@ type CourseClient struct {
 }
 
 func NewCourseClient(addr, serviceToken string) (*CourseClient, error) {
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	interceptors := []grpc.UnaryClientInterceptor{
+		grpcauth.UnaryClientTimeoutInterceptor(5 * time.Second),
+	}
 	if serviceToken != "" {
-		opts = append(opts, grpc.WithChainUnaryInterceptor(grpcauth.UnaryClientInterceptor(serviceToken)))
+		interceptors = append(interceptors, grpcauth.UnaryClientInterceptor(serviceToken))
+	}
+	opts := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithChainUnaryInterceptor(interceptors...),
 	}
 	conn, err := grpc.NewClient(addr, opts...)
 	if err != nil {

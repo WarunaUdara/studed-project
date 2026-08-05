@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -16,6 +19,7 @@ import (
 	"github.com/studed/progress-service/internal/handler"
 	"github.com/studed/progress-service/internal/repository"
 	"github.com/studed/progress-service/internal/service"
+	"github.com/studed/shared/go/grpcauth"
 	"github.com/studed/shared/go/logger"
 	coursepb "github.com/studed/shared/proto/gen/go/course"
 	gampb "github.com/studed/shared/proto/gen/go/gamification"
@@ -86,14 +90,25 @@ func main() {
 	}
 	log.Info("migrations ran successfully")
 
-	courseConn, err := grpc.NewClient(cfg.CourseServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	dialInterceptors := []grpc.UnaryClientInterceptor{
+		grpcauth.UnaryClientTimeoutInterceptor(5 * time.Second),
+	}
+	if cfg.ServiceToken != "" {
+		dialInterceptors = append(dialInterceptors, grpcauth.UnaryClientInterceptor(cfg.ServiceToken))
+	}
+	dialOpts := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithChainUnaryInterceptor(dialInterceptors...),
+	}
+
+	courseConn, err := grpc.NewClient(cfg.CourseServiceAddr, dialOpts...)
 	if err != nil {
 		log.Error("failed to connect to course service", slog.Any("error", err))
 		os.Exit(1)
 	}
 	defer courseConn.Close()
 
-	gamificationConn, err := grpc.NewClient(cfg.GamificationServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	gamificationConn, err := grpc.NewClient(cfg.GamificationServiceAddr, dialOpts...)
 	if err != nil {
 		log.Error("failed to connect to gamification service", slog.Any("error", err))
 		os.Exit(1)
@@ -116,35 +131,57 @@ func main() {
 	grpcServer := grpc.NewServer()
 	progresspb.RegisterProgressServiceServer(grpcServer, grpcHandler)
 
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	httpMux := http.NewServeMux()
+	httpMux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("progress-service ok"))
+	})
+	httpMux.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
+		sqlDB, err := db.DB()
+		if err != nil {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+		if err := sqlDB.Ping(); err != nil {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ready"))
+	})
+	httpServer := &http.Server{
+		Addr:              ":8087",
+		Handler:           httpMux,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      15 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+
 	go func() {
-		mux := http.NewServeMux()
-		mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write([]byte("progress-service ok"))
-		})
-		mux.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
-			sqlDB, err := db.DB()
-			if err != nil {
-				w.WriteHeader(http.StatusServiceUnavailable)
-				return
-			}
-			if err := sqlDB.Ping(); err != nil {
-				w.WriteHeader(http.StatusServiceUnavailable)
-				return
-			}
-			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write([]byte("ready"))
-		})
-		httpAddr := ":8087"
-		log.Info("http health server listening", slog.String("addr", httpAddr))
-		if err := http.ListenAndServe(httpAddr, mux); err != nil {
+		log.Info("http health server listening", slog.String("addr", httpServer.Addr))
+		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Error("http server failed", slog.Any("error", err))
 		}
 	}()
 
-	log.Info("progress-service listening", slog.String("addr", cfg.ServiceAddr))
-	if err := grpcServer.Serve(grpcListener); err != nil {
-		log.Error("grpc server failed", slog.Any("error", err))
-		os.Exit(1)
-	}
+	go func() {
+		log.Info("progress-service listening", slog.String("addr", cfg.ServiceAddr))
+		if err := grpcServer.Serve(grpcListener); err != nil {
+			log.Error("grpc server failed", slog.Any("error", err))
+		}
+	}()
+
+	<-ctx.Done()
+	log.Info("shutting down progress-service gracefully...")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	_ = httpServer.Shutdown(shutdownCtx)
+	grpcServer.GracefulStop()
+	log.Info("progress-service shutdown complete")
 }

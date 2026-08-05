@@ -6,6 +6,8 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -94,37 +96,59 @@ func main() {
 	grpcServer := grpc.NewServer()
 	coursepb.RegisterCourseServiceServer(grpcServer, grpcHandler)
 
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	httpMux := http.NewServeMux()
+	httpMux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("course-service ok"))
+	})
+	httpMux.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
+		sqlDB, err := db.DB()
+		if err != nil {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+		if err := sqlDB.Ping(); err != nil {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ready"))
+	})
+	httpServer := &http.Server{
+		Addr:              ":8084",
+		Handler:           httpMux,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      15 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+
 	go func() {
-		mux := http.NewServeMux()
-		mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write([]byte("course-service ok"))
-		})
-		mux.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
-			sqlDB, err := db.DB()
-			if err != nil {
-				w.WriteHeader(http.StatusServiceUnavailable)
-				return
-			}
-			if err := sqlDB.Ping(); err != nil {
-				w.WriteHeader(http.StatusServiceUnavailable)
-				return
-			}
-			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write([]byte("ready"))
-		})
-		httpAddr := ":8084"
-		log.Info("http health server listening", slog.String("addr", httpAddr))
-		if err := http.ListenAndServe(httpAddr, mux); err != nil {
+		log.Info("http health server listening", slog.String("addr", httpServer.Addr))
+		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Error("http server failed", slog.Any("error", err))
 		}
 	}()
 
-	log.Info("course-service listening", slog.String("addr", cfg.ServiceAddr))
-	if err := grpcServer.Serve(grpcListener); err != nil {
-		log.Error("grpc server failed", slog.Any("error", err))
-		os.Exit(1)
-	}
+	go func() {
+		log.Info("course-service listening", slog.String("addr", cfg.ServiceAddr))
+		if err := grpcServer.Serve(grpcListener); err != nil {
+			log.Error("grpc server failed", slog.Any("error", err))
+		}
+	}()
+
+	<-ctx.Done()
+	log.Info("shutting down course-service gracefully...")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	_ = httpServer.Shutdown(shutdownCtx)
+	grpcServer.GracefulStop()
+	log.Info("course-service shutdown complete")
 }
 
 // backfillCourseIndex reindexes every course so the search index stays
