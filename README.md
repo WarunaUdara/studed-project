@@ -18,6 +18,32 @@
 
 ---
 
+## ☁️ Production Deployment (GCP + Cloudflare + Neon)
+
+The live deployment runs the backend on **GKE** (private nodes, Workload
+Identity, Cloud Armor WAF, managed TLS), the frontend on **Cloudflare Pages**
+(with a cookie-safe `/graphql` proxy function), and Postgres on **Neon**.
+
+```bash
+make prod-deploy       # one command: infra + backend + frontend + demo seed
+make prod-status       # health/cost snapshot
+make prod-stop         # standby: node pool -> 0 (stops ~all node charges)
+make prod-start        # wake back up
+make prod-destroy      # full teardown to $0 (audit with make prod-teardown-audit)
+```
+
+Auto scale-down: an hourly Cloud Scheduler → Cloud Run job (`idle-scout`)
+scales the cluster to zero after 2h without traffic.
+
+| Doc | Contents |
+| :--- | :--- |
+| [DEPLOYMENT.md](DEPLOYMENT.md) | One-command lifecycle, prerequisites, teardown |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Full component diagram + security posture |
+| [docs/COSTS.md](docs/COSTS.md) | Billing risk analysis + cost controls |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | Deployment journey, gotchas, git workflow |
+
+---
+
 ## 🏗️ Master System Architecture Diagram
 
 ```mermaid
