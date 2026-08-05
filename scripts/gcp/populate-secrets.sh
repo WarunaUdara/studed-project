@@ -4,13 +4,20 @@
 # Reads values from the repo root .env (gitignored) and generates strong
 # JWT secrets locally. Run AFTER `tofu apply` and BEFORE deploying workloads.
 #
-# Usage: ./scripts/gcp/populate-secrets.sh
+# Usage:
+#   ./scripts/gcp/populate-secrets.sh             # idempotent; skips existing
+#   ./scripts/gcp/populate-secrets.sh --rotate    # add a new version for every
+#                                                 # secret (credential rotation)
 set -euo pipefail
 
 PROJECT_ID="${PROJECT_ID:-studed-prod}"
 REGION="${REGION:-us-central1}"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ENV_FILE="$REPO_ROOT/.env"
+ROTATE="${ROTATE:-false}"
+if [[ "${1:-}" == "--rotate" ]]; then
+  ROTATE=true
+fi
 
 if [[ ! -f "$ENV_FILE" ]]; then
   echo "error: $ENV_FILE not found" >&2
@@ -35,20 +42,26 @@ put_secret() {
     echo "skip $name (empty)"
     return
   fi
-  if has_version "$name"; then
-    echo "skip $name (already populated - not rotating)"
+  if [[ "$ROTATE" != "true" ]] && has_version "$name"; then
+    echo "skip $name (already populated - use --rotate to add a new version)"
     return
   fi
   printf '%s' "$value" | gcloud secrets versions add "$name" --data-file=- --project="$PROJECT_ID" >/dev/null
   echo "stored $name"
 }
 
-# Neon Postgres connection string from .env
+# Neon Postgres connection string from .env (rotated, never the exposed owner cred)
 put_secret "studed-database-url" "${DATABASE_CONNECTION_STRING:-}"
 
-# Generate fresh JWT secrets (never reuse dev secrets in prod)
-JWT_ACCESS="$(openssl rand -base64 48 | tr -d '\n')"
-JWT_REFRESH="$(openssl rand -base64 48 | tr -d '\n')"
+# JWT secrets. In rotation mode, mint fresh values and store them.
+if [[ "$ROTATE" == "true" ]] || ! has_version "studed-jwt-access-secret"; then
+  JWT_ACCESS="$(openssl rand -base64 48 | tr -d '\n')"
+  JWT_REFRESH="$(openssl rand -base64 48 | tr -d '\n')"
+else
+  # Non-rotation runs keep whatever .env holds so first deploy can use it.
+  JWT_ACCESS="${JWT_ACCESS_SECRET:-}"
+  JWT_REFRESH="${JWT_REFRESH_SECRET:-}"
+fi
 put_secret "studed-jwt-access-secret" "$JWT_ACCESS"
 put_secret "studed-jwt-refresh-secret" "$JWT_REFRESH"
 
@@ -58,7 +71,8 @@ put_secret "studed-payhere-merchant-id" "${PAYHERE_MERCHANT_ID:-}"
 put_secret "studed-payhere-merchant-secret" "${PAYHERE_MERCHANT_SECRET:-}"
 put_secret "studed-payhere-notify-url" "${PAYHERE_NOTIFY_URL:-}"
 
-# Shared service-to-service token (gateway -> internal services)
+# Shared service-to-service token (gateway -> internal services). Kept stable
+# across rotations unless SERVICE_TOKEN is explicitly regenerated in .env.
 SERVICE_TOKEN="${SERVICE_TOKEN:-$(openssl rand -base64 32 | tr -d '\n')}"
 put_secret "studed-service-token" "$SERVICE_TOKEN"
 
