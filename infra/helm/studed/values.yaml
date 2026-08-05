@@ -1,4 +1,7 @@
 # Default values for StudEd Helm Chart
+# NOTE: legacy/local chart. Production deploys infra/k8s/production/ manifests
+# via ArgoCD; runtime secrets there come from GCP Secret Manager (external-secrets),
+# not from these placeholder values.
 
 global:
   environment: dev
