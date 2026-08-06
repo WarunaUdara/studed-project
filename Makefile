@@ -41,10 +41,13 @@
  helm-lint:
 	/opt/homebrew/bin/helm lint infra/helm/studed || helm lint infra/helm/studed
 
+ security-scan:
+	./scripts/security/secret-scan.sh
+
  frontend-test:
 	cd frontend && bun run test --run
 
- ci-local: frontend-typecheck frontend-test frontend-build go-test shared-test helm-lint iac-plan
+ ci-local: security-scan frontend-typecheck frontend-test frontend-build go-test shared-test helm-lint iac-plan
 	@echo "All local CI pre-flight checks passed!"
 
  monitoring-up:
