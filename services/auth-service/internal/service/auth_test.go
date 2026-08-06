@@ -84,7 +84,7 @@ func TestRegisterAndLogin(t *testing.T) {
 	ctx := context.Background()
 
 	grade := model.GradeG10
-	resp, err := svc.Register(ctx, "test@example.com", "password123", "Test User", &grade, "en")
+	resp, err := svc.Register(ctx, "test@example.com", "password1234", "Test User", &grade, "en")
 	if err != nil {
 		t.Fatalf("register failed: %v", err)
 	}
@@ -98,7 +98,7 @@ func TestRegisterAndLogin(t *testing.T) {
 		t.Fatalf("unexpected email: %s", resp.User.Email)
 	}
 
-	loginResp, err := svc.Login(ctx, "test@example.com", "password123")
+	loginResp, err := svc.Login(ctx, "test@example.com", "password1234")
 	if err != nil {
 		t.Fatalf("login failed: %v", err)
 	}
@@ -116,11 +116,11 @@ func TestRegisterDuplicateEmail(t *testing.T) {
 	svc := newTestService()
 	ctx := context.Background()
 
-	if _, err := svc.Register(ctx, "dup@example.com", "password123", "User One", nil, "en"); err != nil {
+	if _, err := svc.Register(ctx, "dup@example.com", "password1234", "User One", nil, "en"); err != nil {
 		t.Fatalf("first register failed: %v", err)
 	}
 
-	if _, err := svc.Register(ctx, "dup@example.com", "password123", "User Two", nil, "en"); err == nil {
+	if _, err := svc.Register(ctx, "dup@example.com", "password1234", "User Two", nil, "en"); err == nil {
 		t.Fatal("expected duplicate email error")
 	}
 }
@@ -129,7 +129,7 @@ func TestValidateToken(t *testing.T) {
 	svc := newTestService()
 	ctx := context.Background()
 
-	resp, err := svc.Register(ctx, "validate@example.com", "password123", "Validate User", nil, "si")
+	resp, err := svc.Register(ctx, "validate@example.com", "password1234", "Validate User", nil, "si")
 	if err != nil {
 		t.Fatalf("register failed: %v", err)
 	}
@@ -159,7 +159,7 @@ func TestRefreshToken_IssuesNewTokenPair(t *testing.T) {
 	ctx := context.Background()
 
 	grade := model.GradeG10
-	registered, err := svc.Register(ctx, "refresh@example.com", "password123", "Refresh User", &grade, "en")
+	registered, err := svc.Register(ctx, "refresh@example.com", "password1234", "Refresh User", &grade, "en")
 	if err != nil {
 		t.Fatalf("register failed: %v", err)
 	}
@@ -180,7 +180,7 @@ func TestRefreshToken_RejectsAccessTokenUsedAsRefresh(t *testing.T) {
 	svc := newTestService()
 	ctx := context.Background()
 
-	registered, err := svc.Register(ctx, "typeconfusion@example.com", "password123", "Test User", nil, "en")
+	registered, err := svc.Register(ctx, "typeconfusion@example.com", "password1234", "Test User", nil, "en")
 	if err != nil {
 		t.Fatalf("register failed: %v", err)
 	}
@@ -207,9 +207,9 @@ func TestRegister_RejectsMissingRequiredFields(t *testing.T) {
 		password string
 		fullName string
 	}{
-		{"missing email", "", "password123", "Some Name"},
+		{"missing email", "", "password1234", "Some Name"},
 		{"missing password", "noPassword@example.com", "", "Some Name"},
-		{"missing full name", "noname@example.com", "password123", ""},
+		{"missing full name", "noname@example.com", "password1234", ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -231,7 +231,7 @@ func TestRegister_DefaultsRoleToStudentWhenUnspecified(t *testing.T) {
 	svc := newTestService()
 	ctx := context.Background()
 
-	resp, err := svc.Register(ctx, "norole@example.com", "password123", "No Role", nil, "en")
+	resp, err := svc.Register(ctx, "norole@example.com", "password1234", "No Role", nil, "en")
 	if err != nil {
 		t.Fatalf("register failed: %v", err)
 	}
@@ -247,7 +247,7 @@ func TestRegister_NeverAcceptsElevatedRole(t *testing.T) {
 	// Self-registration must never produce an elevated role, even if a caller
 	// attempts to impersonate one. Register no longer accepts a role at all.
 	for _, email := range []string{"admin@example.com", "educator@example.com", "head@example.com"} {
-		resp, err := svc.Register(ctx, email, "password123", "Privilege Test", nil, "en")
+		resp, err := svc.Register(ctx, email, "password1234", "Privilege Test", nil, "en")
 		if err != nil {
 			t.Fatalf("register failed for %s: %v", email, err)
 		}
@@ -259,7 +259,7 @@ func TestRegister_NeverAcceptsElevatedRole(t *testing.T) {
 
 func TestRegister_DefaultsPreferredLanguageToEnglish(t *testing.T) {
 	svc := newTestService()
-	resp, err := svc.Register(context.Background(), "nolang@example.com", "password123", "No Lang", nil, "")
+	resp, err := svc.Register(context.Background(), "nolang@example.com", "password1234", "No Lang", nil, "")
 	if err != nil {
 		t.Fatalf("register failed: %v", err)
 	}
@@ -272,7 +272,7 @@ func TestGetUser_ReturnsRegisteredUser(t *testing.T) {
 	svc := newTestService()
 	ctx := context.Background()
 
-	registered, err := svc.Register(ctx, "getuser@example.com", "password123", "Get User", nil, "en")
+	registered, err := svc.Register(ctx, "getuser@example.com", "password1234", "Get User", nil, "en")
 	if err != nil {
 		t.Fatalf("register failed: %v", err)
 	}

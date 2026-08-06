@@ -36,8 +36,12 @@ func (s *authService) Register(ctx context.Context, email, password, fullName st
 		return nil, fmt.Errorf("email, password, and full name are required")
 	}
 
-	if len(password) < 8 {
-		return nil, fmt.Errorf("password must be at least 8 characters")
+	if !strings.Contains(email, "@") || !strings.Contains(email, ".") {
+		return nil, fmt.Errorf("invalid email address")
+	}
+
+	if len(password) < 12 {
+		return nil, fmt.Errorf("password must be at least 12 characters")
 	}
 
 	exists, err := s.repo.EmailExists(ctx, email)
@@ -48,7 +52,7 @@ func (s *authService) Register(ctx context.Context, email, password, fullName st
 		return nil, fmt.Errorf("email already registered")
 	}
 
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	if err != nil {
 		return nil, fmt.Errorf("failed to hash password: %w", err)
 	}
