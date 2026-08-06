@@ -240,6 +240,8 @@ func (h *Handler) payhereNotify(w http.ResponseWriter, r *http.Request) {
 					"provider":             "payhere",
 					"provider_external_id": r.FormValue("payment_id"),
 					"status":               model.SubscriptionStatusActive,
+					"start_date":           time.Now(),
+					"end_date":             time.Now().AddDate(0, 1, 0),
 				}).Error; err != nil {
 				h.log.Error("failed to activate payhere subscription", slog.String("order_id", orderID), slog.Any("error", err))
 				writeError(w, http.StatusInternalServerError, "failed to activate subscription")
