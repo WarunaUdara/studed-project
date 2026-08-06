@@ -115,10 +115,10 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [x] 🟡 `M` **OPS-03c** — Add `.github/workflows/prod-deploy.yml`: manual dispatch, environment protection, release tag, image digest pin.
 - [ ] 🟠 `L` **OPS-01 / REL-06 / REL-07** — Kustomize base+overlays, digest-pinned images, correct registry namespace, CD job writing digests, staging→approval→production with ArgoCD.
 - [ ] 🟡 `M` **OPS-10** — Delete the Helm chart (or complete it); validate the real manifests with `kubectl kustomize | kubeconform`.
-- [ ] 🟡 `S` **OPS-05** — `iac-plan` must run `tofu plan -out`; `iac-apply` applies the reviewed plan; PR plan comments.
+- [x] 🟡 `S` **OPS-05** — `iac-plan` must run `tofu plan -out`; `iac-apply` applies the reviewed plan; PR plan comments.
 - [ ] 🟡 `S` **OPS-06 / REL-15** — GCS Terraform backend with locking and versioning; scheduled drift detection.
-- [ ] 🟡 `M` **OPS-07** — Distroless, digest-pinned base, OCI labels, `-trimpath`, align Go 1.25 between CI and Dockerfiles; expose version/commit on `/health`.
-- [ ] 🔵 `S` **OPS-11** — Renovate, CODEOWNERS, branch protection, PR template, release-please changelog.
+- [x] 🟡 `M` **OPS-07** — Distroless, digest-pinned base, OCI labels, `-trimpath`, align Go 1.25 between CI and Dockerfiles; expose version/commit on `/health`.
+- [x] 🔵 `S` **OPS-11** — Renovate, CODEOWNERS, branch protection, PR template, release-please changelog.
 
 ### Cost
 - [ ] 🟠 `S` **COST-01a** — `maxOutputTokens: 2048` + input length cap in the Gemini client.
@@ -148,7 +148,7 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [ ] 🔵 `M` **TEST-06** — Chaos scenarios (Redis/DB down) + OWASP ZAP baseline DAST.
 
 ### Documentation
-- [ ] 🟡 `M` **ADR** — Write the ten ADRs listed in [09](09-ARCHITECTURE-TARGET.md#architectural-decisions-to-record), including the deliberate exclusions.
+- [x] 🟡 `M` **ADR** — Write the ten ADRs listed in [09](09-ARCHITECTURE-TARGET.md#architectural-decisions-to-record), including the deliberate exclusions.
 
 ---
 
@@ -160,6 +160,6 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 | 1 — Correct | 27 | 27 |
 | 2 — Observable | 11 | 10 |
 | 3 — Resilient & fast | 20 | 16 |
-| 4 — Automated | 17 | 4 |
-| Experience & quality | 14 | 0 |
-| **Total** | **78** (some span phases) | **62** |
+| 4 — Automated | 17 | 7 |
+| Experience & quality | 14 | 1 |
+| **Total** | **78** (some span phases) | **66** |
