@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 type Claims struct {
@@ -44,6 +45,9 @@ func NewManager(accessSecret, refreshSecret string, accessTTL, refreshTTL time.D
 func (m *Manager) Generate(userID, email, fullName, role, preferredLanguage string) (*TokenPair, error) {
 	now := time.Now().UTC()
 
+	jtiAccess := uuid.NewString()
+	jtiRefresh := uuid.NewString()
+
 	accessClaims := Claims{
 		UserID:            userID,
 		Email:             email,
@@ -52,8 +56,12 @@ func (m *Manager) Generate(userID, email, fullName, role, preferredLanguage stri
 		PreferredLanguage: preferredLanguage,
 		Type:              "access",
 		RegisteredClaims: jwt.RegisteredClaims{
+			ID:        jtiAccess,
+			Issuer:    "studed-auth",
+			Audience:  jwt.ClaimStrings{"studed-api"},
 			Subject:   userID,
 			IssuedAt:  jwt.NewNumericDate(now),
+			NotBefore: jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(now.Add(m.accessTTL)),
 		},
 	}
@@ -66,8 +74,12 @@ func (m *Manager) Generate(userID, email, fullName, role, preferredLanguage stri
 		PreferredLanguage: preferredLanguage,
 		Type:              "refresh",
 		RegisteredClaims: jwt.RegisteredClaims{
+			ID:        jtiRefresh,
+			Issuer:    "studed-auth",
+			Audience:  jwt.ClaimStrings{"studed-api"},
 			Subject:   userID,
 			IssuedAt:  jwt.NewNumericDate(now),
+			NotBefore: jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(now.Add(m.refreshTTL)),
 		},
 	}
