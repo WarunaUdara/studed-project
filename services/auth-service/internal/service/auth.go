@@ -84,6 +84,8 @@ func (s *authService) Register(ctx context.Context, email, password, fullName st
 	}, nil
 }
 
+var dummyHash = "$2a$10$tZ9D2w1JzQn6b2x0R3kEdeN.zO/XyZ8p8q0v2m4n6b8v0z2m4n6b8"
+
 func (s *authService) Login(ctx context.Context, email, password string) (*authpb.AuthResponse, error) {
 	email = strings.TrimSpace(strings.ToLower(email))
 	if email == "" || password == "" {
@@ -92,6 +94,8 @@ func (s *authService) Login(ctx context.Context, email, password string) (*authp
 
 	user, err := s.repo.GetByEmail(ctx, email)
 	if err != nil {
+		// Run bcrypt against a dummy hash to preserve constant execution time
+		_ = bcrypt.CompareHashAndPassword([]byte(dummyHash), []byte(password))
 		return nil, fmt.Errorf("invalid credentials")
 	}
 
