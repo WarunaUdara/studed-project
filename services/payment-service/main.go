@@ -68,11 +68,21 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("payment-service ok"))
 	})
+	mux.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
+		sqlDB, err := db.DB()
+		if err != nil || sqlDB.Ping() != nil {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ready"))
+	})
 	// The PayHere webhook is a server-to-server callback authenticated by its
 	// own signature; every other route is internal and requires the shared
 	// service token.
 	publicPaths := map[string]bool{
 		"/health":            true,
+		"/ready":             true,
 		"/v1/payhere/notify": true,
 	}
 	h.Register(mux)

@@ -58,6 +58,15 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("notification-service ok"))
 	})
+	mux.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
+		sqlDB, err := db.DB()
+		if err != nil || sqlDB.Ping() != nil {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ready"))
+	})
 	h.Register(mux)
 
 	var protected http.Handler = mux
@@ -73,7 +82,8 @@ func main() {
 	server := &http.Server{
 		Addr: serviceAddr,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if strings.TrimRight(r.URL.Path, "/") == "/health" {
+			path := strings.TrimRight(r.URL.Path, "/")
+			if path == "/health" || path == "/ready" {
 				mux.ServeHTTP(w, r)
 				return
 			}
