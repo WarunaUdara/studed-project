@@ -17,6 +17,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
 	"github.com/studed/api-gateway/graph"
 	"github.com/studed/api-gateway/internal/client"
 	"github.com/studed/api-gateway/internal/config"
@@ -103,6 +104,11 @@ func main() {
 		srv.Use(extension.Introspection{})
 	}
 
+	rdb := redis.NewClient(&redis.Options{
+		Addr: cfg.RedisAddr,
+	})
+	rateLimiter := authmiddleware.NewRateLimiter(rdb)
+
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
@@ -114,6 +120,7 @@ func main() {
 	})
 	r.Use(authmiddleware.WithResponseWriter)
 	r.Use(authmiddleware.Auth(cfg.AccessSecret))
+	r.Use(rateLimiter.RateLimit())
 
 	r.Handle("/health", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
