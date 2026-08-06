@@ -153,4 +153,6 @@
 	./scripts/gcp/verify-teardown.sh
 
  prod-seed:
-	STUDED_API_URL="$${STUDED_API_URL:-https://api.34.149.224.124.sslip.io}" STUDED_DATABASE_URL="$${STUDED_DATABASE_URL:-$${DATABASE_URL:-}}" ./scripts/mock-data-loader.sh
+	@IP=$$(cd infra/gcp/terraform && tofu output -raw ingress_static_ip 2>/dev/null || echo ""); \
+	URL=$$(if [ -n "$$IP" ]; then echo "https://api.$${IP}.sslip.io"; else echo "http://localhost:8080"; fi); \
+	STUDED_API_URL="$${STUDED_API_URL:-$$URL}" STUDED_DATABASE_URL="$${STUDED_DATABASE_URL:-$${DATABASE_URL:-}}" ./scripts/mock-data-loader.sh
