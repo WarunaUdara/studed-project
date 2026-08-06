@@ -71,10 +71,10 @@ register_or_login() {
   # Public registration is locked to STUDENT. If the seed requested an elevated
   # role and the account was freshly created, promote it via direct DB access
   # (operator credential). Existing accounts keep whatever role they have.
-  if [ -n "${role}" ] && [ "${role}" != "STUDENT" ] && [ "${registered_role}" != "${role}" ] && [ -n "${STUDED_DATABASE_URL:-}" ]; then
-    echo "[mock] promoting ${email} to ${role} via direct DB update"
-    (cd "${REPO_ROOT}/scripts/tools/promote-user" && go run . \
-      -db-url "${STUDED_DATABASE_URL}" -email "${email}" -role "${role}")
+  local db_conn="${STUDED_DATABASE_URL:-${DATABASE_CONNECTION_STRING:-${DATABASE_URL:-}}}"
+  if [ -n "${role}" ] && [ "${role}" != "STUDENT" ] && [ "${registered_role}" != "${role}" ] && [ -n "${db_conn}" ]; then
+    echo "[mock] promoting ${email} to ${role} via provision-educator.sh"
+    STUDED_DATABASE_URL="${db_conn}" "${REPO_ROOT}/scripts/provision-educator.sh" "${email}" "${role}"
   fi
 
   echo "${user_id}"
