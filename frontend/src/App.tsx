@@ -1,5 +1,6 @@
 import { Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { OfflineBanner } from "@/components/ui/OfflineBanner";
 import { PomodoroInitializer } from "@/components/gamification/PomodoroInitializer";
 import { Navbar } from "@/components/layout/Navbar";
 import { ToastProvider } from "@/components/ui/Toast";
@@ -23,6 +24,7 @@ export function App() {
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <ToastProvider>
+        <OfflineBanner />
         {!hideChrome && <Navbar />}
         <main>
           <Outlet />

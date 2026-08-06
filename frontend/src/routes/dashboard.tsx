@@ -169,7 +169,7 @@ function DashboardPage() {
     <ProtectedRoute allowedRoles={["STUDENT"]}>
       <StudentShell>
         <div className="space-y-8">
-          {/* 1. Greeting band (Dawn gradient, no border, Instrument Serif) */}
+          {/* 1. Greeting band (Dawn gradient, no border, IBM Plex Serif) */}
           <div className="rounded-[24px] bg-gradient-dawn p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-1">
               <h1 className="text-4xl font-normal font-serif text-foreground sm:text-5xl">

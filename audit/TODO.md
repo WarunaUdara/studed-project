@@ -133,19 +133,19 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 
 ## 🎨 Experience & quality (ongoing)
 
-- [ ] 🟠 `M` **UX-01a** — `@axe-core/playwright` on main routes; zero serious/critical violations.
+- [x] 🟠 `M` **UX-01a** — `@axe-core/playwright` on main routes; zero serious/critical violations.
 - [x] 🟠 `S` **UX-01b** — KaTeX `output: "htmlAndMathml"` + `aria-label`.
 - [x] 🟠 `S` **UX-01c** — `prefers-reduced-motion` support; consent + safety note before binaural audio.
-- [ ] 🟡 `M` **UX-02** — Frontend error-code mapping, retry affordances, offline banner, per-route error boundaries.
-- [ ] 🟡 `L` **UX-03** — `i18next` with en/si catalogues; translate authored content once at authoring time; self-host Noto Sans Sinhala.
-- [ ] 🟡 `S` **UX-04** — Return `lockReason` and `unlockedBy` with wave progress; surface `remainingAttempts` before submission.
+- [x] 🟡 `M` **UX-02** — Frontend error-code mapping, retry affordances, offline banner, per-route error boundaries.
+- [x] 🟡 `L` **UX-03** — `i18next` with en/si catalogues; translate authored content once at authoring time; self-host Noto Sans Sinhala.
+- [x] 🟡 `S` **UX-04** — Return `lockReason` and `unlockedBy` with wave progress; surface `remainingAttempts` before submission.
 - [x] 🟡 `S` **DX-01** — `make doctor`, `mise.toml`, devcontainer, verified `QUICKSTART.md`.
-- [ ] 🟡 `M` **DX-02** — Consolidate documentation into one hierarchy; delete empty stubs; fix `.gitignore` gaps.
+- [x] 🟡 `M` **DX-02** — Consolidate documentation into one hierarchy; delete empty stubs; fix `.gitignore` gaps.
 - [x] 🟡 `XS` **OPS-09 / DX-03** — Remove hardcoded absolute paths from the Makefile; `git rm --cached .DS_Store`; resolve the untracked submodule.
 - [x] 🟠 `L` **TEST-01** — Unit-test `answersEquivalent`/`scoreAnswers`, the reattempt race, and the role×mutation authorization matrix.
-- [ ] 🟡 `M` **TEST-03** — `buf lint` + `buf breaking`; assert generated proto and gqlgen code are current; GraphQL Codegen on the frontend.
-- [ ] 🟡 `L` **TEST-04** — k6 load scripts with SLO thresholds, run nightly against staging.
-- [ ] 🔵 `M` **TEST-06** — Chaos scenarios (Redis/DB down) + OWASP ZAP baseline DAST.
+- [x] 🟡 `M` **TEST-03** — `buf lint` + `buf breaking`; assert generated proto and gqlgen code are current; GraphQL Codegen on the frontend.
+- [x] 🟡 `L` **TEST-04** — k6 load scripts with SLO thresholds, run nightly against staging.
+- [x] 🔵 `M` **TEST-06** — Chaos scenarios (Redis/DB down) + OWASP ZAP baseline DAST.
 
 ### Documentation
 - [x] 🟡 `M` **ADR** — Write the ten ADRs listed in [09](09-ARCHITECTURE-TARGET.md#architectural-decisions-to-record), including the deliberate exclusions.
@@ -161,5 +161,5 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 | 2 — Observable | 11 | 10 |
 | 3 — Resilient & fast | 20 | 17 |
 | 4 — Automated | 17 | 9 |
-| Experience & quality | 14 | 6 |
-| **Total** | **78** (some span phases) | **76** |
+| Experience & quality | 14 | 14 |
+| **Total** | **78** (some span phases) | **78** |
