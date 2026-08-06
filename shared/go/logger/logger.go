@@ -1,7 +1,13 @@
 package logger
 
-import "log/slog"
+import (
+	"log/slog"
+	"os"
+)
 
 func New(service string) *slog.Logger {
-	return slog.Default().With(slog.String("service", service))
+	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	})
+	return slog.New(handler).With(slog.String("service", service))
 }
