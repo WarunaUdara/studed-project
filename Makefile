@@ -33,10 +33,10 @@
 	cd infra/gcp/terraform && tofu init -backend=false
 
  iac-plan:
-	cd infra/gcp/terraform && tofu validate
+	cd infra/gcp/terraform && tofu validate && tofu plan -out=tfplan
 
  iac-apply:
-	cd infra/gcp/terraform && tofu apply -auto-approve
+	cd infra/gcp/terraform && tofu apply tfplan
 
  helm-lint:
 	/opt/homebrew/bin/helm lint infra/helm/studed || helm lint infra/helm/studed

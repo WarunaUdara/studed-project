@@ -21,7 +21,7 @@ COPY shared/proto/gen/go ./shared/proto/gen/go
 WORKDIR /build/services/api-gateway
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    go build -ldflags="-w -s" -o /app/service .
+    go build -trimpath -ldflags="-w -s" -o /app/service .
 
 FROM alpine:3.21.2
 

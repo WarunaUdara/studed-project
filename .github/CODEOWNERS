@@ -1,0 +1,23 @@
+# Global Code Owners for StudEd Educational Platform
+
+* @WarunaUdara
+
+# Microservices
+/services/ai-service/           @WarunaUdara
+/services/api-gateway/          @WarunaUdara
+/services/auth-service/         @WarunaUdara
+/services/course-service/       @WarunaUdara
+/services/gamification-service/ @WarunaUdara
+/services/notification-service/ @WarunaUdara
+/services/payment-service/      @WarunaUdara
+/services/progress-service/     @WarunaUdara
+
+# Shared Libraries & Contracts
+/shared/                        @WarunaUdara
+
+# Frontend Application
+/frontend/                      @WarunaUdara
+
+# Infrastructure & CI/CD
+/infra/                         @WarunaUdara
+/.github/workflows/             @WarunaUdara
