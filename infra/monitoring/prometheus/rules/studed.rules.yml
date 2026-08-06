@@ -36,6 +36,7 @@ groups:
         annotations:
           summary: "High HTTP 5xx error rate on {{ $labels.job }}"
           description: "Error rate is {{ $value }}% (threshold > 5%)."
+          runbook_url: "https://github.com/WarunaUdara/studed-project/blob/main/docs/runbooks/high-error-rate.md"
 
       - alert: HighP95Latency
         expr: job:http_request_duration:p95 > 1.0
@@ -45,6 +46,7 @@ groups:
         annotations:
           summary: "High P95 response latency on {{ $labels.job }}"
           description: "P95 response latency is {{ $value }}s (threshold > 1s)."
+          runbook_url: "https://github.com/WarunaUdara/studed-project/blob/main/docs/runbooks/high-latency.md"
 
       - alert: PostgresDatabaseDown
         expr: pg_up == 0
@@ -54,6 +56,7 @@ groups:
         annotations:
           summary: "PostgreSQL Database is unreachable"
           description: "Postgres exporter reports database down."
+          runbook_url: "https://github.com/WarunaUdara/studed-project/blob/main/docs/runbooks/database-down.md"
 
       - alert: RedisDatabaseDown
         expr: redis_up == 0
@@ -63,3 +66,4 @@ groups:
         annotations:
           summary: "Redis Cache is unreachable"
           description: "Redis exporter reports server down."
+          runbook_url: "https://github.com/WarunaUdara/studed-project/blob/main/docs/runbooks/database-down.md"
