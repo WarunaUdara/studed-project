@@ -58,7 +58,7 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [x] 🔴 `M` **REL-01a** — Create `shared/go/metrics` with RED metrics + middleware; expose `/metrics` in all 8 services. → [02](02-RELIABILITY-SRE.md#-rel-01--zero-application-metrics-the-entire-monitoring-stack-is-non-functional)
 - [x] 🔴 `S` **REL-01b** — Remove every `metrics_path: "/health"` from `prometheus.yml`.
 - [x] 🔴 `S` **REL-01c** — Add business metrics: `studed_wave_submissions_total`, `studed_xp_awarded_total`, `studed_ai_tokens_total`.
-- [ ] 🔴 `S` **REL-01d** — Verify the three Grafana dashboards render real data; fix panel queries.
+- [x] 🔴 `S` **REL-01d** — Verify the three Grafana dashboards render real data; fix panel queries.
 - [ ] 🟠 `M` **REL-04** — OpenTelemetry across HTTP, gRPC, GraphQL, and SQL; export to Cloud Trace (prod) and Jaeger (local).
 - [x] 🟠 `S` **REL-03** — Real readiness probes checking DB, Redis, and gRPC connection state; keep liveness dependency-free.
 - [x] 🟠 `M` **REL-05a** — Add Alertmanager with routing for `severity=critical`.
@@ -72,12 +72,12 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 ## 🛡️ Phase 3 — Make it resilient & fast (~1 week)
 
 ### Availability
-- [ ] 🔴 `M` **REL-02** — `replicas: 2` + PDB + HPA + `topologySpreadConstraints` on request-path services; document any deliberate exception.
-- [ ] 🟠 `S` **REL-09** — `preStop` sleep + `terminationGracePeriodSeconds: 45`.
+- [x] 🔴 `M` **REL-02** — `replicas: 2` + PDB + HPA + `topologySpreadConstraints` on request-path services; document any deliberate exception.
+- [x] 🟠 `S` **REL-09** — `preStop` sleep + `terminationGracePeriodSeconds: 45`.
 - [ ] 🟡 `M` **REL-10** — Self-healing rebuild for Redis leaderboards and the ES index on start (or drop ES per COST-03).
-- [ ] 🟡 `M` **REL-11** — `docs/DR.md` with RTO/RPO; perform and record one real restore drill.
+- [x] 🟡 `M` **REL-11** — `docs/DR.md` with RTO/RPO; perform and record one real restore drill.
 - [ ] 🟡 `M` **REL-13** — Retry with backoff (idempotent reads only), circuit breakers, documented degradation.
-- [ ] 🔵 `XS` **REL-14** — Add `startupProbe` to every deployment.
+- [x] 🔵 `XS` **REL-14** — Add `startupProbe` to every deployment.
 
 ### Performance
 - [ ] 🔴 `L` **PERF-01a** — Add `GetWaveProgressBatch` RPC with one course-graph fetch and one grouped attempts query.
@@ -92,7 +92,7 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [ ] 🟡 `S` **REL-08** — Connection pool limits + Neon pooled endpoint + `ConnMaxLifetime`.
 
 ### Workload hardening
-- [ ] 🟠 `M` **SEC-05a** — Distroless non-root base images across all services.
+- [x] 🟠 `M` **SEC-05a** — Distroless non-root base images across all services.
 - [ ] 🟠 `S` **SEC-05b** — `securityContext` on every pod; `automountServiceAccountToken: false`; per-service ServiceAccounts.
 - [ ] 攻 `XS` **SEC-05c** — Label the namespace `pod-security.kubernetes.io/enforce: restricted`.
 - [ ] 🟡 `S` **SEC-15** — Reduce node oauth scopes; add a `authorized_cidrs` validation rejecting `0.0.0.0/0`.
@@ -157,8 +157,8 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 | :--- | ---: | ---: |
 | 0 — Blockers | 5 | 5 |
 | 1 — Correct | 27 | 27 |
-| 2 — Observable | 11 | 9 |
-| 3 — Resilient & fast | 20 | 0 |
+| 2 — Observable | 11 | 10 |
+| 3 — Resilient & fast | 20 | 5 |
 | 4 — Automated | 17 | 0 |
 | Experience & quality | 14 | 0 |
-| **Total** | **78** (some span phases) | **41** |
+| **Total** | **78** (some span phases) | **47** |
