@@ -255,7 +255,6 @@ type RegisterRequest struct {
 	Email             string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	Password          string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	FullName          string                 `protobuf:"bytes,3,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	Role              Role                   `protobuf:"varint,4,opt,name=role,proto3,enum=auth.Role" json:"role,omitempty"`
 	Grade             Grade                  `protobuf:"varint,5,opt,name=grade,proto3,enum=auth.Grade" json:"grade,omitempty"`
 	PreferredLanguage string                 `protobuf:"bytes,6,opt,name=preferred_language,json=preferredLanguage,proto3" json:"preferred_language,omitempty"`
 	unknownFields     protoimpl.UnknownFields
@@ -311,13 +310,6 @@ func (x *RegisterRequest) GetFullName() string {
 		return x.FullName
 	}
 	return ""
-}
-
-func (x *RegisterRequest) GetRole() Role {
-	if x != nil {
-		return x.Role
-	}
-	return Role_ROLE_UNSPECIFIED
 }
 
 func (x *RegisterRequest) GetGrade() Grade {
@@ -759,15 +751,13 @@ const file_auth_auth_proto_rawDesc = "" +
 	".auth.RoleR\x04role\x12!\n" +
 	"\x05grade\x18\x05 \x01(\x0e2\v.auth.GradeR\x05grade\x12-\n" +
 	"\x12preferred_language\x18\x06 \x01(\tR\x11preferredLanguage\x12&\n" +
-	"\x0fcreated_at_unix\x18\a \x01(\x03R\rcreatedAtUnix\"\xd2\x01\n" +
+	"\x0fcreated_at_unix\x18\a \x01(\x03R\rcreatedAtUnix\"\xbe\x01\n" +
 	"\x0fRegisterRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1b\n" +
-	"\tfull_name\x18\x03 \x01(\tR\bfullName\x12\x1e\n" +
-	"\x04role\x18\x04 \x01(\x0e2\n" +
-	".auth.RoleR\x04role\x12!\n" +
+	"\tfull_name\x18\x03 \x01(\tR\bfullName\x12!\n" +
 	"\x05grade\x18\x05 \x01(\x0e2\v.auth.GradeR\x05grade\x12-\n" +
-	"\x12preferred_language\x18\x06 \x01(\tR\x11preferredLanguage\"@\n" +
+	"\x12preferred_language\x18\x06 \x01(\tR\x11preferredLanguageJ\x04\b\x04\x10\x05R\x04role\"@\n" +
 	"\fLoginRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x8c\x01\n" +
@@ -861,28 +851,27 @@ var file_auth_auth_proto_goTypes = []any{
 var file_auth_auth_proto_depIdxs = []int32{
 	0,  // 0: auth.User.role:type_name -> auth.Role
 	1,  // 1: auth.User.grade:type_name -> auth.Grade
-	0,  // 2: auth.RegisterRequest.role:type_name -> auth.Role
-	1,  // 3: auth.RegisterRequest.grade:type_name -> auth.Grade
-	2,  // 4: auth.AuthResponse.user:type_name -> auth.User
-	0,  // 5: auth.ValidateTokenResponse.role:type_name -> auth.Role
-	1,  // 6: auth.UpdateUserRequest.grade:type_name -> auth.Grade
-	3,  // 7: auth.AuthService.Register:input_type -> auth.RegisterRequest
-	4,  // 8: auth.AuthService.Login:input_type -> auth.LoginRequest
-	7,  // 9: auth.AuthService.RefreshToken:input_type -> auth.RefreshTokenRequest
-	6,  // 10: auth.AuthService.ValidateToken:input_type -> auth.ValidateTokenRequest
-	9,  // 11: auth.AuthService.GetUser:input_type -> auth.GetUserRequest
-	10, // 12: auth.AuthService.UpdateUser:input_type -> auth.UpdateUserRequest
-	5,  // 13: auth.AuthService.Register:output_type -> auth.AuthResponse
-	5,  // 14: auth.AuthService.Login:output_type -> auth.AuthResponse
-	5,  // 15: auth.AuthService.RefreshToken:output_type -> auth.AuthResponse
-	8,  // 16: auth.AuthService.ValidateToken:output_type -> auth.ValidateTokenResponse
-	2,  // 17: auth.AuthService.GetUser:output_type -> auth.User
-	2,  // 18: auth.AuthService.UpdateUser:output_type -> auth.User
-	13, // [13:19] is the sub-list for method output_type
-	7,  // [7:13] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	1,  // 2: auth.RegisterRequest.grade:type_name -> auth.Grade
+	2,  // 3: auth.AuthResponse.user:type_name -> auth.User
+	0,  // 4: auth.ValidateTokenResponse.role:type_name -> auth.Role
+	1,  // 5: auth.UpdateUserRequest.grade:type_name -> auth.Grade
+	3,  // 6: auth.AuthService.Register:input_type -> auth.RegisterRequest
+	4,  // 7: auth.AuthService.Login:input_type -> auth.LoginRequest
+	7,  // 8: auth.AuthService.RefreshToken:input_type -> auth.RefreshTokenRequest
+	6,  // 9: auth.AuthService.ValidateToken:input_type -> auth.ValidateTokenRequest
+	9,  // 10: auth.AuthService.GetUser:input_type -> auth.GetUserRequest
+	10, // 11: auth.AuthService.UpdateUser:input_type -> auth.UpdateUserRequest
+	5,  // 12: auth.AuthService.Register:output_type -> auth.AuthResponse
+	5,  // 13: auth.AuthService.Login:output_type -> auth.AuthResponse
+	5,  // 14: auth.AuthService.RefreshToken:output_type -> auth.AuthResponse
+	8,  // 15: auth.AuthService.ValidateToken:output_type -> auth.ValidateTokenResponse
+	2,  // 16: auth.AuthService.GetUser:output_type -> auth.User
+	2,  // 17: auth.AuthService.UpdateUser:output_type -> auth.User
+	12, // [12:18] is the sub-list for method output_type
+	6,  // [6:12] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_auth_auth_proto_init() }

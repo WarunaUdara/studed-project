@@ -42,9 +42,10 @@ message RegisterRequest {
   string email = 1;
   string password = 2;
   string full_name = 3;
-  Role role = 4;
   Grade grade = 5;
   string preferred_language = 6;
+  reserved 4;
+  reserved "role";
 }
 
 message LoginRequest {
