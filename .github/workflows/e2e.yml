@@ -1,0 +1,51 @@
+name: StudEd Playwright E2E Integration Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  e2e-playwright:
+    name: E2E Playwright Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Frontend Dependencies
+        run: cd frontend && bun install --frozen-lockfile
+
+      - name: Install Playwright Browsers
+        run: cd frontend && bunx playwright install --with-deps chromium
+
+      - name: Start Docker Compose Stack
+        run: docker compose up -d --build
+
+      - name: Wait for API Gateway Health
+        run: |
+          for i in {1..30}; do
+            if curl -sf http://localhost:8080/health; then
+              echo "API Gateway ready!"
+              exit 0
+            fi
+            echo "Waiting for API Gateway..."
+            sleep 2
+          done
+          echo "API Gateway startup timed out"
+          exit 1
+
+      - name: Seed Demo Data
+        run: ./scripts/mock-data-loader.sh
+
+      - name: Run Playwright E2E Tests
+        run: cd frontend && bun run test:e2e
+
+      - name: Stop Docker Compose Stack
+        if: always()
+        run: docker compose down -v

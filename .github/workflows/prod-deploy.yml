@@ -1,0 +1,49 @@
+name: StudEd Production Deployment Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag to deploy (e.g. v1.0.0)"
+        required: true
+        default: "v1.0.0"
+      confirm_deployment:
+        description: "Type 'DEPLOY' to confirm production release"
+        required: true
+
+jobs:
+  prod-deploy:
+    name: Deploy to GCP Production GKE Cluster
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Assert Confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm_deployment }}" != "DEPLOY" ]; then
+            echo "Deployment cancelled: Confirmation string mismatch."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.release_tag }}
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Connect to GKE Cluster
+        run: gcloud container clusters get-credentials studed-gke --zone us-central1-a --project ${{ secrets.GCP_PROJECT_ID }}
+
+      - uses: azure/setup-helm@v4
+        with:
+          version: "v3.14.0"
+
+      - name: Deploy Helm Chart to Production
+        run: |
+          helm upgrade --install studed infra/helm/studed \
+            --namespace studed \
+            --set image.tag=${{ github.event.inputs.release_tag }} \
+            --wait --timeout 10m

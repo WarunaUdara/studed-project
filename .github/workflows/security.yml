@@ -1,0 +1,63 @@
+name: StudEd Security Scan Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 0 * * 1" # Weekly Monday scan
+  workflow_dispatch:
+
+jobs:
+  gitleaks-scan:
+    name: Gitleaks Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  govulncheck-scan:
+    name: Go Vulnerability Scan (govulncheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+      - name: Run govulncheck across services
+        run: |
+          for svc in services/*; do
+            if [ -f "$svc/go.mod" ]; then
+              echo "Scanning $svc..."
+              (cd "$svc" && govulncheck ./...) || exit 1
+            fi
+          done
+
+  bun-audit-scan:
+    name: Bun Dependency Vulnerability Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Run Bun Audit
+        run: cd frontend && bun pm audit
+
+  kubeconform-scan:
+    name: Kubernetes Manifest Schema Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: yannh/kubeconform-action@v0.8.0
+        with:
+          k8s-version: v1.30.0
+          schema-location: default
+          files: "infra/k8s/production/**/*.yaml"
