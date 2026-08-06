@@ -42,7 +42,7 @@ func md5Upper(s string) string {
 	return strings.ToUpper(hex.EncodeToString(sum[:]))
 }
 
-// Amount formats a price the way PayHere expects (2 decimal places).
-func Amount(v float64) string {
-	return fmt.Sprintf("%.2f", v)
+// AmountCents formats integer minor units (cents) as required by PayHere (e.g. 150000 -> "1500.00").
+func AmountCents(cents int64) string {
+	return fmt.Sprintf("%.2f", float64(cents)/100.0)
 }
