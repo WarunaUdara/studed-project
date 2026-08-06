@@ -109,27 +109,29 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="flex flex-wrap items-center gap-3"
+            className="flex flex-col items-start gap-2.5 sm:flex-row sm:items-center sm:gap-3"
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary">
-              <Sparkles className="h-3.5 w-3.5" />
-              {t("heroBadge")}
+            <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-xs font-medium text-primary shadow-xs">
+              <Sparkles className="h-3.5 w-3.5 shrink-0 text-primary" />
+              <span className="truncate">{t("heroBadge")}</span>
             </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-success/25 bg-success/5 px-3 py-1.5 text-xs font-medium text-success">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+            <div className="flex items-center gap-2.5">
+              <span className="inline-flex items-center gap-2 rounded-full border border-success/25 bg-success/5 px-3.5 py-1.5 text-xs font-medium text-success shadow-xs">
+                <span className="relative flex h-2 w-2 shrink-0">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+                </span>
+                <span>{t("heroLiveChip")}</span>
               </span>
-              {t("heroLiveChip")}
-            </span>
-            <LanguageToggle />
+              <LanguageToggle />
+            </div>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.06 }}
-            className="text-balance font-serif text-5xl leading-[1.05] text-foreground sm:text-6xl lg:text-7xl"
+            className="text-balance font-serif text-5xl leading-[1.08] text-foreground sm:text-6xl lg:text-7xl"
           >
             {t("heroTitleA")}
             <br />
@@ -150,30 +152,26 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.26 }}
-            className="flex flex-wrap gap-3"
+            className="flex flex-wrap items-center gap-3.5"
           >
             {authed ? (
               <Link to={ctaLink}>
-                <Button size="lg" className="gap-2 rounded-full px-8">
-                  <Zap className="h-5 w-5" />
+                <Button size="lg" className="h-12 gap-2 rounded-full px-7 text-sm font-semibold shadow-md">
+                  <Zap className="h-4.5 w-4.5" />
                   {t("ctaPortal")}
                 </Button>
               </Link>
             ) : (
               <>
                 <Link to="/register">
-                  <Button
-                    size="lg"
-                    className="gap-2 rounded-full px-8 shadow-lg shadow-primary/25"
-                    onClick={() => playSuccessSound()}
-                  >
-                    <Zap className="h-5 w-5" />
+                  <Button size="lg" className="h-12 gap-2 rounded-full px-7 text-sm font-semibold shadow-md">
+                    <Zap className="h-4.5 w-4.5" />
                     {t("ctaGetStarted")}
                   </Button>
                 </Link>
                 <Link to="/courses">
-                  <Button size="lg" variant="outline" className="gap-2 rounded-full px-8">
-                    <Compass className="h-5 w-5" />
+                  <Button size="lg" variant="outline" className="h-12 gap-2 rounded-full border-border/80 bg-card/80 px-7 text-sm font-semibold shadow-xs hover:bg-card">
+                    <Compass className="h-4.5 w-4.5 text-muted-foreground" />
                     {t("ctaBrowseCourses")}
                   </Button>
                 </Link>

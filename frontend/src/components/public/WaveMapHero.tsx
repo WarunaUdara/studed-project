@@ -268,29 +268,25 @@ export function WaveMapHero() {
               );
             })}
 
-            {/* XP chips drifting up from the current node */}
-            {currentPoint &&
-              !reduce &&
-              [0, 1, 2].map((i) => (
-                <motion.span
-                  key={`xp-chip-${i}`}
-                  aria-hidden
-                  className="pointer-events-none absolute z-20 inline-flex items-center gap-1 rounded-full bg-gold/90 px-2 py-0.5 text-[10px] font-extrabold text-white shadow-md"
-                  style={{
-                    left: `${(currentPoint.x / VIEW_W) * 100}%`,
-                    top: `${(currentPoint.y / VIEW_H) * 100}%`,
-                  }}
-                  animate={{ y: [-8, -64], x: [0, i === 1 ? 14 : -10], opacity: [0, 1, 0] }}
-                  transition={{
-                    duration: 2.6,
-                    repeat: Number.POSITIVE_INFINITY,
-                    delay: i * 0.9,
-                    ease: "easeOut",
-                  }}
-                >
-                  +50
-                </motion.span>
-              ))}
+            {/* XP chip drifting up from current node */}
+            {currentPoint && !reduce && (
+              <motion.span
+                aria-hidden
+                className="pointer-events-none absolute z-20 inline-flex items-center gap-1 rounded-full bg-gold px-2 py-0.5 text-[10px] font-extrabold text-white shadow-sm"
+                style={{
+                  left: `${(currentPoint.x / VIEW_W) * 100}%`,
+                  top: `${(currentPoint.y / VIEW_H) * 100}%`,
+                }}
+                animate={{ y: [-32, -80], opacity: [0, 1, 0] }}
+                transition={{
+                  duration: 2.8,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "easeOut",
+                }}
+              >
+                +50 XP
+              </motion.span>
+            )}
           </div>
         </div>
 
