@@ -49,8 +49,8 @@ func TestScoreAnswers_PartialCredit(t *testing.T) {
 	}
 
 	score, _ := scoreAnswers(blocks, answers)
-	if score != 66 {
-		t.Fatalf("expected 66 (2/3 correct, integer division), got %d", score)
+	if score != 67 {
+		t.Fatalf("expected 67 (2/3 correct, rounded), got %d", score)
 	}
 }
 

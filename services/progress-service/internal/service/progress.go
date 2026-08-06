@@ -523,7 +523,7 @@ func scoreAnswers(blocks []evaluateBlock, answers []*progresspb.Answer) (int32, 
 		}
 	}
 
-	score := int32((correctCount * 100) / len(blocks))
+	score := int32(math.Round(float64(correctCount*100) / float64(len(blocks))))
 	return score, feedback
 }
 
