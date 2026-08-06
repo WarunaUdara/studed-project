@@ -4,6 +4,8 @@ Deployment, cost control, and teardown for the live StudEd platform
 (GKE backend + Cloudflare Pages frontend + Neon Postgres).
 
 Deep dives: [ARCHITECTURE.md](docs/ARCHITECTURE.md) (component diagram),
+[GCP-ARCHITECTURE-SPEC.md](docs/GCP-ARCHITECTURE-SPEC.md) (GCP icon mapping & tech spec),
+[CICD-PIPELINE.md](docs/CICD-PIPELINE.md) (DevOps CI/CD & GitOps architecture),
 [COSTS.md](docs/COSTS.md) (billing risk analysis), [DECISIONS.md](docs/DECISIONS.md)
 (journey + gotchas + git workflow).
 
@@ -11,8 +13,8 @@ Deep dives: [ARCHITECTURE.md](docs/ARCHITECTURE.md) (component diagram),
 
 | Component | URL |
 | :--- | :--- |
-| Backend GraphQL API | `https://api.34.149.224.124.sslip.io/graphql` |
-| Backend health | `https://api.34.149.224.124.sslip.io/health` |
+| Backend GraphQL API | `https://api.<static-ip>.sslip.io/graphql` |
+| Backend health | `https://api.<static-ip>.sslip.io/health` |
 | Frontend | `https://studed-project-frontend.pages.dev` |
 | ArgoCD (port-forward) | `http://localhost:8080` |
 

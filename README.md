@@ -39,6 +39,8 @@ scales the cluster to zero after 2h without traffic.
 | :--- | :--- |
 | [DEPLOYMENT.md](DEPLOYMENT.md) | One-command lifecycle, prerequisites, teardown |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Full component diagram + security posture |
+| [docs/GCP-ARCHITECTURE-SPEC.md](docs/GCP-ARCHITECTURE-SPEC.md) | GCP official symbol mappings & layer specifications |
+| [docs/CICD-PIPELINE.md](docs/CICD-PIPELINE.md) | Industrial-grade DevOps CI/CD & GitOps pipeline diagram |
 | [docs/COSTS.md](docs/COSTS.md) | Billing risk analysis + cost controls |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Deployment journey, gotchas, git workflow |
 
