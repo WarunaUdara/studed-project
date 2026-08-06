@@ -2,6 +2,7 @@ package payhere
 
 import (
 	"crypto/md5"
+	"crypto/subtle"
 	"encoding/hex"
 	"fmt"
 	"strings"
@@ -29,11 +30,11 @@ func (c Config) CheckoutHash(orderID string, amount string, currency string) str
 }
 
 // VerifyNotification validates the md5sig on a PayHere server-to-server
-// payment notification.
+// payment notification using constant-time byte comparison.
 func (c Config) VerifyNotification(merchantID, orderID, amount, currency, statusCode, md5sig string) bool {
 	secretHash := md5Upper(c.MerchantSecret)
 	expected := md5Upper(merchantID + orderID + amount + currency + statusCode + secretHash)
-	return strings.EqualFold(expected, md5sig)
+	return subtle.ConstantTimeCompare([]byte(strings.ToUpper(expected)), []byte(strings.ToUpper(md5sig))) == 1
 }
 
 func md5Upper(s string) string {
