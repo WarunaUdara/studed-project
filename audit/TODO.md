@@ -74,7 +74,7 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 ### Availability
 - [x] 🔴 `M` **REL-02** — `replicas: 2` + PDB + HPA + `topologySpreadConstraints` on request-path services; document any deliberate exception.
 - [x] 🟠 `S` **REL-09** — `preStop` sleep + `terminationGracePeriodSeconds: 45`.
-- [ ] 🟡 `M` **REL-10** — Self-healing rebuild for Redis leaderboards and the ES index on start (or drop ES per COST-03).
+- [x] 🟡 `M` **REL-10** — Self-healing rebuild for Redis leaderboards and the ES index on start (or drop ES per COST-03).
 - [x] 🟡 `M` **REL-11** — `docs/DR.md` with RTO/RPO; perform and record one real restore drill.
 - [ ] 🟡 `M` **REL-13** — Retry with backoff (idempotent reads only), circuit breakers, documented degradation.
 - [x] 🔵 `XS` **REL-14** — Add `startupProbe` to every deployment.
@@ -85,9 +85,9 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [ ] 🟠 `M` **PERF-02** — Redis cache-aside for course/lesson/wave/leaderboard with publish-triggered invalidation.
 - [x] 🟠 `S` **PERF-03** — Migration adding partial indexes on `wave_attempts(user_id, course_id/lesson_id) WHERE passed`; verify with `EXPLAIN ANALYZE`.
 - [x] 🟡 `S` **PERF-04** — Raise memory requests/limits; set `GOMEMLIMIT` and `GOMAXPROCS` from the container limits.
-- [ ] 🟡 `S` **PERF-05** — Server-enforced pagination caps on all list fields; cursor pagination for the leaderboard.
+- [x] 🟡 `S` **PERF-05** — Server-enforced pagination caps on all list fields; cursor pagination for the leaderboard.
 - [ ] 🟡 `M` **PERF-06** — Partition `wave_attempts` by month; `answers_json` as `JSONB`; define a retention policy.
-- [ ] 🟡 `M` **PERF-07** — Bundle visualizer, lazy-load Puck, CI size budget (250 KB gzipped), Lighthouse CI.
+- [x] 🟡 `M` **PERF-07** — Bundle visualizer, lazy-load Puck, CI size budget (250 KB gzipped), Lighthouse CI.
 - [x] 🔵 `S` **PERF-08** — Per-field GraphQL complexity costs, depth limit, per-operation timeout.
 - [x] 🟡 `S` **REL-08** — Connection pool limits + Neon pooled endpoint + `ConnMaxLifetime`.
 
@@ -95,8 +95,8 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [x] 🟠 `M` **SEC-05a** — Distroless non-root base images across all services.
 - [x] 🟠 `S` **SEC-05b** — `securityContext` on every pod; `automountServiceAccountToken: false`; per-service ServiceAccounts.
 - [x] 攻 `XS` **SEC-05c** — Label the namespace `pod-security.kubernetes.io/enforce: restricted`.
-- [ ] 🟡 `S` **SEC-15** — Reduce node oauth scopes; add a `authorized_cidrs` validation rejecting `0.0.0.0/0`.
-- [ ] 🟡 `M` **SEC-17** — Scope `allow-external-egress` per workload; FQDN egress policy for Gemini; Private Service Connect for Neon.
+- [x] 🟡 `S` **SEC-15** — Reduce node oauth scopes; add a `authorized_cidrs` validation rejecting `0.0.0.0/0`.
+- [x] 🟡 `M` **SEC-17** — Scope `allow-external-egress` per workload; FQDN egress policy for Gemini; Private Service Connect for Neon.
 
 ---
 
@@ -158,7 +158,7 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 | 0 — Blockers | 5 | 5 |
 | 1 — Correct | 27 | 27 |
 | 2 — Observable | 11 | 10 |
-| 3 — Resilient & fast | 20 | 11 |
+| 3 — Resilient & fast | 20 | 15 |
 | 4 — Automated | 17 | 0 |
 | Experience & quality | 14 | 0 |
-| **Total** | **78** (some span phases) | **53** |
+| **Total** | **78** (some span phases) | **57** |
