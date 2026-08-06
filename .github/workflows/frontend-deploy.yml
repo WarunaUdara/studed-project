@@ -1,0 +1,41 @@
+name: StudEd Frontend Cloudflare Pages Deployment Pipeline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-deploy.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy-cloudflare-pages:
+    name: Build & Deploy Frontend to Cloudflare Pages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Frontend Dependencies
+        run: cd frontend && bun install --frozen-lockfile
+
+      - name: Build Production Bundle
+        run: cd frontend && bun run build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: studed-frontend
+          directory: frontend/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
