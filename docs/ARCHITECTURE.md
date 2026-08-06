@@ -36,8 +36,9 @@ flowchart TB
                     AI["ai-service :8090 (HTTP)<br/>• Gemini 1.5 Flash<br/>• Graceful Shutdown"]
                     NOTIF["notification-service :8092 (HTTP)<br/>• Bearer Auth Guard<br/>• Graceful Shutdown"]
                     PAY["payment-service :8091 (HTTP)<br/>• PayHere Webhook + Signature<br/>• Bearer Auth Guard"]
-                    UP["upload-service :8090 (HTTP)<br/>• Media Handling"]
-                    USER["user-service :8082 (HTTP)<br/>• Profile Management"]
+                    UP["upload-service :8096 (HTTP)<br/>• Extension Stub"]
+                    USER["user-service :8082 (HTTP)<br/>• Extension Stub"]
+                    CNT["content-service :8095 (HTTP)<br/>• Extension Stub"]
                 end
 
                 subgraph DataNS["In-Cluster Data Tier"]
