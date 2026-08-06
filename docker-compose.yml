@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: studed
       POSTGRES_DB: studed
     ports:
-      - "5433:5432"
+      - "127.0.0.1:5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -20,7 +20,7 @@ services:
     image: redis:7-alpine
     container_name: studed-redis
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
 
   elasticsearch:
     build:
@@ -31,7 +31,7 @@ services:
       - xpack.security.enabled=false
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
-      - "9200:9200"
+      - "127.0.0.1:9200:9200"
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     healthcheck:
@@ -53,8 +53,8 @@ services:
       JWT_ACCESS_TTL: 15m
       JWT_REFRESH_TTL: 168h
     ports:
-      - "8081:8081"
-      - "8085:8085"
+      - "127.0.0.1:8081:8081"
+      - "127.0.0.1:8085:8085"
     depends_on:
       postgres:
         condition: service_healthy
@@ -75,8 +75,8 @@ services:
       AUTH_SERVICE_ADDR: auth-service:8081
       ELASTICSEARCH_URL: http://elasticsearch:9200
     ports:
-      - "8083:8083"
-      - "8084:8084"
+      - "127.0.0.1:8083:8083"
+      - "127.0.0.1:8084:8084"
     depends_on:
       postgres:
         condition: service_healthy
@@ -101,8 +101,8 @@ services:
       COURSE_SERVICE_ADDR: course-service:8083
       GAMIFICATION_SERVICE_ADDR: gamification-service:8088
     ports:
-      - "8086:8086"
-      - "8087:8087"
+      - "127.0.0.1:8086:8086"
+      - "127.0.0.1:8087:8087"
     depends_on:
       postgres:
         condition: service_healthy
@@ -126,8 +126,8 @@ services:
       DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
       REDIS_ADDR: redis:6379
     ports:
-      - "8088:8088"
-      - "8089:8089"
+      - "127.0.0.1:8088:8088"
+      - "127.0.0.1:8089:8089"
     depends_on:
       postgres:
         condition: service_healthy
@@ -149,7 +149,7 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
     ports:
-      - "8090:8090"
+      - "127.0.0.1:8090:8090"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8090/health"]
       interval: 5s
@@ -168,7 +168,7 @@ services:
       PAYHERE_MERCHANT_SECRET: ${PAYHERE_MERCHANT_SECRET:-}
       PAYHERE_NOTIFY_URL: ${PAYHERE_NOTIFY_URL:-}
     ports:
-      - "8091:8091"
+      - "127.0.0.1:8091:8091"
     depends_on:
       postgres:
         condition: service_healthy
@@ -187,7 +187,7 @@ services:
       NOTIFICATION_SERVICE_ADDR: :8092
       DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
     ports:
-      - "8092:8092"
+      - "127.0.0.1:8092:8092"
     depends_on:
       postgres:
         condition: service_healthy
@@ -214,7 +214,7 @@ services:
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-local-dev-access-secret-min-32-bytes}
       GRAPHQL_PLAYGROUND: "true"
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     depends_on:
       redis:
         condition: service_started
@@ -245,7 +245,7 @@ services:
       - "--storage.tsdb.retention.time=15d"
       - "--web.enable-lifecycle"
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:9090/-/healthy"]
       interval: 10s
@@ -264,7 +264,7 @@ services:
       - ./infra/monitoring/grafana/dashboards:/etc/grafana/dashboards
       - grafana_data:/var/lib/grafana
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       prometheus:
         condition: service_healthy
@@ -275,7 +275,7 @@ services:
     environment:
       DATA_SOURCE_NAME: "postgresql://studed:studed@postgres:5432/studed?sslmode=disable"
     ports:
-      - "9187:9187"
+      - "127.0.0.1:9187:9187"
     depends_on:
       postgres:
         condition: service_healthy
@@ -286,7 +286,7 @@ services:
     environment:
       REDIS_ADDR: "redis:6379"
     ports:
-      - "9121:9121"
+      - "127.0.0.1:9121:9121"
     depends_on:
       redis:
         condition: service_started
