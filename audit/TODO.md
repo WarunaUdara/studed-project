@@ -86,7 +86,7 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [x] 🟠 `S` **PERF-03** — Migration adding partial indexes on `wave_attempts(user_id, course_id/lesson_id) WHERE passed`; verify with `EXPLAIN ANALYZE`.
 - [x] 🟡 `S` **PERF-04** — Raise memory requests/limits; set `GOMEMLIMIT` and `GOMAXPROCS` from the container limits.
 - [x] 🟡 `S` **PERF-05** — Server-enforced pagination caps on all list fields; cursor pagination for the leaderboard.
-- [ ] 🟡 `M` **PERF-06** — Partition `wave_attempts` by month; `answers_json` as `JSONB`; define a retention policy.
+- [x] 🟡 `M` **PERF-06** — Partition `wave_attempts` by month; `answers_json` as `JSONB`; define a retention policy.
 - [x] 🟡 `M` **PERF-07** — Bundle visualizer, lazy-load Puck, CI size budget (250 KB gzipped), Lighthouse CI.
 - [x] 🔵 `S` **PERF-08** — Per-field GraphQL complexity costs, depth limit, per-operation timeout.
 - [x] 🟡 `S` **REL-08** — Connection pool limits + Neon pooled endpoint + `ConnMaxLifetime`.
@@ -103,15 +103,16 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 ## 🚀 Phase 4 — Make it automated (~1 week)
 
 ### Pipeline
-- [ ] 🟠 `XS` **OPS-02** — Remove the `|| bun install` fallback.
-- [ ] 🟠 `M` **OPS-03a** — Add `.github/workflows/security.yml`: gitleaks, golangci-lint, govulncheck, trivy, tfsec, checkov, kubeconform, bun audit.
+- [x] 🟠 `XS` **OPS-02** — Remove the `|| bun install` fallback.
+- [x] 🟠 `M` **OPS-03a** — Add `.github/workflows/security.yml`: gitleaks, golangci-lint, govulncheck, trivy, tfsec, checkov, kubeconform, bun audit.
 - [ ] 🟠 `S` **OPS-03b** — SBOM (syft) + keyless image signing (cosign + OIDC).
 - [ ] 🟡 `S` **OPS-03c** — Enable Binary Authorization on GKE to require signed images.
-- [ ] 🟠 `S` **OPS-04a** — Playwright e2e job in CI against the compose stack, with report artifacts.
+- [x] 🟠 `S` **OPS-04a** — Playwright e2e job in CI against the compose stack, with report artifacts.
 - [ ] 🟠 `S` **OPS-04b** — Coverage via `-coverprofile`, upload to Codecov, ratchet + 70% floor on `internal/service/**`.
 - [ ] 🟡 `S` **OPS-08** — Scope `packages: write` to the publish job only; pin all actions to commit SHAs.
 
 ### Delivery
+- [x] 🟡 `M` **OPS-03c** — Add `.github/workflows/prod-deploy.yml`: manual dispatch, environment protection, release tag, image digest pin.
 - [ ] 🟠 `L` **OPS-01 / REL-06 / REL-07** — Kustomize base+overlays, digest-pinned images, correct registry namespace, CD job writing digests, staging→approval→production with ArgoCD.
 - [ ] 🟡 `M` **OPS-10** — Delete the Helm chart (or complete it); validate the real manifests with `kubectl kustomize | kubeconform`.
 - [ ] 🟡 `S` **OPS-05** — `iac-plan` must run `tofu plan -out`; `iac-apply` applies the reviewed plan; PR plan comments.
@@ -158,7 +159,7 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 | 0 — Blockers | 5 | 5 |
 | 1 — Correct | 27 | 27 |
 | 2 — Observable | 11 | 10 |
-| 3 — Resilient & fast | 20 | 15 |
-| 4 — Automated | 17 | 0 |
+| 3 — Resilient & fast | 20 | 16 |
+| 4 — Automated | 17 | 4 |
 | Experience & quality | 14 | 0 |
-| **Total** | **78** (some span phases) | **57** |
+| **Total** | **78** (some span phases) | **62** |
