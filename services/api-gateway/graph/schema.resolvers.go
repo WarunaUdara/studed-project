@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/studed/api-gateway/graph/model"
@@ -233,15 +234,20 @@ func (r *mutationResolver) SubmitWaveAnswers(ctx context.Context, waveID string,
 			return nil, fmt.Errorf("full name is empty in user context")
 		}
 
+		displayName := userCtx.FullName
+		if parts := strings.Fields(displayName); len(parts) > 1 {
+			displayName = parts[0] + " " + string(parts[len(parts)-1][0]) + "."
+		}
+
 		// Always update the global leaderboard.
-		if _, err := r.GamificationClient.UpdateLeaderboard(ctx, userCtx.UserID, userCtx.FullName, result.TotalXp, model.LeaderboardScopeGlobal, "", nil); err != nil {
+		if _, err := r.GamificationClient.UpdateLeaderboard(ctx, userCtx.UserID, displayName, result.TotalXp, model.LeaderboardScopeGlobal, "", nil); err != nil {
 			return nil, fmt.Errorf("failed to update global leaderboard: %w", err)
 		}
 
 		// Resolve the wave's courseID for the course-scoped leaderboard.
 		courseID, err := r.CourseClient.GetWaveCourseID(ctx, waveID)
 		if err == nil && courseID != "" {
-			if _, err := r.GamificationClient.UpdateLeaderboard(ctx, userCtx.UserID, userCtx.FullName, result.TotalXp, model.LeaderboardScopeCourse, courseID, nil); err != nil {
+			if _, err := r.GamificationClient.UpdateLeaderboard(ctx, userCtx.UserID, displayName, result.TotalXp, model.LeaderboardScopeCourse, courseID, nil); err != nil {
 				return nil, fmt.Errorf("failed to update course leaderboard: %w", err)
 			}
 		}
@@ -250,7 +256,7 @@ func (r *mutationResolver) SubmitWaveAnswers(ctx context.Context, waveID string,
 		// (grade is fetched from auth-service, NOT carried in the JWT).
 		authUser, err := r.AuthClient.GetUser(ctx, userCtx.UserID)
 		if err == nil && authUser.Grade != nil {
-			if _, err := r.GamificationClient.UpdateLeaderboard(ctx, userCtx.UserID, userCtx.FullName, result.TotalXp, model.LeaderboardScopeGrade, "", authUser.Grade); err != nil {
+			if _, err := r.GamificationClient.UpdateLeaderboard(ctx, userCtx.UserID, displayName, result.TotalXp, model.LeaderboardScopeGrade, "", authUser.Grade); err != nil {
 				return nil, fmt.Errorf("failed to update grade leaderboard: %w", err)
 			}
 		}
@@ -663,6 +669,9 @@ func (r *queryResolver) WaveProgress(ctx context.Context, waveID string) (*model
 
 // Leaderboard is the resolver for the leaderboard field.
 func (r *queryResolver) Leaderboard(ctx context.Context, scope model.LeaderboardScope, courseID *string, grade *model.Grade) ([]*model.LeaderboardEntry, error) {
+	if _, err := requireUser(ctx); err != nil {
+		return nil, err
+	}
 	return r.GamificationClient.GetLeaderboard(ctx, scope, courseID, grade, 100)
 }
 
