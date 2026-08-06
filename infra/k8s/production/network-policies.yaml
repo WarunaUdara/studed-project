@@ -160,7 +160,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-course-ingress-from-gateway
+  name: allow-course-ingress
   namespace: studed
 spec:
   podSelector:
@@ -172,11 +172,40 @@ spec:
         - podSelector:
             matchLabels:
               app: api-gateway
+        - podSelector:
+            matchLabels:
+              app: progress-service
       ports:
         - protocol: TCP
           port: 8083
         - protocol: TCP
           port: 8084
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-progress-egress
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: progress-service
+  policyTypes: ["Egress"]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: course-service
+      ports:
+        - protocol: TCP
+          port: 8083
+    - to:
+        - podSelector:
+            matchLabels:
+              app: gamification-service
+      ports:
+        - protocol: TCP
+          port: 8088
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -202,7 +231,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-gamification-ingress-from-gateway
+  name: allow-gamification-ingress
   namespace: studed
 spec:
   podSelector:
@@ -214,6 +243,9 @@ spec:
         - podSelector:
             matchLabels:
               app: api-gateway
+        - podSelector:
+            matchLabels:
+              app: progress-service
       ports:
         - protocol: TCP
           port: 8088
