@@ -6,51 +6,65 @@
 
 @layer base {
   :root {
+    /* Palette Tokens (OKLCH Hue 145 - Forest/Emerald Learning Theme) */
+    --color-1: oklch(0.178 0.029 145);
+    --color-2: oklch(0.209 0.041 145);
+    --color-3: oklch(0.272 0.076 145);
+    --color-4: oklch(0.322 0.103 145);
+    --color-5: oklch(0.367 0.125 145);
+    --color-6: oklch(0.417 0.145 145);
+    --color-7: oklch(0.484 0.164 145);
+    --color-8: oklch(0.571 0.181 145);
+    --color-9: oklch(0.623 0.178 145);
+    --color-10: oklch(0.676 0.167 145);
+    --color-11: oklch(0.843 0.107 145);
+    --color-12: oklch(0.919 0.063 145);
+
     /* Core surface tokens (oklch) */
-    --background: oklch(0.984 0.003 95);        /* Parchment #FAFAF7 */
-    --foreground: oklch(0.21 0.034 264.7);      /* Ink #111827 */
-    --card: oklch(1 0 0);                       /* white cards on parchment */
-    --card-foreground: oklch(0.21 0.034 264.7);
+    --background: oklch(0.988 0.003 145);       /* Calming Natural Parchment */
+    --foreground: oklch(0.178 0.029 145);       /* Deep Ink Forest */
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.178 0.029 145);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.21 0.034 264.7);
+    --popover-foreground: oklch(0.178 0.029 145);
 
     /* Action tokens */
-    --primary: oklch(0.546 0.215 262.9);        /* Intelligent Blue #2563EB */
-    --primary-foreground: oklch(0.985 0.002 95);
-    --secondary: oklch(0.962 0.004 95);
-    --secondary-foreground: oklch(0.21 0.034 264.7);
-    --muted: oklch(0.962 0.004 95);
-    --muted-foreground: oklch(0.47 0.02 264);
-    --accent: oklch(0.95 0.014 262);
-    --accent-foreground: oklch(0.37 0.13 262.9);
+    --primary: oklch(0.484 0.164 145);          /* Focused Emerald #059669 */
+    --primary-foreground: oklch(0.988 0.003 145);
+    --secondary: oklch(0.95 0.015 145);
+    --secondary-foreground: oklch(0.209 0.041 145);
+    --muted: oklch(0.95 0.015 145);
+    --muted-foreground: oklch(0.417 0.145 145);
+    --accent: oklch(0.919 0.063 145);
+    --accent-foreground: oklch(0.272 0.076 145);
     --destructive: oklch(0.577 0.245 27.3);
     --destructive-foreground: oklch(0.985 0.002 95);
 
-    --border: oklch(0.92 0.005 264);
-    --input: oklch(0.92 0.005 264);
-    --ring: oklch(0.546 0.215 262.9);           /* blue focus ring */
+    --border: oklch(0.88 0.03 145);
+    --input: oklch(0.88 0.03 145);
+    --ring: oklch(0.484 0.164 145);
     --radius: 1.5rem;                           /* 24px rounded corners */
 
     /* Feedback tokens */
-    --success: oklch(0.696 0.17 162.5);         /* Growth Green #10B981 */
+    --success: oklch(0.571 0.181 145);          /* Emerald Success */
     --success-foreground: oklch(0.985 0.002 95);
     --warning: oklch(0.769 0.188 70.1);
     --warning-foreground: oklch(0.26 0.05 70);
-    --info: oklch(0.546 0.215 262.9);
-    --info-foreground: oklch(0.985 0.002 95);
+    --info: oklch(0.484 0.164 145);
+    --info-foreground: oklch(0.988 0.003 145);
 
     /* Gamification & Intelligence */
     --gold: oklch(0.769 0.188 70.1);            /* Amber */
     --gold-foreground: oklch(0.26 0.05 70);
-    --purple: oklch(0.541 0.281 293);           /* Knowledge Violet */
-    --purple-foreground: oklch(0.985 0.002 95);
+    --purple: oklch(0.484 0.164 145);
+    --purple-foreground: oklch(0.988 0.003 145);
     --orange: oklch(0.769 0.188 70.1);
     --orange-foreground: oklch(0.26 0.05 70);
     --achievement: oklch(0.769 0.188 70.1);     /* Amber */
     --achievement-foreground: oklch(0.26 0.05 70);
     
-    --ai: oklch(0.541 0.281 293);               /* Knowledge Violet */
-    --ai-foreground: oklch(0.985 0.002 95);
+    --ai: oklch(0.484 0.164 145);
+    --ai-foreground: oklch(0.988 0.003 145);
 
     --rank-1: oklch(0.769 0.188 70.1);          /* Gold */
     --rank-1-foreground: oklch(0.26 0.05 70);
@@ -60,43 +74,43 @@
     --rank-3-foreground: oklch(0.985 0.002 95);
 
     /* Sidebar / shell surfaces */
-    --sidebar: oklch(0.984 0.003 95);
-    --sidebar-foreground: oklch(0.21 0.034 264.7);
-    --sidebar-border: oklch(0.92 0.005 264);
-    --sidebar-accent: oklch(0.95 0.014 262);
+    --sidebar: oklch(0.988 0.003 145);
+    --sidebar-foreground: oklch(0.178 0.029 145);
+    --sidebar-border: oklch(0.88 0.03 145);
+    --sidebar-accent: oklch(0.919 0.063 145);
 
     /* Chart palette (Recharts) */
-    --chart-xp: oklch(0.546 0.215 262.9);
-    --chart-xp-soft: oklch(0.546 0.215 262.9 / 0.5);
+    --chart-xp: oklch(0.484 0.164 145);
+    --chart-xp-soft: oklch(0.484 0.164 145 / 0.5);
     --chart-streak: oklch(0.769 0.188 70.1);
     --chart-proficient: oklch(0.769 0.188 70.1);
   }
 
   .dark {
-    --background: oklch(0.17 0.01 264);         /* warm near-black */
-    --foreground: oklch(0.985 0.002 95);
-    --card: oklch(0.21 0.015 264);
-    --card-foreground: oklch(0.985 0.002 95);
-    --popover: oklch(0.21 0.015 264);
-    --popover-foreground: oklch(0.985 0.002 95);
+    --background: oklch(0.15 0.02 145);         /* Forest Deep Dark */
+    --foreground: oklch(0.919 0.063 145);
+    --card: oklch(0.209 0.041 145);
+    --card-foreground: oklch(0.919 0.063 145);
+    --popover: oklch(0.209 0.041 145);
+    --popover-foreground: oklch(0.919 0.063 145);
 
-    --primary: oklch(0.62 0.19 262.9);
-    --primary-foreground: oklch(0.12 0.02 264);
-    --secondary: oklch(0.25 0.015 264);
-    --secondary-foreground: oklch(0.985 0.002 95);
-    --muted: oklch(0.25 0.015 264);
-    --muted-foreground: oklch(0.72 0.015 264);
-    --accent: oklch(0.28 0.03 262);
-    --accent-foreground: oklch(0.985 0.002 95);
+    --primary: oklch(0.623 0.178 145);
+    --primary-foreground: oklch(0.15 0.02 145);
+    --secondary: oklch(0.272 0.076 145);
+    --secondary-foreground: oklch(0.919 0.063 145);
+    --muted: oklch(0.272 0.076 145);
+    --muted-foreground: oklch(0.843 0.107 145);
+    --accent: oklch(0.322 0.103 145);
+    --accent-foreground: oklch(0.919 0.063 145);
     --destructive: oklch(0.704 0.19 22);
     --destructive-foreground: oklch(0.12 0.02 22);
 
-    --border: oklch(1 0 0 / 10%);
+    --border: oklch(1 0 0 / 12%);
     --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.62 0.19 262.9);
+    --ring: oklch(0.623 0.178 145);
 
-    --success: oklch(0.72 0.16 145);
-    --success-foreground: oklch(0.12 0.02 145);
+    --success: oklch(0.676 0.167 145);
+    --success-foreground: oklch(0.15 0.02 145);
     --warning: oklch(0.8 0.16 75);
     --warning-foreground: oklch(0.22 0.02 75);
     --info: oklch(0.75 0.14 250);
@@ -166,6 +180,20 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
+
+  /* Emerald Ramp Palette (OKLCH Hue 145) */
+  --color-brand-1: var(--color-1);
+  --color-brand-2: var(--color-2);
+  --color-brand-3: var(--color-3);
+  --color-brand-4: var(--color-4);
+  --color-brand-5: var(--color-5);
+  --color-brand-6: var(--color-6);
+  --color-brand-7: var(--color-7);
+  --color-brand-8: var(--color-8);
+  --color-brand-9: var(--color-9);
+  --color-brand-10: var(--color-10);
+  --color-brand-11: var(--color-11);
+  --color-brand-12: var(--color-12);
 
   /* Gamification & Intelligence */
   --color-gold: var(--gold);
@@ -266,24 +294,24 @@
   
   /* Atmospheric Gradients */
   .bg-gradient-dawn {
-    background: radial-gradient(120% 120% at 50% 0%, oklch(0.546 0.215 262.9 / 0.08), transparent 60%);
+    background: radial-gradient(120% 120% at 50% 0%, oklch(0.484 0.164 145 / 0.08), transparent 60%);
   }
   .bg-gradient-sarvam-hero {
     background: 
-      radial-gradient(ellipse 70% 50% at 50% -10%, rgba(255, 143, 0, 0.4) 0%, rgba(255, 143, 0, 0.15) 35%, rgba(255, 143, 0, 0) 70%),
-      radial-gradient(circle 50vw at 0vw 15vh, rgba(221, 190, 252, 0.4) 0%, rgba(221, 190, 252, 0.15) 40%, rgba(221, 190, 252, 0) 80%),
-      radial-gradient(circle 50vw at 100vw 15vh, rgba(147, 197, 253, 0.4) 0%, rgba(147, 197, 253, 0.15) 40%, rgba(147, 197, 253, 0) 80%),
+      radial-gradient(ellipse 70% 50% at 50% -10%, oklch(0.769 0.188 70.1 / 0.15) 0%, oklch(0.769 0.188 70.1 / 0.04) 35%, transparent 70%),
+      radial-gradient(circle 50vw at 0vw 15vh, oklch(0.571 0.181 145 / 0.12) 0%, oklch(0.571 0.181 145 / 0.03) 40%, transparent 80%),
+      radial-gradient(circle 50vw at 100vw 15vh, oklch(0.676 0.167 145 / 0.12) 0%, oklch(0.676 0.167 145 / 0.03) 40%, transparent 80%),
       var(--background);
   }
   .dark .bg-gradient-sarvam-hero {
     background: 
-      radial-gradient(ellipse 70% 50% at 50% -10%, rgba(230, 81, 0, 0.35) 0%, rgba(230, 81, 0, 0.1) 35%, rgba(230, 81, 0, 0) 70%),
-      radial-gradient(circle 50vw at 0vw 15vh, rgba(107, 33, 168, 0.3) 0%, rgba(107, 33, 168, 0.08) 40%, rgba(107, 33, 168, 0) 80%),
-      radial-gradient(circle 50vw at 100vw 15vh, rgba(30, 58, 138, 0.3) 0%, rgba(30, 58, 138, 0.08) 40%, rgba(30, 58, 138, 0) 80%),
+      radial-gradient(ellipse 70% 50% at 50% -10%, oklch(0.769 0.188 70.1 / 0.1) 0%, oklch(0.769 0.188 70.1 / 0.02) 35%, transparent 70%),
+      radial-gradient(circle 50vw at 0vw 15vh, oklch(0.272 0.076 145 / 0.3) 0%, oklch(0.272 0.076 145 / 0.08) 40%, transparent 80%),
+      radial-gradient(circle 50vw at 100vw 15vh, oklch(0.322 0.103 145 / 0.3) 0%, oklch(0.322 0.103 145 / 0.08) 40%, transparent 80%),
       var(--background);
   }
   .bg-gradient-intelligence {
-    background: linear-gradient(135deg, oklch(0.546 0.215 262.9 / 0.06), oklch(0.541 0.281 293 / 0.06));
+    background: linear-gradient(135deg, oklch(0.484 0.164 145 / 0.06), oklch(0.571 0.181 145 / 0.06));
   }
   .bg-gradient-growth {
     background: linear-gradient(to top, oklch(0.696 0.17 162.5 / 0.06), transparent);

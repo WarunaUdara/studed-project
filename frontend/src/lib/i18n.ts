@@ -26,7 +26,6 @@ export function pick(pair: StringPair, lang: Lang): string {
 /* --------------------------------- Strings -------------------------------- */
 
 export const PUBLIC_STRINGS = {
-export const PUBLIC_STRINGS = {
   heroBadge: {
     EN: "Premium learning for Sri Lankan schools",
     SI: "ලංකාවේ පාසල් සඳහාම නිර්මාණය වූ Premium learning platform එක",
