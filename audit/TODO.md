@@ -23,13 +23,13 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [x] 🔴 `S` **SEC-01** — Split `EvaluateBlock` into student-facing and `AuthoredEvaluateBlock`; never return `correctAnswer` to students. → [01](01-SECURITY.md#-sec-01--quiz-answers-are-readable-by-any-enrolled-student)
 - [x] 🔴 `M` **SEC-03** — Redis-backed rate limiting at the gateway: login 5/min/IP, register 3/h/IP, AI 10/h/user, global per-user cap.
 - [x] 🟠 `M` **SEC-04** — Add `jti`; Redis token denylist; refresh-token rotation with reuse detection; make logout revoke.
-- [ ] 🟠 `M` **SEC-06** — Verify `payhere_amount`/currency against a server-side price table; `processed_webhooks` ledger keyed on `payment_id`; only `PENDING → ACTIVE`.
+- [x] 🟠 `M` **SEC-06** — Verify `payhere_amount`/currency against a server-side price table; `processed_webhooks` ledger keyed on `payment_id`; only `PENDING → ACTIVE`.
 - [x] 🟠 `S` **SEC-08** — Add `frontend/public/_headers` with CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy.
-- [ ] 🟡 `S` **SEC-09 / SEC-23** — Replace `handler.NewDefaultServer` with explicit composition; makes introspection genuinely conditional, drops the unused GET + MultipartForm transports, and activates the WebSocket origin allowlist that is currently dead code.
+- [x] 🟡 `S` **SEC-09 / SEC-23** — Replace `handler.NewDefaultServer` with explicit composition; makes introspection genuinely conditional, drops the unused GET + MultipartForm transports, and activates the WebSocket origin allowlist that is currently dead code.
 - [ ] 🟡 `S` **SEC-23b** — Verify all four GraphQL subscriptions end to end in the deployed environment; add a Playwright test asserting a subscription delivers a message.
-- [ ] 🟡 `S` **SEC-10** — Add a gqlgen `ErrorPresenter` with a `PublicError` taxonomy and request IDs.
+- [x] 🟡 `S` **SEC-10** — Add a gqlgen `ErrorPresenter` with a `PublicError` taxonomy and request IDs.
 - [x] 🟡 `XS` **SEC-11** — Constant-time login: always run bcrypt against a dummy hash when the user is absent.
-- [ ] 🟡 `S` **SEC-12** — Password policy: min 12 chars, HIBP k-anonymity check, bcrypt cost 12, email validation, progressive lockout.
+- [x] 🟡 `S` **SEC-12** — Password policy: min 12 chars, HIBP k-anonymity check, bcrypt cost 12, email validation, progressive lockout.
 - [x] 🟡 `S` **SEC-13** — Add `iss`/`aud`/`jti`/`nbf`; validate all at the gateway; assert `type == "access"`.
 - [x] 🟡 `XS` **SEC-14** — Remove `sslmode=disable` defaults from payment/notification; fail fast on missing `DATABASE_URL`.
 - [ ] 🟡 `S` **SEC-16** — Require auth on `leaderboard`; show display names not legal names; begin the consent/data-rights model.
@@ -156,9 +156,9 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 | Phase | Items | Done |
 | :--- | ---: | ---: |
 | 0 — Blockers | 5 | 5 |
-| 1 — Correct | 27 | 12 |
+| 1 — Correct | 27 | 16 |
 | 2 — Observable | 11 | 0 |
 | 3 — Resilient & fast | 20 | 0 |
 | 4 — Automated | 17 | 0 |
 | Experience & quality | 14 | 0 |
-| **Total** | **78** (some span phases) | **17** |
+| **Total** | **78** (some span phases) | **21** |
