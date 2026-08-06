@@ -72,6 +72,14 @@ func Auth(accessSecret string) func(http.Handler) http.Handler {
 	}
 }
 
+func (u UserContext) IsAdmin() bool {
+	return u.Role == "ADMIN"
+}
+
+func (u UserContext) IsEducator() bool {
+	return u.Role == "EDUCATOR" || u.Role == "HEAD_EDUCATOR" || u.Role == "ADMIN"
+}
+
 func UserFromContext(ctx context.Context) (UserContext, bool) {
 	user, ok := ctx.Value(UserContextKey).(UserContext)
 	return user, ok
