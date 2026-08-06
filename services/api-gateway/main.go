@@ -106,6 +106,12 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			r.Body = http.MaxBytesReader(w, r.Body, 1<<20) // 1MB payload cap (SEC-21)
+			next.ServeHTTP(w, r)
+		})
+	})
 	r.Use(authmiddleware.WithResponseWriter)
 	r.Use(authmiddleware.Auth(cfg.AccessSecret))
 

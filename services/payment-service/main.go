@@ -25,7 +25,10 @@ func main() {
 
 	log := logger.New("payment-service")
 
-	databaseURL := getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable")
+	databaseURL := getEnv("DATABASE_URL", os.Getenv("DATABASE_CONNECTION_STRING"))
+	if databaseURL == "" {
+		databaseURL = "postgres://studed:studed@localhost:5433/studed?sslmode=disable"
+	}
 	serviceAddr := getEnv("PAYMENT_SERVICE_ADDR", ":8091")
 	serviceToken := os.Getenv("SERVICE_TOKEN")
 
