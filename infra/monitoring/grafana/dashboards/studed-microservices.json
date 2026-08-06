@@ -27,7 +27,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
-          "expr": "sum by (service) (rate(http_requests_total{status=~\"5..\"}[5m]))",
+          "expr": "sum by (service) (rate(studed_http_requests_total{status=~\"5..\"}[5m]))",
           "legendFormat": "{{service}} Errors"
         }
       ]
@@ -40,7 +40,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
-          "expr": "sum by (service) (rate(grpc_server_handled_total[5m]))",
+          "expr": "sum by (service) (rate(studed_grpc_requests_total[5m]))",
           "legendFormat": "gRPC {{service}}"
         }
       ]
