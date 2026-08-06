@@ -55,17 +55,17 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 
 ## 📊 Phase 2 — Make it observable (~1 week)
 
-- [ ] 🔴 `M` **REL-01a** — Create `shared/go/metrics` with RED metrics + middleware; expose `/metrics` in all 8 services. → [02](02-RELIABILITY-SRE.md#-rel-01--zero-application-metrics-the-entire-monitoring-stack-is-non-functional)
-- [ ] 🔴 `S` **REL-01b** — Remove every `metrics_path: "/health"` from `prometheus.yml`.
-- [ ] 🔴 `S` **REL-01c** — Add business metrics: `studed_wave_submissions_total`, `studed_xp_awarded_total`, `studed_ai_tokens_total`.
+- [x] 🔴 `M` **REL-01a** — Create `shared/go/metrics` with RED metrics + middleware; expose `/metrics` in all 8 services. → [02](02-RELIABILITY-SRE.md#-rel-01--zero-application-metrics-the-entire-monitoring-stack-is-non-functional)
+- [x] 🔴 `S` **REL-01b** — Remove every `metrics_path: "/health"` from `prometheus.yml`.
+- [x] 🔴 `S` **REL-01c** — Add business metrics: `studed_wave_submissions_total`, `studed_xp_awarded_total`, `studed_ai_tokens_total`.
 - [ ] 🔴 `S` **REL-01d** — Verify the three Grafana dashboards render real data; fix panel queries.
 - [ ] 🟠 `M` **REL-04** — OpenTelemetry across HTTP, gRPC, GraphQL, and SQL; export to Cloud Trace (prod) and Jaeger (local).
-- [ ] 🟠 `S` **REL-03** — Real readiness probes checking DB, Redis, and gRPC connection state; keep liveness dependency-free.
-- [ ] 🟠 `M` **REL-05a** — Add Alertmanager with routing for `severity=critical`.
-- [ ] 🟠 `S` **REL-05b** — Define SLOs in `docs/SLO.md`; convert alerts to multi-window burn-rate rules.
-- [ ] 🟠 `S` **REL-05c** — Write three runbooks; link them via `runbook_url` annotations.
-- [ ] 🟡 `S` **REL-12** — Replace chi's `Logger` with structured `slog` JSON; add `RequestID` propagated over gRPC; add `trace_id` to logs.
-- [ ] 🟡 `S` **OPS-04c** — Run `make promtool-check` in CI.
+- [x] 🟠 `S` **REL-03** — Real readiness probes checking DB, Redis, and gRPC connection state; keep liveness dependency-free.
+- [x] 🟠 `M` **REL-05a** — Add Alertmanager with routing for `severity=critical`.
+- [x] 🟠 `S` **REL-05b** — Define SLOs in `docs/SLO.md`; convert alerts to multi-window burn-rate rules.
+- [x] 🟠 `S` **REL-05c** — Write three runbooks; link them via `runbook_url` annotations.
+- [x] 🟡 `S` **REL-12** — Replace chi's `Logger` with structured `slog` JSON; add `RequestID` propagated over gRPC; add `trace_id` to logs.
+- [x] 🟡 `S` **OPS-04c** — Run `make promtool-check` in CI.
 
 ---
 
@@ -157,8 +157,8 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 | :--- | ---: | ---: |
 | 0 — Blockers | 5 | 5 |
 | 1 — Correct | 27 | 27 |
-| 2 — Observable | 11 | 0 |
+| 2 — Observable | 11 | 9 |
 | 3 — Resilient & fast | 20 | 0 |
 | 4 — Automated | 17 | 0 |
 | Experience & quality | 14 | 0 |
-| **Total** | **78** (some span phases) | **32** |
+| **Total** | **78** (some span phases) | **41** |
