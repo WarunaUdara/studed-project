@@ -39,6 +39,13 @@ func main() {
 	for attempt := 1; attempt <= 15; attempt++ {
 		db, err = gorm.Open(postgres.Open(cfg.DatabaseURL), &gorm.Config{})
 		if err == nil {
+			sqlDB, err := db.DB()
+			if err == nil {
+				sqlDB.SetMaxOpenConns(25)
+				sqlDB.SetMaxIdleConns(5)
+				sqlDB.SetConnMaxLifetime(5 * time.Minute)
+				sqlDB.SetConnMaxIdleTime(1 * time.Minute)
+			}
 			break
 		}
 		if attempt == 15 {

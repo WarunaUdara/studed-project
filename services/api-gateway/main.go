@@ -126,7 +126,9 @@ func main() {
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			r.Body = http.MaxBytesReader(w, r.Body, 1<<20) // 1MB payload cap (SEC-21)
-			next.ServeHTTP(w, r)
+			ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
+			defer cancel()
+			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	})
 	r.Use(metrics.HTTPMiddleware("api-gateway"))
