@@ -112,7 +112,7 @@ func main() {
 		defer cancel()
 		if allXp, err := xpRepo.GetAllUserXp(ctx); err == nil {
 			for _, u := range allXp {
-				_ = leaderboardRepo.UpdateScore(ctx, "global", "", u.UserID, u.UserID, u.TotalXp)
+				_ = leaderboardRepo.UpdateLeaderboard(ctx, u.UserID, u.UserID, u.TotalXp, "GLOBAL", "", 0)
 			}
 			log.Info("self-healing leaderboard sync completed", slog.Int("count", len(allXp)))
 		}

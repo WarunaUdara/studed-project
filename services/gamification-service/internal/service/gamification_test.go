@@ -39,6 +39,14 @@ func (r *fakeXpRepo) GetUserXp(ctx context.Context, userID string) (int32, error
 	return r.totalXp[userID], nil
 }
 
+func (r *fakeXpRepo) GetAllUserXp(ctx context.Context) ([]model.UserXp, error) {
+	var result []model.UserXp
+	for id, xp := range r.totalXp {
+		result = append(result, model.UserXp{UserID: id, TotalXp: xp})
+	}
+	return result, nil
+}
+
 func (r *fakeXpRepo) HasAwardedXp(ctx context.Context, userID, reason, sourceID string) (bool, error) {
 	if reason != "wave_completed" {
 		return false, nil

@@ -260,12 +260,11 @@ type Wave struct {
 }
 
 type WaveProgress struct {
-	Status            ProgressStatus `json:"status"`
-	AttemptsCount     int            `json:"attemptsCount"`
-	RemainingAttempts *int           `json:"remainingAttempts,omitempty"`
-	HighestScore      *int           `json:"highestScore,omitempty"`
-	CompletedAt       *time.Time     `json:"completedAt,omitempty"`
-	LastAttemptedAt   *time.Time     `json:"lastAttemptedAt,omitempty"`
+	Status          ProgressStatus `json:"status"`
+	AttemptsCount   int            `json:"attemptsCount"`
+	HighestScore    *int           `json:"highestScore,omitempty"`
+	CompletedAt     *time.Time     `json:"completedAt,omitempty"`
+	LastAttemptedAt *time.Time     `json:"lastAttemptedAt,omitempty"`
 }
 
 type WaveResult struct {

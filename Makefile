@@ -39,7 +39,7 @@
 	cd infra/gcp/terraform && tofu apply tfplan
 
  helm-lint:
-	helm lint infra/helm/studed
+	/opt/homebrew/bin/helm lint infra/helm/studed || helm lint infra/helm/studed
 
  security-scan:
 	./scripts/security/secret-scan.sh
