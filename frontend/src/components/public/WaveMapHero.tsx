@@ -77,7 +77,7 @@ export function WaveMapHero() {
         : t("waveStatusLocked");
 
   return (
-    <div className="relative mx-auto w-full max-w-md">
+    <div className="relative mx-auto w-full max-w-[340px] sm:max-w-sm lg:max-w-[360px]">
       {/* Halo behind the card */}
       <div
         aria-hidden

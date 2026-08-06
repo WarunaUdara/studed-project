@@ -84,54 +84,51 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
   const reduce = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden px-4 pb-24 pt-32 sm:px-6 sm:pt-40">
+    <section className="relative flex min-h-[calc(100vh-80px)] items-center overflow-hidden px-4 py-8 sm:px-6 sm:py-12 lg:py-14">
       {/* Atmosphere: graph-paper dots + soft brand washes */}
       <div aria-hidden className="pointer-events-none absolute inset-0 select-none">
         <div
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "radial-gradient(oklch(0.546 0.215 262.9 / 0.07) 1px, transparent 1px)",
+              "radial-gradient(oklch(0.484 0.164 145 / 0.07) 1px, transparent 1px)",
             backgroundSize: "28px 28px",
             maskImage: "linear-gradient(to bottom, black 0%, transparent 80%)",
             WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 80%)",
           }}
         />
-        <div className="absolute -top-40 left-[-15%] h-[560px] w-[70vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.546_0.215_262.9_/_0.16)_0%,transparent_70%)] blur-[100px]" />
-        <div className="absolute -top-32 right-[-15%] h-[520px] w-[60vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.541_0.281_293_/_0.14)_0%,transparent_70%)] blur-[100px]" />
-        <div className="absolute bottom-[-20%] left-1/2 h-[420px] w-[70vw] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,oklch(0.696_0.17_162.5_/_0.08)_0%,transparent_70%)] blur-[110px]" />
+        <div className="absolute -top-40 left-[-15%] h-[560px] w-[70vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.484_0.164_145_/_0.12)_0%,transparent_70%)] blur-[100px]" />
+        <div className="absolute -top-32 right-[-15%] h-[520px] w-[60vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.571_0.181_145_/_0.1)_0%,transparent_70%)] blur-[100px]" />
       </div>
 
-      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
         {/* Copy */}
-        <div className="flex flex-col items-start gap-6">
+        <div className="flex flex-col items-start gap-4 sm:gap-5">
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="flex flex-col items-start gap-2.5 sm:flex-row sm:items-center sm:gap-3"
+            className="flex flex-wrap items-center gap-2.5"
           >
-            <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-xs font-medium text-primary shadow-xs">
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary shadow-xs">
               <Sparkles className="h-3.5 w-3.5 shrink-0 text-primary" />
-              <span className="truncate">{t("heroBadge")}</span>
+              <span>{t("heroBadge")}</span>
             </span>
-            <div className="flex items-center gap-2.5">
-              <span className="inline-flex items-center gap-2 rounded-full border border-success/25 bg-success/5 px-3.5 py-1.5 text-xs font-medium text-success shadow-xs">
-                <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
-                </span>
-                <span>{t("heroLiveChip")}</span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-success/25 bg-success/5 px-3 py-1 text-xs font-medium text-success shadow-xs">
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
               </span>
-              <LanguageToggle />
-            </div>
+              <span>{t("heroLiveChip")}</span>
+            </span>
+            <LanguageToggle />
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.06 }}
-            className="text-balance font-serif text-5xl leading-[1.08] text-foreground sm:text-6xl lg:text-7xl"
+            transition={{ duration: 0.5, delay: 0.06 }}
+            className="text-balance font-serif text-4xl leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl"
           >
             {t("heroTitleA")}
             <br />
@@ -140,38 +137,38 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.16 }}
-            className="max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg"
+            transition={{ duration: 0.5, delay: 0.14 }}
+            className="max-w-lg text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base"
           >
             {t("heroSubtitle")}
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.26 }}
-            className="flex flex-wrap items-center gap-3.5"
+            transition={{ duration: 0.5, delay: 0.22 }}
+            className="flex flex-wrap items-center gap-3.5 pt-1"
           >
             {authed ? (
               <Link to={ctaLink}>
-                <Button size="lg" className="h-12 gap-2 rounded-full px-7 text-sm font-semibold shadow-md">
-                  <Zap className="h-4.5 w-4.5" />
+                <Button size="lg" className="h-11 gap-2 rounded-full px-6 text-sm font-semibold shadow-md">
+                  <Zap className="h-4 w-4" />
                   {t("ctaPortal")}
                 </Button>
               </Link>
             ) : (
               <>
                 <Link to="/register">
-                  <Button size="lg" className="h-12 gap-2 rounded-full px-7 text-sm font-semibold shadow-md">
-                    <Zap className="h-4.5 w-4.5" />
+                  <Button size="lg" className="h-11 gap-2 rounded-full px-6 text-sm font-semibold shadow-md">
+                    <Zap className="h-4 w-4" />
                     {t("ctaGetStarted")}
                   </Button>
                 </Link>
                 <Link to="/courses">
-                  <Button size="lg" variant="outline" className="h-12 gap-2 rounded-full border-border/80 bg-card/80 px-7 text-sm font-semibold shadow-xs hover:bg-card">
-                    <Compass className="h-4.5 w-4.5 text-muted-foreground" />
+                  <Button size="lg" variant="outline" className="h-11 gap-2 rounded-full border-border/80 bg-card/80 px-6 text-sm font-semibold shadow-xs hover:bg-card">
+                    <Compass className="h-4 w-4 text-muted-foreground" />
                     {t("ctaBrowseCourses")}
                   </Button>
                 </Link>
