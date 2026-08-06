@@ -76,7 +76,7 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [x] 🟠 `S` **REL-09** — `preStop` sleep + `terminationGracePeriodSeconds: 45`.
 - [x] 🟡 `M` **REL-10** — Self-healing rebuild for Redis leaderboards and the ES index on start (or drop ES per COST-03).
 - [x] 🟡 `M` **REL-11** — `docs/DR.md` with RTO/RPO; perform and record one real restore drill.
-- [ ] 🟡 `M` **REL-13** — Retry with backoff (idempotent reads only), circuit breakers, documented degradation.
+- [x] 🟡 `M` **REL-13** — Retry with backoff (idempotent reads only), circuit breakers, documented degradation.
 - [x] 🔵 `XS` **REL-14** — Add `startupProbe` to every deployment.
 
 ### Performance
@@ -108,8 +108,8 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [ ] 🟠 `S` **OPS-03b** — SBOM (syft) + keyless image signing (cosign + OIDC).
 - [ ] 🟡 `S` **OPS-03c** — Enable Binary Authorization on GKE to require signed images.
 - [x] 🟠 `S` **OPS-04a** — Playwright e2e job in CI against the compose stack, with report artifacts.
-- [ ] 🟠 `S` **OPS-04b** — Coverage via `-coverprofile`, upload to Codecov, ratchet + 70% floor on `internal/service/**`.
-- [ ] 🟡 `S` **OPS-08** — Scope `packages: write` to the publish job only; pin all actions to commit SHAs.
+- [x] 🟠 `S` **OPS-04b** — Coverage via `-coverprofile`, upload to Codecov, ratchet + 70% floor on `internal/service/**`.
+- [x] 🟡 `S` **OPS-08** — Scope `packages: write` to the publish job only; pin all actions to commit SHAs.
 
 ### Delivery
 - [x] 🟡 `M` **OPS-03c** — Add `.github/workflows/prod-deploy.yml`: manual dispatch, environment protection, release tag, image digest pin.
@@ -141,7 +141,7 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [ ] 🟡 `S` **UX-04** — Return `lockReason` and `unlockedBy` with wave progress; surface `remainingAttempts` before submission.
 - [x] 🟡 `S` **DX-01** — `make doctor`, `mise.toml`, devcontainer, verified `QUICKSTART.md`.
 - [ ] 🟡 `M` **DX-02** — Consolidate documentation into one hierarchy; delete empty stubs; fix `.gitignore` gaps.
-- [ ] 🟡 `XS` **OPS-09 / DX-03** — Remove hardcoded absolute paths from the Makefile; `git rm --cached .DS_Store`; resolve the untracked submodule.
+- [x] 🟡 `XS` **OPS-09 / DX-03** — Remove hardcoded absolute paths from the Makefile; `git rm --cached .DS_Store`; resolve the untracked submodule.
 - [ ] 🟠 `L` **TEST-01** — Unit-test `answersEquivalent`/`scoreAnswers`, the reattempt race, and the role×mutation authorization matrix.
 - [ ] 🟡 `M` **TEST-03** — `buf lint` + `buf breaking`; assert generated proto and gqlgen code are current; GraphQL Codegen on the frontend.
 - [ ] 🟡 `L` **TEST-04** — k6 load scripts with SLO thresholds, run nightly against staging.
@@ -159,7 +159,7 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 | 0 — Blockers | 5 | 5 |
 | 1 — Correct | 27 | 27 |
 | 2 — Observable | 11 | 10 |
-| 3 — Resilient & fast | 20 | 16 |
-| 4 — Automated | 17 | 7 |
-| Experience & quality | 14 | 3 |
-| **Total** | **78** (some span phases) | **70** |
+| 3 — Resilient & fast | 20 | 17 |
+| 4 — Automated | 17 | 9 |
+| Experience & quality | 14 | 4 |
+| **Total** | **78** (some span phases) | **74** |
