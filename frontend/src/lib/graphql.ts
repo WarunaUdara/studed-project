@@ -9,8 +9,12 @@ const REFRESH_TOKEN_MUTATION = `
   }
 `;
 
+const GRAPHQL_URL =
+  import.meta.env.VITE_GRAPHQL_URL ||
+  (import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/graphql` : "/graphql");
+
 export const graphqlClient = createClient({
-  url: "/graphql",
+  url: GRAPHQL_URL,
   fetchOptions: {
     credentials: "include",
   },
