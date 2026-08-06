@@ -8,13 +8,19 @@
 
 ## 🌟 Key Features & Innovations
 
-- 📚 **Structured Curriculum Hierarchy**: **Course → Lesson → Wave**. Every Wave features a **Learn Phase** (multimedia & math blocks) and an **Evaluate Phase** (interactive exercises).
+- 🎨 **OKLCH Multi-Hue Learning Design System**: Science-backed color psychology with subject-specific OKLCH palettes:
+  - **Core Platform**: Emerald/Forest Green (`oklch(0.484 0.164 145)`)
+  - **Mathematics & Science**: Ocean Blue (`oklch(0.579 0.191 252)`)
+  - **History & Commerce**: Warm Amber (`oklch(0.67 0.185 55)`)
+  - **AI & Advanced Level (A/L)**: Knowledge Violet (`oklch(0.581 0.192 295)`)
+  - **Dark Mode**: Soft, luminous high-legibility green (`oklch(0.76 0.15 145)`).
+- ✍️ **IBM Plex Serif Typography**: Premium academic typography suite combining IBM Plex Serif, Noto Serif Sinhala, and Inter.
+- 🚀 **Automated Cloudflare Pages CI/CD**: Seamless GitHub Actions deployment pipeline (`frontend-deploy.yml`) building and deploying `frontend/dist` on `main` push.
+- 📊 **Full Observability Suite**: Provisioned **Prometheus** (Port 9090) and **Grafana** (Port 3000, `admin`/`admin`) with metrics exporters for PostgreSQL and Redis.
 - 🐍 **Featured Python 10 Challenges Course**: Interactive programming curriculum designed for hands-on coding practice.
-- ⏱️ **Pomodoro Focus Engine**: Includes client-side ADHD Binaural Beats, Brownian Rain, and Ocean Breeze soundscapes via the Web Audio API, rewarding students with **+10 XP per 25-minute focus session**.
+- ⏱️ **Pomodoro Focus Engine**: Client-side ADHD Binaural Beats, Brownian Rain, and Ocean Breeze soundscapes synthesized via the Web Audio API (+10 XP per 25min focus session).
 - 🎨 **Visual Drag-and-Drop Editor**: Built with **Puck**, allowing educators to design rich multimedia lessons with zero coding.
-- ⚡ **Sub-Second Live Demo Ingress**: Single-command public demo pipeline powered by **Ngrok** (`make demo-public`) and optimized Vite production preview bundling.
 - ☁️ **Floci Local Cloud Emulation**: Emulates AWS S3, RDS, and ElastiCache in **~24ms cold-start** without cloud bills or credential leaks.
-- ☸️ **16GB Laptop-Tuned Kubernetes**: Declarative K8s manifest suite (<1.1GB total memory footprint) with **ArgoCD GitOps** continuous delivery.
 
 ---
 
@@ -22,7 +28,7 @@
 
 The live deployment runs the backend on **GKE** (private nodes, Workload
 Identity, Cloud Armor WAF, managed TLS), the frontend on **Cloudflare Pages**
-(with a cookie-safe `/graphql` proxy function), and Postgres on **Neon**.
+(automated via `.github/workflows/frontend-deploy.yml`), and Postgres on **Neon**.
 
 ```bash
 make prod-deploy       # one command: infra + backend + frontend + demo seed
@@ -51,27 +57,31 @@ scales the cluster to zero after 2h without traffic.
 ```mermaid
 graph TB
     subgraph Client_Tier ["📱 Client Tier (Web & Mobile)"]
-        ReactApp["React 18 SPA (Vite + TypeScript)<br/>• TanStack Router & Tailwind CSS v4<br/>• Puck Visual Page Builder<br/>• Zustand Pomodoro Engine (Web Audio API)<br/>• KaTeX Math Renderer & Recharts"]
+        ReactApp["React 18 SPA (Vite 5+ Bun + TypeScript)<br/>• TanStack Router & Tailwind CSS v4 OKLCH<br/>• Puck Visual Page Builder & IBM Plex Serif<br/>• Zustand Pomodoro Engine (Web Audio API)<br/>• KaTeX Math Renderer & Recharts"]
     end
 
-    subgraph Ingress_Tier ["🌐 Ingress & Public Tunneling"]
-        Ngrok["Ngrok Public Ingress Tunnel<br/>(mumps-lapel-rinsing.ngrok-free.dev)"]
-        K8sIngress["Kubernetes Ingress / Traefik<br/>(SSL Offloading & Load Balancing)"]
+    subgraph Ingress_Tier ["🌐 Ingress & Public Deployment"]
+        CloudflarePages["Cloudflare Pages (Frontend CDN)<br/>Auto GitHub Actions Deployment"]
+        Ngrok["Ngrok Public Ingress Tunnel<br/>(make demo-public)"]
     end
 
     subgraph Gateway_Tier ["🚪 API Gateway Tier"]
         APIGateway["Go GraphQL API Gateway (Port 8080)<br/>• gqlgen GraphQL Schema Execution<br/>• JWT Bearer Token Authentication<br/>• Health & Readiness Probes"]
     end
 
-    subgraph Service_Tier ["⚡ Go Microservices Mesh (gRPC Inter-Service)"]
+    subgraph Service_Tier ["⚡ Go Microservices Mesh (Go 1.24 gRPC)"]
         AuthSvc["Auth Service (Port 8081/8085)<br/>User Auth & JWT Tokens"]
         CourseSvc["Course Service (Port 8083/8084)<br/>Course → Lesson → Wave Engine"]
         ProgressSvc["Progress Service (Port 8086/8087)<br/>Wave Completion & Quiz Grading"]
         GamifySvc["Gamification Service (Port 8088/8089)<br/>Leaderboards, Streaks & XP (+10 Focus)"]
         AISvc["AI Service (Port 8090)<br/>Gemini 3.5 Flash Tutor"]
-        PaymentSvc["Payment Service (Port 8091)<br/>Stripe / PayHere Billing"]
+        PaymentSvc["Payment Service (Port 8091)<br/>PayHere / Stripe Billing"]
         NotifySvc["Notification Service (Port 8092)<br/>Student Alerts"]
-        UploadSvc["Upload Service (Port 8096)<br/>Media & R2 Signatures"]
+    end
+
+    subgraph Observability_Tier ["📊 Monitoring & Telemetry"]
+        Prometheus["Prometheus (Port 9090)<br/>Service Scrape Targets"]
+        Grafana["Grafana (Port 3000)<br/>Dashboards (admin/admin)"]
     end
 
     subgraph Data_Tier ["💾 Data & Search Tier"]
@@ -81,17 +91,10 @@ graph TB
         Storage[(Cloudflare R2 / S3<br/>Multimedia & PDFs)]
     end
 
-    subgraph Infra_Tier ["🛠️ DevOps & IaC Infrastructure"]
-        Floci["Floci Local Cloud Emulator<br/>(24ms AWS S3, RDS & Redis)"]
-        OpenTofu["OpenTofu IaC (infra/terraform)<br/>Modular Provisioning"]
-        K8sCluster["Kubernetes Cluster (k3d/K3s)<br/>Resource Budget < 1.1GB RAM"]
-        ArgoCD["ArgoCD GitOps<br/>Automated Git Sync"]
-    end
-
+    ReactApp -->|HTTPS| CloudflarePages
     ReactApp -->|HTTP/2| Ngrok
-    ReactApp -->|HTTP/2| K8sIngress
     Ngrok --> APIGateway
-    K8sIngress --> APIGateway
+    CloudflarePages -->|GraphQL Proxy| APIGateway
 
     APIGateway -->|gRPC| AuthSvc
     APIGateway -->|gRPC| CourseSvc
@@ -106,25 +109,25 @@ graph TB
     ProgressSvc --> PostgresDB
     GamifySvc --> PostgresDB
     GamifySvc --> RedisCache
-    PaymentSvc --> PostgresDB
-    UploadSvc --> Storage
 
-    OpenTofu -.->|Targets| Floci
-    ArgoCD -.->|Deploys| K8sCluster
+    Prometheus -->|Scrape| APIGateway
+    Prometheus -->|Scrape| PostgresDB
+    Grafana -->|Dashboard| Prometheus
 ```
 
 ---
 
 ## 🛠️ Technology Stack Overview
 
-| Category | Technology | Description |
-| :--- | :--- | :--- |
-| **Frontend** | React 18, Vite 8, TypeScript 5, Bun, TanStack Router | High-performance SPA with file-based routing and sub-millisecond builds. |
-| **UI & Styling** | Tailwind CSS v4, shadcn/ui, Base UI, Puck Builder, KaTeX | Modern UI primitives, visual page builder, and math rendering. |
-| **Backend Services** | Go 1.22+, `gqlgen` GraphQL, gRPC (Protobuf) | 8 decoupled Go microservices communicating via gRPC. |
-| **Database & Cache** | PostgreSQL 15, Redis 7, Elasticsearch 8 | ACID data persistence, sorted set leaderboards, and full-text search. |
-| **Cloud & DevOps** | OpenTofu v1.12, Floci v0.1.8, K3s/k3d, ArgoCD | Infrastructure as Code, local AWS cloud emulation, and GitOps delivery. |
-| **AI Integration** | Gemini 3.5 Flash, DeepSeek-Coder | AI tutoring, Sinhala translation, and interactive exercise generation. |
+| Category | Technology | Version | Description |
+| :--- | :--- | :--- | :--- |
+| **Frontend** | React 18, Vite 5+, TypeScript 5, Bun, TanStack Router | 1.x | High-performance SPA with file-based routing and sub-second builds. |
+| **UI & Styling** | Tailwind CSS v4, shadcn/ui, Base UI, Puck, KaTeX | 4.x | OKLCH multi-hue design tokens, visual page builder, IBM Plex Serif fonts. |
+| **Backend Services** | Go, `gqlgen` GraphQL, gRPC (Protobuf), Gin | 1.24+ | Decoupled Go microservices communicating via gRPC. |
+| **Database & Cache** | PostgreSQL 15, Redis 7, Elasticsearch 8 | 15 / 7 / 8 | ACID data persistence, sorted set leaderboards, and full-text search. |
+| **Observability** | Prometheus, Grafana, Exporters | 3.2 / 11.5 | Golden signals metrics monitoring, dashboards (`admin`/`admin`). |
+| **Cloud & CI/CD** | Cloudflare Pages, OpenTofu, Floci, GitHub Actions | latest | Automated CD pipeline, IaC provisioning, local cloud emulation. |
+| **AI Integration** | Gemini 3.5 Flash, Qwen 2.5, DeepSeek-Coder | latest | AI tutoring, Sinhala translation, and exercise generation. |
 
 ---
 

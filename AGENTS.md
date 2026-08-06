@@ -44,7 +44,7 @@ Reference documentation lives in the Obsidian folders at the repo root:
 - Web Audio API (synthesized UI sounds — no audio files)
 
 ### Backend
-- Go 1.22+
+- Go 1.24+
 - gqlgen (GraphQL)
 - Gin / Echo / chi (REST handlers)
 - gRPC + protobuf (inter-service)
@@ -243,8 +243,9 @@ All color tokens in the StudEd frontend use **OKLCH** (`oklch(L C H)`), the mode
 | Group | Tokens | Usage |
 |-------|--------|-------|
 | Core surface | `--background`, `--foreground`, `--card`, `--popover`, `--border`, `--input`, `--ring` | App shell, cards, inputs |
-| Action | `--primary`, `--secondary`, `--accent`, `--destructive` | Buttons, links, focus |
+| Action | `--primary`, `--secondary`, `--accent`, `--destructive` | Buttons, links, focus (luminous green `oklch(0.76 0.15 145)` in dark mode) |
 | Feedback | `--success`, `--warning`, `--info` | Success states, warnings, info badges |
+| Subject Palettes | `--color-brand-1..12` (Hue 145), `--color-science-1..12` (Hue 252), `--color-commerce-1..12` (Hue 55), `--color-ai-1..12` (Hue 295) | Domain-specific learning themes (Core, Math/Science, History/Commerce, AI) |
 | Gamification | `--gold`, `--purple`, `--orange`, `--achievement`, `--rank-1/2/3` | XP, badges, leaderboards, streaks |
 
 ### Example

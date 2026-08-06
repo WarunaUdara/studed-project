@@ -30,11 +30,12 @@ date: 2026-07-23
 | Layer | Technology | Version | Rationale |
 |-------|------------|---------|-----------|
 | **Runtime & Package Manager** | Bun | 1.x | Ultra-fast dependency installation and script runner |
-| **Build Tool** | Vite | 8.x | Lightning-fast dev server, optimized Rolldown/Esbuild production bundling |
+| **Build Tool** | Vite | 5.x / 6.x | Lightning-fast dev server and production bundling |
 | **Framework** | React | 18+ | Component-based UI with client-side state management |
 | **Router** | TanStack Router | latest | Type-safe, file-based routing and data loading |
 | **Language** | TypeScript | 5.x | Comprehensive type safety across frontend |
-| **Styling** | Tailwind CSS | 4.x | Utility-first styling with modern design tokens |
+| **Styling & Design System** | Tailwind CSS v4 (OKLCH) | 4.x | OKLCH multi-hue palettes (Emerald, Ocean Blue, Amber, Violet) |
+| **Typography** | IBM Plex Serif + Noto Serif | Google Fonts | Academic typography with weight 100-700 & italics support |
 | **Components** | shadcn/ui + Radix UI + Base UI | latest | Accessible, unstyled UI primitives |
 | **Visual Page Editor** | Puck | latest | Drag-and-drop component editor for Wave content |
 | **State (Client)** | Zustand | latest | Lightweight global state store & Web Audio API Pomodoro timer |
@@ -49,13 +50,14 @@ date: 2026-07-23
 
 | Layer | Technology | Version | Rationale |
 |-------|------------|---------|-----------|
-| **Language** | Go | 1.22+ | Exceptional performance, low memory footprint (~15MB/svc) |
+| **Language** | Go | 1.24+ | Exceptional performance, low memory footprint (~15MB/svc) |
 | **GraphQL Gateway** | gqlgen | latest | Schema-first GraphQL gateway with Go code generation |
 | **gRPC** | protobuf + gRPC-Go | latest | High-performance binary inter-service communication |
 | **REST Router** | stdlib + chi / Gin | latest | Lightweight REST handlers for health checks & webhooks |
 | **ORM & SQL** | GORM / pgx | latest | Type-safe PostgreSQL mapping & connection pooling |
 | **Validation** | go-playground/validator | latest | Struct validation for incoming DTOs |
 | **Authentication** | golang-jwt | latest | HMAC SHA256 signed Access & Refresh JWT tokens |
+| **Telemetry & Metrics** | Prometheus + Grafana | 3.2 / 11.5 | Golden signals metrics scrape & dashboards (`admin`/`admin`) |
 | **Service Discovery** | Kubernetes DNS / Docker DNS | latest | Internal microservice hostname lookup (`auth-service:8081`) |
 
 ---
