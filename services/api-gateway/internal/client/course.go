@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/studed/api-gateway/graph/model"
+	"github.com/studed/api-gateway/internal/middleware"
 	"github.com/studed/shared/go/grpcauth"
 	coursepb "github.com/studed/shared/proto/gen/go/course"
 	"google.golang.org/grpc"
@@ -129,7 +130,7 @@ func (c *CourseClient) GetCourseWithLessons(ctx context.Context, id string) (*mo
 
 		lesson.Waves = make([]*model.Wave, len(wavesResp.Waves))
 		for j, w := range wavesResp.Waves {
-			lesson.Waves[j] = protoWaveToModel(w)
+			lesson.Waves[j] = protoWaveToModel(ctx, w)
 		}
 
 		course.Lessons[i] = lesson
@@ -269,7 +270,7 @@ func (c *CourseClient) GetLessonWithWaves(ctx context.Context, id string) (*mode
 
 	lesson.Waves = make([]*model.Wave, len(wavesResp.Waves))
 	for i, w := range wavesResp.Waves {
-		lesson.Waves[i] = protoWaveToModel(w)
+		lesson.Waves[i] = protoWaveToModel(ctx, w)
 	}
 
 	return lesson, nil
@@ -298,7 +299,7 @@ func (c *CourseClient) CreateWave(ctx context.Context, educatorID, lessonID stri
 		return nil, fmt.Errorf("create wave failed: %s", resp.Error)
 	}
 
-	return protoWaveToModel(resp.Wave), nil
+	return protoWaveToModel(ctx, resp.Wave), nil
 }
 
 func (c *CourseClient) GetWave(ctx context.Context, id string) (*model.Wave, error) {
@@ -310,7 +311,7 @@ func (c *CourseClient) GetWave(ctx context.Context, id string) (*model.Wave, err
 		return nil, fmt.Errorf("get wave failed: %s", resp.Error)
 	}
 
-	return protoWaveToModel(resp.Wave), nil
+	return protoWaveToModel(ctx, resp.Wave), nil
 }
 
 // GetWaveCourseID resolves the course ID for a wave by fetching the wave's
@@ -375,7 +376,7 @@ func (c *CourseClient) UpdateWave(ctx context.Context, educatorID, id string, in
 		return nil, fmt.Errorf("update wave failed: %s", resp.Error)
 	}
 
-	return protoWaveToModel(resp.Wave), nil
+	return protoWaveToModel(ctx, resp.Wave), nil
 }
 
 func (c *CourseClient) PublishWave(ctx context.Context, educatorID, id string) (*model.Wave, error) {
@@ -387,7 +388,7 @@ func (c *CourseClient) PublishWave(ctx context.Context, educatorID, id string) (
 		return nil, fmt.Errorf("publish wave failed: %s", resp.Error)
 	}
 
-	return protoWaveToModel(resp.Wave), nil
+	return protoWaveToModel(ctx, resp.Wave), nil
 }
 
 func blocksToJSON(learnBlocks []*model.LearnBlockInput, evaluateBlocks []*model.EvaluateBlockInput) (string, string) {
@@ -480,7 +481,7 @@ func protoLessonToModel(l *coursepb.Lesson) *model.Lesson {
 	}
 }
 
-func protoWaveToModel(w *coursepb.Wave) *model.Wave {
+func protoWaveToModel(ctx context.Context, w *coursepb.Wave) *model.Wave {
 	if w == nil {
 		return nil
 	}
@@ -495,7 +496,7 @@ func protoWaveToModel(w *coursepb.Wave) *model.Wave {
 		EstimatedDuration: int(w.EstimatedDuration),
 		IsPublished:       w.IsPublished,
 		LearnBlocks:       parseLearnBlocks(w.LearnBlocksJson),
-		EvaluateBlocks:    parseEvaluateBlocks(w.EvaluateBlocksJson),
+		EvaluateBlocks:    parseEvaluateBlocks(ctx, w.EvaluateBlocksJson),
 	}
 
 	switch w.Difficulty {
@@ -545,9 +546,16 @@ func parseLearnBlocks(jsonStr string) []*model.LearnBlock {
 	return blocks
 }
 
-func parseEvaluateBlocks(jsonStr string) []*model.EvaluateBlock {
+func parseEvaluateBlocks(ctx context.Context, jsonStr string) []*model.EvaluateBlock {
 	if jsonStr == "" || jsonStr == "[]" {
 		return []*model.EvaluateBlock{}
+	}
+
+	var isElevatedUser bool
+	if user, ok := middleware.UserFromContext(ctx); ok {
+		if user.Role == "EDUCATOR" || user.Role == "HEAD_EDUCATOR" || user.Role == "ADMIN" {
+			isElevatedUser = true
+		}
 	}
 
 	var raw []map[string]any
@@ -575,13 +583,17 @@ func parseEvaluateBlocks(jsonStr string) []*model.EvaluateBlock {
 		}
 
 		var correctAnswer *string
-		if ca, ok := item["correctAnswer"].(string); ok {
-			correctAnswer = &ca
+		if isElevatedUser {
+			if ca, ok := item["correctAnswer"].(string); ok {
+				correctAnswer = &ca
+			}
 		}
 
 		var explanation *string
-		if e, ok := item["explanation"].(string); ok {
-			explanation = &e
+		if isElevatedUser {
+			if e, ok := item["explanation"].(string); ok {
+				explanation = &e
+			}
 		}
 
 		var metadata *string
