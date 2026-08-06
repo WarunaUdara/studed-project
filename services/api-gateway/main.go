@@ -9,10 +9,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 	coderws "github.com/coder/websocket"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -78,7 +80,7 @@ func main() {
 		PaymentClient:      paymentClient,
 		Events:             eventBus,
 	}
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
+	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.Websocket{
@@ -103,6 +105,14 @@ func main() {
 	if cfg.GraphQLPlayground {
 		srv.Use(extension.Introspection{})
 	}
+
+	srv.SetErrorPresenter(func(ctx context.Context, e error) *gqlerror.Error {
+		err := graphql.DefaultErrorPresenter(ctx, e)
+		if err != nil {
+			log.Error("graphql error", slog.String("message", err.Message), slog.Any("path", err.Path))
+		}
+		return err
+	})
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr: cfg.RedisAddr,
