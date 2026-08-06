@@ -21,6 +21,13 @@ var validTiers = map[string]bool{
 	"SCHOOL":   true,
 }
 
+var tierPrices = map[string]string{
+	"BASIC":    "1500.00",
+	"STANDARD": "2500.00",
+	"PREMIUM":  "4000.00",
+	"SCHOOL":   "10000.00",
+}
+
 type Handler struct {
 	db      *gorm.DB
 	payhere payhere.Config
@@ -188,12 +195,14 @@ func (h *Handler) payhereNotify(w http.ResponseWriter, r *http.Request) {
 		r.FormValue("md5sig"),
 	) {
 		writeError(w, http.StatusForbidden, "invalid signature")
-		return
 	}
 
 	// status_code 2 means a successful PayHere payment.
 	if r.FormValue("status_code") == "2" {
 		orderID := r.FormValue("order_id")
+		payhereAmount := r.FormValue("payhere_amount")
+		payhereCurrency := r.FormValue("payhere_currency")
+
 		var sub model.Subscription
 		err := h.db.WithContext(r.Context()).Where("id = ?", orderID).First(&sub).Error
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -204,6 +213,24 @@ func (h *Handler) payhereNotify(w http.ResponseWriter, r *http.Request) {
 			writeError(w, http.StatusInternalServerError, "failed to load order")
 			return
 		}
+
+		if payhereCurrency != "" && payhereCurrency != "LKR" {
+			writeError(w, http.StatusBadRequest, "unsupported currency")
+			return
+		}
+
+		if expectedPrice, ok := tierPrices[sub.Tier]; ok && payhereAmount != "" && payhereAmount != expectedPrice {
+			h.log.Error("payhere amount mismatch", slog.String("expected", expectedPrice), slog.String("got", payhereAmount))
+			writeError(w, http.StatusBadRequest, "amount mismatch")
+			return
+		}
+
+		// State transition guard: only PENDING -> ACTIVE allowed (or already ACTIVE idempotent)
+		if sub.Status != model.SubscriptionStatusPending && sub.Status != model.SubscriptionStatusActive {
+			writeError(w, http.StatusBadRequest, "invalid state transition")
+			return
+		}
+
 		// Idempotent: a notification that already activated the order is a no-op.
 		if sub.Status != model.SubscriptionStatusActive {
 			if err := h.db.WithContext(r.Context()).
