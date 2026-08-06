@@ -14,7 +14,6 @@ scrape_configs:
       - targets: ["localhost:9090"]
 
   - job_name: "studed-api-gateway"
-    metrics_path: "/health"
     static_configs:
       - targets: ["api-gateway:8080"]
         labels:
@@ -22,7 +21,6 @@ scrape_configs:
           service: "api-gateway"
 
   - job_name: "studed-auth-service"
-    metrics_path: "/health"
     static_configs:
       - targets: ["auth-service:8085"]
         labels:
@@ -30,7 +28,6 @@ scrape_configs:
           service: "auth-service"
 
   - job_name: "studed-course-service"
-    metrics_path: "/health"
     static_configs:
       - targets: ["course-service:8084"]
         labels:
@@ -38,7 +35,6 @@ scrape_configs:
           service: "course-service"
 
   - job_name: "studed-progress-service"
-    metrics_path: "/health"
     static_configs:
       - targets: ["progress-service:8087"]
         labels:
@@ -46,7 +42,6 @@ scrape_configs:
           service: "progress-service"
 
   - job_name: "studed-gamification-service"
-    metrics_path: "/health"
     static_configs:
       - targets: ["gamification-service:8089"]
         labels:
@@ -54,7 +49,6 @@ scrape_configs:
           service: "gamification-service"
 
   - job_name: "studed-ai-service"
-    metrics_path: "/health"
     static_configs:
       - targets: ["ai-service:8090"]
         labels:
@@ -62,7 +56,6 @@ scrape_configs:
           service: "ai-service"
 
   - job_name: "studed-payment-service"
-    metrics_path: "/health"
     static_configs:
       - targets: ["payment-service:8091"]
         labels:
@@ -70,7 +63,6 @@ scrape_configs:
           service: "payment-service"
 
   - job_name: "studed-notification-service"
-    metrics_path: "/health"
     static_configs:
       - targets: ["notification-service:8092"]
         labels:

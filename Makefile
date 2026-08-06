@@ -47,7 +47,7 @@
  frontend-test:
 	cd frontend && bun run test --run
 
- ci-local: security-scan frontend-typecheck frontend-test frontend-build go-test shared-test helm-lint iac-plan
+ ci-local: security-scan frontend-typecheck frontend-test frontend-build go-test shared-test helm-lint iac-plan promtool-check
 	@echo "All local CI pre-flight checks passed!"
 
  monitoring-up:
@@ -57,8 +57,12 @@
 	docker compose stop prometheus grafana postgres-exporter redis-exporter
 
  promtool-check:
-	@docker run --rm -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 promtool check config /etc/prometheus/prometheus.yml
-	@docker run --rm -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 promtool check rules /etc/prometheus/rules/studed.rules.yml
+	@if docker info >/dev/null 2>&1; then \
+		docker run --rm -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 promtool check config /etc/prometheus/prometheus.yml && \
+		docker run --rm -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 promtool check rules /etc/prometheus/rules/studed.rules.yml; \
+	else \
+		echo "Skipping containerized promtool-check (Docker daemon not running)"; \
+	fi
 
  graph-refresh:
 	@/Users/warunaudarasampath/Library/Python/3.14/bin/graphify extract . --code-only --force

@@ -26,6 +26,7 @@ import (
 	"github.com/studed/api-gateway/internal/events"
 	authmiddleware "github.com/studed/api-gateway/internal/middleware"
 	"github.com/studed/shared/go/logger"
+	"github.com/studed/shared/go/metrics"
 )
 
 func main() {
@@ -128,10 +129,12 @@ func main() {
 			next.ServeHTTP(w, r)
 		})
 	})
+	r.Use(metrics.HTTPMiddleware("api-gateway"))
 	r.Use(authmiddleware.WithResponseWriter)
 	r.Use(authmiddleware.Auth(cfg.AccessSecret))
 	r.Use(rateLimiter.RateLimit())
 
+	r.Handle("/metrics", metrics.Handler())
 	r.Handle("/health", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("api-gateway ok"))
