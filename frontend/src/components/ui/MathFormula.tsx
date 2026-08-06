@@ -21,7 +21,7 @@ export function MathFormula({ formula, displayMode = true, className }: MathProp
         displayMode,
         throwOnError: false,
         strict: "ignore",
-        output: "html",
+        output: "htmlAndMathml",
       });
     } catch {
       return null;
@@ -38,6 +38,10 @@ export function MathFormula({ formula, displayMode = true, className }: MathProp
 
   return (
     // biome-ignore lint/security/noDangerouslySetInnerHtml: katex.renderToString sanitizes its own output
-    <div className={cn("katex-block", className)} dangerouslySetInnerHTML={{ __html: html }} />
+    <div
+      className={cn("katex-block", className)}
+      aria-label={formula}
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
   );
 }

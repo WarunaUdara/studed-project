@@ -121,6 +121,7 @@ type EvaluateBlock {
 type WaveProgress {
   status: ProgressStatus!
   attemptsCount: Int!
+  remainingAttempts: Int
   highestScore: Int
   completedAt: DateTime
   lastAttemptedAt: DateTime

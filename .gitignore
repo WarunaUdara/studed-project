@@ -65,6 +65,7 @@ infra/gcp/terraform/*.tfstate
 infra/gcp/terraform/*.tfstate.backup
 infra/gcp/terraform/terraform.tfvars
 infra/gcp/terraform/*.plan
+infra/gcp/terraform/tfplan
 
 # Kubernetes Secrets
 infra/k8s/secret.yaml
