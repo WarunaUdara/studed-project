@@ -83,18 +83,18 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [ ] 🔴 `L` **PERF-01a** — Add `GetWaveProgressBatch` RPC with one course-graph fetch and one grouped attempts query.
 - [ ] 🔴 `M` **PERF-01b** — DataLoader on `Wave.myProgress` at the gateway.
 - [ ] 🟠 `M` **PERF-02** — Redis cache-aside for course/lesson/wave/leaderboard with publish-triggered invalidation.
-- [ ] 🟠 `S` **PERF-03** — Migration adding partial indexes on `wave_attempts(user_id, course_id/lesson_id) WHERE passed`; verify with `EXPLAIN ANALYZE`.
-- [ ] 🟡 `S` **PERF-04** — Raise memory requests/limits; set `GOMEMLIMIT` and `GOMAXPROCS` from the container limits.
+- [x] 🟠 `S` **PERF-03** — Migration adding partial indexes on `wave_attempts(user_id, course_id/lesson_id) WHERE passed`; verify with `EXPLAIN ANALYZE`.
+- [x] 🟡 `S` **PERF-04** — Raise memory requests/limits; set `GOMEMLIMIT` and `GOMAXPROCS` from the container limits.
 - [ ] 🟡 `S` **PERF-05** — Server-enforced pagination caps on all list fields; cursor pagination for the leaderboard.
 - [ ] 🟡 `M` **PERF-06** — Partition `wave_attempts` by month; `answers_json` as `JSONB`; define a retention policy.
 - [ ] 🟡 `M` **PERF-07** — Bundle visualizer, lazy-load Puck, CI size budget (250 KB gzipped), Lighthouse CI.
-- [ ] 🔵 `S` **PERF-08** — Per-field GraphQL complexity costs, depth limit, per-operation timeout.
-- [ ] 🟡 `S` **REL-08** — Connection pool limits + Neon pooled endpoint + `ConnMaxLifetime`.
+- [x] 🔵 `S` **PERF-08** — Per-field GraphQL complexity costs, depth limit, per-operation timeout.
+- [x] 🟡 `S` **REL-08** — Connection pool limits + Neon pooled endpoint + `ConnMaxLifetime`.
 
 ### Workload hardening
 - [x] 🟠 `M` **SEC-05a** — Distroless non-root base images across all services.
-- [ ] 🟠 `S` **SEC-05b** — `securityContext` on every pod; `automountServiceAccountToken: false`; per-service ServiceAccounts.
-- [ ] 攻 `XS` **SEC-05c** — Label the namespace `pod-security.kubernetes.io/enforce: restricted`.
+- [x] 🟠 `S` **SEC-05b** — `securityContext` on every pod; `automountServiceAccountToken: false`; per-service ServiceAccounts.
+- [x] 攻 `XS` **SEC-05c** — Label the namespace `pod-security.kubernetes.io/enforce: restricted`.
 - [ ] 🟡 `S` **SEC-15** — Reduce node oauth scopes; add a `authorized_cidrs` validation rejecting `0.0.0.0/0`.
 - [ ] 🟡 `M` **SEC-17** — Scope `allow-external-egress` per workload; FQDN egress policy for Gemini; Private Service Connect for Neon.
 
@@ -158,7 +158,7 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 | 0 — Blockers | 5 | 5 |
 | 1 — Correct | 27 | 27 |
 | 2 — Observable | 11 | 10 |
-| 3 — Resilient & fast | 20 | 5 |
+| 3 — Resilient & fast | 20 | 11 |
 | 4 — Automated | 17 | 0 |
 | Experience & quality | 14 | 0 |
-| **Total** | **78** (some span phases) | **47** |
+| **Total** | **78** (some span phases) | **53** |
