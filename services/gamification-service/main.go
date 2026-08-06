@@ -105,6 +105,19 @@ func main() {
 	achievementRepo := repository.NewAchievementRepository(db)
 	eventPublisher := events.NewPublisher(redisClient)
 	gamificationSvc := service.NewGamificationService(xpRepo, leaderboardRepo, achievementRepo, service.WithEventPublisher(eventPublisher))
+	
+	// Self-healing rebuild for Redis leaderboards on start (REL-10)
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		if allXp, err := xpRepo.GetAllUserXp(ctx); err == nil {
+			for _, u := range allXp {
+				_ = leaderboardRepo.UpdateScore(ctx, "global", "", u.UserID, u.UserID, u.TotalXp)
+			}
+			log.Info("self-healing leaderboard sync completed", slog.Int("count", len(allXp)))
+		}
+	}()
+
 	grpcHandler := handler.NewGamificationGRPCHandler(gamificationSvc)
 
 	grpcListener, err := net.Listen("tcp", cfg.ServiceAddr)

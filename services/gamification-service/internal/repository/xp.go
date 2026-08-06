@@ -14,6 +14,7 @@ type XpRepository interface {
 	GetOrCreateUserXp(ctx context.Context, userID string) (*model.UserXp, error)
 	AddXp(ctx context.Context, userID string, amount int32, reason, sourceID string) (int32, error)
 	GetUserXp(ctx context.Context, userID string) (int32, error)
+	GetAllUserXp(ctx context.Context) ([]model.UserXp, error)
 	HasAwardedXp(ctx context.Context, userID, reason, sourceID string) (bool, error)
 }
 
@@ -116,6 +117,12 @@ func (r *xpRepository) GetUserXp(ctx context.Context, userID string) (int32, err
 		return 0, err
 	}
 	return userXp.TotalXp, nil
+}
+
+func (r *xpRepository) GetAllUserXp(ctx context.Context) ([]model.UserXp, error) {
+	var users []model.UserXp
+	err := r.db.WithContext(ctx).Find(&users).Error
+	return users, err
 }
 
 // HasAwardedXp reports whether a history row already exists for the given

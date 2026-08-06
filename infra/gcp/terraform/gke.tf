@@ -68,7 +68,9 @@ resource "google_container_node_pool" "primary" {
   node_config {
     service_account = google_service_account.gke_node_sa.email
     oauth_scopes = [
-      "https://www.googleapis.com/auth/cloud-platform",
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+      "https://www.googleapis.com/auth/devstorage.read_only",
     ]
     machine_type = var.node_machine_type
     disk_size_gb = var.node_disk_size_gb
