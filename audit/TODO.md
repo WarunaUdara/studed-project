@@ -121,8 +121,8 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [x] 🔵 `S` **OPS-11** — Renovate, CODEOWNERS, branch protection, PR template, release-please changelog.
 
 ### Cost
-- [ ] 🟠 `S` **COST-01a** — `maxOutputTokens: 2048` + input length cap in the Gemini client.
-- [ ] 🟠 `XS` **COST-01b** — Gate `translateContent` on `requireEducator`.
+- [x] 🟠 `S` **COST-01a** — `maxOutputTokens: 2048` + input length cap in the Gemini client.
+- [x] 🟠 `XS` **COST-01b** — Gate `translateContent` on `requireEducator`.
 - [ ] 🟠 `M` **COST-01c** — Per-user AI quotas in Redis + a global daily token budget breaker + AI spend metrics.
 - [ ] 🟠 `XS` **COST-01d** — Set a hard quota on the Gemini API key in the Google Cloud console.
 - [ ] 🟡 `M` **COST-03** — Replace Elasticsearch with Postgres full-text search; record as ADR-001.
@@ -135,11 +135,11 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 
 - [ ] 🟠 `M` **UX-01a** — `@axe-core/playwright` on main routes; zero serious/critical violations.
 - [ ] 🟠 `S` **UX-01b** — KaTeX `output: "htmlAndMathml"` + `aria-label`.
-- [ ] 🟠 `S` **UX-01c** — `prefers-reduced-motion` support; consent + safety note before binaural audio.
+- [x] 🟠 `S` **UX-01c** — `prefers-reduced-motion` support; consent + safety note before binaural audio.
 - [ ] 🟡 `M` **UX-02** — Frontend error-code mapping, retry affordances, offline banner, per-route error boundaries.
 - [ ] 🟡 `L` **UX-03** — `i18next` with en/si catalogues; translate authored content once at authoring time; self-host Noto Sans Sinhala.
 - [ ] 🟡 `S` **UX-04** — Return `lockReason` and `unlockedBy` with wave progress; surface `remainingAttempts` before submission.
-- [ ] 🟡 `S` **DX-01** — `make doctor`, `mise.toml`, devcontainer, verified `QUICKSTART.md`.
+- [x] 🟡 `S` **DX-01** — `make doctor`, `mise.toml`, devcontainer, verified `QUICKSTART.md`.
 - [ ] 🟡 `M` **DX-02** — Consolidate documentation into one hierarchy; delete empty stubs; fix `.gitignore` gaps.
 - [ ] 🟡 `XS` **OPS-09 / DX-03** — Remove hardcoded absolute paths from the Makefile; `git rm --cached .DS_Store`; resolve the untracked submodule.
 - [ ] 🟠 `L` **TEST-01** — Unit-test `answersEquivalent`/`scoreAnswers`, the reattempt race, and the role×mutation authorization matrix.
@@ -161,5 +161,5 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 | 2 — Observable | 11 | 10 |
 | 3 — Resilient & fast | 20 | 16 |
 | 4 — Automated | 17 | 7 |
-| Experience & quality | 14 | 1 |
-| **Total** | **78** (some span phases) | **66** |
+| Experience & quality | 14 | 3 |
+| **Total** | **78** (some span phases) | **70** |
