@@ -165,6 +165,28 @@ func (r *fakeProgressRepo) GetAttemptsByWave(ctx context.Context, userID, waveID
 	return out, nil
 }
 
+func (r *fakeProgressRepo) GetAttemptBySubmissionID(ctx context.Context, submissionID string) (*model.WaveAttempt, error) {
+	if submissionID == "" {
+		return nil, errNotFound
+	}
+	for i := range r.attempts {
+		if r.attempts[i].SubmissionID == submissionID {
+			return &r.attempts[i], nil
+		}
+	}
+	return nil, errNotFound
+}
+
+func (r *fakeProgressRepo) UpdateAttemptXPAwarded(ctx context.Context, attemptID string, xpEarned int32) error {
+	for i := range r.attempts {
+		if r.attempts[i].ID == attemptID {
+			r.attempts[i].XPAwarded = xpEarned
+			return nil
+		}
+	}
+	return errNotFound
+}
+
 func (r *fakeProgressRepo) CountPassedWavesInCourse(ctx context.Context, userID, courseID string) (int64, error) {
 	seen := map[string]bool{}
 	for _, a := range r.attempts {
@@ -342,7 +364,7 @@ func TestRecordAttempt_RejectsUnenrolledUser(t *testing.T) {
 
 	_, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", []*progresspb.Answer{
 		{EvaluateBlockId: "q1", Answer: "yes"},
-	})
+	}, "")
 	if err == nil {
 		t.Fatalf("expected an error for an unenrolled user")
 	}
@@ -356,7 +378,7 @@ func TestRecordAttempt_FirstWaveIsAvailableAndAwardsXp(t *testing.T) {
 
 	resp, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", []*progresspb.Answer{
 		{EvaluateBlockId: "q1", Answer: "yes"},
-	})
+	}, "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -379,7 +401,7 @@ func TestRecordAttempt_SecondWaveLockedUntilFirstPassed(t *testing.T) {
 
 	_, err := svc.RecordAttempt(context.Background(), "u1", "wave-2", []*progresspb.Answer{
 		{EvaluateBlockId: "q1", Answer: "yes"},
-	})
+	}, "")
 	if err == nil {
 		t.Fatalf("expected wave-2 to be locked before wave-1 is passed")
 	}
@@ -392,13 +414,13 @@ func TestRecordAttempt_UnlocksNextWaveAfterPassing(t *testing.T) {
 	}
 	if _, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", []*progresspb.Answer{
 		{EvaluateBlockId: "q1", Answer: "yes"},
-	}); err != nil {
+	}, ""); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
 	resp, err := svc.RecordAttempt(context.Background(), "u1", "wave-2", []*progresspb.Answer{
 		{EvaluateBlockId: "q1", Answer: "yes"},
-	})
+	}, "")
 	if err != nil {
 		t.Fatalf("expected wave-2 to now be unlocked, got error: %v", err)
 	}
@@ -416,13 +438,41 @@ func TestRecordAttempt_EnforcesMaxReattempts(t *testing.T) {
 	failingAnswer := []*progresspb.Answer{{EvaluateBlockId: "q1", Answer: "no"}}
 	// wave-1 allows MaxReattempts=2, so 2 attempts should succeed...
 	for i := 0; i < 2; i++ {
-		if _, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", failingAnswer); err != nil {
+		if _, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", failingAnswer, ""); err != nil {
 			t.Fatalf("attempt %d: unexpected error: %v", i+1, err)
 		}
 	}
 	// ...and the 3rd should be rejected.
-	if _, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", failingAnswer); err == nil {
+	if _, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", failingAnswer, ""); err == nil {
 		t.Fatalf("expected the 3rd attempt to be rejected once max reattempts is reached")
+	}
+}
+
+func TestRecordAttempt_IdempotentOnSubmissionID(t *testing.T) {
+	svc, repo, _, _ := newTestProgressService()
+	if _, err := svc.EnrollInCourse(context.Background(), "u1", "course-1"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	answers := []*progresspb.Answer{{EvaluateBlockId: "q1", Answer: "yes"}}
+	subID := "sub-12345"
+
+	first, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", answers, subID)
+	if err != nil {
+		t.Fatalf("first attempt failed: %v", err)
+	}
+
+	second, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", answers, subID)
+	if err != nil {
+		t.Fatalf("second attempt failed: %v", err)
+	}
+
+	if first.AttemptId != second.AttemptId {
+		t.Fatalf("expected same attempt ID returned for duplicate submission, got %s vs %s", first.AttemptId, second.AttemptId)
+	}
+
+	if len(repo.attempts) != 1 {
+		t.Fatalf("expected exactly 1 attempt in repo, got %d", len(repo.attempts))
 	}
 }
 

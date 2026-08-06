@@ -20,7 +20,7 @@ import (
 
 type ProgressService interface {
 	EnrollInCourse(ctx context.Context, userID, courseID string) (*progresspb.EnrollResponse, error)
-	RecordAttempt(ctx context.Context, userID, waveID string, answers []*progresspb.Answer) (*progresspb.RecordAttemptResponse, error)
+	RecordAttempt(ctx context.Context, userID, waveID string, answers []*progresspb.Answer, submissionID string) (*progresspb.RecordAttemptResponse, error)
 	GetWaveProgress(ctx context.Context, userID, waveID string) (*progresspb.WaveProgressResponse, error)
 	GetCourseProgress(ctx context.Context, userID, courseID string) (*progresspb.CourseProgressResponse, error)
 	IsEnrolled(ctx context.Context, userID, courseID string) (*progresspb.IsEnrolledResponse, error)
@@ -60,7 +60,7 @@ func (s *progressService) EnrollInCourse(ctx context.Context, userID, courseID s
 	}
 
 	if err := s.repo.CreateEnrollment(ctx, enrollment); err != nil {
-		return nil, fmt.Errorf("failed to create enrollment: %w", err)
+		return nil, fmt.Errorf("failed to enroll: %w", err)
 	}
 
 	return &progresspb.EnrollResponse{
@@ -68,7 +68,7 @@ func (s *progressService) EnrollInCourse(ctx context.Context, userID, courseID s
 	}, nil
 }
 
-func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID string, answers []*progresspb.Answer) (*progresspb.RecordAttemptResponse, error) {
+func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID string, answers []*progresspb.Answer, submissionID string) (*progresspb.RecordAttemptResponse, error) {
 	if userID == "" || waveID == "" {
 		return nil, fmt.Errorf("user id and wave id are required")
 	}
@@ -81,6 +81,35 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 		return nil, fmt.Errorf("failed to fetch wave: %s", waveResp.Error)
 	}
 	wave := waveResp.Wave
+
+	// Idempotency check: if submissionID was already recorded, return existing attempt directly
+	if submissionID != "" {
+		if existing, err := s.repo.GetAttemptBySubmissionID(ctx, submissionID); err == nil && existing != nil {
+			evaluateBlocks, _ := parseEvaluateBlocks(wave.EvaluateBlocksJson)
+			var existingAnswers []*progresspb.Answer
+			_ = json.Unmarshal([]byte(existing.AnswersJSON), &existingAnswers)
+			_, feedback := scoreAnswers(evaluateBlocks, existingAnswers)
+
+			remaining := int32(0)
+			if wave.MaxReattempts > 0 {
+				if attempts, err := s.repo.GetAttemptsByWave(ctx, userID, waveID); err == nil {
+					remaining = wave.MaxReattempts - int32(len(attempts))
+					if remaining < 0 {
+						remaining = 0
+					}
+				}
+			}
+
+			return &progresspb.RecordAttemptResponse{
+				AttemptId:         existing.ID,
+				Score:             existing.Score,
+				Passed:            existing.Passed,
+				XpEarned:          existing.XPAwarded,
+				RemainingAttempts: remaining,
+				Feedback:          feedback,
+			}, nil
+		}
+	}
 
 	lessonResp, err := s.course.GetLesson(ctx, &coursepb.GetLessonRequest{Id: wave.LessonId})
 	if err != nil {
@@ -123,6 +152,26 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 		passed = score >= wave.PassingThreshold
 	}
 
+	answersJSON, _ := json.Marshal(answers)
+	attempt := &model.WaveAttempt{
+		UserID:        userID,
+		WaveID:        waveID,
+		LessonID:      wave.LessonId,
+		CourseID:      lesson.CourseId,
+		SubmissionID:  submissionID,
+		AnswersJSON:   string(answersJSON),
+		Score:         score,
+		Passed:        passed,
+		XPAwarded:     0,
+		AttemptNumber: int32(len(attempts)) + 1,
+		CreatedAt:     time.Now(),
+	}
+
+	// Persist attempt in DB FIRST before attempting XP calculations to prevent ghost XP inflation
+	if err := s.repo.CreateAttempt(ctx, attempt); err != nil {
+		return nil, fmt.Errorf("failed to record attempt: %w", err)
+	}
+
 	xpEarned := int32(0)
 	totalXp := int32(0)
 	if passed {
@@ -133,37 +182,16 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 			XpReward:         wave.XpReward,
 			PassingThreshold: wave.PassingThreshold,
 		})
-		if err != nil {
-			return nil, fmt.Errorf("failed to award xp: %w", err)
+		if err == nil && xpResp.Error == "" {
+			xpEarned = xpResp.XpEarned
+			totalXp = xpResp.TotalXp
+			_ = s.repo.UpdateAttemptXPAwarded(ctx, attempt.ID, xpEarned)
 		}
-		if xpResp.Error != "" {
-			return nil, fmt.Errorf("failed to award xp: %s", xpResp.Error)
-		}
-		xpEarned = xpResp.XpEarned
-		totalXp = xpResp.TotalXp
 	} else {
 		xpResp, err := s.gamification.GetUserXp(ctx, &gampb.GetUserXpRequest{UserId: userID})
 		if err == nil && xpResp.Error == "" {
 			totalXp = xpResp.TotalXp
 		}
-	}
-
-	answersJSON, _ := json.Marshal(answers)
-	attempt := &model.WaveAttempt{
-		UserID:        userID,
-		WaveID:        waveID,
-		LessonID:      wave.LessonId,
-		CourseID:      lesson.CourseId,
-		AnswersJSON:   string(answersJSON),
-		Score:         score,
-		Passed:        passed,
-		XPAwarded:     xpEarned,
-		AttemptNumber: int32(len(attempts)) + 1,
-		CreatedAt:     time.Now(),
-	}
-
-	if err := s.repo.CreateAttempt(ctx, attempt); err != nil {
-		return nil, fmt.Errorf("failed to record attempt: %w", err)
 	}
 
 	if passed {

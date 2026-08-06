@@ -13,6 +13,8 @@ type ProgressRepository interface {
 	ListEnrollmentsByUser(ctx context.Context, userID string) ([]model.Enrollment, error)
 	CreateAttempt(ctx context.Context, attempt *model.WaveAttempt) error
 	GetAttemptsByWave(ctx context.Context, userID, waveID string) ([]model.WaveAttempt, error)
+	GetAttemptBySubmissionID(ctx context.Context, submissionID string) (*model.WaveAttempt, error)
+	UpdateAttemptXPAwarded(ctx context.Context, attemptID string, xpEarned int32) error
 	CountPassedWavesInCourse(ctx context.Context, userID, courseID string) (int64, error)
 	CountPassedWavesInLesson(ctx context.Context, userID, lessonID string) (int64, error)
 	CountPassedWavesGroupedByLesson(ctx context.Context, userID, courseID string) (map[string]int64, error)
@@ -56,6 +58,21 @@ func (r *progressRepository) GetAttemptsByWave(ctx context.Context, userID, wave
 		return nil, err
 	}
 	return attempts, nil
+}
+
+func (r *progressRepository) GetAttemptBySubmissionID(ctx context.Context, submissionID string) (*model.WaveAttempt, error) {
+	if submissionID == "" {
+		return nil, gorm.ErrRecordNotFound
+	}
+	var attempt model.WaveAttempt
+	if err := r.db.WithContext(ctx).Where("submission_id = ?", submissionID).First(&attempt).Error; err != nil {
+		return nil, err
+	}
+	return &attempt, nil
+}
+
+func (r *progressRepository) UpdateAttemptXPAwarded(ctx context.Context, attemptID string, xpEarned int32) error {
+	return r.db.WithContext(ctx).Model(&model.WaveAttempt{}).Where("id = ?", attemptID).Update("xp_awarded", xpEarned).Error
 }
 
 func (r *progressRepository) CountPassedWavesInCourse(ctx context.Context, userID, courseID string) (int64, error) {

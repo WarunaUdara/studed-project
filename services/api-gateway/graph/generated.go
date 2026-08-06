@@ -139,7 +139,7 @@ type ComplexityRoot struct {
 		PublishWave            func(childComplexity int, id string) int
 		RefreshToken           func(childComplexity int, refreshToken string) int
 		Register               func(childComplexity int, input model.RegisterInput) int
-		SubmitWaveAnswers      func(childComplexity int, waveID string, answers []*model.AnswerInput) int
+		SubmitWaveAnswers      func(childComplexity int, waveID string, answers []*model.AnswerInput, submissionID *string) int
 		TranslateContent       func(childComplexity int, content string, targetLanguage string) int
 		UpdateCourse           func(childComplexity int, id string, input model.UpdateCourseInput) int
 		UpdateLesson           func(childComplexity int, id string, input model.UpdateLessonInput) int
@@ -260,7 +260,7 @@ type MutationResolver interface {
 	CreateWave(ctx context.Context, lessonID string, input model.CreateWaveInput) (*model.Wave, error)
 	UpdateWave(ctx context.Context, id string, input model.UpdateWaveInput) (*model.Wave, error)
 	PublishWave(ctx context.Context, id string) (*model.Wave, error)
-	SubmitWaveAnswers(ctx context.Context, waveID string, answers []*model.AnswerInput) (*model.WaveResult, error)
+	SubmitWaveAnswers(ctx context.Context, waveID string, answers []*model.AnswerInput, submissionID *string) (*model.WaveResult, error)
 	EnrollInCourse(ctx context.Context, courseID string) (*model.Course, error)
 	GenerateLearnBlocks(ctx context.Context, prompt string, language *string, grade *model.Grade) ([]*model.LearnBlock, error)
 	GenerateEvaluateBlocks(ctx context.Context, content string, count *int) ([]*model.EvaluateBlock, error)
@@ -789,7 +789,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.ComplexityRoot.Mutation.SubmitWaveAnswers(childComplexity, args["waveId"].(string), args["answers"].([]*model.AnswerInput)), true
+		return e.ComplexityRoot.Mutation.SubmitWaveAnswers(childComplexity, args["waveId"].(string), args["answers"].([]*model.AnswerInput), args["submissionId"].(*string)), true
 	case "Mutation.translateContent":
 		if e.ComplexityRoot.Mutation.TranslateContent == nil {
 			break
@@ -2091,6 +2091,14 @@ func (ec *executionContext) field_Mutation_submitWaveAnswers_args(ctx context.Co
 		return nil, err
 	}
 	args["answers"] = arg1
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "submissionId",
+		func(ctx context.Context, v any) (*string, error) {
+			return ec.unmarshalOString2ᚖstring(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["submissionId"] = arg2
 	return args, nil
 }
 
@@ -4278,7 +4286,7 @@ func (ec *executionContext) _Mutation_submitWaveAnswers(ctx context.Context, fie
 		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.Resolvers.Mutation().SubmitWaveAnswers(ctx, fc.Args["waveId"].(string), fc.Args["answers"].([]*model.AnswerInput))
+			return ec.Resolvers.Mutation().SubmitWaveAnswers(ctx, fc.Args["waveId"].(string), fc.Args["answers"].([]*model.AnswerInput), fc.Args["submissionId"].(*string))
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *model.WaveResult) graphql.Marshaler {

@@ -60,7 +60,7 @@ func (c *ProgressClient) EnrollInCourse(ctx context.Context, userID, courseID st
 	return nil, nil
 }
 
-func (c *ProgressClient) SubmitWaveAnswers(ctx context.Context, userID, waveID string, answers []*model.AnswerInput) (*model.WaveResult, error) {
+func (c *ProgressClient) SubmitWaveAnswers(ctx context.Context, userID, waveID string, answers []*model.AnswerInput, submissionID *string) (*model.WaveResult, error) {
 	protoAnswers := make([]*progresspb.Answer, len(answers))
 	for i, a := range answers {
 		protoAnswers[i] = &progresspb.Answer{
@@ -69,10 +69,16 @@ func (c *ProgressClient) SubmitWaveAnswers(ctx context.Context, userID, waveID s
 		}
 	}
 
+	subID := ""
+	if submissionID != nil {
+		subID = *submissionID
+	}
+
 	resp, err := c.client.RecordAttempt(ctx, &progresspb.RecordAttemptRequest{
-		UserId:  userID,
-		WaveId:  waveID,
-		Answers: protoAnswers,
+		UserId:       userID,
+		WaveId:       waveID,
+		Answers:      protoAnswers,
+		SubmissionId: subID,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("submit answers failed: %w", err)
@@ -81,17 +87,32 @@ func (c *ProgressClient) SubmitWaveAnswers(ctx context.Context, userID, waveID s
 		return nil, fmt.Errorf("submit answers failed: %s", resp.Error)
 	}
 
+	remainingAttempts := int(resp.RemainingAttempts)
+	revealAnswers := resp.Passed || remainingAttempts == 0
+
 	feedback := make([]*model.QuestionFeedback, len(resp.Feedback))
 	for i, f := range resp.Feedback {
+		var ca *string
+		var exp *string
+		if revealAnswers {
+			if f.CorrectAnswer != "" {
+				caStr := f.CorrectAnswer
+				ca = &caStr
+			}
+			if f.Explanation != "" {
+				expStr := f.Explanation
+				exp = &expStr
+			}
+		}
+
 		feedback[i] = &model.QuestionFeedback{
 			EvaluateBlockID: f.EvaluateBlockId,
 			Correct:         f.Correct,
-			CorrectAnswer:   &f.CorrectAnswer,
-			Explanation:     &f.Explanation,
+			CorrectAnswer:   ca,
+			Explanation:     exp,
 		}
 	}
 
-	remainingAttempts := int(resp.RemainingAttempts)
 	return &model.WaveResult{
 		Score:             int(resp.Score),
 		XpEarned:          int(resp.XpEarned),

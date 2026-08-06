@@ -29,6 +29,7 @@ message RecordAttemptRequest {
   string user_id = 1;
   string wave_id = 2;
   repeated Answer answers = 3;
+  string submission_id = 4;
 }
 
 message QuestionFeedback {

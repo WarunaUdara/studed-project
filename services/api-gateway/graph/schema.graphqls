@@ -354,7 +354,7 @@ type Mutation {
   updateWave(id: ID!, input: UpdateWaveInput!): Wave!
   publishWave(id: ID!): Wave!
 
-  submitWaveAnswers(waveId: ID!, answers: [AnswerInput!]!): WaveResult!
+  submitWaveAnswers(waveId: ID!, answers: [AnswerInput!]!, submissionId: String): WaveResult!
   enrollInCourse(courseId: ID!): Course!
 
   generateLearnBlocks(prompt: String!, language: String, grade: Grade): [LearnBlock!]!

@@ -217,13 +217,13 @@ func (r *mutationResolver) PublishWave(ctx context.Context, id string) (*model.W
 }
 
 // SubmitWaveAnswers is the resolver for the submitWaveAnswers field.
-func (r *mutationResolver) SubmitWaveAnswers(ctx context.Context, waveID string, answers []*model.AnswerInput) (*model.WaveResult, error) {
+func (r *mutationResolver) SubmitWaveAnswers(ctx context.Context, waveID string, answers []*model.AnswerInput, submissionID *string) (*model.WaveResult, error) {
 	userCtx, err := requireUser(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := r.ProgressClient.SubmitWaveAnswers(ctx, userCtx.UserID, waveID, answers)
+	result, err := r.ProgressClient.SubmitWaveAnswers(ctx, userCtx.UserID, waveID, answers, submissionID)
 	if err != nil {
 		return nil, err
 	}

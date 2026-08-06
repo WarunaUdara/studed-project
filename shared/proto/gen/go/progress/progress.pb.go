@@ -250,6 +250,7 @@ type RecordAttemptRequest struct {
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	WaveId        string                 `protobuf:"bytes,2,opt,name=wave_id,json=waveId,proto3" json:"wave_id,omitempty"`
 	Answers       []*Answer              `protobuf:"bytes,3,rep,name=answers,proto3" json:"answers,omitempty"`
+	SubmissionId  string                 `protobuf:"bytes,4,opt,name=submission_id,json=submissionId,proto3" json:"submission_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -303,6 +304,13 @@ func (x *RecordAttemptRequest) GetAnswers() []*Answer {
 		return x.Answers
 	}
 	return nil
+}
+
+func (x *RecordAttemptRequest) GetSubmissionId() string {
+	if x != nil {
+		return x.SubmissionId
+	}
+	return ""
 }
 
 type QuestionFeedback struct {
@@ -1026,11 +1034,12 @@ const file_progress_progress_proto_rawDesc = "" +
 	"\x05error\x18\x02 \x01(\tR\x05error\"L\n" +
 	"\x06Answer\x12*\n" +
 	"\x11evaluate_block_id\x18\x01 \x01(\tR\x0fevaluateBlockId\x12\x16\n" +
-	"\x06answer\x18\x02 \x01(\tR\x06answer\"t\n" +
+	"\x06answer\x18\x02 \x01(\tR\x06answer\"\x99\x01\n" +
 	"\x14RecordAttemptRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
 	"\awave_id\x18\x02 \x01(\tR\x06waveId\x12*\n" +
-	"\aanswers\x18\x03 \x03(\v2\x10.progress.AnswerR\aanswers\"\xa1\x01\n" +
+	"\aanswers\x18\x03 \x03(\v2\x10.progress.AnswerR\aanswers\x12#\n" +
+	"\rsubmission_id\x18\x04 \x01(\tR\fsubmissionId\"\xa1\x01\n" +
 	"\x10QuestionFeedback\x12*\n" +
 	"\x11evaluate_block_id\x18\x01 \x01(\tR\x0fevaluateBlockId\x12\x18\n" +
 	"\acorrect\x18\x02 \x01(\bR\acorrect\x12%\n" +

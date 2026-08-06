@@ -25,6 +25,7 @@ type WaveAttempt struct {
 	WaveID        string `gorm:"index:idx_attempt_user_wave"`
 	LessonID      string
 	CourseID      string
+	SubmissionID  string `gorm:"index:idx_attempt_submission_id"`
 	AnswersJSON   string
 	Score         int32
 	Passed        bool

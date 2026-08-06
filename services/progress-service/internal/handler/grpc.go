@@ -25,7 +25,7 @@ func (h *ProgressGRPCHandler) EnrollInCourse(ctx context.Context, req *progressp
 }
 
 func (h *ProgressGRPCHandler) RecordAttempt(ctx context.Context, req *progresspb.RecordAttemptRequest) (*progresspb.RecordAttemptResponse, error) {
-	resp, err := h.svc.RecordAttempt(ctx, req.UserId, req.WaveId, req.Answers)
+	resp, err := h.svc.RecordAttempt(ctx, req.UserId, req.WaveId, req.Answers, req.SubmissionId)
 	if err != nil {
 		return &progresspb.RecordAttemptResponse{Error: err.Error()}, nil
 	}
