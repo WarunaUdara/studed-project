@@ -6,7 +6,7 @@ metadata:
   labels:
     app: auth-service
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: auth-service
@@ -15,10 +15,20 @@ spec:
       labels:
         app: auth-service
     spec:
+      terminationGracePeriodSeconds: 45
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
       containers:
         - name: auth-service
           image: ghcr.io/warunaudara/studed-auth-service:latest
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8081
             - containerPort: 8085
@@ -34,12 +44,33 @@ spec:
             limits:
               memory: "96Mi"
               cpu: "150m"
-          readinessProbe:
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "10"]
+          startupProbe:
             httpGet:
               path: /health
               port: 8085
+            failureThreshold: 30
+            periodSeconds: 2
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8085
             initialDelaySeconds: 5
             periodSeconds: 5
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: auth-service-pdb
+  namespace: studed
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: auth-service
 ---
 apiVersion: v1
 kind: Service

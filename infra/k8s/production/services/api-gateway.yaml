@@ -6,7 +6,7 @@ metadata:
   labels:
     app: api-gateway
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: api-gateway
@@ -15,10 +15,27 @@ spec:
       labels:
         app: api-gateway
     spec:
+      terminationGracePeriodSeconds: 45
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: api-gateway
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
       containers:
         - name: api-gateway
           image: ghcr.io/warunaudara/studed-api-gateway:latest
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
           envFrom:
@@ -33,6 +50,16 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "250m"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "10"]
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 2
           readinessProbe:
             httpGet:
               path: /ready
@@ -45,6 +72,17 @@ spec:
               port: 8080
             initialDelaySeconds: 15
             periodSeconds: 10
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: api-gateway-pdb
+  namespace: studed
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: api-gateway
 ---
 apiVersion: v1
 kind: Service
