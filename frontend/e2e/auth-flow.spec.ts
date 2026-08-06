@@ -15,7 +15,7 @@ test.describe("Authentication and Authorization Flow", () => {
     await page.goto("/login");
 
     await page.locator("#email").fill("demo.student@studed.lk");
-    await page.locator("#password").fill("password123");
+    await page.locator("#password").fill("password1234");
     await page.getByRole("button", { name: "Sign in" }).click();
 
     await expect(page).toHaveURL(/\/dashboard/);
@@ -30,7 +30,7 @@ test.describe("Authentication and Authorization Flow", () => {
     await page.goto("/login");
 
     await page.locator("#email").fill("demo.educator@studed.lk");
-    await page.locator("#password").fill("password123");
+    await page.locator("#password").fill("password1234");
     await page.getByRole("button", { name: "Sign in" }).click();
 
     await expect(page).toHaveURL(/\/educator\/courses/);

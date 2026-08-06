@@ -57,7 +57,7 @@ async function registerOrLogin(email: string, role: string, fullName: string, gr
   const session = new Session(email);
   const registerInput: any = {
     email,
-    password: "password123",
+    password: "password1234",
     fullName,
     preferredLanguage: "en",
   };
@@ -93,7 +93,7 @@ async function registerOrLogin(email: string, role: string, fullName: string, gr
       {
         input: {
           email,
-          password: "password123",
+          password: "password1234",
         },
       }
     );
@@ -509,8 +509,8 @@ async function main() {
   console.log(`[mock] done`);
   console.log(`
 Demo accounts:
-  educator: demo.educator@studed.lk / password123
-  student:  demo.student@studed.lk / password123
+  educator: demo.educator@studed.lk / password1234
+  student:  demo.student@studed.lk / password1234
   `);
 }
 

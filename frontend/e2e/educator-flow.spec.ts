@@ -6,7 +6,7 @@ test.describe("Educator Portal Course Lifecycle Flow", () => {
     await page.context().clearCookies();
     await page.goto("/login");
     await page.locator("#email").fill("demo.educator@studed.lk");
-    await page.locator("#password").fill("password123");
+    await page.locator("#password").fill("password1234");
     await page.getByRole("button", { name: "Sign in" }).click();
     await page.waitForURL(/\/educator/, { timeout: 30000 });
   });

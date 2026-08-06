@@ -15,7 +15,7 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
 
     await page.locator("#fullName").fill(studentName);
     await page.locator("#email").fill(studentEmail);
-    await page.locator("#password").fill("password123");
+    await page.locator("#password").fill("password1234");
     await page.locator("#grade").selectOption("AL");
 
     // Submit registration

@@ -49,7 +49,7 @@ test_auth() {
   local response
   response=$(call_graphql \
     '"mutation Register($input: RegisterInput!) { register(input: $input) { user { id email role } accessToken } }"' \
-    "{\"input\":{\"email\":\"${email}\",\"password\":\"password123\",\"fullName\":\"Test Educator\",\"role\":\"EDUCATOR\",\"preferredLanguage\":\"en\"}}")
+    "{\"input\":{\"email\":\"${email}\",\"password\":\"password1234\",\"fullName\":\"Test Educator\",\"role\":\"EDUCATOR\",\"preferredLanguage\":\"en\"}}")
 
   if echo "${response}" | jq -e '.data.register.user.role == "EDUCATOR"' >/dev/null 2>&1; then
     pass "educator registration returns EDUCATOR user"
@@ -116,7 +116,7 @@ test_course_lifecycle() {
   local response_other
   response_other=$(curl -s -c "${cookie_jar_other}" \
     -H "Content-Type: application/json" \
-    -d "{\"query\":\"mutation Register(\$input: RegisterInput!) { register(input: \$input) { user { id } } }\",\"variables\":{\"input\":{\"email\":\"${email_other}\",\"password\":\"password123\",\"fullName\":\"Other Educator\",\"role\":\"EDUCATOR\",\"preferredLanguage\":\"en\"}}}" \
+    -d "{\"query\":\"mutation Register(\$input: RegisterInput!) { register(input: \$input) { user { id } } }\",\"variables\":{\"input\":{\"email\":\"${email_other}\",\"password\":\"password1234\",\"fullName\":\"Other Educator\",\"role\":\"EDUCATOR\",\"preferredLanguage\":\"en\"}}}" \
     "${GATEWAY}/graphql")
   
   response_other=$(curl -s -b "${cookie_jar_other}" \
@@ -137,7 +137,7 @@ test_course_lifecycle() {
   local response_mismatch
   response_mismatch=$(curl -s -c "${cookie_jar_mismatch}" \
     -H "Content-Type: application/json" \
-    -d "{\"query\":\"mutation Register(\$input: RegisterInput!) { register(input: \$input) { user { id } } }\",\"variables\":{\"input\":{\"email\":\"${email_mismatch}\",\"password\":\"password123\",\"fullName\":\"Mismatch Student\",\"role\":\"STUDENT\",\"preferredLanguage\":\"en\",\"grade\":\"G11\"}}}" \
+    -d "{\"query\":\"mutation Register(\$input: RegisterInput!) { register(input: \$input) { user { id } } }\",\"variables\":{\"input\":{\"email\":\"${email_mismatch}\",\"password\":\"password1234\",\"fullName\":\"Mismatch Student\",\"role\":\"STUDENT\",\"preferredLanguage\":\"en\",\"grade\":\"G11\"}}}" \
     "${GATEWAY}/graphql")
 
   response_mismatch=$(curl -s -b "${cookie_jar_mismatch}" \
@@ -158,7 +158,7 @@ test_course_lifecycle() {
   local response_student
   response_student=$(curl -s -c "${cookie_jar_student}" \
     -H "Content-Type: application/json" \
-    -d "{\"query\":\"mutation Register(\$input: RegisterInput!) { register(input: \$input) { user { id } } }\",\"variables\":{\"input\":{\"email\":\"${email_student}\",\"password\":\"password123\",\"fullName\":\"Test Student\",\"role\":\"STUDENT\",\"preferredLanguage\":\"en\",\"grade\":\"G10\"}}}" \
+    -d "{\"query\":\"mutation Register(\$input: RegisterInput!) { register(input: \$input) { user { id } } }\",\"variables\":{\"input\":{\"email\":\"${email_student}\",\"password\":\"password1234\",\"fullName\":\"Test Student\",\"role\":\"STUDENT\",\"preferredLanguage\":\"en\",\"grade\":\"G10\"}}}" \
     "${GATEWAY}/graphql")
 
   response_student=$(curl -s -b "${cookie_jar_student}" \

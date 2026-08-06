@@ -27,7 +27,7 @@ export default async function globalSetup() {
       .catch(() => {});
     await page
       .locator("#password")
-      .fill("password123")
+      .fill("password1234")
       .catch(() => {});
     await page
       .getByRole("button", { name: "Sign in" })
@@ -54,7 +54,7 @@ export default async function globalSetup() {
       .catch(() => {});
     await page
       .locator("#password")
-      .fill("password123")
+      .fill("password1234")
       .catch(() => {});
     await page
       .getByRole("button", { name: "Sign in" })

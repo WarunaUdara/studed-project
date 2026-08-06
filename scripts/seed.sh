@@ -96,7 +96,7 @@ main() {
   rm -f "${COOKIE_JAR}"
   wait_for_gateway
 
-  register_or_login "educator@studed.lk" "password123" "Demo Educator" "EDUCATOR"
+  register_or_login "educator@studed.lk" "password1234" "Demo Educator" "EDUCATOR"
   create_course "Demo Science" "demo-science" "G10"
 
   echo "[seed] done"

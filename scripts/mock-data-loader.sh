@@ -259,10 +259,10 @@ main() {
   wait_for_gateway
 
   echo "[mock] creating educator..."
-  register_or_login "${EDUCATOR_JAR}" "demo.educator@studed.lk" "password123" "Demo Educator" "EDUCATOR" ""
+  register_or_login "${EDUCATOR_JAR}" "demo.educator@studed.lk" "password1234" "Demo Educator" "EDUCATOR" ""
 
   echo "[mock] creating student..."
-  register_or_login "${STUDENT_JAR}" "demo.student@studed.lk" "password123" "Demo Student" "STUDENT" "G10"
+  register_or_login "${STUDENT_JAR}" "demo.student@studed.lk" "password1234" "Demo Student" "STUDENT" "G10"
 
   echo "[mock] creating courses, lessons and waves..."
 
@@ -352,8 +352,8 @@ main() {
   echo "[mock] done"
   echo ""
   echo "Demo accounts:"
-  echo "  educator: demo.educator@studed.lk / password123"
-  echo "  student:  demo.student@studed.lk / password123"
+  echo "  educator: demo.educator@studed.lk / password1234"
+  echo "  student:  demo.student@studed.lk / password1234"
 }
 
 main "$@"
