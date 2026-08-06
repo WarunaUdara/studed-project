@@ -9,11 +9,11 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 
 ## ⚡ Phase 0 — Do these first (≈3 hours, 4 blockers removed)
 
-- [ ] 🟠 `XS` **FLOW-02** — Fix `make go-test` exit status; add `-race`. *Until this is done, no test result in this repo means anything.* → [04](04-CORRECTNESS-FLOWS.md#-flow-02--ci-silently-ignores-go-test-failures)
-- [ ] 🔴 `S` **SEC-02** — Reorder Cloud Armor: throttle at priority 900, remove the blanket `/graphql` allow, use preconfigured-expression exclusions instead. → [01](01-SECURITY.md#-sec-02--cloud-armor-allows-graphql-past-every-waf-rule-and-the-rate-limit)
-- [ ] 🔴 `S` **FLOW-01 / SEC-07** — Add NetworkPolicy edges: progress→course:8083, progress→gamification:8088 (egress + matching ingress). → [04](04-CORRECTNESS-FLOWS.md#-flow-01--networkpolicies-break-wave-submission-in-the-cluster)
-- [ ] 🟠 `S` **FLOW-03** — Add `scripts/provision-educator.sh`; call it from the seed so the educator demo works. → [04](04-CORRECTNESS-FLOWS.md#-flow-03--the-demo-seed-cannot-create-an-educator)
-- [ ] 🟡 `S` **FLOW-09** — Delete `user-service`, `content-service`, `upload-service` stubs; correct the README architecture diagram. → [04](04-CORRECTNESS-FLOWS.md#-flow-09--three-services-exist-in-the-architecture-diagram-but-not-in-the-system)
+- [x] 🟠 `XS` **FLOW-02** — Fix `make go-test` exit status; add `-race`. *Until this is done, no test result in this repo means anything.* → [04](04-CORRECTNESS-FLOWS.md#-flow-02--ci-silently-ignores-go-test-failures)
+- [x] 🔴 `S` **SEC-02** — Reorder Cloud Armor: throttle at priority 900, remove the blanket `/graphql` allow, use preconfigured-expression exclusions instead. → [01](01-SECURITY.md#-sec-02--cloud-armor-allows-graphql-past-every-waf-rule-and-the-rate-limit)
+- [x] 🔴 `S` **FLOW-01 / SEC-07** — Add NetworkPolicy edges: progress→course:8083, progress→gamification:8088 (egress + matching ingress). → [04](04-CORRECTNESS-FLOWS.md#-flow-01--networkpolicies-break-wave-submission-in-the-cluster)
+- [x] 🟠 `S` **FLOW-03** — Add `scripts/provision-educator.sh`; call it from the seed so the educator demo works. → [04](04-CORRECTNESS-FLOWS.md#-flow-03--the-demo-seed-cannot-create-an-educator)
+- [x] 🟡 `S` **FLOW-09** — Delete `user-service`, `content-service`, `upload-service` stubs; correct the README architecture diagram. → [04](04-CORRECTNESS-FLOWS.md#-flow-09--three-services-exist-in-the-architecture-diagram-but-not-in-the-system)
 
 ---
 
@@ -94,7 +94,7 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 ### Workload hardening
 - [ ] 🟠 `M` **SEC-05a** — Distroless non-root base images across all services.
 - [ ] 🟠 `S` **SEC-05b** — `securityContext` on every pod; `automountServiceAccountToken: false`; per-service ServiceAccounts.
-- [ ] 🟠 `XS` **SEC-05c** — Label the namespace `pod-security.kubernetes.io/enforce: restricted`.
+- [ ] 攻 `XS` **SEC-05c** — Label the namespace `pod-security.kubernetes.io/enforce: restricted`.
 - [ ] 🟡 `S` **SEC-15** — Reduce node oauth scopes; add a `authorized_cidrs` validation rejecting `0.0.0.0/0`.
 - [ ] 🟡 `M` **SEC-17** — Scope `allow-external-egress` per workload; FQDN egress policy for Gemini; Private Service Connect for Neon.
 
@@ -155,10 +155,10 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 
 | Phase | Items | Done |
 | :--- | ---: | ---: |
-| 0 — Blockers | 5 | 0 |
+| 0 — Blockers | 5 | 5 |
 | 1 — Correct | 27 | 0 |
 | 2 — Observable | 11 | 0 |
 | 3 — Resilient & fast | 20 | 0 |
 | 4 — Automated | 17 | 0 |
 | Experience & quality | 14 | 0 |
-| **Total** | **78** (some span phases) | **0** |
+| **Total** | **78** (some span phases) | **5** |
