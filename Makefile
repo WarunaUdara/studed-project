@@ -101,10 +101,10 @@
 	 done
 
  go-test:
-	@for svc in services/*; do \
+	@set -e; for svc in services/*; do \
 		if [ -f "$$svc/go.mod" ]; then \
 			echo "testing $$svc..."; \
-			cd "$$svc" && go test ./... && cd ../..; \
+			(cd "$$svc" && go test -race ./...); \
 		fi \
 	 done
 
