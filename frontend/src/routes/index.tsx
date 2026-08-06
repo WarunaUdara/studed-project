@@ -84,7 +84,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
   const reduce = useReducedMotion();
 
   return (
-    <section className="relative flex min-h-[calc(100vh-80px)] items-center overflow-hidden px-4 py-8 sm:px-6 sm:py-12 lg:py-14">
+    <section className="relative flex min-h-screen items-center overflow-hidden px-4 pb-12 pt-24 sm:px-6 sm:pb-16 sm:pt-28 lg:pb-20 lg:pt-32">
       {/* Atmosphere: graph-paper dots + soft brand washes */}
       <div aria-hidden className="pointer-events-none absolute inset-0 select-none">
         <div
