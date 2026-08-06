@@ -32,24 +32,24 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 - [x] 🟡 `S` **SEC-12** — Password policy: min 12 chars, HIBP k-anonymity check, bcrypt cost 12, email validation, progressive lockout.
 - [x] 🟡 `S` **SEC-13** — Add `iss`/`aud`/`jti`/`nbf`; validate all at the gateway; assert `type == "access"`.
 - [x] 🟡 `XS` **SEC-14** — Remove `sslmode=disable` defaults from payment/notification; fail fast on missing `DATABASE_URL`.
-- [ ] 🟡 `S` **SEC-16** — Require auth on `leaderboard`; show display names not legal names; begin the consent/data-rights model.
+- [x] 🟡 `S` **SEC-16** — Require auth on `leaderboard`; show display names not legal names; begin the consent/data-rights model.
 - [x] 🔵 `XS` **SEC-19** — Use `subtle.ConstantTimeCompare` for the PayHere signature.
-- [ ] 🔵 `XS` **SEC-20** — Bind compose ports to `127.0.0.1`; add a local-only banner.
+- [x] 🔵 `XS` **SEC-20** — Bind compose ports to `127.0.0.1`; add a local-only banner.
 - [x] 🔵 `XS` **SEC-21** — `http.MaxBytesReader` at 1MB on the gateway.
 - [x] 🔵 `XS` **SEC-22 / FLOW-12** — Remove the ignored `role` field from `RegisterInput`.
 
 ### Correctness
 - [x] 🟠 `M` **FLOW-04** — Make `RecordAttempt` transactional and idempotent on a `submissionId`; record the attempt before awarding XP; add a concurrency test.
 - [x] 🟠 `S` **FLOW-05** — Reveal `correctAnswer`/`explanation` only when passed or no attempts remain.
-- [ ] 🟡 `M` **FLOW-06** — Subscription reconciliation job; extend `end_date` on renewal; implement or remove the entitlement model.
-- [ ] 🟡 `M` **FLOW-07** — Implement `ADMIN`/`HEAD_EDUCATOR` overrides with an audit log, or delete the unused roles.
+- [x] 🟡 `M` **FLOW-06** — Subscription reconciliation job; extend `end_date` on renewal; implement or remove the entitlement model.
+- [x] 🟡 `M` **FLOW-07** — Implement `ADMIN`/`HEAD_EDUCATOR` overrides with an audit log, or delete the unused roles.
 - [x] 🟡 `XS` **FLOW-08** — Round the score instead of truncating; warn authors when the threshold is unreachable.
-- [ ] 🟡 `M` **FLOW-10** — Standardise on `golang-migrate`; remove GORM `AutoMigrate`; run migrations as an ArgoCD `PreSync` Job.
-- [ ] 🔵 `S` **FLOW-11** — Money as integer minor units, not `float64`.
-- [ ] 🟡 `M` **COST-02** — Pages proxy: forward a signed `x-studed-client-ip`; move `API_ORIGIN` to an env binding; add a fetch timeout and 502 handling.
+- [x] 🟡 `M` **FLOW-10** — Standardise on `golang-migrate`; remove GORM `AutoMigrate`; run migrations as an ArgoCD `PreSync` Job.
+- [x] 🔵 `S` **FLOW-11** — Money as integer minor units, not `float64`.
+- [x] 🟡 `M` **COST-02** — Pages proxy: forward a signed `x-studed-client-ip`; move `API_ORIGIN` to an env binding; add a fetch timeout and 502 handling.
 
 ### Demo readiness
-- [ ] 🟠 `S` **DEMO** — Write `scripts/verify-demo.sh` asserting the full journey from `docker compose down -v`; run it nightly in CI. → [04](04-CORRECTNESS-FLOWS.md#demo-readiness-gate)
+- [x] 🟠 `S` **DEMO** — Write `scripts/verify-demo.sh` asserting the full journey from `docker compose down -v`; run it nightly in CI. → [04](04-CORRECTNESS-FLOWS.md#demo-readiness-gate)
 
 ---
 
@@ -156,9 +156,9 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 | Phase | Items | Done |
 | :--- | ---: | ---: |
 | 0 — Blockers | 5 | 5 |
-| 1 — Correct | 27 | 16 |
+| 1 — Correct | 27 | 24 |
 | 2 — Observable | 11 | 0 |
 | 3 — Resilient & fast | 20 | 0 |
 | 4 — Automated | 17 | 0 |
 | Experience & quality | 14 | 0 |
-| **Total** | **78** (some span phases) | **21** |
+| **Total** | **78** (some span phases) | **29** |
