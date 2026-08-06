@@ -93,6 +93,12 @@ let leftOsc: OscillatorNode | null = null;
 let rightOsc: OscillatorNode | null = null;
 
 export function playAmbientNoise(type: "brown" | "pink" | "white" | "adhd" | "none") {
+  if (
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+  )
+    return;
+
   const ctx = getCtx();
   if (!ctx) return;
 

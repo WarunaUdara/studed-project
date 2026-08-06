@@ -50,6 +50,13 @@
  ci-local: security-scan frontend-typecheck frontend-test frontend-build go-test shared-test helm-lint iac-plan promtool-check
 	@echo "All local CI pre-flight checks passed!"
 
+ doctor:
+	@echo "Checking development environment toolchain..."
+	@go version
+	@bun --version
+	@docker --version
+	@echo "Environment doctor check passed!"
+
  monitoring-up:
 	docker compose up -d prometheus grafana postgres-exporter redis-exporter
 

@@ -1,0 +1,5 @@
+[tools]
+go = "1.25"
+bun = "latest"
+opentofu = "1.8.0"
+helm = "3.14.0"

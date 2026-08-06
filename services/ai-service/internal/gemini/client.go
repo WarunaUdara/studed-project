@@ -54,6 +54,7 @@ type part struct {
 type generationConfig struct {
 	ResponseMimeType string  `json:"responseMimeType,omitempty"`
 	Temperature      float64 `json:"temperature"`
+	MaxOutputTokens  int     `json:"maxOutputTokens,omitempty"`
 }
 
 type generateResponse struct {
@@ -82,6 +83,10 @@ func (c *Client) GenerateText(ctx context.Context, systemPrompt, userPrompt stri
 }
 
 func (c *Client) generate(ctx context.Context, systemPrompt, userPrompt, mimeType string) ([]byte, error) {
+	if len(userPrompt) > 8000 {
+		return nil, fmt.Errorf("user prompt exceeds maximum allowed length of 8000 characters")
+	}
+
 	reqBody := generateRequest{
 		Contents: []content{
 			{Role: "user", Parts: []part{{Text: userPrompt}}},
@@ -89,6 +94,7 @@ func (c *Client) generate(ctx context.Context, systemPrompt, userPrompt, mimeTyp
 		GenerationConfig: generationConfig{
 			ResponseMimeType: mimeType,
 			Temperature:      0.4,
+			MaxOutputTokens:  2048,
 		},
 	}
 	if systemPrompt != "" {

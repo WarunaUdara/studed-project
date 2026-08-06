@@ -335,7 +335,11 @@ func (r *mutationResolver) GenerateEvaluateBlocks(ctx context.Context, content s
 
 // TranslateContent is the resolver for the translateContent field.
 func (r *mutationResolver) TranslateContent(ctx context.Context, content string, targetLanguage string) (string, error) {
-	if _, err := requireUser(ctx); err != nil {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return "", err
+	}
+	if err := requireEducator(userCtx); err != nil {
 		return "", err
 	}
 	if r.AIClient == nil {
