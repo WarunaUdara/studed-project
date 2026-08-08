@@ -189,7 +189,7 @@ Examples:
 6. **Prefer explicit types** over `var`/`dynamic` in Dart and be explicit in TypeScript.
 7. **Prefer early returns** over deep nesting.
 8. **Write minimal changes.** Do not over-engineer. Build only what is asked for.
-9. **Test what you build.** Run relevant tests, type checks, and builds before committing.
+9. **Test what you build (`make ci-local`).** Before pushing to `main` or opening Pull Requests, execute `make ci-local` to verify all pre-flight checks (Bun typecheck, Vitest, Go microservices tests, Kyverno policy validation, IaC plan) pass 100%. Fix any failures locally before pushing code.
 10. **Update docs.** If you change architecture, tech choices, or workflow, update the relevant markdown docs and this `AGENTS.md`.
 
 ## Service Conventions

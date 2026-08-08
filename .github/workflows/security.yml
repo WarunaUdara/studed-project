@@ -45,19 +45,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Run Bun Audit
-        run: cd frontend && bun pm audit
+      - name: Run Bun Security Scan
+        run: cd frontend && bun pm scan
 
   kubeconform-scan:
     name: Kubernetes Manifest Schema Validation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: yannh/kubeconform-action@v0.8.0
-        with:
-          k8s-version: v1.30.0
-          schema-location: default
-          files: "infra/k8s/production/**/*.yaml"
+      - name: Setup Kubeconform
+        run: |
+          curl -sL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz | tar xz -C /tmp
+          sudo mv /tmp/kubeconform /usr/local/bin/
+      - name: Validate Kubernetes Manifests
+        run: |
+          kubeconform -kubernetes-version 1.30.0 -schema-location default "infra/k8s/**/*.yaml"
+
+  kyverno-policy-check:
+    name: Kyverno Admission Security Policy Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: kyverno/action-install-cli@v0.2.0
+      - name: Validate Manifests against Kyverno Security Policies
+        run: |
+          kyverno apply infra/k8s/kyverno/cluster-policies.yaml --resource infra/k8s/services/*.yaml
+
