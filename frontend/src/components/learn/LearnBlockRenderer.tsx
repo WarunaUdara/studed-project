@@ -86,16 +86,19 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
       return <ManimBlock content={block.content} metadata={block.metadata} />;
 
     case "molecule_3dmol":
+    case "chemviz_3dmol":
     case "3dmol":
     case "molecule":
       return <Mol3DBlock content={block.content} metadata={block.metadata} />;
 
     case "circuit_tscircuit":
+    case "elecsim_tscircuit":
     case "tscircuit":
     case "circuit":
       return <TsCircuitBlock content={block.content} metadata={block.metadata} />;
 
     case "simulation_matter":
+    case "mechsim_matterjs":
     case "matter_js":
     case "physics":
     case "simulation":
