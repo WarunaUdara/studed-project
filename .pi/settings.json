@@ -1,0 +1,5 @@
+{
+  "packages": [
+    "extensions/opencode-go.ts"
+  ]
+}

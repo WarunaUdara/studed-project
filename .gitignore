@@ -76,3 +76,6 @@ infra/k8s/secret.yaml
 
 # Go build artifacts
 scripts/tools/**/rotate-*
+
+# Local scratch (Pi agent work, temp files)
+.tmp/
