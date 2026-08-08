@@ -54,7 +54,9 @@ scales the cluster to zero after 2h without traffic.
 
 ## 🏗️ Master System Architecture Diagram
 
-![StudEd Master GCP Solution Architecture](docs/architecture-diagram.png)
+<p align="center">
+  <img src="./docs/architecture-diagram.png" alt="StudEd Master GCP Solution Architecture" style="max-width: 100%; height: auto;" />
+</p>
 
 ```mermaid
 graph TB

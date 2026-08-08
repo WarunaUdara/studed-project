@@ -41,6 +41,13 @@ func NewProgressClient(addr string, courseClient *CourseClient, serviceToken str
 	}, nil
 }
 
+func NewProgressClientFromPB(pbClient progresspb.ProgressServiceClient, courseClient *CourseClient) *ProgressClient {
+	return &ProgressClient{
+		client:       pbClient,
+		courseClient: courseClient,
+	}
+}
+
 func (c *ProgressClient) Close() error {
 	return c.conn.Close()
 }

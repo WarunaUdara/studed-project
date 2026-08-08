@@ -4,7 +4,9 @@ End-to-end architecture of the live StudEd deployment (GCP backend, Cloudflare f
 
 ## Full GCP Architecture Diagram
 
-![StudEd GCP Production Architecture](architecture-diagram.png)
+<p align="center">
+  <img src="./architecture-diagram.png" alt="StudEd GCP Production Architecture" style="max-width: 100%; height: auto;" />
+</p>
 
 ```mermaid
 flowchart TB

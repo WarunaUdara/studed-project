@@ -41,6 +41,12 @@ func NewCourseClient(addr, serviceToken string) (*CourseClient, error) {
 	}, nil
 }
 
+func NewCourseClientFromPB(pbClient coursepb.CourseServiceClient) *CourseClient {
+	return &CourseClient{
+		client: pbClient,
+	}
+}
+
 func (c *CourseClient) Close() error {
 	return c.conn.Close()
 }
