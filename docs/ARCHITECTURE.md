@@ -4,6 +4,8 @@ End-to-end architecture of the live StudEd deployment (GCP backend, Cloudflare f
 
 ## Full GCP Architecture Diagram
 
+![StudEd GCP Production Architecture](architecture-diagram.png)
+
 ```mermaid
 flowchart TB
     subgraph Client["End User Layer"]

@@ -54,6 +54,8 @@ scales the cluster to zero after 2h without traffic.
 
 ## 🏗️ Master System Architecture Diagram
 
+![StudEd Master GCP Solution Architecture](docs/architecture-diagram.png)
+
 ```mermaid
 graph TB
     subgraph Client_Tier ["📱 Client Tier (Web & Mobile)"]
