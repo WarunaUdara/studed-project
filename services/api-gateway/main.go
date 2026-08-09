@@ -24,6 +24,7 @@ import (
 	"github.com/studed/api-gateway/internal/client"
 	"github.com/studed/api-gateway/internal/config"
 	"github.com/studed/api-gateway/internal/events"
+	gwhandler "github.com/studed/api-gateway/internal/handler"
 	authmiddleware "github.com/studed/api-gateway/internal/middleware"
 	"github.com/studed/shared/go/logger"
 	"github.com/studed/shared/go/metrics"
@@ -154,6 +155,12 @@ func main() {
 			// Request timeout. AI generation (learn blocks, visualizations,
 			// agent runs) can take 20-90s, so the default is generous; set
 			// REQUEST_TIMEOUT_SECONDS to tighten it (e.g. 15 in production).
+			// The AI chat stream is exempt: it is long-lived by design and
+			// terminates when the agent finishes or the client disconnects.
+			if r.URL.Path == "/ai/chat" {
+				next.ServeHTTP(w, r)
+				return
+			}
 			timeout := time.Duration(envInt("REQUEST_TIMEOUT_SECONDS", 100)) * time.Second
 			ctx, cancel := context.WithTimeout(r.Context(), timeout)
 			defer cancel()
@@ -175,6 +182,11 @@ func main() {
 		_, _ = w.Write([]byte("ready"))
 	}))
 
+	// Educator AI assistant: streams agent events (SSE) from the ai-service
+	// to the wave editor chat panel. Educator-only (enforced in the handler).
+	aiChatProxy := gwhandler.NewAIChatProxy(cfg.AIServiceURL)
+	r.Handle("/ai/chat", aiChatProxy)
+
 	if cfg.GraphQLPlayground {
 		r.Handle("/", playground.Handler("StudEd GraphQL", "/graphql"))
 	}
@@ -185,8 +197,11 @@ func main() {
 		Handler:           r,
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       30 * time.Second,
-		WriteTimeout:      30 * time.Second,
-		IdleTimeout:       120 * time.Second,
+		// WriteTimeout is disabled: the AI chat stream (/ai/chat) is long-lived
+		// by design and the agent may stream for minutes. Non-stream routes are
+		// bounded by the per-request context timeout middleware instead.
+		WriteTimeout: 0,
+		IdleTimeout:  120 * time.Second,
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
