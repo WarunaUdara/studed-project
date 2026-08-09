@@ -117,14 +117,13 @@ Reference documentation lives in the Obsidian folders at the repo root:
     └── matter-js/
 ```
 
-## Git Workflow (Workflow A - Trunk-Based)
+## Git Workflow (Branch & Feature Workflow)
 
 All development agents must follow this exact workflow:
 
 ```bash
-# 1. Start on main and pull latest changes
-git checkout main
-git pull origin main
+# 1. Ensure you are on your active branch (e.g., main or dev/malshan)
+git checkout <active-branch>
 
 # 2. Make your changes
 # ... edit files ...
@@ -133,18 +132,15 @@ git pull origin main
 git add <files>
 git commit -m "type(scope): description"
 
-# 4. Pull again and resolve any conflicts before pushing
-git pull origin main
-# resolve conflicts if any
-git push origin main
+# 4. Push ONLY to your active current branch
+git push origin <active-branch>
 ```
 
 ### Rules
-- Work directly on `main` unless explicitly asked to use a feature branch.
-- Always `git pull origin main` before starting work and again before pushing.
-- Resolve merge conflicts locally. Never force-push to `main`.
+- **On `main` branch**: Push directly to `origin main`.
+- **On `dev/malshan` (or feature branches)**: Push strictly to `origin dev/malshan` (or `origin <current-branch>`). NEVER push to `main` while working on `dev/malshan`.
+- Pull updates from `main` locally (`git pull origin main`) to resolve any merge conflicts before pushing to your branch.
 - Keep commits small and focused.
-- Delete any temporary branches you create after use.
 
 ## Commit Message Convention
 
