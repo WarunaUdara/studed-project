@@ -94,6 +94,9 @@ func main() {
 	}
 	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
 	srv.AddTransport(transport.Options{})
+	// GET transport enables GraphQL queries over HTTP GET (urql and TanStack
+	// Router prefetch issue GET requests); without it every data query returns
+	// 400 "transport not supported" and the app cannot browse any data.
 	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.MultipartForm{})
