@@ -6,6 +6,8 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -13,62 +15,42 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type RateLimiter struct {
-	rdb     *redis.Client
-	healthy atomic.Bool
-	log     *slog.Logger
+// RateLimitConfig holds the tunable rate-limit values. Production defaults
+// match the original hardcoded limits; development can raise them via env.
+type RateLimitConfig struct {
+	GlobalLimit    int64
+	GlobalWindow   time.Duration
+	UserLimit      int64
+	UserWindow     time.Duration
+}
 
-	initialBackoff time.Duration
-	maxBackoff     time.Duration
-	backoffFactor  float64
+// RateLimitConfigFromEnv builds a config from environment variables with
+// production-safe defaults:
+//
+//	RATE_LIMIT_GLOBAL    requests per window per IP (default 100)
+//	RATE_LIMIT_GLOBAL_WINDOW_SECONDS (default 60)
+//	RATE_LIMIT_USER      requests per window per authenticated user (default 60)
+//	RATE_LIMIT_USER_WINDOW_SECONDS  (default 60)
+func RateLimitConfigFromEnv() RateLimitConfig {
+	return RateLimitConfig{
+		GlobalLimit:  int64(envInt("RATE_LIMIT_GLOBAL", 100)),
+		GlobalWindow: time.Duration(envInt("RATE_LIMIT_GLOBAL_WINDOW_SECONDS", 60)) * time.Second,
+		UserLimit:    int64(envInt("RATE_LIMIT_USER", 60)),
+		UserWindow:   time.Duration(envInt("RATE_LIMIT_USER_WINDOW_SECONDS", 60)) * time.Second,
+	}
+}
+
+type RateLimiter struct {
+	rdb    *redis.Client
+	config RateLimitConfig
 }
 
 func NewRateLimiter(rdb *redis.Client) *RateLimiter {
-	rl := &RateLimiter{
-		rdb:            rdb,
-		log:            slog.Default(),
-		initialBackoff: 250 * time.Millisecond,
-		maxBackoff:     30 * time.Second,
-		backoffFactor:  2.0,
-	}
-	if rdb != nil {
-		rl.healthy.Store(true)
-	}
-	return rl
+	return NewRateLimiterWithConfig(rdb, RateLimitConfigFromEnv())
 }
 
-// StartReconnectLoop monitors Redis connectivity and applies exponential
-// backoff between probes so a downed Redis is not hammered. It flips the
-// healthy flag used by allow() to decide between fail-open and fail-closed.
-func (rl *RateLimiter) StartReconnectLoop(ctx context.Context) {
-	if rl.rdb == nil {
-		return
-	}
-	backoff := rl.initialBackoff
-	for {
-		err := rl.rdb.Ping(ctx).Err()
-		if err == nil {
-			if !rl.healthy.Load() {
-				rl.healthy.Store(true)
-				rl.log.Info("redis reconnected", slog.String("component", "ratelimit"))
-			}
-			backoff = rl.initialBackoff
-		} else {
-			if rl.healthy.Load() {
-				rl.healthy.Store(false)
-				rl.log.Warn("redis unreachable, rate limiting disabled", slog.Any("error", err))
-			}
-			backoff = time.Duration(float64(backoff) * rl.backoffFactor)
-			if backoff > rl.maxBackoff {
-				backoff = rl.maxBackoff
-			}
-		}
-		select {
-		case <-ctx.Done():
-			return
-		case <-time.After(backoff):
-		}
-	}
+func NewRateLimiterWithConfig(rdb *redis.Client, cfg RateLimitConfig) *RateLimiter {
+	return &RateLimiter{rdb: rdb, config: cfg}
 }
 
 // RateLimit returns a middleware enforcing rate limits based on path and user context.
@@ -87,8 +69,8 @@ func (rl *RateLimiter) RateLimit() func(http.Handler) http.Handler {
 				return
 			}
 
-			// Global IP rate limit (600 req / min)
-			if !rl.allow(r.Context(), fmt.Sprintf("ratelimit:global:%s", ip), 600, 1*time.Minute) {
+			// Global IP rate limit.
+			if !rl.allow(r.Context(), fmt.Sprintf("ratelimit:global:%s", ip), rl.config.GlobalLimit, rl.config.GlobalWindow) {
 				http.Error(w, `{"error":"rate limit exceeded"}`, http.StatusTooManyRequests)
 				return
 			}
@@ -97,8 +79,8 @@ func (rl *RateLimiter) RateLimit() func(http.Handler) http.Handler {
 			if path == "/graphql" && r.Method == http.MethodPost {
 				user, _ := UserFromContext(r.Context())
 				if user.UserID != "" {
-					// User-scoped AI / mutation limit (60 req / min)
-					if !rl.allow(r.Context(), fmt.Sprintf("ratelimit:user:%s", user.UserID), 60, 1*time.Minute) {
+					// User-scoped AI / mutation limit.
+					if !rl.allow(r.Context(), fmt.Sprintf("ratelimit:user:%s", user.UserID), rl.config.UserLimit, rl.config.UserWindow) {
 						http.Error(w, `{"error":"rate limit exceeded"}`, http.StatusTooManyRequests)
 						return
 					}
@@ -144,4 +126,16 @@ func getClientIP(r *http.Request) string {
 		return r.RemoteAddr
 	}
 	return host
+}
+
+func envInt(key string, fallback int) int {
+	v := os.Getenv(key)
+	if v == "" {
+		return fallback
+	}
+	n, err := strconv.Atoi(v)
+	if err != nil || n <= 0 {
+		return fallback
+	}
+	return n
 }
