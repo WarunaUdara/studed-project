@@ -250,8 +250,11 @@ func (h *Handler) agentTask(w http.ResponseWriter, r *http.Request) {
 			Language:    req.Language,
 			Grade:       req.Grade,
 			WaveContext: req.WaveContext,
-			Images:      req.Images,
-			OCRContext:  ocrCtx,
+			// Raw images are NOT forwarded to the agent: the main agent model
+			// (deepseek-v4-flash) is text-only and rejects image_url parts.
+			// The high-effort OCR (qwen3.7-plus) already extracted the text,
+			// which arrives as OCRContext above.
+			OCRContext: ocrCtx,
 		}, events)
 	}()
 
@@ -322,7 +325,6 @@ func (h *Handler) agentStream(w http.ResponseWriter, r *http.Request) {
 			Language:    req.Language,
 			Grade:       req.Grade,
 			WaveContext: req.WaveContext,
-			Images:      req.Images,
 			OCRContext:  ocrCtx,
 		}, events)
 	}()
