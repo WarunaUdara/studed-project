@@ -6,6 +6,18 @@ GATEWAY="${STUDED_API_URL:-http://localhost:8080}"
 EDUCATOR_JAR="${REPO_ROOT}/.mock-educator-cookies"
 STUDENT_JAR="${REPO_ROOT}/.mock-student-cookies"
 
+# Resolve the Postgres host connection for role promotion. docker-compose maps
+# the DB to 127.0.0.1:5433 (see docker-compose.yml); the provision script needs
+# a reachable URL or it silently skips promotion, leaving educator accounts as
+# STUDENT and hiding all educator-only UI.
+default_db_url() {
+  if command -v docker >/dev/null 2>&1 && docker ps --format '{{.Names}}' 2>/dev/null | grep -q '^studed-postgres$'; then
+    echo "postgres://studed:studed@127.0.0.1:5433/studed?sslmode=disable"
+  else
+    echo "postgres://studed:studed@localhost:5432/studed?sslmode=disable"
+  fi
+}
+
 wait_for_gateway() {
   echo "[mock] waiting for API gateway at ${GATEWAY}..."
   for _ in {1..60}; do
@@ -71,7 +83,7 @@ register_or_login() {
   # Public registration is locked to STUDENT. If the seed requested an elevated
   # role and the account was freshly created, promote it via direct DB access
   # (operator credential). Existing accounts keep whatever role they have.
-  local db_conn="${STUDED_DATABASE_URL:-${DATABASE_CONNECTION_STRING:-${DATABASE_URL:-}}}"
+  local db_conn="${STUDED_DATABASE_URL:-${DATABASE_CONNECTION_STRING:-${DATABASE_URL:-$(default_db_url)}}}"
   if [ -n "${role}" ] && [ "${role}" != "STUDENT" ] && [ "${registered_role}" != "${role}" ] && [ -n "${db_conn}" ]; then
     echo "[mock] promoting ${email} to ${role} via provision-educator.sh"
     STUDED_DATABASE_URL="${db_conn}" "${REPO_ROOT}/scripts/provision-educator.sh" "${email}" "${role}"
