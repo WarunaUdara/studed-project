@@ -149,6 +149,10 @@ func (c *OpenCodeClient) chatCompletion(ctx context.Context, msgs []Message, too
 // an error. The channel is closed by the caller.
 func readOpenCodeStream(ctx context.Context, body io.Reader, events chan<- StreamEvent) {
 	var full strings.Builder
+	var reasoning strings.Builder
+	// Tool calls accumulate by chunk index across deltas; they are emitted
+	// once the stream finishes (the terminal chunk carries finish_reason).
+	var toolCallsByIndex []chatToolCall
 	scanner := bufio.NewScanner(body)
 	scanner.Buffer(make([]byte, 0, 64*1024), 1024*1024)
 	for scanner.Scan() {
@@ -169,25 +173,53 @@ func readOpenCodeStream(ctx context.Context, body io.Reader, events chan<- Strea
 			continue
 		}
 		delta := chunk.Choices[0].Delta
-		// reasoning_content is deliberately ignored: deepseek emits it for
-		// reasoning models and it must not be treated as final content.
+		// reasoning_content is accumulated but never treated as final
+		// content; it must be echoed back to the API on tool round trips.
+		if delta.ReasoningContent != "" {
+			reasoning.WriteString(delta.ReasoningContent)
+		}
 		if delta.Content != "" {
 			full.WriteString(delta.Content)
 			events <- StreamEvent{Type: "text_delta", Delta: delta.Content}
 		}
 		for _, tc := range delta.ToolCalls {
-			events <- StreamEvent{Type: "tool_call", ToolCall: &ToolCall{
-				ID:        tc.ID,
-				Name:      tc.Function.Name,
-				Arguments: tc.Function.Arguments,
-			}}
+			// Tool call deltas arrive across chunks: the first chunk carries
+			// id + name + empty arguments, subsequent chunks carry only the
+			// index and argument fragments. Key the accumulation by the
+			// chunk index and fill id/name when present.
+			idx := tc.Index
+			if idx >= len(toolCallsByIndex) {
+				// Grow the slice; unknown/absent indices append at the end.
+				toolCallsByIndex = append(toolCallsByIndex, make([]chatToolCall, idx+1-len(toolCallsByIndex))...)
+			}
+			if tc.ID != "" {
+				toolCallsByIndex[idx].ID = tc.ID
+			}
+			if tc.Type != "" {
+				toolCallsByIndex[idx].Type = tc.Type
+			}
+			if tc.Function.Name != "" {
+				toolCallsByIndex[idx].Function.Name = tc.Function.Name
+			}
+			toolCallsByIndex[idx].Function.Arguments += tc.Function.Arguments
 		}
 	}
 	if err := scanner.Err(); err != nil && ctx.Err() == nil {
 		events <- StreamEvent{Type: "error", Error: fmt.Errorf("opencode stream read failed: %w", err)}
 		return
 	}
-	events <- StreamEvent{Type: "done", Content: full.String()}
+	for _, tc := range toolCallsByIndex {
+		if tc.ID == "" || tc.Function.Name == "" {
+			events <- StreamEvent{Type: "error", Error: fmt.Errorf("opencode stream produced an incomplete tool call")}
+			return
+		}
+		events <- StreamEvent{Type: "tool_call", ToolCall: &ToolCall{
+			ID:        tc.ID,
+			Name:      tc.Function.Name,
+			Arguments: tc.Function.Arguments,
+		}}
+	}
+	events <- StreamEvent{Type: "done", Content: full.String(), Reasoning: reasoning.String()}
 }
 
 // buildChatRequest converts provider-level messages and tools into the
@@ -210,7 +242,7 @@ func buildChatRequest(model string, msgs []Message, tools []Tool, opts Options, 
 func toChatMessages(msgs []Message) []chatMessage {
 	out := make([]chatMessage, 0, len(msgs))
 	for _, m := range msgs {
-		cm := chatMessage{Role: m.Role, Content: m.Content, ToolCallID: m.ToolCallID}
+		cm := chatMessage{Role: m.Role, Content: m.Content, ToolCallID: m.ToolCallID, ReasoningContent: m.ReasoningContent}
 		if len(m.ToolCalls) > 0 {
 			cm.ToolCalls = make([]chatToolCall, 0, len(m.ToolCalls))
 			for _, tc := range m.ToolCalls {
@@ -272,10 +304,11 @@ type chatRequest struct {
 }
 
 type chatMessage struct {
-	Role       string         `json:"role"`
-	Content    string         `json:"content"`
-	ToolCallID string         `json:"tool_call_id,omitempty"`
-	ToolCalls  []chatToolCall `json:"tool_calls,omitempty"`
+	Role             string         `json:"role"`
+	Content          string         `json:"content"`
+	ToolCallID       string         `json:"tool_call_id,omitempty"`
+	ToolCalls        []chatToolCall `json:"tool_calls,omitempty"`
+	ReasoningContent string         `json:"reasoning_content,omitempty"`
 }
 
 type chatTool struct {
@@ -290,6 +323,7 @@ type chatToolFunction struct {
 }
 
 type chatToolCall struct {
+	Index    int                  `json:"index,omitempty"`
 	ID       string               `json:"id,omitempty"`
 	Type     string               `json:"type,omitempty"`
 	Function chatToolCallFunction `json:"function,omitempty"`

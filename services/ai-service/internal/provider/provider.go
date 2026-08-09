@@ -31,6 +31,11 @@ type Message struct {
 	ToolCallID string
 	// ToolCalls is set for Role == "assistant" when the model requested tools.
 	ToolCalls []ToolCall
+	// ReasoningContent is set for Role == "assistant" on reasoning models
+	// (e.g. deepseek). Providers that emit a separate reasoning stream require
+	// it to be echoed back when the assistant message is fed into the next
+	// round trip; it is never surfaced to end users.
+	ReasoningContent string
 }
 
 // ToolCall is a request from the model to invoke a tool.
@@ -55,4 +60,7 @@ type StreamEvent struct {
 	Error    error
 	// Content carries the full assistant content when Type == "done".
 	Content string
+	// Reasoning carries the full reasoning_content when Type == "done" on
+	// reasoning models; the agent echoes it back on the next round trip.
+	Reasoning string
 }

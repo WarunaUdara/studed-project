@@ -215,6 +215,57 @@ func TestOpenCodeStream(t *testing.T) {
 	}
 }
 
+func TestOpenCodeStreamSplitToolCallChunks(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		flusher, _ := w.(http.Flusher)
+		// Real deepseek streaming: the first chunk carries id+name, later
+		// chunks carry only the index and argument fragments.
+		for _, e := range []string{
+			`data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"call_abc","type":"function","function":{"name":"generateLearnBlocks","arguments":""}}]}}]}`,
+			`data: {"choices":[{"delta":{"tool_calls":[{"index":0,"function":{"arguments":"{\"pro"}}]}}]}`,
+			`data: {"choices":[{"delta":{"tool_calls":[{"index":0,"function":{"arguments":"mpt\":\"x\"}"}}]}}]}`,
+			`data: {"choices":[{"delta":{"content":"","reasoning_content":null},"finish_reason":"tool_calls"}]}`,
+			`data: [DONE]`,
+		} {
+			fmt.Fprintln(w, e)
+			flusher.Flush()
+		}
+	}))
+	defer srv.Close()
+
+	t.Setenv("OPENCODE_API_KEY", "k")
+	c := NewOpenCodeClient().WithBaseURL(srv.URL)
+
+	ch, err := c.Stream(context.Background(), []Message{{Role: "user", Content: "go"}}, nil, DefaultOptions())
+	if err != nil {
+		t.Fatalf("Stream: %v", err)
+	}
+
+	var toolCalls []ToolCall
+	var errMsg string
+	for ev := range ch {
+		switch ev.Type {
+		case "tool_call":
+			if ev.ToolCall != nil {
+				toolCalls = append(toolCalls, *ev.ToolCall)
+			}
+		case "error":
+			errMsg = ev.Error.Error()
+		}
+	}
+	if errMsg != "" {
+		t.Fatalf("unexpected error event: %s", errMsg)
+	}
+	if len(toolCalls) != 1 {
+		t.Fatalf("tool calls = %+v, want exactly 1 (split chunks must merge)", toolCalls)
+	}
+	tc := toolCalls[0]
+	if tc.ID != "call_abc" || tc.Name != "generateLearnBlocks" || tc.Arguments != `{"prompt":"x"}` {
+		t.Errorf("merged tool call = %+v", tc)
+	}
+}
+
 func TestOpenCodeStreamHTTPError(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "upstream down", http.StatusBadGateway)

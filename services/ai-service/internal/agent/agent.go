@@ -84,15 +84,16 @@ func (a *Agent) Run(ctx context.Context, req Request, events chan<- Event) {
 			return
 		}
 
-		assistantText, calls, err := a.streamOnce(ctx, msgs, events)
+		assistantText, reasoning, calls, err := a.streamOnce(ctx, msgs, events)
 		if err != nil {
 			events <- Event{Type: "error", Error: err.Error()}
 			return
 		}
 		msgs = append(msgs, provider.Message{
-			Role:      "assistant",
-			Content:   assistantText,
-			ToolCalls: calls,
+			Role:             "assistant",
+			Content:          assistantText,
+			ToolCalls:        calls,
+			ReasoningContent: reasoning,
 		})
 
 		if len(calls) == 0 {
@@ -131,14 +132,17 @@ func (a *Agent) Run(ctx context.Context, req Request, events chan<- Event) {
 // streamOnce calls the provider and accumulates text deltas and tool calls
 // from the stream, forwarding deltas as events. Tool call arguments are
 // accumulated by call ID so providers that split arguments across chunks are
-// handled correctly.
-func (a *Agent) streamOnce(ctx context.Context, msgs []provider.Message, events chan<- Event) (string, []provider.ToolCall, error) {
+// handled correctly. It returns the assistant text, the full reasoning
+// content (for reasoning models; echoed back on tool round trips), and the
+// requested tool calls.
+func (a *Agent) streamOnce(ctx context.Context, msgs []provider.Message, events chan<- Event) (string, string, []provider.ToolCall, error) {
 	ch, err := a.provider.Stream(ctx, msgs, a.Tools(), provider.DefaultOptions())
 	if err != nil {
-		return "", nil, err
+		return "", "", nil, err
 	}
 
 	var text strings.Builder
+	var reasoning strings.Builder
 	var calls []provider.ToolCall
 	callIndex := make(map[string]int)
 	var streamErr error
@@ -162,20 +166,22 @@ func (a *Agent) streamOnce(ctx context.Context, msgs []provider.Message, events 
 			if ev.Error != nil {
 				streamErr = ev.Error
 			}
+		case "done":
+			reasoning.WriteString(ev.Reasoning)
 		}
 	}
 	if streamErr != nil {
-		return "", nil, streamErr
+		return "", "", nil, streamErr
 	}
-	return text.String(), calls, nil
+	return text.String(), reasoning.String(), calls, nil
 }
 
 // doneEvent builds the final done event. If the assistant text looks like a
 // JSON blocks payload it is parsed into Learn/Evaluate blocks; otherwise the
-// text is delivered as-is.
+// text is delivered as-is. Markdown code fences around the JSON are stripped.
 func (a *Agent) doneEvent(final string) Event {
 	ev := Event{Type: "done", Message: final}
-	trimmed := strings.TrimSpace(final)
+	trimmed := extractJSON(strings.TrimSpace(final))
 	switch {
 	case strings.HasPrefix(trimmed, "["):
 		if lbs, err := blocks.ParseLearnBlocks([]byte(trimmed)); err == nil {
@@ -208,6 +214,55 @@ func (a *Agent) doneEvent(final string) Event {
 		}
 	}
 	return ev
+}
+
+// extractJSON pulls the first JSON value (array or object) out of s, skipping
+// markdown code fences and any prose around it. If no JSON value is found it
+// returns s unchanged so the caller's parse attempt fails naturally.
+func extractJSON(s string) string {
+	if !strings.Contains(s, "```") {
+		return s
+	}
+	start := strings.IndexByte(s, '[')
+	endObj := strings.IndexByte(s, '{')
+	if endObj >= 0 && (start < 0 || endObj < start) {
+		start = endObj
+	}
+	if start < 0 {
+		return s
+	}
+	depth := 0
+	inString := false
+	escaped := false
+	for i := start; i < len(s); i++ {
+		c := s[i]
+		if inString {
+			if escaped {
+				escaped = false
+				continue
+			}
+			if c == '\\' {
+				escaped = true
+				continue
+			}
+			if c == '"' {
+				inString = false
+			}
+			continue
+		}
+		switch c {
+		case '"':
+			inString = true
+		case '[', '{':
+			depth++
+		case ']', '}':
+			depth--
+			if depth == 0 {
+				return s[start : i+1]
+			}
+		}
+	}
+	return s
 }
 
 // buildMessages assembles the system prompt and user message for the first
