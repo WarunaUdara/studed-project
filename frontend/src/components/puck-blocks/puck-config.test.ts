@@ -9,11 +9,19 @@ import {
   type PuckData,
 } from "@/components/puck-blocks/puck-config";
 
-// Realistic agent output (matches what /v1/agent/stream emits on "done").
+// Realistic agent output covering EVERY learn and evaluate type the agent
+// can generate (matches the ai-service block catalog).
 const AGENT_LEARN: LearnBlockRaw[] = [
   { id: "learn-1", type: "text", content: "Gravity pulls objects toward Earth." },
   { id: "learn-2", type: "math", content: "F = G(m1 m2)/r^2" },
   { id: "learn-3", type: "image", content: "https://cdn.example.com/gravity.png", metadata: "Diagram of falling objects" },
+  { id: "learn-4", type: "video", content: "https://www.youtube.com/watch?v=abc123", metadata: "Gravity explained" },
+  { id: "learn-5", type: "callout", content: "Remember: mass attracts mass." },
+  { id: "learn-6", type: "example", content: "A 70kg person weighs 686N on Earth." },
+  { id: "learn-7", type: "mathviz_manim", content: "Pendulum animation", metadata: JSON.stringify({ title: "Pendulum", scene_spec: { beats: [{ time: 0, action: "create" }] } }) },
+  { id: "learn-8", type: "chemviz_3dmol", content: "Water molecule", metadata: JSON.stringify({ title: "H2O", source_type: "smiles", source: "O" }) },
+  { id: "learn-9", type: "elecsim_tscircuit", content: "LED circuit", metadata: JSON.stringify({ title: "LED", circuit_code: "..." }) },
+  { id: "learn-10", type: "mechsim_matterjs", content: "Bouncing ball", metadata: JSON.stringify({ title: "Ball", bodies: [{ shape: "circle" }] }) },
 ];
 
 const AGENT_EVALUATE: EvaluateBlockRaw[] = [
@@ -34,6 +42,20 @@ const AGENT_EVALUATE: EvaluateBlockRaw[] = [
   },
   {
     id: "eval-3",
+    type: "true_false",
+    question: "The Moon has weaker gravity than Earth.",
+    correctAnswer: "True",
+    explanation: "Smaller mass means weaker gravity.",
+  },
+  {
+    id: "eval-4",
+    type: "numeric",
+    question: "What is the value of g on Earth in m/s^2?",
+    correctAnswer: "9.8",
+    explanation: "Standard value.",
+  },
+  {
+    id: "eval-5",
     type: "drag_drop",
     question: "Match each planet to its gravity strength.",
     correctAnswer: "Earth: 9.8, Moon: 1.6",
@@ -42,85 +64,79 @@ const AGENT_EVALUATE: EvaluateBlockRaw[] = [
 ];
 
 describe("agentBlocksToPuckItems", () => {
-  it("converts every learn and evaluate block into a Puck item", () => {
+  it("converts every learn and evaluate block type into a Puck item", () => {
     const items = agentBlocksToPuckItems(AGENT_LEARN, AGENT_EVALUATE);
-    expect(items).toHaveLength(6);
-    expect(items[0]).toMatchObject({ type: "TextBlock" });
-    expect(items[1]).toMatchObject({ type: "MathViz" });
-    expect(items[2]).toMatchObject({ type: "ImageBlock" });
-    expect(items[3]).toMatchObject({ type: "MCQBlock" });
-    expect(items[4]).toMatchObject({ type: "FillBlankBlock" });
-    expect(items[5]).toMatchObject({ type: "DragDropBlock" });
+    expect(items).toHaveLength(15);
+
+    const byType = new Map(items.map((i) => [i.type, i]));
+    expect(byType.get("TextBlock")).toBeDefined();
+    expect(byType.get("MathViz")).toBeDefined();
+    expect(byType.get("ImageBlock")).toBeDefined();
+    expect(byType.get("VideoBlock")).toBeDefined();
+    expect(byType.get("CalloutBlock")).toBeDefined();
+    expect(byType.get("ExampleBlock")).toBeDefined();
+    expect(byType.get("VizBlock")).toBeDefined();
+    expect(byType.get("MCQBlock")).toBeDefined();
+    expect(byType.get("FillBlankBlock")).toBeDefined();
+    expect(byType.get("TrueFalseBlock")).toBeDefined();
+    expect(byType.get("NumericBlock")).toBeDefined();
+    expect(byType.get("DragDropBlock")).toBeDefined();
+  });
+
+  it("preserves ids, content, and metadata through conversion", () => {
+    const items = agentBlocksToPuckItems(AGENT_LEARN, AGENT_EVALUATE);
+    const viz = items.find((i) => i.type === "VizBlock")!;
+    expect(viz.props.id).toBe("learn-7");
+    expect(viz.props.vizType).toBe("mathviz_manim");
+    const parsed = JSON.parse(viz.props.metadata as string);
+    expect(parsed.title).toBe("Pendulum");
+
+    const mcq = items.find((i) => i.type === "MCQBlock")!;
+    expect((mcq.props.options as string).split("\n")).toHaveLength(4);
+    expect(mcq.props.correctAnswer).toBe("Pulls objects together");
   });
 
   it("handles empty input without error", () => {
     expect(agentBlocksToPuckItems([], [])).toHaveLength(0);
-    expect(agentBlocksToPuckItems(undefined as unknown as LearnBlockRaw[], undefined as unknown as EvaluateBlockRaw[])).toHaveLength(0);
-  });
-
-  it("preserves ids and content through conversion", () => {
-    const items = agentBlocksToPuckItems(AGENT_LEARN, AGENT_EVALUATE);
-    expect(items[0].props.id).toBe("learn-1");
-    expect(items[0].props.content).toBe("Gravity pulls objects toward Earth.");
-    expect(items[3].props.id).toBe("eval-1");
-    expect((items[3].props.options as string).split("\n")).toHaveLength(4);
+    expect(
+      agentBlocksToPuckItems(undefined as unknown as LearnBlockRaw[], undefined as unknown as EvaluateBlockRaw[]),
+    ).toHaveLength(0);
   });
 });
 
-describe("insert-then-save round trip (the chat agent insert flow)", () => {
-  it("agent blocks appended to a wave survive save serialization unchanged", () => {
-    // Start with existing wave content, as an educator would see it.
+describe("insert-then-save round trip (the chat agent auto-insert flow)", () => {
+  it("all agent block types survive save serialization with field parity", () => {
     const existing: PuckData = {
-      content: [
-        { type: "TextBlock", props: { id: "existing-1", content: "Existing intro text." } },
-      ],
+      content: [{ type: "TextBlock", props: { id: "existing-1", content: "Existing intro text." } }],
       root: {},
       zones: {},
     };
 
-    // 1. Agent finishes; panel converts its blocks to Puck items.
     const newItems = agentBlocksToPuckItems(AGENT_LEARN, AGENT_EVALUATE);
-
-    // 2. Editor appends them to the live content (handleInsertBlocks).
     const merged: PuckData = {
       ...existing,
       content: [...(existing.content ?? []), ...newItems],
     };
-    expect(merged.content).toHaveLength(1 + 6);
+    expect(merged.content).toHaveLength(1 + 15);
 
-    // 3. Save serializes back to GraphQL inputs (puckToWaveData).
     const { learnBlocks, evaluateBlocks } = puckToWaveData(merged);
 
-    // 4. The original agent blocks must round-trip exactly (field equality,
-    //    order preserved, existing content untouched). The existing
-    //    TextBlock serializes first as a learn block, then the agent's.
-    expect(learnBlocks).toHaveLength(4);
-    expect(evaluateBlocks).toHaveLength(3);
+    // existing + 10 learn
+    expect(learnBlocks).toHaveLength(11);
+    expect(evaluateBlocks).toHaveLength(5);
 
-    expect(learnBlocks[0]).toEqual({
-      id: "existing-1",
-      type: "text",
-      content: "Existing intro text.",
-      metadata: null,
-    });
-    expect(learnBlocks[1]).toEqual({
-      id: "learn-1",
-      type: "text",
-      content: "Gravity pulls objects toward Earth.",
-      metadata: null,
-    });
-    expect(learnBlocks[2]).toEqual({
-      id: "learn-2",
-      type: "formula",
-      content: "F = G(m1 m2)/r^2",
-      metadata: null,
-    });
-    expect(learnBlocks[3]).toEqual({
-      id: "learn-3",
-      type: "image",
-      content: "https://cdn.example.com/gravity.png",
-      metadata: "Diagram of falling objects",
-    });
+    // Verify every type round-trips with exact field parity.
+    expect(learnBlocks[1]).toEqual({ id: "learn-1", type: "text", content: "Gravity pulls objects toward Earth.", metadata: null });
+    expect(learnBlocks[2]).toEqual({ id: "learn-2", type: "formula", content: "F = G(m1 m2)/r^2", metadata: null });
+    expect(learnBlocks[3]).toEqual({ id: "learn-3", type: "image", content: "https://cdn.example.com/gravity.png", metadata: "Diagram of falling objects" });
+    expect(learnBlocks[4]).toEqual({ id: "learn-4", type: "video", content: "https://www.youtube.com/watch?v=abc123", metadata: "Gravity explained" });
+    expect(learnBlocks[5]).toEqual({ id: "learn-5", type: "callout", content: "Remember: mass attracts mass.", metadata: null });
+    expect(learnBlocks[6]).toEqual({ id: "learn-6", type: "example", content: "A 70kg person weighs 686N on Earth.", metadata: null });
+    expect(learnBlocks[7].type).toBe("mathviz_manim");
+    expect(learnBlocks[7].metadata).toContain("Pendulum");
+    expect(learnBlocks[8].type).toBe("chemviz_3dmol");
+    expect(learnBlocks[9].type).toBe("elecsim_tscircuit");
+    expect(learnBlocks[10].type).toBe("mechsim_matterjs");
 
     expect(evaluateBlocks[0]).toEqual({
       id: "eval-1",
@@ -142,6 +158,24 @@ describe("insert-then-save round trip (the chat agent insert flow)", () => {
     });
     expect(evaluateBlocks[2]).toEqual({
       id: "eval-3",
+      type: "true_false",
+      question: "The Moon has weaker gravity than Earth.",
+      options: null,
+      correctAnswer: "True",
+      explanation: "Smaller mass means weaker gravity.",
+      metadata: null,
+    });
+    expect(evaluateBlocks[3]).toEqual({
+      id: "eval-4",
+      type: "numeric",
+      question: "What is the value of g on Earth in m/s^2?",
+      options: null,
+      correctAnswer: "9.8",
+      explanation: "Standard value.",
+      metadata: null,
+    });
+    expect(evaluateBlocks[4]).toEqual({
+      id: "eval-5",
       type: "drag_and_drop",
       question: "Match each planet to its gravity strength.",
       options: null,
@@ -152,23 +186,32 @@ describe("insert-then-save round trip (the chat agent insert flow)", () => {
   });
 
   it("reloading the saved wave reproduces the same Puck blocks (editor reload path)", () => {
-    // Simulate: agent blocks inserted -> saved -> wave fetched again -> the
-    // editor rebuilds Puck data via waveDataToPuck. Nothing may be lost.
     const { learnBlocks, evaluateBlocks } = puckToWaveData({
-      content: [
-        ...agentBlocksToPuckItems(AGENT_LEARN, AGENT_EVALUATE),
-      ],
+      content: [...agentBlocksToPuckItems(AGENT_LEARN, AGENT_EVALUATE)],
       root: {},
       zones: {},
     });
 
     const rebuilt = waveDataToPuck(learnBlocks, evaluateBlocks);
-    expect(rebuilt.content).toHaveLength(6);
-    expect(rebuilt.content[0]).toMatchObject({ type: "TextBlock", props: { id: "learn-1", content: AGENT_LEARN[0].content } });
-    expect(rebuilt.content[1]).toMatchObject({ type: "MathViz", props: { id: "learn-2", formula: AGENT_LEARN[1].content } });
-    expect(rebuilt.content[2]).toMatchObject({ type: "ImageBlock", props: { id: "learn-3", src: AGENT_LEARN[2].content } });
-    expect(rebuilt.content[3]).toMatchObject({ type: "MCQBlock", props: { id: "eval-1", question: AGENT_EVALUATE[0].question } });
-    expect(rebuilt.content[4]).toMatchObject({ type: "FillBlankBlock", props: { id: "eval-2", question: AGENT_EVALUATE[1].question } });
-    expect(rebuilt.content[5]).toMatchObject({ type: "DragDropBlock", props: { id: "eval-3", question: AGENT_EVALUATE[2].question } });
+    expect(rebuilt.content).toHaveLength(15);
+
+    // Spot-check the distinctive mappings survive the full cycle.
+    const byType = new Map(rebuilt.content.map((i) => [i.type, i]));
+    expect(byType.get("TextBlock")?.props.content).toBe(AGENT_LEARN[0].content);
+    expect(byType.get("MathViz")?.props.formula).toBe(AGENT_LEARN[1].content);
+    expect(byType.get("ImageBlock")?.props.src).toBe(AGENT_LEARN[2].content);
+    expect(byType.get("VideoBlock")?.props.src).toBe(AGENT_LEARN[3].content);
+    expect(byType.get("CalloutBlock")?.props.content).toBe(AGENT_LEARN[4].content);
+    expect(byType.get("ExampleBlock")?.props.content).toBe(AGENT_LEARN[5].content);
+    const manimViz = rebuilt.content.find((i) => i.type === "VizBlock" && i.props.vizType === "mathviz_manim");
+    expect(manimViz?.props.vizType).toBe("mathviz_manim");
+    expect(manimViz?.props.id).toBe("learn-7");
+    const chemViz = rebuilt.content.find((i) => i.type === "VizBlock" && i.props.vizType === "chemviz_3dmol");
+    expect(chemViz?.props.vizType).toBe("chemviz_3dmol");
+    expect(byType.get("MCQBlock")?.props.question).toBe(AGENT_EVALUATE[0].question);
+    expect(byType.get("FillBlankBlock")?.props.question).toBe(AGENT_EVALUATE[1].question);
+    expect(byType.get("TrueFalseBlock")?.props.correctAnswer).toBe("True");
+    expect(byType.get("NumericBlock")?.props.correctAnswer).toBe("9.8");
+    expect(byType.get("DragDropBlock")?.props.question).toBe(AGENT_EVALUATE[4].question);
   });
 });

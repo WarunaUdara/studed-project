@@ -19,6 +19,7 @@ export interface AIChatContext {
   images?: string[]; // base64 data URLs of uploaded photos
 }
 
+/** Block sets handed to the wave editor for immediate insertion. */
 export interface AIGeneratedBlocks {
   learnBlocks: NonNullable<AgentEvent["learnBlocks"]>;
   evaluateBlocks: NonNullable<AgentEvent["evaluateBlocks"]>;
@@ -27,16 +28,16 @@ export interface AIGeneratedBlocks {
 interface AIAssistantState {
   messages: AIChatMessage[];
   running: boolean;
-  lastGenerated: AIGeneratedBlocks | null;
+  /** Most recent insert for the confirmation chip ("Added 2 Learn, 1 Evaluate"). */
+  lastInserted: AIGeneratedBlocks | null;
   /** In-flight abort controller so "Stop" can cancel the stream. */
   abortRef: AbortController | null;
 
   sendPrompt: (prompt: string, ctx: AIChatContext) => void;
   stop: () => void;
-  clearGenerated: () => void;
-  /** Registers the wave editor's insert callback (set on mount). */
+  clearInserted: () => void;
+  /** Registers the wave editor's auto-insert callback (set on mount). */
   setInsertHandler: (fn: (blocks: AIGeneratedBlocks) => void) => void;
-  insertGenerated: () => void;
   reset: () => void;
 }
 
@@ -45,7 +46,7 @@ let insertHandler: ((blocks: AIGeneratedBlocks) => void) | null = null;
 export const useAIAssistant = create<AIAssistantState>((set, get) => ({
   messages: [],
   running: false,
-  lastGenerated: null,
+  lastInserted: null,
   abortRef: null,
 
   sendPrompt: (prompt, ctx) => {
@@ -56,7 +57,7 @@ export const useAIAssistant = create<AIAssistantState>((set, get) => ({
     set((s) => ({
       running: true,
       abortRef: abort,
-      lastGenerated: null,
+      lastInserted: null,
       messages: [
         ...s.messages,
         { role: "user", text: trimmed, events: [], done: true },
@@ -101,22 +102,27 @@ export const useAIAssistant = create<AIAssistantState>((set, get) => ({
               const count =
                 (event.learnBlocks?.length ?? 0) + (event.evaluateBlocks?.length ?? 0);
               const summary = count
-                ? `Generated ${event.learnBlocks?.length ?? 0} Learn block(s) and ${event.evaluateBlocks?.length ?? 0} Evaluate block(s).`
+                ? `Added ${event.learnBlocks?.length ?? 0} Learn block(s) and ${event.evaluateBlocks?.length ?? 0} Evaluate block(s) to your editor.`
                 : "";
               patchLast((m) => ({
                 ...m,
-                text: finalText || event.message || summary || "Done.",
+                // Auto-inserted blocks are rendered in the editor; the chat
+                // keeps a human summary instead of raw block syntax.
+                text:
+                  finalText && !/learnBlocks|evaluateBlocks/i.test(finalText)
+                    ? finalText.trim()
+                    : summary || "Done.",
                 events: [...m.events, event],
                 done: true,
               }));
-              set({
-                running: false,
-                abortRef: null,
-                lastGenerated: {
+              if (count > 0) {
+                insertHandler?.({
                   learnBlocks: latest.learnBlocks,
                   evaluateBlocks: latest.evaluateBlocks,
-                },
-              });
+                });
+                set({ lastInserted: { learnBlocks: latest.learnBlocks, evaluateBlocks: latest.evaluateBlocks } });
+              }
+              set({ running: false, abortRef: null });
               break;
             }
             case "error":
@@ -141,8 +147,6 @@ export const useAIAssistant = create<AIAssistantState>((set, get) => ({
           set({ running: false, abortRef: null });
         },
         onComplete: () => {
-          // Mark the last assistant message done if the stream ended without
-          // a terminal event (e.g. abort).
           set((s) => {
             const msgs = [...s.messages];
             const last = msgs[msgs.length - 1];
@@ -161,18 +165,11 @@ export const useAIAssistant = create<AIAssistantState>((set, get) => ({
     set({ running: false, abortRef: null });
   },
 
-  clearGenerated: () => set({ lastGenerated: null }),
+  clearInserted: () => set({ lastInserted: null }),
 
   setInsertHandler: (fn) => {
     insertHandler = fn;
   },
 
-  insertGenerated: () => {
-    const { lastGenerated } = get();
-    if (!lastGenerated) return;
-    insertHandler?.(lastGenerated);
-    set({ lastGenerated: null });
-  },
-
-  reset: () => set({ messages: [], running: false, lastGenerated: null, abortRef: null }),
+  reset: () => set({ messages: [], running: false, lastInserted: null, abortRef: null }),
 }));

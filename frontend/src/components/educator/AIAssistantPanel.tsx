@@ -44,8 +44,7 @@ export function AIAssistantPanel({
   puckData,
   onClose,
 }: AIAssistantPanelProps) {
-  const { messages, running, lastGenerated, sendPrompt, stop, insertGenerated, clearGenerated } =
-    useAIAssistant();
+  const { messages, running, lastInserted, sendPrompt, stop, clearInserted } = useAIAssistant();
   const [input, setInput] = useState("");
   const [images, setImages] = useState<{ file: File; dataUrl: string }[]>([]);
   const [imageError, setImageError] = useState<string | null>(null);
@@ -81,8 +80,6 @@ export function AIAssistantPanel({
     }
     const toAdd = pending.slice(0, Math.max(0, remaining));
 
-    // Read each file as a data URL. Thumbnails render from the data URL, so
-    // the grid keeps fixed dimensions and never shifts while decoding.
     for (const item of toAdd) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -164,9 +161,11 @@ export function AIAssistantPanel({
                 <Bot className="h-4 w-4" /> I can build this wave&apos;s content with you.
               </p>
               <p>
-                Ask me to create Learn blocks (text, formulas, images) and Evaluate blocks
-                (MCQ, fill-in-the-blank, drag-and-drop). Upload photos of notes or textbook
-                pages and I&apos;ll read them with high-effort OCR before generating.
+                Ask me to create any content — text, formulas, images, videos, callouts,
+                examples, interactive visualizations, MCQs, fill-in-the-blank, true/false,
+                numeric, and drag-and-drop. Generated blocks appear in your editor instantly.
+                Upload photos of notes or textbook pages and I&apos;ll read them with
+                high-effort OCR first.
               </p>
             </div>
             <div className="space-y-2">
@@ -213,12 +212,6 @@ export function AIAssistantPanel({
                     {m.error}
                   </p>
                 )}
-                {m.done && !m.error && m.events.some((e) => e.type === "done") && (
-                  <p className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <ArrowDownToLine className="h-3 w-3" />
-                    Review the blocks below, then insert them into the editor.
-                  </p>
-                )}
               </>
             )}
           </div>
@@ -232,18 +225,16 @@ export function AIAssistantPanel({
         )}
       </div>
 
-      {/* Insert actions */}
-      {lastGenerated && (
+      {/* Auto-insert confirmation (blocks already landed in the editor). */}
+      {lastInserted && !running && (
         <div className="shrink-0 border-t bg-muted/30 px-4 py-3">
-          <p className="mb-2 text-xs font-medium text-foreground">
-            Ready to insert: {lastGenerated.learnBlocks.length} Learn,{" "}
-            {lastGenerated.evaluateBlocks.length} Evaluate block(s)
-          </p>
-          <div className="flex gap-2">
-            <Button size="sm" className="flex-1" onClick={insertGenerated}>
-              <ArrowDownToLine className="mr-1.5 h-4 w-4" /> Insert
-            </Button>
-            <Button size="sm" variant="ghost" onClick={clearGenerated} className="shrink-0">
+          <div className="flex items-center justify-between gap-2">
+            <p className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+              <ArrowDownToLine className="h-3.5 w-3.5 text-success" />
+              Added {lastInserted.learnBlocks.length} Learn, {lastInserted.evaluateBlocks.length}{" "}
+              Evaluate block(s) to the editor
+            </p>
+            <Button size="sm" variant="ghost" onClick={clearInserted} className="h-7 px-2 text-xs">
               Dismiss
             </Button>
           </div>
@@ -258,8 +249,6 @@ export function AIAssistantPanel({
           </p>
         )}
 
-        {/* Image thumbnails: fixed-height grid so adding/removing never
-            shifts the composer or the message list. */}
         {images.length > 0 && (
           <div className="mb-2 flex flex-wrap gap-2">
             {images.map((img) => (
