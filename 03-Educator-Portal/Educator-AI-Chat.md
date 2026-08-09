@@ -299,6 +299,16 @@ After generation, educators can:
 - **Notion-style left sidebar collapse**: a toggle button in Puck's header
   collapses the blocks/outline palette to a narrow icon rail (smooth
   transition) and expands it back.
+- **Notion-style site sidebar collapse**: the educator portal's own left
+  nav (Dashboard / My Courses / Leaderboard / Achievements / Settings /
+  Log out) collapses to a narrow icon rail via a toggle in the profile
+  card, persisted in localStorage so the choice survives navigation and
+  reloads — collapsing it gives the wave editor the full remaining width.
+- **Request fidelity**: the agent system prompt, tool descriptions, and
+  per-tool prompts enforce generating exactly the block types and count
+  the educator requested (verified live: "one true/false question"
+  produces exactly one `true_false` block; "2 learn blocks" produces
+  exactly two).
 
 ### Frontend files
 
