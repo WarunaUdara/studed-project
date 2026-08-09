@@ -3,6 +3,7 @@ package graph
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -53,6 +54,25 @@ func setAuthCookies(ctx context.Context, accessToken, refreshToken string) {
 		Path:     "/",
 		MaxAge:   int(7 * 24 * time.Hour / time.Second),
 	})
+}
+
+// populateLessons attaches lessons (and their waves) to a course. List
+// endpoints (Courses, MyEnrollments) return courses without lessons because
+// the course-service ListCourses gRPC response carries no lesson data; the
+// GraphQL Course type exposes lessons non-null, so without this the
+// educator dashboard and course cards report zero lessons. Failures are
+// logged but never fail the parent query.
+func (r *Resolver) populateLessons(ctx context.Context, course *model.Course) {
+	if course == nil {
+		return
+	}
+	full, err := r.CourseClient.GetCourseWithLessons(ctx, course.ID)
+	if err != nil {
+		slog.Warn("failed to load lessons for course", slog.String("course_id", course.ID), slog.Any("error", err))
+		return
+	}
+	course.Lessons = full.Lessons
+	course.Educator = full.Educator
 }
 
 func (r *Resolver) populateWavesProgress(ctx context.Context, userID string, course *model.Course) {

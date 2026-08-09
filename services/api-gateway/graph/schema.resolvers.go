@@ -455,7 +455,16 @@ func (r *queryResolver) Courses(ctx context.Context, filter *model.CourseFilter,
 		filter.IsPublished = &published
 	}
 
-	return r.CourseClient.ListCourses(ctx, filter, educatorID)
+	conn, err := r.CourseClient.ListCourses(ctx, filter, educatorID)
+	if err != nil {
+		return nil, err
+	}
+	for _, edge := range conn.Edges {
+		if edge != nil {
+			r.populateLessons(ctx, edge.Node)
+		}
+	}
+	return conn, nil
 }
 
 // MyEnrollments is the resolver for the myEnrollments field.
@@ -471,6 +480,7 @@ func (r *queryResolver) MyEnrollments(ctx context.Context) ([]*model.Course, err
 	}
 
 	for _, course := range courses {
+		r.populateLessons(ctx, course)
 		progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, course.ID)
 		course.MyProgress = progress
 		r.populateWavesProgress(ctx, userCtx.UserID, course)
