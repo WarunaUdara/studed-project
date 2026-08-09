@@ -119,25 +119,45 @@ All bodies bounded (`MAX_BODY_BYTES`, default 2MB), 90s write timeout
 
 ## Gateway
 
-- Extend `internal/client/ai.go` with `GenerateVisualization`,
-  `AnalyzeImage`, `AgentTask`.
-- GraphQL schema: add `generateVisualization(concept, vizType, grade):
-  VisualizationBlock!` and `analyzeImage(imageBase64, prompt): ImageAnalysis!`
-  mutations; `VisualizationBlock`/`ImageAnalysis` types.
-- SSE proxy: `GET /api/v1/ai/agent/stream` streams the ai-service SSE through
-  the gateway (service-token protected).
+Implemented:
+
+- `internal/client/ai.go`: `GenerateVisualization`, `AnalyzeImage` (plus the
+  pre-existing `GenerateLearnBlocks`, `GenerateEvaluateBlocks`,
+  `TranslateContent`).
+- GraphQL schema: `VizType` enum (MANIM / THREEDMOL / TSCIRCUIT / MATTERJS),
+  `generateVisualization(concept: String!, vizType: VizType!, grade: String):
+  String!` (raw JSON block) and `analyzeImage(imageBase64: String!, prompt:
+  String): String!` mutations. Educator-guarded; `vizTypeToService()` maps
+  enum values to the ai-service wire strings (`manim|3dmol|tscircuit|matterjs`).
+- SSE proxy: **`POST /ai/chat`** (`internal/handler/ai_chat_proxy.go`)
+  authenticates (educator-only), forwards to ai-service `/v1/agent/stream`,
+  and pipes the `text/event-stream` back unbuffered. Exempt from the
+  per-request timeout; server `WriteTimeout` disabled for the long-lived
+  stream. Covered by httptest (401/403/400/405 paths).
+- Request timeout now env-configurable: `REQUEST_TIMEOUT_SECONDS` (default
+  100s) — the old hardcoded 15s killed AI generation mid-flight.
 
 ## Frontend
 
-- New Puck blocks in `puck-config.tsx`: `ChemViz` (3Dmol viewer),
-  `ElecSim` (tscircuit), `MechSim` (Matter.js), `MathViz` (existing, keep) —
-  render from `metadata`/props with a code/config preview.
-- `AIAssistantPanel` component in the wave editor: prompt input, quick-action
-  chips ("Draft Learn section", "Generate 5 MCQs", "Translate to Sinhala",
-  "Make an animation"), streaming status, suggestion cards with Insert /
-  Regenerate. Insert dispatches Puck `insert` actions so blocks land in the
-  canvas and serialize via the existing `puckToWaveData`.
-- All styling uses existing OKLCH tokens; sounds via `lib/sounds.ts`.
+Implemented:
+
+- `AIAssistantPanel` (`src/components/educator/AIAssistantPanel.tsx`) docks
+  on the right of the wave editor; the Puck canvas shrinks via a flex layout
+  (content retained) and the panel toggles from the header.
+- `src/lib/ai-chat.ts`: plain `fetch()` + `ReadableStream` SSE parser — no
+  SSE library or websocket. Streams `plan|tool_start|tool_end|delta|done|
+  error` with tool chips and streaming text.
+- `agentBlocksToPuckItems` in `puck-config.tsx` converts agent-generated
+  learn/evaluate blocks into Puck items; "Insert into editor" appends them
+  to the live canvas, persisted by the existing Save flow.
+- The wave's existing blocks are summarized into `waveContext` so the agent
+  can extend current content.
+- `vite.config.ts` proxies `/ai` to the gateway.
+
+Not yet implemented: dedicated `ChemViz` (3Dmol), `ElecSim` (tscircuit),
+`MechSim` (Matter.js) Puck renderers — viz blocks currently degrade to text
+blocks in the editor. Photo upload is unwired; `analyzeImage` exists at the
+API level.
 
 ## Testing
 

@@ -24,8 +24,18 @@ date: 2026-06-03
 > [!info] Purpose
 > The **AI Content Generation Service** is a Go microservice that orchestrates **open-source and accessible AI models** — **Google Gemini 3.5 Flash** (for Sinhala OCR, text generation, and translation) and **Qwen 2.5 / DeepSeek-V3** (for general pedagogy, code generation, and visualization scripting) — to power the [[Educator AI Chat Interface]] and [[MDX Editor]] AI assistant.
 >
-> > [!tip] Open-Source First
-> > StudEd avoids proprietary models (OpenAI GPT-4, Claude) to minimize costs, avoid vendor lock-in, and maintain data sovereignty. All models are accessible via standard HTTP APIs.
+> > [!note] Implemented v1
+> > The live service (`services/ai-service`, HTTP :8090) runs an **agentic
+> > tool-calling loop** (plan → tool calls → validate → stream) over an
+> > OpenAI-compatible provider (opencode-go, `deepseek-v4-flash`) with Gemini
+> > fallback. Endpoints: `/v1/generate-learn-blocks`,
+> > `/v1/generate-evaluate-blocks`, `/v1/translate`, `/v1/generate-visualization`,
+> > `/v1/analyze-image`, `/v1/agent/task`, `/v1/agent/stream`. See
+> > `docs/AGENTIC-AI-SERVICE.md` for the full architecture and the wave-editor
+> > chat integration in [[Educator AI Chat Interface]].
+>
+> > > [!tip] Open-Source First
+> > > StudEd avoids proprietary models (OpenAI GPT-4, Claude) to minimize costs, avoid vendor lock-in, and maintain data sovereignty. All models are accessible via standard HTTP APIs.
 
 ## Architecture
 
