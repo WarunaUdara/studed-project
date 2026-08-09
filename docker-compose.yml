@@ -150,6 +150,11 @@ services:
     container_name: studed-ai-service
     environment:
       AI_SERVICE_ADDR: :8090
+      AI_PROVIDER: ${AI_PROVIDER:-opencode}
+      OPENCODE_API_KEY: ${OPENCODE_API_KEY:-}
+      OPENCODE_BASE_URL: ${OPENCODE_BASE_URL:-https://opencode.ai/zen/go/v1}
+      OPENCODE_MODEL: ${OPENCODE_MODEL:-deepseek-v4-flash}
+      OPENCODE_VISION_MODEL: ${OPENCODE_VISION_MODEL:-qwen3.7-plus}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
