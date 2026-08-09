@@ -279,14 +279,26 @@ After generation, educators can:
   Learn/Evaluate blocks — so prompts like "add 2 MCQs to the existing
   section" work against current content.
 - **Blocks auto-insert on generation**: the moment the agent's `done` event
-  carries blocks, they are appended to the live editor (Puck remounts via a
-  version key — its data prop is uncontrolled). No manual insert step, and
-  the chat shows a human summary ("Added 2 Learn, 1 Evaluate block(s)")
-  instead of block syntax.
+  carries blocks, they are appended to the live editor. The insert is
+  **non-disruptive**: data is pushed into Puck's internal store via a
+  `usePuck` bridge (`pushPuckData`) rather than remounting the editor, so
+  zoom level, selection, and undo history are preserved while the agent
+  works (verified live). The chat shows a human summary ("Added 2 Learn,
+  1 Evaluate block(s)") instead of block syntax.
 - **All block types supported**: Text, Image, Video, Callout, Example,
-  MathViz (formula), VizBlock (Manim / 3Dmol / tscircuit / Matter.js config),
+  MathViz (formula), VizBlock (Manim / 3Dmol / tscircuit / Matter.js),
   MCQ, Fill-in-the-blank, True/False, Numeric, Drag-and-drop — with full
   bidirectional serialization between Puck items and the GraphQL wave input.
+  VizBlock renders the **same interactive components students see** (playable
+  Manim steps, rotatable 3D molecules, live tscircuit, Matter.js physics)
+  right inside the editor canvas.
+- **Puck themed to the app**: `src/styles/puck-theme.css` maps Puck's CSS
+  custom properties onto the StudEd OKLCH tokens, so the editor chrome
+  (blocks palette, header, property fields, actionbar) blends with the
+  design system in light and dark mode.
+- **Notion-style left sidebar collapse**: a toggle button in Puck's header
+  collapses the blocks/outline palette to a narrow icon rail (smooth
+  transition) and expands it back.
 
 ### Frontend files
 
@@ -312,11 +324,6 @@ After generation, educators can:
 
 ### Known gaps (next iterations)
 
-- ChemViz / ElecSim / MechSim / Manim **interactive renderers** are not yet
-  wired into the editor: VizBlock shows the content + a collapsible config
-  preview in the editor, while the student-facing `LearnBlockRenderer`
-  already renders the full interactive components (Manim / 3Dmol / tscircuit
-  / Matter.js) in Preview mode.
 - Photo upload → vision analysis is not wired into the panel; `analyzeImage`
   exists at the API level.
 - Chat history is session-only (not persisted per wave).
