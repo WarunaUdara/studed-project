@@ -11,12 +11,14 @@ import (
 )
 
 // scriptedProvider returns canned JSON per GenerateJSON call and an empty
-// stream for Stream. It is safe for concurrent use.
+// stream for Stream. It is safe for concurrent use. It records the user
+// prompts it receives so tests can assert request fidelity (count/types).
 type scriptedProvider struct {
 	mu        sync.Mutex
 	jsonCalls int
 	jsonOuts  [][]byte
 	jsonErrs  []error
+	prompts   []string
 }
 
 func (s *scriptedProvider) GenerateJSON(ctx context.Context, system, user string, opts provider.Options) ([]byte, error) {
@@ -24,6 +26,7 @@ func (s *scriptedProvider) GenerateJSON(ctx context.Context, system, user string
 	defer s.mu.Unlock()
 	i := s.jsonCalls
 	s.jsonCalls++
+	s.prompts = append(s.prompts, user)
 	if i < len(s.jsonErrs) && s.jsonErrs[i] != nil {
 		return nil, s.jsonErrs[i]
 	}
@@ -31,6 +34,15 @@ func (s *scriptedProvider) GenerateJSON(ctx context.Context, system, user string
 		return s.jsonOuts[i], nil
 	}
 	return []byte("{}"), nil
+}
+
+func (s *scriptedProvider) lastPrompt() string {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if len(s.prompts) == 0 {
+		return ""
+	}
+	return s.prompts[len(s.prompts)-1]
 }
 
 func (s *scriptedProvider) Stream(ctx context.Context, msgs []provider.Message, tools []provider.Tool, opts provider.Options) (<-chan provider.StreamEvent, error) {
@@ -314,5 +326,54 @@ func TestParseLearnBlocksHandlesStringMetadata(t *testing.T) {
 	}
 	if !strings.Contains(parsed[0].Metadata, "source_value") {
 		t.Errorf("metadata = %q", parsed[0].Metadata)
+	}
+}
+
+func TestLearnBlocksHonorsCount(t *testing.T) {
+	s := &scriptedProvider{jsonOuts: [][]byte{[]byte(`[{"id":"l1","type":"text","content":"x"}]`)}}
+	tool := LearnBlocks(s)
+
+	if _, err := tool.Execute(context.Background(), map[string]any{"prompt": "one example", "count": 1}); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	p := s.lastPrompt()
+	if !strings.Contains(p, "exactly 1 learn blocks") {
+		t.Errorf("prompt does not enforce count: %q", p)
+	}
+}
+
+func TestEvaluateBlocksHonorsCountAndTypes(t *testing.T) {
+	s := &scriptedProvider{jsonOuts: [][]byte{[]byte(`[{"id":"q1","type":"true_false","question":"q","correctAnswer":"True"}]`)}}
+	tool := EvaluateBlocks(s)
+
+	if _, err := tool.Execute(context.Background(), map[string]any{
+		"content": "linear equations",
+		"count":   1,
+		"types":   []any{"true_false"},
+	}); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	p := s.lastPrompt()
+	if !strings.Contains(p, "exactly 1 evaluate blocks") {
+		t.Errorf("prompt does not enforce count: %q", p)
+	}
+	if !strings.Contains(p, "true_false") || !strings.Contains(p, "Do not use any other types") {
+		t.Errorf("prompt does not enforce types: %q", p)
+	}
+}
+
+func TestEvaluateBlocksDefaultIsMinimal(t *testing.T) {
+	s := &scriptedProvider{jsonOuts: [][]byte{[]byte(`[{"id":"q1","type":"mcq","question":"q","options":["a","b"],"correctAnswer":"a"}]`)}}
+	tool := EvaluateBlocks(s)
+
+	if _, err := tool.Execute(context.Background(), map[string]any{"content": "topic"}); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	p := s.lastPrompt()
+	if strings.Contains(p, "Generate 5 evaluate blocks") {
+		t.Errorf("default should not be a batch of 5: %q", p)
+	}
+	if !strings.Contains(p, "minimal reasonable amount") {
+		t.Errorf("default should instruct minimal generation: %q", p)
 	}
 }

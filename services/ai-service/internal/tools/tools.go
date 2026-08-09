@@ -46,18 +46,21 @@ func DefaultSet(p provider.Provider) []Tool {
 	}
 }
 
-const learnSystemPrompt = `You are a curriculum designer for StudEd, a Sri Lankan school platform (Grades 1-11, O/L, A/L). Create Brilliant.org-style interactive lesson content tailored to the requested grade and language. Output JSON only: an array of learn blocks, each with fields: id (string), type (one of text, math, image, video, callout, example, mathviz_manim, chemviz_3dmol, elecsim_tscircuit, mechsim_matterjs), content (markdown text, LaTeX math with $...$), and metadata (object; required for visualization types). For mathviz_manim, metadata must be {"title": ..., "scene_spec": {"scene_title": ..., "duration_seconds": ..., "style": ..., "beats": [{"time": ..., "action": ...}], "color_palette": [...]}}. For chemviz_3dmol, metadata must be {"title": ..., "molecule": {"source_type": "smiles", "source_value": "..."}, "style": {"stick": {}}}. For elecsim_tscircuit, metadata must be {"title": ..., "circuit_code": "..."}. For mechsim_matterjs, metadata must be {"title": ..., "scenario_type": "...", "world_config": {"gravity": {"x": ..., "y": ...}, "bounds": {"width": ..., "height": ...}, "bodies": [{"id": ..., "type": ..., "position": {"x": ..., "y": ...}}]}}. Keep content concise, accurate, and grade-appropriate. Do not use emojis.`
+const learnSystemPrompt = `You are a curriculum designer for StudEd, a Sri Lankan school platform (Grades 1-11, O/L, A/L). Create Brilliant.org-style interactive lesson content tailored to the requested grade and language. Output JSON only: an array of learn blocks, each with fields: id (string), type (one of text, math, image, video, callout, example, mathviz_manim, chemviz_3dmol, elecsim_tscircuit, mechsim_matterjs), content (markdown text, LaTeX math with $...$), and metadata (object; required for visualization types). For mathviz_manim, metadata must be {"title": ..., "scene_spec": {"scene_title": ..., "duration_seconds": ..., "style": ..., "beats": [{"time": ..., "action": ...}], "color_palette": [...]}}. For chemviz_3dmol, metadata must be {"title": ..., "molecule": {"source_type": "smiles", "source_value": "..."}, "style": {"stick": {}}}. For elecsim_tscircuit, metadata must be {"title": ..., "circuit_code": "..."}. For mechsim_matterjs, metadata must be {"title": ..., "scenario_type": "...", "world_config": {"gravity": {"x": ..., "y": ...}, "bounds": {"width": ..., "height": ...}, "bodies": [{"id": ..., "type": ..., "position": {"x": ..., "y": ...}}]}}. Keep content concise, accurate, and grade-appropriate. Do not use emojis.
+
+FIDELITY: Generate exactly the block types and count specified in the prompt. If the prompt names a type (e.g. "a callout"), output that type and nothing else. If a count is given, output exactly that many blocks — no more, no fewer, no substitutes. If no count is given, output a minimal reasonable amount (1-3 blocks). Never pad with extra blocks.`
 
 // LearnBlocks builds the generateLearnBlocks tool: it drafts a set of Learn
 // blocks for a Sri Lankan grade in the requested language.
 func LearnBlocks(p provider.Provider) Tool {
 	return Tool{
 		Name:        "generateLearnBlocks",
-		Description: "Generate a set of Learn blocks (Brilliant.org style lesson content) for a Sri Lankan grade, in the requested language.",
+		Description: "Generate Learn blocks (text, math, image, video, callout, example, visualization) for lesson content. Generate EXACTLY the block types and count the educator requested — never more, never substitutes.",
 		Parameters: map[string]any{
 			"type": "object",
 			"properties": map[string]any{
-				"prompt":   map[string]any{"type": "string", "description": "What the educator wants the lesson to cover"},
+				"prompt":   map[string]any{"type": "string", "description": "Exactly what the educator wants the lesson to cover, including any requested block types and count"},
+				"count":    map[string]any{"type": "integer", "description": "Number of learn blocks to generate. Must match the educator's requested count; omit only if unspecified"},
 				"language": map[string]any{"type": "string", "description": "Content language: en, si, or ta"},
 				"grade":    map[string]any{"type": "string", "description": "Target grade or exam level (e.g. 8, O/L, A/L)"},
 			},
@@ -67,12 +70,17 @@ func LearnBlocks(p provider.Provider) Tool {
 			prompt := argString(args, "prompt")
 			language := argString(args, "language")
 			grade := argString(args, "grade")
+			count := argInt(args, "count", 0)
 
 			var user strings.Builder
 			user.WriteString("Prompt: " + prompt + "\n")
 			user.WriteString("Language: " + language + "\n")
 			user.WriteString("Grade: " + grade + "\n")
-			user.WriteString("Generate a set of learn blocks.")
+			if count > 0 {
+				user.WriteString(fmt.Sprintf("Generate exactly %d learn blocks. Do not generate more or fewer.", count))
+			} else {
+				user.WriteString("Generate the exact learn blocks the prompt requests: same block types and same count. If no count is given, generate a minimal reasonable amount (1-3 blocks), never a large batch.")
+			}
 
 			raw, err := p.GenerateJSON(ctx, learnSystemPrompt, user.String(), provider.JSONOptions())
 			if err != nil {
@@ -116,7 +124,9 @@ func parseLearnBlocks(raw []byte) ([]blocks.LearnBlock, error) {
 	return blocks.ParseLearnBlocks(out)
 }
 
-const evalSystemPrompt = `You are an assessment designer for StudEd, a Sri Lankan school platform (Grades 1-11, O/L, A/L). Create assessment questions that check understanding of the provided content. Output JSON only: an array of evaluate blocks, each with fields: id (string), type (one of mcq, fill_in_blank, true_false, numeric, drag_drop), question (string), options (array of strings; required for mcq), correctAnswer (string; for mcq it must exactly match one option), explanation (string). Keep questions grade-appropriate and unambiguous. Do not use emojis.`
+const evalSystemPrompt = `You are an assessment designer for StudEd, a Sri Lankan school platform (Grades 1-11, O/L, A/L). Create assessment questions that check understanding of the provided content. Output JSON only: an array of evaluate blocks, each with fields: id (string), type (one of mcq, fill_in_blank, true_false, numeric, drag_drop), question (string), options (array of strings; required for mcq), correctAnswer (string; for mcq it must exactly match one option), explanation (string). Keep questions grade-appropriate and unambiguous. Do not use emojis.
+
+FIDELITY: Generate exactly the question types and count specified in the prompt. If the prompt names a type (e.g. "a true/false question"), output that type and nothing else. If a count is given, output exactly that many questions — no more, no fewer, no substitutes. If no count is given, output a minimal reasonable amount (1-3 questions). Never pad with extra questions.`
 
 // EvaluateBlocks builds the generateEvaluateBlocks tool: it drafts a set of
 // Evaluate blocks (mcq, fill_in_blank, true_false, numeric, drag_drop) for
@@ -124,22 +134,31 @@ const evalSystemPrompt = `You are an assessment designer for StudEd, a Sri Lanka
 func EvaluateBlocks(p provider.Provider) Tool {
 	return Tool{
 		Name:        "generateEvaluateBlocks",
-		Description: "Generate a set of Evaluate blocks (MCQs, fill-in-the-blank, true/false, numeric, drag-and-drop) for given content.",
+		Description: "Generate Evaluate blocks (MCQs, fill-in-the-blank, true/false, numeric, drag-and-drop) for given content. Generate EXACTLY the question types and count the educator requested — never more, never substitutes (e.g. one true/false stays one true_false).",
 		Parameters: map[string]any{
 			"type": "object",
 			"properties": map[string]any{
 				"content": map[string]any{"type": "string", "description": "The lesson content the questions should assess"},
-				"count":   map[string]any{"type": "integer", "description": "Number of questions to generate"},
+				"count":   map[string]any{"type": "integer", "description": "Number of questions to generate. Must match the educator's requested count; omit only if unspecified"},
+				"types":   map[string]any{"type": "array", "items": map[string]any{"type": "string", "enum": []string{"mcq", "fill_in_blank", "true_false", "numeric", "drag_drop"}}, "description": "Exact question types requested by the educator, in order. Generate ONLY these types"},
 			},
 			"required": []string{"content"},
 		},
 		Execute: func(ctx context.Context, args map[string]any) (Result, error) {
 			content := argString(args, "content")
-			count := argInt(args, "count", 5)
+			count := argInt(args, "count", 0)
+			types := argStringSlice(args, "types")
 
 			var user strings.Builder
 			user.WriteString("Content:\n" + content + "\n")
-			user.WriteString(fmt.Sprintf("Generate %d evaluate blocks.", count))
+			if count > 0 {
+				user.WriteString(fmt.Sprintf("Generate exactly %d evaluate blocks. Do not generate more or fewer.", count))
+			} else {
+				user.WriteString("Generate the exact questions the educator requested: same types and same count. If no count is given, generate a minimal reasonable amount (1-3 questions), never a large batch.")
+			}
+			if len(types) > 0 {
+				user.WriteString("\nUse exactly these question types, in this order: " + strings.Join(types, ", ") + ". Do not use any other types.")
+			}
 
 			raw, err := p.GenerateJSON(ctx, evalSystemPrompt, user.String(), provider.JSONOptions())
 			if err != nil {
@@ -349,4 +368,24 @@ func argInt(args map[string]any, key string, def int) int {
 		}
 	}
 	return def
+}
+
+func argStringSlice(args map[string]any, key string) []string {
+	v, ok := args[key]
+	if !ok {
+		return nil
+	}
+	switch items := v.(type) {
+	case []any:
+		out := make([]string, 0, len(items))
+		for _, it := range items {
+			if s, ok := it.(string); ok {
+				out = append(out, s)
+			}
+		}
+		return out
+	case []string:
+		return items
+	}
+	return nil
 }
