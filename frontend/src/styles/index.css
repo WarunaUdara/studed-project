@@ -126,9 +126,27 @@
     --chart-xp-soft: oklch(0.484 0.164 145 / 0.5);
     --chart-streak: oklch(0.67 0.185 55);
     --chart-proficient: oklch(0.579 0.191 252);
+
+    /* PullCord interactive theme toggle variables */
+    --pullcord-top: 0px;
+    --pullcord-right: 2.5rem;
+    --pullcord-z: 100;
+    --pullcord-ink: rgba(30, 41, 59, 0.45);
+  }
+
+  /* Mint Green Jelly Blob Mascot Theme (Feral Blob) */
+  .jelly-mint {
+    --jelly-body-top: #6ee7b7;
+    --jelly-body-bottom: #10b981;
+    --jelly-arm-top: #6ee7b7;
+    --jelly-arm-bottom: #059669;
+    --jelly-cheek: rgba(16, 185, 129, 0.45);
+    --jelly-eye: #064e3b;
+    --jelly-blush: rgba(16, 185, 129, 0.55);
   }
 
   .dark {
+    --pullcord-ink: rgba(255, 255, 255, 0.4);
     --background: oklch(0.14 0.02 145);         /* Deep Forest Slate */
     --foreground: oklch(0.935 0.05 145);
     --card: oklch(0.19 0.035 145);

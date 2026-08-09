@@ -1,0 +1,271 @@
+{
+  "slug": "coordinate-geometry",
+  "title": "Coordinate Geometry",
+  "description": "Master the 2D Cartesian plane, coordinate pairs, quadrants, linear graphs, and gridline distances through interactive visual discovery.",
+  "gradeLevel": "G10",
+  "subject": "Mathematics",
+  "price": 0,
+  "version": 1,
+  "lessons": [
+    {
+      "title": "Level 1: Coordinates",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Coordinates & Origin",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 150,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 12,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-coord-1",
+              "type": "coordinate_plane",
+              "content": "Interactive 2D Coordinate Grid Discovery",
+              "metadata": "{\"title\":\"Interactive Coordinate Discovery\"}"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-coord-1",
+              "type": "multiple_choice",
+              "question": "What are the coordinates of the origin on a 2D Cartesian plane?",
+              "options": ["(0, 0)", "(1, 1)", "(0, 1)", "(1, 0)"],
+              "correctAnswer": "(0, 0)",
+              "explanation": "The origin is defined as point (0, 0) where the x-axis and y-axis intersect."
+            },
+            {
+              "id": "eb-coord-2",
+              "type": "multiple_choice",
+              "question": "If you move 4 steps right along the x-axis and 2 steps up along the y-axis from origin, what is your coordinate pair?",
+              "options": ["(4, 2)", "(2, 4)", "(4, 0)", "(0, 2)"],
+              "correctAnswer": "(4, 2)",
+              "explanation": "Coordinates are written as (x, y). First value = horizontal shift 4, second value = vertical shift 2."
+            }
+          ]
+        },
+        {
+          "title": "2. Coordinate Pairs",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 100,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 10,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-coord-2",
+              "type": "text",
+              "content": "A coordinate pair (x, y) gives exact directions to locate a point on the plane from the origin (0, 0)."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-coord-3",
+              "type": "multiple_choice",
+              "question": "In the coordinate pair (5, 3), what does the number 5 represent?",
+              "options": ["The x-coordinate (horizontal position)", "The y-coordinate (vertical position)", "Distance from y-axis", "Both A and C"],
+              "correctAnswer": "Both A and C",
+              "explanation": "The first number 5 is the x-coordinate, which measures the horizontal distance from the y-axis."
+            }
+          ]
+        },
+        {
+          "title": "3. Axes & Gridlines",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 100,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 10,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-coord-3",
+              "type": "text",
+              "content": "The horizontal axis is the x-axis, and the vertical axis is the y-axis."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-coord-4",
+              "type": "multiple_choice",
+              "question": "What is the vertical line on a coordinate plane called?",
+              "options": ["y-axis", "x-axis", "Origin", "Hypotenuse"],
+              "correctAnswer": "y-axis",
+              "explanation": "The vertical axis is defined as the y-axis."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 2: The 4 Quadrants",
+      "sequenceOrder": 2,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Negative Coordinates",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-quad-1",
+              "type": "text",
+              "content": "Moving left along the x-axis or down along the y-axis gives negative values."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-quad-1",
+              "type": "multiple_choice",
+              "question": "Which direction do you move for a negative x-coordinate?",
+              "options": ["Left", "Right", "Up", "Down"],
+              "correctAnswer": "Left",
+              "explanation": "Negative x-values lie to the left of the y-axis."
+            }
+          ]
+        },
+        {
+          "title": "2. Points in Quadrants",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-quad-2",
+              "type": "text",
+              "content": "The two axes divide the plane into four regions called Quadrants I, II, III, and IV."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-quad-2",
+              "type": "multiple_choice",
+              "question": "In which quadrant do both x and y coordinates have positive values (+, +)?",
+              "options": ["Quadrant I", "Quadrant II", "Quadrant III", "Quadrant IV"],
+              "correctAnswer": "Quadrant I",
+              "explanation": "Quadrant I (upper right) has positive x and positive y."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 3: Lines",
+      "sequenceOrder": 3,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Horizontal & Vertical Lines",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 140,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 12,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-line-1",
+              "type": "text",
+              "content": "A horizontal line has equation y = c. A vertical line has equation x = k."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-line-1",
+              "type": "multiple_choice",
+              "question": "What is the equation of a horizontal line passing through y = 4?",
+              "options": ["y = 4", "x = 4", "x + y = 4", "y = 4x"],
+              "correctAnswer": "y = 4",
+              "explanation": "Every point on a horizontal line has constant y-value."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 4: Inequalities",
+      "sequenceOrder": 4,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Half-Planes & Regions",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 150,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 15,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "lb-ineq-1",
+              "type": "text",
+              "content": "An inequality divides the Cartesian plane into half-planes above/below or left/right of boundary lines."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-ineq-1",
+              "type": "multiple_choice",
+              "question": "Which half-plane represents y > 2?",
+              "options": ["The region strictly above the line y = 2", "The region below y = 2", "The region left of x = 2", "The line y = 2 itself"],
+              "correctAnswer": "The region strictly above the line y = 2",
+              "explanation": "y > 2 includes all points with y-coordinate greater than 2."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 5: Gridline Distance",
+      "sequenceOrder": 5,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Distance Between Points",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 150,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 15,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "lb-dist-1",
+              "type": "text",
+              "content": "For points on the same horizontal line (y1 = y2), distance = |x2 - x1|."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-dist-1",
+              "type": "multiple_choice",
+              "question": "What is the horizontal distance between point A(2, 3) and point B(7, 3)?",
+              "options": ["5 units", "7 units", "2 units", "10 units"],
+              "correctAnswer": "5 units",
+              "explanation": "Distance = |7 - 2| = 5 units."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

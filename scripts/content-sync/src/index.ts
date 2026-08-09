@@ -1,10 +1,14 @@
 import { Glob } from "bun";
 import { statSync } from "fs";
+import { resolve } from "path";
 import { authenticate } from "./client";
 import { formatIssues, validateManifest } from "./validate";
 import { syncCourse } from "./sync";
 import type { SyncReport } from "./sync";
 import type { CourseManifest } from "./types";
+
+const REPO_ROOT = resolve(import.meta.dir, "../../..");
+const DEFAULT_CONTENT_DIR = resolve(REPO_ROOT, "content/courses");
 
 interface CliOptions {
   targets: string[];
@@ -81,7 +85,7 @@ function parseArgs(argv: string[]): CliOptions | null {
 }
 
 function collectManifestFiles(targets: string[]): string[] {
-  if (targets.length === 0) targets = ["content/courses"];
+  if (targets.length === 0) targets = [DEFAULT_CONTENT_DIR];
 
   const files: string[] = [];
   for (const target of targets) {
