@@ -1,7 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import { validateManifest } from "./validate";
+import type { CourseManifest } from "./types";
 
-const validCourse = {
+const validCourse: CourseManifest = {
   slug: "test-course",
   title: "Test Course",
   description: "A course used in unit tests.",
