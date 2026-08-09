@@ -97,6 +97,26 @@ func TestParseEvaluateBlocks_OutOfRangeCorrectIndexFails(t *testing.T) {
 	}
 }
 
+func TestParseEvaluateBlocks_AcceptsChoicesAlias(t *testing.T) {
+	// The model sometimes emits "choices" instead of "options".
+	raw := []byte(`[{"id":"q1","type":"mcq","question":"Solve for x: 3x + 5 = 20",
+		"choices":["x = 5","x = 8","x = 15","x = 3"],"correctIndex":0,
+		"explanation":"Subtract 5, divide by 3."}]`)
+	parsed, err := ParseEvaluateBlocks(raw)
+	if err != nil {
+		t.Fatalf("expected choices alias to parse: %v", err)
+	}
+	if len(parsed) != 1 {
+		t.Fatalf("expected 1 block, got %d", len(parsed))
+	}
+	if len(parsed[0].Options) != 4 {
+		t.Fatalf("options = %v, want 4 from choices alias", parsed[0].Options)
+	}
+	if parsed[0].CorrectAnswer != "x = 5" {
+		t.Fatalf("correctAnswer = %q, want x = 5", parsed[0].CorrectAnswer)
+	}
+}
+
 func TestValidateVizMetadata_MathViz(t *testing.T) {
 	meta := `{"title":"Pendulum","scene_spec":{"style":"dark"}}`
 	got, err := ValidateVizMetadata("mathviz_manim", json.RawMessage(meta))

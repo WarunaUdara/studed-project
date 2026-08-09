@@ -22,7 +22,6 @@ import {
   puckToWaveData,
   waveDataToPuck,
 } from "@/components/puck-blocks/puck-config";
-import type { PuckCanvasHandle } from "@/components/puck-blocks/PuckCanvas";
 import { Button } from "@/components/ui/button";
 import { PUBLISH_WAVE_MUTATION, UPDATE_WAVE_MUTATION, WAVE_QUERY } from "@/graphql/courses";
 import { useAIAssistant } from "@/stores/ai-assistant";
@@ -96,7 +95,9 @@ function WaveEditorPage() {
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [assistantOpen, setAssistantOpen] = useState(false);
-  const puckCanvasRef = useRef<PuckCanvasHandle | null>(null);
+  // Bumped on AI insert: Puck's data prop is uncontrolled, so remounting
+  // with a new key makes it reinitialize from the updated data.
+  const [puckVersion, setPuckVersion] = useState(0);
 
   // Remember the last AI tabset width so reopen restores the user's resize.
   const aiFlexRef = useRef(0.3);
@@ -115,19 +116,18 @@ function WaveEditorPage() {
   }, [wave]);
 
   // Insert AI-generated blocks at the end of the current editor content.
-  // The parent state is updated AND the new data is pushed into Puck's
-  // internal store (Puck's data prop is uncontrolled after mount).
+  // The parent state is updated and Puck is remounted (key bump) so it
+  // reinitializes from the new data — Puck's data prop is uncontrolled.
   const handleInsertBlocks = useCallback(
     (learnBlocks: Parameters<typeof agentBlocksToPuckItems>[0], evaluateBlocks: Parameters<typeof agentBlocksToPuckItems>[1]) => {
       if (!puckData) return;
       const newItems = agentBlocksToPuckItems(learnBlocks, evaluateBlocks);
       if (newItems.length === 0) return;
-      const next: PuckData = {
+      setPuckData({
         ...puckData,
         content: [...(puckData.content ?? []), ...newItems],
-      };
-      setPuckData(next);
-      puckCanvasRef.current?.setData(next);
+      });
+      setPuckVersion((v) => v + 1);
     },
     [puckData],
   );
@@ -254,7 +254,7 @@ function WaveEditorPage() {
                 </div>
               }
             >
-              <PuckCanvas ref={puckCanvasRef} data={puckData} onChange={setPuckData} onPublish={handleSave} />
+              <PuckCanvas key={puckVersion} data={puckData} onChange={setPuckData} onPublish={handleSave} />
             </Suspense>
           );
         case "ai-assistant":

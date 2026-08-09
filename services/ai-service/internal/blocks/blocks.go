@@ -48,6 +48,25 @@ type EvaluateBlock struct {
 	Explanation  string `json:"explanation,omitempty"`
 }
 
+// UnmarshalJSON tolerates the model's common field-name variants: "choices"
+// is accepted as an alias for "options", and either "correctAnswer" or
+// "correctIndex" locates the right option.
+func (b *EvaluateBlock) UnmarshalJSON(raw []byte) error {
+	type alias EvaluateBlock
+	var a struct {
+		alias
+		Choices []string `json:"choices,omitempty"`
+	}
+	if err := json.Unmarshal(raw, &a); err != nil {
+		return err
+	}
+	*b = EvaluateBlock(a.alias)
+	if len(b.Options) == 0 && len(a.Choices) > 0 {
+		b.Options = a.Choices
+	}
+	return nil
+}
+
 // ParseLearnBlocks decodes and validates AI-generated learn blocks, so
 // malformed model output is rejected before it reaches an educator's editor.
 func ParseLearnBlocks(raw []byte) ([]LearnBlock, error) {
