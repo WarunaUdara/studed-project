@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -150,7 +151,11 @@ func main() {
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			r.Body = http.MaxBytesReader(w, r.Body, 1<<20) // 1MB payload cap (SEC-21)
-			ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
+			// Request timeout. AI generation (learn blocks, visualizations,
+			// agent runs) can take 20-90s, so the default is generous; set
+			// REQUEST_TIMEOUT_SECONDS to tighten it (e.g. 15 in production).
+			timeout := time.Duration(envInt("REQUEST_TIMEOUT_SECONDS", 100)) * time.Second
+			ctx, cancel := context.WithTimeout(r.Context(), timeout)
 			defer cancel()
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
@@ -211,4 +216,18 @@ func main() {
 	if err := tracerShutdown(shutdownCtx); err != nil {
 		log.Error("failed to flush tracer", slog.Any("error", err))
 	}
+}
+
+// envInt reads a positive integer from the environment, falling back to the
+// provided default when unset, empty, or invalid.
+func envInt(key string, fallback int) int {
+	v := os.Getenv(key)
+	if v == "" {
+		return fallback
+	}
+	n, err := strconv.Atoi(v)
+	if err != nil || n <= 0 {
+		return fallback
+	}
+	return n
 }

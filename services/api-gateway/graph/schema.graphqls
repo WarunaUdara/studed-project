@@ -23,6 +23,13 @@ enum Grade {
   AL
 }
 
+enum VizType {
+  MANIM
+  THREEDMOL
+  TSCIRCUIT
+  MATTERJS
+}
+
 enum Difficulty {
   EASY
   MEDIUM
@@ -362,6 +369,8 @@ type Mutation {
   generateLearnBlocks(prompt: String!, language: String, grade: Grade): [LearnBlock!]!
   generateEvaluateBlocks(content: String!, count: Int = 3): [EvaluateBlock!]!
   translateContent(content: String!, targetLanguage: String!): String!
+  generateVisualization(concept: String!, vizType: VizType!, grade: String): String!
+  analyzeImage(imageBase64: String!, prompt: String): String!
 
   createSubscription(input: CreateSubscriptionInput!): UserSubscription!
   cancelSubscription: UserSubscription!

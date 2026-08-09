@@ -355,6 +355,61 @@ func (r *mutationResolver) TranslateContent(ctx context.Context, content string,
 	return r.AIClient.TranslateContent(ctx, content, targetLanguage)
 }
 
+// GenerateVisualization is the resolver for the generateVisualization field.
+func (r *mutationResolver) GenerateVisualization(ctx context.Context, concept string, vizType model.VizType, grade *string) (string, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return "", err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return "", err
+	}
+	if r.AIClient == nil {
+		return "", errors.New("AI service is not configured")
+	}
+
+	gradeValue := ""
+	if grade != nil {
+		gradeValue = *grade
+	}
+	return r.AIClient.GenerateVisualization(ctx, concept, vizTypeToService(vizType), gradeValue)
+}
+
+// vizTypeToService maps the GraphQL VizType enum to the ai-service's
+// lowercase wire values (manim|3dmol|tscircuit|matterjs).
+func vizTypeToService(vt model.VizType) string {
+	switch vt {
+	case model.VizTypeThreedmol:
+		return "3dmol"
+	case model.VizTypeTscircuit:
+		return "tscircuit"
+	case model.VizTypeMatterjs:
+		return "matterjs"
+	default:
+		return "manim"
+	}
+}
+
+// AnalyzeImage is the resolver for the analyzeImage field.
+func (r *mutationResolver) AnalyzeImage(ctx context.Context, imageBase64 string, prompt *string) (string, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return "", err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return "", err
+	}
+	if r.AIClient == nil {
+		return "", errors.New("AI service is not configured")
+	}
+
+	promptValue := ""
+	if prompt != nil {
+		promptValue = *prompt
+	}
+	return r.AIClient.AnalyzeImage(ctx, imageBase64, promptValue)
+}
+
 // CreateSubscription is the resolver for the createSubscription field.
 func (r *mutationResolver) CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput) (*model.UserSubscription, error) {
 	userCtx, err := requireUser(ctx)

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -151,4 +152,41 @@ func (c *AIClient) TranslateContent(ctx context.Context, content, targetLanguage
 		return "", err
 	}
 	return resp.Translation, nil
+}
+
+// GenerateVisualization asks the AI service for a single visualization
+// block (manim / 3dmol / tscircuit / matterjs) as a raw JSON document.
+// The visualization payload is arbitrary JSON (scene spec, molecule data,
+// circuit code, world config), so it is surfaced verbatim as a compact
+// JSON string for the frontend to embed in a Puck block.
+func (c *AIClient) GenerateVisualization(ctx context.Context, concept, vizType, grade string) (string, error) {
+	var resp struct {
+		Block json.RawMessage `json:"block"`
+	}
+	if err := c.post(ctx, "/v1/generate-visualization", map[string]any{
+		"concept": concept,
+		"vizType": vizType,
+		"grade":   grade,
+	}, &resp); err != nil {
+		return "", err
+	}
+	if len(resp.Block) == 0 || string(resp.Block) == "null" {
+		return "", errors.New("AI service returned an empty visualization")
+	}
+	return string(resp.Block), nil
+}
+
+// AnalyzeImage sends a base64 image to the vision model and returns the
+// textual analysis.
+func (c *AIClient) AnalyzeImage(ctx context.Context, imageBase64, prompt string) (string, error) {
+	var resp struct {
+		Analysis string `json:"analysis"`
+	}
+	if err := c.post(ctx, "/v1/analyze-image", map[string]any{
+		"imageBase64": imageBase64,
+		"prompt":      prompt,
+	}, &resp); err != nil {
+		return "", err
+	}
+	return resp.Analysis, nil
 }

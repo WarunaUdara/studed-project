@@ -124,6 +124,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
+		AnalyzeImage           func(childComplexity int, imageBase64 string, prompt *string) int
 		CancelSubscription     func(childComplexity int) int
 		CreateCourse           func(childComplexity int, input model.CreateCourseInput) int
 		CreateLesson           func(childComplexity int, courseID string, input model.CreateLessonInput) int
@@ -132,6 +133,7 @@ type ComplexityRoot struct {
 		EnrollInCourse         func(childComplexity int, courseID string) int
 		GenerateEvaluateBlocks func(childComplexity int, content string, count *int) int
 		GenerateLearnBlocks    func(childComplexity int, prompt string, language *string, grade *model.Grade) int
+		GenerateVisualization  func(childComplexity int, concept string, vizType model.VizType, grade *string) int
 		Login                  func(childComplexity int, input model.LoginInput) int
 		Logout                 func(childComplexity int) int
 		PublishCourse          func(childComplexity int, id string) int
@@ -265,6 +267,8 @@ type MutationResolver interface {
 	GenerateLearnBlocks(ctx context.Context, prompt string, language *string, grade *model.Grade) ([]*model.LearnBlock, error)
 	GenerateEvaluateBlocks(ctx context.Context, content string, count *int) ([]*model.EvaluateBlock, error)
 	TranslateContent(ctx context.Context, content string, targetLanguage string) (string, error)
+	GenerateVisualization(ctx context.Context, concept string, vizType model.VizType, grade *string) (string, error)
+	AnalyzeImage(ctx context.Context, imageBase64 string, prompt *string) (string, error)
 	CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput) (*model.UserSubscription, error)
 	CancelSubscription(ctx context.Context) (*model.UserSubscription, error)
 	UpdateMe(ctx context.Context, input model.UpdateMeInput) (*model.User, error)
@@ -624,6 +628,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.ComplexityRoot.LessonProgress.TotalWaves(childComplexity), true
 
+	case "Mutation.analyzeImage":
+		if e.ComplexityRoot.Mutation.AnalyzeImage == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_analyzeImage_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.AnalyzeImage(childComplexity, args["imageBase64"].(string), args["prompt"].(*string)), true
 	case "Mutation.cancelSubscription":
 		if e.ComplexityRoot.Mutation.CancelSubscription == nil {
 			break
@@ -707,6 +722,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Mutation.GenerateLearnBlocks(childComplexity, args["prompt"].(string), args["language"].(*string), args["grade"].(*model.Grade)), true
+	case "Mutation.generateVisualization":
+		if e.ComplexityRoot.Mutation.GenerateVisualization == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_generateVisualization_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.GenerateVisualization(childComplexity, args["concept"].(string), args["vizType"].(model.VizType), args["grade"].(*string)), true
 	case "Mutation.login":
 		if e.ComplexityRoot.Mutation.Login == nil {
 			break
@@ -1850,6 +1876,28 @@ func (ec *executionContext) childFields___Type(ctx context.Context, field graphq
 
 // region    ***************************** args.gotpl *****************************
 
+func (ec *executionContext) field_Mutation_analyzeImage_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "imageBase64",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNString2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["imageBase64"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "prompt",
+		func(ctx context.Context, v any) (*string, error) {
+			return ec.unmarshalOString2ᚖstring(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["prompt"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createCourse_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -1980,6 +2028,36 @@ func (ec *executionContext) field_Mutation_generateLearnBlocks_args(ctx context.
 	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "grade",
 		func(ctx context.Context, v any) (*model.Grade, error) {
 			return ec.unmarshalOGrade2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐGrade(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["grade"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_generateVisualization_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "concept",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNString2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["concept"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "vizType",
+		func(ctx context.Context, v any) (model.VizType, error) {
+			return ec.unmarshalNVizType2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐVizType(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["vizType"] = arg1
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "grade",
+		func(ctx context.Context, v any) (*string, error) {
+			return ec.unmarshalOString2ᚖstring(ctx, v)
 		})
 	if err != nil {
 		return nil, err
@@ -4490,6 +4568,94 @@ func (ec *executionContext) fieldContext_Mutation_translateContent(ctx context.C
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_translateContent_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_generateVisualization(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_generateVisualization(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().GenerateVisualization(ctx, fc.Args["concept"].(string), fc.Args["vizType"].(model.VizType), fc.Args["grade"].(*string))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_generateVisualization(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_generateVisualization_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_analyzeImage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_analyzeImage(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().AnalyzeImage(ctx, fc.Args["imageBase64"].(string), fc.Args["prompt"].(*string))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_analyzeImage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_analyzeImage_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -9075,6 +9241,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "generateVisualization":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_generateVisualization(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "analyzeImage":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_analyzeImage(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createSubscription":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createSubscription(ctx, field)
@@ -10885,6 +11065,16 @@ func (ec *executionContext) marshalNUserSubscription2ᚖgithubᚗcomᚋstudedᚋ
 		return graphql.Null
 	}
 	return ec._UserSubscription(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNVizType2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐVizType(ctx context.Context, v any) (model.VizType, error) {
+	var res model.VizType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNVizType2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐVizType(ctx context.Context, sel ast.SelectionSet, v model.VizType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) marshalNWave2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐWave(ctx context.Context, sel ast.SelectionSet, v model.Wave) graphql.Marshaler {
