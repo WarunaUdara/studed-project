@@ -1,300 +1,307 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, HelpCircle, MoveRight, RotateCcw, Sparkles, XCircle } from "lucide-react";
-import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  Check,
+  CheckCircle2,
+  HelpCircle,
+  RotateCcw,
+  Sparkles,
+  XCircle,
+} from "lucide-react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { playErrorSound, playSuccessSound } from "@/lib/sounds";
 import { cn } from "@/lib/utils";
-
-interface StepConfig {
-  id: string;
-  title: string;
-  instruction: string;
-  mode: "move_axis" | "vector_demo" | "select_point" | "identify_point";
-  targetPoint: { x: number; y: number };
-  initialPoint?: { x: number; y: number };
-  candidatePoints?: { x: number; y: number }[];
-  explanation: string;
-  xBounds?: { min: number; max: number };
-  yBounds?: { min: number; max: number };
-}
-
-const DEFAULT_STEPS: StepConfig[] = [
-  {
-    id: "step-1",
-    title: "1. Horizontal Movement (x-axis)",
-    instruction: "Move the point 3 grid steps to the right along the x-axis.",
-    mode: "move_axis",
-    initialPoint: { x: 0, y: 0 },
-    targetPoint: { x: 3, y: 0 },
-    explanation:
-      "The horizontal line is the x-axis. Moving right increases the x-coordinate from 0 to 3.",
-  },
-  {
-    id: "step-2",
-    title: "2. Vector & Displacements",
-    instruction: "Observe how horizontal and vertical distances reach point (5, 4) from the origin (0, 0).",
-    mode: "vector_demo",
-    initialPoint: { x: 0, y: 0 },
-    targetPoint: { x: 5, y: 4 },
-    explanation:
-      "The origin (0, 0) is the reference point. From the origin, we go 5 steps right along the x-axis, then 4 steps up along the y-axis to reach (5, 4).",
-  },
-  {
-    id: "step-3",
-    title: "3. Plotting Coordinate Pairs",
-    instruction: "Select the point that is 3 steps right and 1 step up from the origin.",
-    mode: "select_point",
-    targetPoint: { x: 3, y: 1 },
-    candidatePoints: [
-      { x: 3, y: 3 },
-      { x: 2, y: 2 },
-      { x: 3, y: 2 },
-      { x: 4, y: 2 },
-      { x: 3, y: 1 },
-    ],
-    explanation:
-      "Starting at origin (0,0): 3 steps right gives x = 3. 1 step up gives y = 1. The coordinate pair is (3, 1).",
-  },
-  {
-    id: "step-4",
-    title: "4. Identifying Coordinates",
-    instruction: "Find point (4, 3) on the coordinate grid.",
-    mode: "select_point",
-    targetPoint: { x: 4, y: 3 },
-    candidatePoints: [
-      { x: 2, y: 4 },
-      { x: 4, y: 3 },
-      { x: 3, y: 4 },
-      { x: 4, y: 2 },
-      { x: 1, y: 3 },
-    ],
-    explanation:
-      "Coordinates are written as (x, y). First number = horizontal shift right, second number = vertical shift up.",
-  },
-];
+import {
+  type CoordinatePlaneStep,
+  DEFAULT_STEPS,
+  isPointInGrid,
+  type Point,
+  parseConfig,
+  resolveGrid,
+  stepTargetsMatch,
+} from "./coordinatePlaneUtils";
 
 interface CoordinatePlaneBlockProps {
   content?: string;
   metadata?: string | null;
 }
 
-export function CoordinatePlaneBlock({ content: _content, metadata }: CoordinatePlaneBlockProps) {
-  let customSteps: StepConfig[] | null = null;
-  if (metadata) {
-    try {
-      const parsed = JSON.parse(metadata);
-      if (Array.isArray(parsed.steps)) {
-        customSteps = parsed.steps;
-      }
-    } catch {
-      // Use fallback steps
-    }
-  }
+const SVG_PADDING = 40;
+const SVG_WIDTH = 360;
+const SVG_HEIGHT = 360;
 
-  const steps = customSteps ?? DEFAULT_STEPS;
+type Status = "idle" | "correct" | "incorrect";
+
+export function CoordinatePlaneBlock({ metadata }: CoordinatePlaneBlockProps) {
+  const config = useMemo(() => parseConfig(metadata), [metadata]);
+  const grid = useMemo(() => resolveGrid(config.grid), [config.grid]);
+  const steps: CoordinatePlaneStep[] = config.steps?.length ? config.steps : DEFAULT_STEPS;
+
   const [stepIdx, setStepIdx] = useState(0);
-  const currentStep = steps[stepIdx] || steps[0];
+  const currentStep = steps[stepIdx] ?? steps[0];
 
-  const [currentPos, setCurrentPos] = useState<{ x: number; y: number }>(
-    currentStep.initialPoint ?? { x: 0, y: 0 }
-  );
-  const [selectedPoint, setSelectedPoint] = useState<{ x: number; y: number } | null>(null);
-  const [status, setStatus] = useState<"idle" | "correct" | "incorrect">("idle");
+  const [currentPos, setCurrentPos] = useState<Point>(currentStep.initial ?? { x: 0, y: 0 });
+  const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
+  const [status, setStatus] = useState<Status>("idle");
   const [showWhy, setShowWhy] = useState(false);
+  const [demoRevealed, setDemoRevealed] = useState(false);
 
-  const xMax = currentStep.xBounds?.max ?? 6;
-  const yMax = currentStep.yBounds?.max ?? 6;
+  const gridW = SVG_WIDTH - SVG_PADDING * 2;
+  const gridH = SVG_HEIGHT - SVG_PADDING * 2;
 
-  // Grid drawing parameters
-  const padding = 40;
-  const width = 360;
-  const height = 360;
-  const gridW = width - padding * 2;
-  const gridH = height - padding * 2;
+  const toSvgX = (x: number) => SVG_PADDING + ((x - grid.xMin) / (grid.xMax - grid.xMin)) * gridW;
+  const toSvgY = (y: number) =>
+    SVG_HEIGHT - SVG_PADDING - ((y - grid.yMin) / (grid.yMax - grid.yMin)) * gridH;
 
-  const toSvgX = (x: number) => padding + (x / xMax) * gridW;
-  const toSvgY = (y: number) => height - padding - (y / yMax) * gridH;
+  const xTicks = useMemo(() => {
+    const ticks: number[] = [];
+    for (let i = Math.ceil(grid.xMin); i <= Math.floor(grid.xMax); i++) ticks.push(i);
+    return ticks;
+  }, [grid]);
 
-  const handleResetStep = () => {
-    setCurrentPos(currentStep.initialPoint ?? { x: 0, y: 0 });
+  const yTicks = useMemo(() => {
+    const ticks: number[] = [];
+    for (let i = Math.ceil(grid.yMin); i <= Math.floor(grid.yMax); i++) ticks.push(i);
+    return ticks;
+  }, [grid]);
+
+  const hasXAxis = grid.xMin <= 0 && grid.xMax >= 0;
+  const hasYAxis = grid.yMin <= 0 && grid.yMax >= 0;
+  const hasOrigin = isPointInGrid({ x: 0, y: 0 }, grid);
+
+  const isVectorDemo = currentStep.mode === "vector_demo";
+  const isMoveMode = currentStep.mode === "move_axis" || currentStep.mode === "move_plane";
+  const isSelectMode = currentStep.mode === "select_point";
+
+  const isCorrect =
+    status === "correct" ||
+    (isVectorDemo && demoRevealed) ||
+    (isMoveMode && stepTargetsMatch(currentPos, currentStep.target)) ||
+    (isSelectMode && stepTargetsMatch(selectedPoint, currentStep.target));
+
+  const isLastStep = stepIdx >= steps.length - 1;
+
+  const resetStep = () => {
+    setCurrentPos(currentStep.initial ?? { x: 0, y: 0 });
     setSelectedPoint(null);
     setStatus("idle");
     setShowWhy(false);
+    setDemoRevealed(false);
   };
 
-  const handleNextStep = () => {
-    if (stepIdx < steps.length - 1) {
-      const nextIdx = stepIdx + 1;
-      setStepIdx(nextIdx);
-      const nextStep = steps[nextIdx];
-      setCurrentPos(nextStep.initialPoint ?? { x: 0, y: 0 });
-      setSelectedPoint(null);
-      setStatus("idle");
-      setShowWhy(false);
-    } else {
-      // Loop back or stay
-      setStepIdx(0);
-      const firstStep = steps[0];
-      setCurrentPos(firstStep.initialPoint ?? { x: 0, y: 0 });
-      setSelectedPoint(null);
-      setStatus("idle");
-      setShowWhy(false);
-    }
+  const goToStep = (idx: number) => {
+    const next = steps[idx] ?? steps[0];
+    setStepIdx(idx);
+    setCurrentPos(next.initial ?? { x: 0, y: 0 });
+    setSelectedPoint(null);
+    setStatus("idle");
+    setShowWhy(false);
+    setDemoRevealed(false);
   };
 
   const handleCheck = () => {
-    let isCorrect = false;
-    if (currentStep.mode === "move_axis") {
-      isCorrect = currentPos.x === currentStep.targetPoint.x && currentPos.y === currentStep.targetPoint.y;
-    } else if (currentStep.mode === "select_point") {
-      isCorrect =
-        selectedPoint !== null &&
-        selectedPoint.x === currentStep.targetPoint.x &&
-        selectedPoint.y === currentStep.targetPoint.y;
-    } else if (currentStep.mode === "vector_demo") {
-      isCorrect = true;
-    }
-
-    if (isCorrect) {
+    if (isMoveMode && stepTargetsMatch(currentPos, currentStep.target)) {
       setStatus("correct");
       playSuccessSound();
-    } else {
-      setStatus("incorrect");
-      playErrorSound();
+      return;
     }
+    if (isSelectMode && stepTargetsMatch(selectedPoint, currentStep.target)) {
+      setStatus("correct");
+      playSuccessSound();
+      return;
+    }
+    setStatus("incorrect");
+    playErrorSound();
   };
+
+  const handleVectorContinue = () => {
+    setDemoRevealed(true);
+    setStatus("correct");
+    playSuccessSound();
+  };
+
+  const handleNext = () => {
+    if (isLastStep) {
+      goToStep(0);
+      return;
+    }
+    goToStep(stepIdx + 1);
+  };
+
+  const movePoint = (dx: number, dy: number) => {
+    const next: Point = { x: currentPos.x + dx, y: currentPos.y + dy };
+    if (!isPointInGrid(next, grid)) return;
+    setCurrentPos(next);
+    setStatus("idle");
+  };
+
+  const canCheck = isVectorDemo ? true : isSelectMode ? selectedPoint !== null : true;
+  const checkDisabled = isCorrect || !canCheck;
 
   return (
     <div className="rounded-3xl border bg-card p-6 shadow-xl space-y-6 max-w-2xl mx-auto border-emerald-500/20 dark:border-emerald-500/30">
-      {/* Header & Step Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-              <Sparkles className="h-3.5 w-3.5" /> Interactive Coordinate Geometry
+              <Sparkles className="h-3.5 w-3.5" />
+              {config.title ?? "Interactive Coordinate Geometry"}
             </span>
             <span className="text-xs text-muted-foreground font-medium">
               Step {stepIdx + 1} of {steps.length}
             </span>
           </div>
-          <h3 className="text-xl font-bold font-serif text-foreground mt-1">
-            {currentStep.title}
-          </h3>
+          <h3 className="text-xl font-bold font-serif text-foreground mt-1">{currentStep.title}</h3>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div
+          className="flex items-center gap-1.5"
+          role="tablist"
+          aria-label="Coordinate plane steps"
+        >
           {steps.map((s, idx) => (
             <button
               key={s.id}
               type="button"
-              onClick={() => {
-                setStepIdx(idx);
-                const sStep = steps[idx];
-                setCurrentPos(sStep.initialPoint ?? { x: 0, y: 0 });
-                setSelectedPoint(null);
-                setStatus("idle");
-                setShowWhy(false);
-              }}
+              role="tab"
+              aria-selected={stepIdx === idx}
+              aria-label={`Go to step ${idx + 1}: ${s.title}`}
+              onClick={() => goToStep(idx)}
               className={cn(
                 "h-2.5 rounded-full transition-all duration-300",
                 stepIdx === idx
                   ? "w-7 bg-emerald-500"
-                  : "w-2.5 bg-muted hover:bg-muted-foreground/30"
+                  : "w-2.5 bg-muted hover:bg-muted-foreground/30",
               )}
-              title={s.title}
             />
           ))}
         </div>
       </div>
 
-      {/* Instruction Banner */}
       <div className="text-center space-y-1">
         <p className="text-base sm:text-lg font-medium text-foreground">
           {currentStep.instruction}
         </p>
-        {currentStep.mode === "move_axis" && (
+        {isMoveMode && (
           <p className="text-xs text-muted-foreground">
-            Current Position: <span className="font-mono font-bold text-emerald-500">({currentPos.x}, {currentPos.y})</span>
+            Current Position:{" "}
+            <span className="font-mono font-bold text-emerald-500">
+              ({currentPos.x}, {currentPos.y})
+            </span>
           </p>
         )}
       </div>
 
-      {/* Interactive 2D Grid SVG */}
       <div className="relative flex justify-center items-center py-2">
         <div
           className={cn(
             "relative rounded-2xl bg-slate-950 p-4 shadow-inner border transition-all duration-300",
             status === "correct" && "ring-4 ring-emerald-500/40 border-emerald-500",
-            status === "incorrect" && "ring-4 ring-rose-500/40 border-rose-500"
+            status === "incorrect" && "ring-4 ring-rose-500/40 border-rose-500",
           )}
         >
-          <svg width={width} height={height} className="overflow-visible select-none">
-            {/* Gridlines */}
-            {Array.from({ length: xMax + 1 }).map((_, i) => (
-              <line
-                key={`grid-x-${i}`}
-                x1={toSvgX(i)}
-                y1={toSvgY(0)}
-                x2={toSvgX(i)}
-                y2={toSvgY(yMax)}
-                stroke="rgba(255,255,255,0.08)"
-                strokeWidth="1"
-              />
-            ))}
-            {Array.from({ length: yMax + 1 }).map((_, j) => (
-              <line
-                key={`grid-y-${j}`}
-                x1={toSvgX(0)}
-                y1={toSvgY(j)}
-                x2={toSvgX(xMax)}
-                y2={toSvgY(j)}
-                stroke="rgba(255,255,255,0.08)"
-                strokeWidth="1"
-              />
-            ))}
+          <div className="relative">
+            <svg
+              width={SVG_WIDTH}
+              height={SVG_HEIGHT}
+              viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
+              className="overflow-visible select-none"
+              role="img"
+            >
+              <title>
+                Coordinate grid from x={grid.xMin} to x={grid.xMax} and y={grid.yMin} to y=
+                {grid.yMax}
+              </title>
 
-            {/* X-axis & Y-axis */}
-            <line
-              x1={toSvgX(0)}
-              y1={toSvgY(0)}
-              x2={toSvgX(xMax + 0.3)}
-              y2={toSvgY(0)}
-              stroke="#e2e8f0"
-              strokeWidth="2.5"
-            />
-            <polygon
-              points={`${toSvgX(xMax + 0.35)},${toSvgY(0)} ${toSvgX(xMax + 0.2)},${toSvgY(0) - 5} ${toSvgX(xMax + 0.2)},${toSvgY(0) + 5}`}
-              fill="#e2e8f0"
-            />
-
-            <line
-              x1={toSvgX(0)}
-              y1={toSvgY(0)}
-              x2={toSvgX(0)}
-              y2={toSvgY(yMax + 0.3)}
-              stroke="#e2e8f0"
-              strokeWidth="2.5"
-            />
-            <polygon
-              points={`${toSvgX(0)},${toSvgY(yMax + 0.35)} ${toSvgX(0) - 5},${toSvgY(yMax + 0.2)} ${toSvgX(0) + 5},${toSvgY(yMax + 0.2)}`}
-              fill="#e2e8f0"
-            />
-
-            {/* Tick marks & Labels */}
-            {Array.from({ length: xMax + 1 }).map((_, i) => (
-              <g key={`tick-x-${i}`}>
+              {xTicks.map((i) => (
                 <line
+                  key={`grid-x-${i}`}
                   x1={toSvgX(i)}
-                  y1={toSvgY(0) - 4}
+                  y1={toSvgY(grid.yMin)}
                   x2={toSvgX(i)}
-                  y2={toSvgY(0) + 4}
-                  stroke="#e2e8f0"
-                  strokeWidth="1.5"
+                  y2={toSvgY(grid.yMax)}
+                  stroke="rgba(255,255,255,0.08)"
+                  strokeWidth="1"
                 />
-                {i > 0 && (
+              ))}
+              {yTicks.map((j) => (
+                <line
+                  key={`grid-y-${j}`}
+                  x1={toSvgX(grid.xMin)}
+                  y1={toSvgY(j)}
+                  x2={toSvgX(grid.xMax)}
+                  y2={toSvgY(j)}
+                  stroke="rgba(255,255,255,0.08)"
+                  strokeWidth="1"
+                />
+              ))}
+
+              {hasXAxis && (
+                <g>
+                  <line
+                    x1={toSvgX(grid.xMin)}
+                    y1={toSvgY(0)}
+                    x2={toSvgX(grid.xMax)}
+                    y2={toSvgY(0)}
+                    stroke="#e2e8f0"
+                    strokeWidth="2.5"
+                  />
+                  <polygon
+                    points={`${toSvgX(grid.xMax)},${toSvgY(0)} ${toSvgX(grid.xMax) - 6},${toSvgY(0) - 5} ${toSvgX(grid.xMax) - 6},${toSvgY(0) + 5}`}
+                    fill="#e2e8f0"
+                  />
+                </g>
+              )}
+              {hasYAxis && (
+                <g>
+                  <line
+                    x1={toSvgX(0)}
+                    y1={toSvgY(grid.yMin)}
+                    x2={toSvgX(0)}
+                    y2={toSvgY(grid.yMax)}
+                    stroke="#e2e8f0"
+                    strokeWidth="2.5"
+                  />
+                  <polygon
+                    points={`${toSvgX(0)},${toSvgY(grid.yMax)} ${toSvgX(0) - 5},${toSvgY(grid.yMax) + 6} ${toSvgX(0) + 5},${toSvgY(grid.yMax) + 6}`}
+                    fill="#e2e8f0"
+                  />
+                </g>
+              )}
+
+              {hasOrigin && (
+                <g>
+                  <circle
+                    cx={toSvgX(0)}
+                    cy={toSvgY(0)}
+                    r="7"
+                    fill="none"
+                    stroke="#fbbf24"
+                    strokeWidth="2.5"
+                  />
+                  <circle cx={toSvgX(0)} cy={toSvgY(0)} r="3" fill="#fbbf24" />
+                </g>
+              )}
+
+              {xTicks.map((i) => (
+                <g key={`tick-x-${i}`}>
+                  {hasXAxis && (
+                    <line
+                      x1={toSvgX(i)}
+                      y1={toSvgY(0) - 4}
+                      x2={toSvgX(i)}
+                      y2={toSvgY(0) + 4}
+                      stroke="#e2e8f0"
+                      strokeWidth="1.5"
+                    />
+                  )}
                   <text
                     x={toSvgX(i)}
-                    y={toSvgY(0) + 20}
+                    y={SVG_HEIGHT - SVG_PADDING + 18}
                     textAnchor="middle"
                     fill="#94a3b8"
                     fontSize="12"
@@ -302,23 +309,22 @@ export function CoordinatePlaneBlock({ content: _content, metadata }: Coordinate
                   >
                     {i}
                   </text>
-                )}
-              </g>
-            ))}
-
-            {Array.from({ length: yMax + 1 }).map((_, j) => (
-              <g key={`tick-y-${j}`}>
-                <line
-                  x1={toSvgX(0) - 4}
-                  y1={toSvgY(j)}
-                  x2={toSvgX(0) + 4}
-                  y2={toSvgY(j)}
-                  stroke="#e2e8f0"
-                  strokeWidth="1.5"
-                />
-                {j > 0 && (
+                </g>
+              ))}
+              {yTicks.map((j) => (
+                <g key={`tick-y-${j}`}>
+                  {hasYAxis && (
+                    <line
+                      x1={toSvgX(0) - 4}
+                      y1={toSvgY(j)}
+                      x2={toSvgX(0) + 4}
+                      y2={toSvgY(j)}
+                      stroke="#e2e8f0"
+                      strokeWidth="1.5"
+                    />
+                  )}
                   <text
-                    x={toSvgX(0) - 16}
+                    x={SVG_PADDING - 12}
                     y={toSvgY(j) + 4}
                     textAnchor="middle"
                     fill="#94a3b8"
@@ -327,192 +333,188 @@ export function CoordinatePlaneBlock({ content: _content, metadata }: Coordinate
                   >
                     {j}
                   </text>
-                )}
-              </g>
-            ))}
+                </g>
+              ))}
 
-            {/* Origin Highlight Ring */}
-            <circle
-              cx={toSvgX(0)}
-              cy={toSvgY(0)}
-              r="7"
-              fill="none"
-              stroke="#fbbf24"
-              strokeWidth="2.5"
-            />
-            <circle cx={toSvgX(0)} cy={toSvgY(0)} r="3" fill="#fbbf24" />
+              {isVectorDemo && (
+                <g>
+                  <line
+                    x1={toSvgX(0)}
+                    y1={toSvgY(0)}
+                    x2={toSvgX(currentStep.target.x)}
+                    y2={toSvgY(0)}
+                    stroke="#2dd4bf"
+                    strokeWidth="3.5"
+                  />
+                  <text
+                    x={toSvgX(currentStep.target.x / 2)}
+                    y={toSvgY(0) + 22}
+                    textAnchor="middle"
+                    fill="#2dd4bf"
+                    fontSize="14"
+                    fontWeight="700"
+                  >
+                    {currentStep.target.x}
+                  </text>
+                  <line
+                    x1={toSvgX(currentStep.target.x)}
+                    y1={toSvgY(0)}
+                    x2={toSvgX(currentStep.target.x)}
+                    y2={toSvgY(currentStep.target.y)}
+                    stroke="#38bdf8"
+                    strokeWidth="3.5"
+                  />
+                  <text
+                    x={toSvgX(currentStep.target.x) + 16}
+                    y={toSvgY(currentStep.target.y / 2)}
+                    textAnchor="start"
+                    fill="#38bdf8"
+                    fontSize="14"
+                    fontWeight="700"
+                  >
+                    {currentStep.target.y}
+                  </text>
+                  <circle
+                    cx={toSvgX(currentStep.target.x)}
+                    cy={toSvgY(currentStep.target.y)}
+                    r="7"
+                    fill="#60a5fa"
+                    stroke="#ffffff"
+                    strokeWidth="2"
+                  />
+                </g>
+              )}
 
-            {/* Vector Mode Highlights & Lines */}
-            {currentStep.mode === "vector_demo" && (
-              <>
-                {/* Horizontal x-displacement vector */}
-                <line
-                  x1={toSvgX(0)}
-                  y1={toSvgY(0)}
-                  x2={toSvgX(currentStep.targetPoint.x)}
-                  y2={toSvgY(0)}
-                  stroke="#2dd4bf"
-                  strokeWidth="3.5"
-                />
-                <text
-                  x={toSvgX(currentStep.targetPoint.x / 2)}
-                  y={toSvgY(0) + 22}
-                  textAnchor="middle"
-                  fill="#2dd4bf"
-                  fontSize="14"
-                  fontWeight="700"
-                >
-                  {currentStep.targetPoint.x}
-                </text>
+              {isMoveMode && (
+                <g>
+                  {currentStep.mode === "move_plane" &&
+                    currentPos.x !== 0 &&
+                    currentPos.y !== 0 && (
+                      <line
+                        x1={toSvgX(0)}
+                        y1={toSvgY(0)}
+                        x2={toSvgX(currentPos.x)}
+                        y2={toSvgY(currentPos.y)}
+                        stroke="rgba(16,185,129,0.4)"
+                        strokeWidth="2"
+                        strokeDasharray="4 4"
+                      />
+                    )}
+                  <circle
+                    cx={toSvgX(currentPos.x)}
+                    cy={toSvgY(currentPos.y)}
+                    r="7"
+                    fill="#10b981"
+                    stroke="#ffffff"
+                    strokeWidth="2"
+                  />
+                  {status === "correct" && (
+                    <g
+                      transform={`translate(${toSvgX(currentPos.x) - 8}, ${toSvgY(currentPos.y) - 26})`}
+                    >
+                      <rect width="16" height="16" rx="4" fill="#10b981" />
+                      <path
+                        d="M4 8 L7 11 L12 5"
+                        fill="none"
+                        stroke="#ffffff"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                    </g>
+                  )}
+                </g>
+              )}
+            </svg>
 
-                {/* Vertical y-displacement vector */}
-                <line
-                  x1={toSvgX(currentStep.targetPoint.x)}
-                  y1={toSvgY(0)}
-                  x2={toSvgX(currentStep.targetPoint.x)}
-                  y2={toSvgY(currentStep.targetPoint.y)}
-                  stroke="#38bdf8"
-                  strokeWidth="3.5"
-                />
-                <text
-                  x={toSvgX(currentStep.targetPoint.x) + 16}
-                  y={toSvgY(currentStep.targetPoint.y / 2)}
-                  textAnchor="start"
-                  fill="#38bdf8"
-                  fontSize="14"
-                  fontWeight="700"
-                >
-                  {currentStep.targetPoint.y}
-                </text>
-
-                {/* Target Point */}
-                <circle
-                  cx={toSvgX(currentStep.targetPoint.x)}
-                  cy={toSvgY(currentStep.targetPoint.y)}
-                  r="7"
-                  fill="#60a5fa"
-                  stroke="#ffffff"
-                  strokeWidth="2"
-                />
-              </>
-            )}
-
-            {/* Candidate Points for Select Mode */}
-            {currentStep.mode === "select_point" &&
+            {isSelectMode &&
               currentStep.candidatePoints?.map((pt) => {
-                const isSelected =
-                  selectedPoint && selectedPoint.x === pt.x && selectedPoint.y === pt.y;
+                const isSelected = selectedPoint?.x === pt.x && selectedPoint.y === pt.y;
                 return (
-                  <g
+                  <button
                     key={`cand-${pt.x}-${pt.y}`}
-                    className="cursor-pointer group"
+                    type="button"
+                    aria-label={`Select point (${pt.x}, ${pt.y})`}
+                    aria-pressed={isSelected}
                     onClick={() => {
                       setSelectedPoint(pt);
                       setStatus("idle");
                     }}
+                    className="absolute -translate-x-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                    style={{ left: toSvgX(pt.x), top: toSvgY(pt.y) }}
                   >
-                    <circle
-                      cx={toSvgX(pt.x)}
-                      cy={toSvgY(pt.y)}
-                      r="16"
-                      fill="transparent"
-                    />
-                    <circle
-                      cx={toSvgX(pt.x)}
-                      cy={toSvgY(pt.y)}
-                      r={isSelected ? "9" : "6"}
-                      fill={isSelected ? "#10b981" : "#60a5fa"}
-                      stroke="#ffffff"
-                      strokeWidth="2"
-                      className="transition-all duration-200 group-hover:scale-125"
+                    <span
+                      className={cn(
+                        "block rounded-full border-2 border-white shadow transition-all duration-200",
+                        isSelected ? "h-5 w-5 bg-emerald-500" : "h-3.5 w-3.5 bg-blue-400",
+                      )}
                     />
                     {isSelected && (
-                      <circle
-                        cx={toSvgX(pt.x)}
-                        cy={toSvgY(pt.y)}
-                        r="14"
-                        fill="none"
-                        stroke="#10b981"
-                        strokeWidth="2"
-                        strokeDasharray="3 3"
-                        className="animate-spin-slow"
-                      />
+                      <span className="absolute h-7 w-7 rounded-full border-2 border-dashed border-emerald-500 animate-spin-slow" />
                     )}
-                  </g>
+                  </button>
                 );
               })}
-
-            {/* Draggable Point along x-axis */}
-            {currentStep.mode === "move_axis" && (
-              <g
-                className="cursor-pointer"
-                onClick={() => {
-                  const nextX = (currentPos.x + 1) % (xMax + 1);
-                  setCurrentPos({ x: nextX, y: 0 });
-                  setStatus("idle");
-                }}
-              >
-                <circle
-                  cx={toSvgX(currentPos.x)}
-                  cy={toSvgY(currentPos.y)}
-                  r="18"
-                  fill="rgba(16,185,129,0.2)"
-                />
-                <circle
-                  cx={toSvgX(currentPos.x)}
-                  cy={toSvgY(currentPos.y)}
-                  r="7"
-                  fill="#10b981"
-                  stroke="#ffffff"
-                  strokeWidth="2"
-                />
-                {status === "correct" && (
-                  <g transform={`translate(${toSvgX(currentPos.x) - 8}, ${toSvgY(currentPos.y) - 26})`}>
-                    <rect width="16" height="16" rx="4" fill="#10b981" />
-                    <path d="M4 8 L7 11 L12 5" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
-                  </g>
-                )}
-              </g>
-            )}
-          </svg>
+          </div>
         </div>
       </div>
 
-      {/* Axis Movement Controls for Move Mode */}
-      {currentStep.mode === "move_axis" && (
+      {isMoveMode && (
         <div className="flex items-center justify-center gap-3">
           <Button
             size="sm"
             variant="outline"
-            onClick={() => {
-              if (currentPos.x > 0) {
-                setCurrentPos({ x: currentPos.x - 1, y: 0 });
-                setStatus("idle");
-              }
-            }}
-            disabled={currentPos.x <= 0}
+            aria-label="Move left"
+            onClick={() => movePoint(-1, 0)}
+            disabled={
+              (currentStep.mode === "move_axis" && currentStep.axis !== "x") ||
+              currentPos.x <= grid.xMin ||
+              isCorrect
+            }
           >
-            Move Left (-1)
+            <ArrowLeft className="h-4 w-4" />
           </Button>
           <Button
             size="sm"
             className="bg-emerald-600 hover:bg-emerald-500 text-white font-medium"
-            onClick={() => {
-              if (currentPos.x < xMax) {
-                setCurrentPos({ x: currentPos.x + 1, y: 0 });
-                setStatus("idle");
-              }
-            }}
-            disabled={currentPos.x >= xMax}
+            aria-label="Move right"
+            onClick={() => movePoint(1, 0)}
+            disabled={
+              (currentStep.mode === "move_axis" && currentStep.axis !== "x") ||
+              currentPos.x >= grid.xMax ||
+              isCorrect
+            }
           >
-            Move Right (+1) <MoveRight className="h-4 w-4 ml-1" />
+            <ArrowRight className="h-4 w-4" />
           </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            aria-label="Move up"
+            onClick={() => movePoint(0, 1)}
+            disabled={
+              (currentStep.mode === "move_axis" && currentStep.axis !== "y") ||
+              currentPos.y >= grid.yMax ||
+              isCorrect
+            }
+          >
+            <ArrowUp className="h-4 w-4" />
+          </Button>
+          {currentStep.mode === "move_plane" && (
+            <Button
+              size="sm"
+              variant="outline"
+              aria-label="Move down"
+              onClick={() => movePoint(0, -1)}
+              disabled={currentPos.y <= grid.yMin || isCorrect}
+            >
+              <ArrowDown className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       )}
 
-      {/* Action Footer & Feedback */}
       <div className="space-y-4 pt-2 border-t">
-        {status === "correct" && (
+        {isCorrect && (
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
@@ -521,11 +523,13 @@ export function CoordinatePlaneBlock({ content: _content, metadata }: Coordinate
             <div className="flex items-center gap-2.5">
               <CheckCircle2 className="h-6 w-6 text-emerald-500 shrink-0" />
               <div>
-                <p className="font-bold text-sm">You got it!</p>
+                <p className="font-bold text-sm">
+                  {isVectorDemo ? "Got it — see the displacement!" : "You got it!"}
+                </p>
                 <p className="text-xs text-emerald-600/80 dark:text-emerald-400/80">
-                  {currentStep.targetPoint
-                    ? `Point identified at (${currentStep.targetPoint.x}, ${currentStep.targetPoint.y}).`
-                    : "Great job!"}
+                  {isVectorDemo
+                    ? "Right then up reaches the target point."
+                    : `Point identified at (${currentStep.target.x}, ${currentStep.target.y}).`}
                 </p>
               </div>
             </div>
@@ -541,9 +545,9 @@ export function CoordinatePlaneBlock({ content: _content, metadata }: Coordinate
               <Button
                 size="sm"
                 className="bg-emerald-600 text-white hover:bg-emerald-500 font-semibold"
-                onClick={handleNextStep}
+                onClick={handleNext}
               >
-                Continue
+                {isLastStep ? "Restart" : "Continue"}
               </Button>
             </div>
           </motion.div>
@@ -568,29 +572,39 @@ export function CoordinatePlaneBlock({ content: _content, metadata }: Coordinate
               size="sm"
               variant="outline"
               className="border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10"
-              onClick={handleResetStep}
+              onClick={resetStep}
             >
               <RotateCcw className="h-4 w-4 mr-1" /> Reset
             </Button>
           </motion.div>
         )}
 
-        {status === "idle" && (
+        {status === "idle" && !isCorrect && (
           <div className="flex items-center justify-between">
-            <Button size="sm" variant="ghost" onClick={handleResetStep}>
+            <Button size="sm" variant="ghost" onClick={resetStep}>
               <RotateCcw className="h-4 w-4 mr-1.5" /> Start over
             </Button>
-            <Button
-              size="default"
-              className="px-8 bg-emerald-600 text-white hover:bg-emerald-500 font-bold rounded-xl shadow-md"
-              onClick={handleCheck}
-            >
-              Check
-            </Button>
+            {isVectorDemo ? (
+              <Button
+                size="default"
+                className="px-8 bg-emerald-600 text-white hover:bg-emerald-500 font-bold rounded-xl shadow-md"
+                onClick={handleVectorContinue}
+              >
+                <Check className="h-4 w-4 mr-1" /> I see it
+              </Button>
+            ) : (
+              <Button
+                size="default"
+                className="px-8 bg-emerald-600 text-white hover:bg-emerald-500 font-bold rounded-xl shadow-md"
+                onClick={handleCheck}
+                disabled={checkDisabled}
+              >
+                Check
+              </Button>
+            )}
           </div>
         )}
 
-        {/* "Why?" Explanation Popover */}
         <AnimatePresence>
           {showWhy && (
             <motion.div
