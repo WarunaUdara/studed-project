@@ -15,6 +15,7 @@ const GRAPHQL_URL =
 
 export const graphqlClient = createClient({
   url: GRAPHQL_URL,
+  preferGetMethod: false,
   fetchOptions: {
     credentials: "include",
   },

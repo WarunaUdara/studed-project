@@ -28,11 +28,16 @@ func (rl *RateLimiter) RateLimit() func(http.Handler) http.Handler {
 				return
 			}
 
-			ip := getClientIP(r)
 			path := strings.TrimRight(r.URL.Path, "/")
+			if path == "/health" || path == "/metrics" || path == "/ready" {
+				next.ServeHTTP(w, r)
+				return
+			}
 
-			// Global IP rate limit (100 req / min)
-			if !rl.allow(r.Context(), fmt.Sprintf("ratelimit:global:%s", ip), 100, 1*time.Minute) {
+			ip := getClientIP(r)
+
+			// Global IP rate limit (600 req / min)
+			if !rl.allow(r.Context(), fmt.Sprintf("ratelimit:global:%s", ip), 600, 1*time.Minute) {
 				http.Error(w, `{"error":"rate limit exceeded"}`, http.StatusTooManyRequests)
 				return
 			}

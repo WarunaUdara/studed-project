@@ -475,17 +475,14 @@ func (r *queryResolver) MyEnrollments(ctx context.Context) ([]*model.Course, err
 
 // Course is the resolver for the course field.
 func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, error) {
-	userCtx, err := requireUser(ctx)
-	if err != nil {
-		return nil, err
-	}
+	userCtx, ok := middleware.UserFromContext(ctx)
 
 	course, err := r.CourseClient.GetCourseWithLessons(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	isEducatorOrAdmin := userCtx.Role == "EDUCATOR" || userCtx.Role == "HEAD_EDUCATOR" || userCtx.Role == "ADMIN"
+	isEducatorOrAdmin := ok && (userCtx.Role == "EDUCATOR" || userCtx.Role == "HEAD_EDUCATOR" || userCtx.Role == "ADMIN")
 	if isEducatorOrAdmin {
 		if userCtx.Role != "ADMIN" {
 			if course.Educator == nil || course.Educator.ID != userCtx.UserID {
@@ -515,11 +512,15 @@ func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, e
 			}
 		}
 		course.Lessons = publishedLessons
-		r.populateWavesProgress(ctx, userCtx.UserID, course)
+		if ok {
+			r.populateWavesProgress(ctx, userCtx.UserID, course)
+		}
 	}
 
-	progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, id)
-	course.MyProgress = progress
+	if ok {
+		progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, id)
+		course.MyProgress = progress
+	}
 
 	return course, nil
 }

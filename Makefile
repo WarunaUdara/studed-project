@@ -57,6 +57,9 @@
  k8s-policy-test:
 	@which kyverno >/dev/null 2>&1 || [ -f /opt/homebrew/bin/kyverno ] && (/opt/homebrew/bin/kyverno apply infra/k8s/kyverno/cluster-policies.yaml --resource infra/k8s/services/ --resource infra/k8s/production/services/ || kyverno apply infra/k8s/kyverno/cluster-policies.yaml --resource infra/k8s/services/ --resource infra/k8s/production/services/) || echo "⚠️ Kyverno CLI not found locally; install via 'brew install kyverno'"
 
+ regression-test: go-test shared-test frontend-test k8s-policy-test
+	@echo "All extensible regression test matrices passed successfully!"
+
  ci-local: security-scan frontend-typecheck frontend-test frontend-build go-test shared-test helm-lint k8s-policy-test iac-plan promtool-check
 	@echo "All local CI pre-flight checks passed!"
 
@@ -75,8 +78,8 @@
 
  promtool-check:
 	@if docker info >/dev/null 2>&1; then \
-		docker run --rm -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 promtool check config /etc/prometheus/prometheus.yml && \
-		docker run --rm -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 promtool check rules /etc/prometheus/rules/studed.rules.yml; \
+		docker run --rm --entrypoint promtool -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 check config /etc/prometheus/prometheus.yml && \
+		docker run --rm --entrypoint promtool -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 check rules /etc/prometheus/rules/studed.rules.yml; \
 	else \
 		echo "Skipping containerized promtool-check (Docker daemon not running)"; \
 	fi
