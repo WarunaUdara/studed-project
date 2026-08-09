@@ -371,6 +371,72 @@ interface EvaluateBlockInput {
 // Safe coercion for unknown props
 const str = (v: unknown, fallback = ""): string => (typeof v === "string" ? v : fallback);
 
+// Convert AI-agent generated blocks into Puck content items so the chat
+// panel can insert them into the live editor. Mirrors waveDataToPuck's
+// mapping, but returns only the new items (no root/zones).
+export function agentBlocksToPuckItems(
+  learnBlocks: LearnBlockRaw[],
+  evaluateBlocks: EvaluateBlockRaw[],
+): PuckData["content"] {
+  const items: PuckData["content"] = [];
+
+  for (const lb of learnBlocks ?? []) {
+    if (lb.type === "image") {
+      items.push({
+        type: "ImageBlock",
+        props: { id: lb.id, src: lb.content, alt: "Visual aid", caption: lb.metadata || "" },
+      });
+    } else if (lb.type === "formula" || lb.type === "math") {
+      items.push({
+        type: "MathViz",
+        props: { id: lb.id, formula: lb.content },
+      });
+    } else {
+      items.push({
+        type: "TextBlock",
+        props: { id: lb.id, content: lb.content },
+      });
+    }
+  }
+
+  for (const eb of evaluateBlocks ?? []) {
+    if (eb.type === "multiple_choice" || eb.type === "mcq") {
+      items.push({
+        type: "MCQBlock",
+        props: {
+          id: eb.id,
+          question: eb.question,
+          options: (eb.options || []).join("\n"),
+          correctAnswer: eb.correctAnswer || "",
+          explanation: eb.explanation || "",
+        },
+      });
+    } else if (eb.type === "fill_in_the_blank" || eb.type === "fill_in_blank") {
+      items.push({
+        type: "FillBlankBlock",
+        props: {
+          id: eb.id,
+          question: eb.question,
+          correctAnswer: eb.correctAnswer || "",
+          explanation: eb.explanation || "",
+        },
+      });
+    } else {
+      items.push({
+        type: "DragDropBlock",
+        props: {
+          id: eb.id,
+          question: eb.question,
+          correctAnswer: eb.correctAnswer || "",
+          explanation: eb.explanation || "",
+        },
+      });
+    }
+  }
+
+  return items;
+}
+
 export function puckToWaveData(puckData: PuckData) {
   const learnBlocks: LearnBlockInput[] = [];
   const evaluateBlocks: EvaluateBlockInput[] = [];

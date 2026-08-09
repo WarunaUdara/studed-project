@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Check, Loader2, Save, Send } from "lucide-react";
+import { ArrowLeft, Bot, Check, Loader2, Save, Send } from "lucide-react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { useMutation, useQuery } from "urql";
 
+import { AIAssistantPanel } from "@/components/educator/AIAssistantPanel";
 import {
+  agentBlocksToPuckItems,
   type PuckData,
   puckToWaveData,
   waveDataToPuck,
@@ -35,6 +37,7 @@ function WaveEditorPage() {
   const [puckData, setPuckData] = useState<PuckData | null>(null);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [assistantOpen, setAssistantOpen] = useState(false);
 
   const wave = data?.wave;
 
@@ -88,6 +91,20 @@ function WaveEditorPage() {
     reexecuteQuery({ requestPolicy: "network-only" });
   };
 
+  // Insert AI-generated blocks at the end of the current editor content.
+  const handleInsertBlocks = (
+    learnBlocks: Parameters<typeof agentBlocksToPuckItems>[0],
+    evaluateBlocks: Parameters<typeof agentBlocksToPuckItems>[1],
+  ) => {
+    if (!puckData) return;
+    const newItems = agentBlocksToPuckItems(learnBlocks, evaluateBlocks);
+    if (newItems.length === 0) return;
+    setPuckData({
+      ...puckData,
+      content: [...(puckData.content ?? []), ...newItems],
+    });
+  };
+
   if (fetching && !puckData) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -111,6 +128,18 @@ function WaveEditorPage() {
       </div>
     );
   }
+
+  // A short markdown-ish summary of the wave for the agent's context, so it
+  // can reference existing content ("keep the same tone as...", "add to the
+  // existing learn section").
+  const waveContext = [
+    `Wave: ${wave.title}`,
+    `Difficulty: ${wave.difficulty} | XP: ${wave.xpReward}`,
+    `Learn blocks: ${(wave.learnBlocks ?? []).length}`,
+    `Evaluate blocks: ${(wave.evaluateBlocks ?? []).length}`,
+    ...(wave.learnBlocks ?? []).map((b: { type: string; content: string }) => `- [learn/${b.type}] ${b.content.slice(0, 120)}`),
+    ...(wave.evaluateBlocks ?? []).map((b: { type: string; question: string }) => `- [evaluate/${b.type}] ${b.question.slice(0, 120)}`),
+  ].join("\n");
 
   return (
     <div className="space-y-6 flex flex-col h-[calc(100vh-8rem)]">
@@ -138,6 +167,16 @@ function WaveEditorPage() {
           >
             {wave.isPublished ? "Published" : "Draft"}
           </span>
+
+          <Button
+            size="sm"
+            variant={assistantOpen ? "default" : "outline"}
+            onClick={() => setAssistantOpen((open) => !open)}
+            className="gap-1.5"
+          >
+            <Bot className="h-4 w-4" />
+            AI Assistant
+          </Button>
 
           {!wave.isPublished && (
             <Button
@@ -183,19 +222,38 @@ function WaveEditorPage() {
         </p>
       )}
 
-      {/* Puck Canvas Container */}
-      <div className="flex-1 border rounded-lg overflow-hidden bg-background relative min-h-[400px]">
-        {puckData && (
-          <Suspense
-            fallback={
-              <div className="flex h-full items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <span className="ml-2 text-muted-foreground">Loading editor...</span>
-              </div>
-            }
-          >
-            <PuckCanvas data={puckData} onChange={setPuckData} onPublish={handleSave} />
-          </Suspense>
+      {/* Editor + AI Assistant: the assistant docks on the right and the
+          Puck canvas shrinks to make room (content is never dropped). */}
+      <div className="flex flex-1 gap-0 min-h-[400px]">
+        <div className="flex-1 min-w-0 border rounded-lg overflow-hidden bg-background relative">
+          {puckData && (
+            <Suspense
+              fallback={
+                <div className="flex h-full items-center justify-center">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <span className="ml-2 text-muted-foreground">Loading editor...</span>
+                </div>
+              }
+            >
+              <PuckCanvas data={puckData} onChange={setPuckData} onPublish={handleSave} />
+            </Suspense>
+          )}
+        </div>
+
+        {assistantOpen && puckData && (
+          <div className="w-[380px] shrink-0 rounded-r-lg overflow-hidden border border-l-0">
+            <AIAssistantPanel
+              waveTitle={wave.title}
+              waveContext={waveContext}
+              grade={wave.gradeLevel ?? undefined}
+              language="en"
+              puckData={puckData}
+              onInsertBlocks={(learnBlocks, evaluateBlocks) =>
+                handleInsertBlocks(learnBlocks, evaluateBlocks)
+              }
+              onClose={() => setAssistantOpen(false)}
+            />
+          </div>
         )}
       </div>
     </div>

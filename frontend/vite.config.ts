@@ -41,6 +41,10 @@ export default defineConfig(({ mode }) => {
           target,
           changeOrigin: true,
         },
+        "/ai": {
+          target,
+          changeOrigin: true,
+        },
       },
       warmup: {
         clientFiles: [
