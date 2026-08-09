@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.25"
+          go-version: "1.24"
       - name: Install govulncheck
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
       - name: Run govulncheck across services
@@ -36,7 +36,7 @@ jobs:
           for svc in services/*; do
             if [ -f "$svc/go.mod" ]; then
               echo "Scanning $svc..."
-              (cd "$svc" && govulncheck ./...) || exit 1
+              (cd "$svc" && govulncheck -mode=source ./...) || exit 1
             fi
           done
 
@@ -48,8 +48,12 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Run Bun Security Scan
-        run: cd frontend && bun pm scan
+      - name: Run Bun Untrusted Scan & Audit
+        run: |
+          cd frontend
+          bun pm untrusted
+          npm i --package-lock-only
+          npm audit --audit-level=high
 
   kubeconform-scan:
     name: Kubernetes Manifest Schema Validation
@@ -62,7 +66,7 @@ jobs:
           sudo mv /tmp/kubeconform /usr/local/bin/
       - name: Validate Kubernetes Manifests
         run: |
-          kubeconform -kubernetes-version 1.30.0 -schema-location default "infra/k8s/**/*.yaml"
+          kubeconform -kubernetes-version 1.30.0 -schema-location default infra/k8s/services/ infra/k8s/production/services/
 
   kyverno-policy-check:
     name: Kyverno Admission Security Policy Validation
@@ -72,5 +76,5 @@ jobs:
       - uses: kyverno/action-install-cli@v0.2.0
       - name: Validate Manifests against Kyverno Security Policies
         run: |
-          kyverno apply infra/k8s/kyverno/cluster-policies.yaml --resource infra/k8s/services/*.yaml
+          kyverno apply infra/k8s/kyverno/cluster-policies.yaml --resource infra/k8s/services/ --resource infra/k8s/production/services/
 

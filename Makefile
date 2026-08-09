@@ -48,7 +48,7 @@
 	cd frontend && bun run test --run
 
  k8s-policy-test:
-	@which kyverno >/dev/null 2>&1 || [ -f /opt/homebrew/bin/kyverno ] && (/opt/homebrew/bin/kyverno apply infra/k8s/kyverno/cluster-policies.yaml --resource infra/k8s/services/*.yaml || kyverno apply infra/k8s/kyverno/cluster-policies.yaml --resource infra/k8s/services/*.yaml) || echo "⚠️ Kyverno CLI not found locally; install via 'brew install kyverno'"
+	@which kyverno >/dev/null 2>&1 || [ -f /opt/homebrew/bin/kyverno ] && (/opt/homebrew/bin/kyverno apply infra/k8s/kyverno/cluster-policies.yaml --resource infra/k8s/services/ --resource infra/k8s/production/services/ || kyverno apply infra/k8s/kyverno/cluster-policies.yaml --resource infra/k8s/services/ --resource infra/k8s/production/services/) || echo "⚠️ Kyverno CLI not found locally; install via 'brew install kyverno'"
 
  ci-local: security-scan frontend-typecheck frontend-test frontend-build go-test shared-test helm-lint k8s-policy-test iac-plan promtool-check
 	@echo "All local CI pre-flight checks passed!"
