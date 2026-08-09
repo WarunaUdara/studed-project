@@ -4,11 +4,14 @@ import {
   Crown,
   Home,
   LayoutGrid,
+  PanelLeftClose,
+  PanelLeftOpen,
   Settings as SettingsIcon,
   TrendingUp,
   Users,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
 
@@ -70,6 +73,16 @@ const MOBILE_TABS: NavItem[] = [
   },
 ];
 
+const SIDEBAR_STORAGE_KEY = "studed:educator-sidebar-collapsed";
+
+function loadSidebarState(): boolean {
+  try {
+    return localStorage.getItem(SIDEBAR_STORAGE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 export interface EducatorShellProps {
   children: ReactNode;
   className?: string;
@@ -79,29 +92,70 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
   const { user } = useAuthStore();
   const matchRoute = useMatchRoute();
 
+  // Notion-style collapsible side panel. Persisted so the educator's choice
+  // survives navigation — collapsing it gives the wave editor (and other
+  // pages) the full remaining width.
+  const [collapsed, setCollapsed] = useState(loadSidebarState);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(SIDEBAR_STORAGE_KEY, collapsed ? "1" : "0");
+    } catch {
+      // storage unavailable (private mode) — state still works per session
+    }
+  }, [collapsed]);
+
   return (
     <div className={cn("mx-auto max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:flex", className)}>
       {/* Sidebar — desktop */}
-      <aside className="hidden w-60 shrink-0 lg:block">
+      <aside
+        className={cn(
+          "hidden shrink-0 lg:block transition-[width] duration-200 ease-out",
+          collapsed ? "w-[4.25rem]" : "w-60",
+        )}
+      >
         <div className="sticky top-20 space-y-4">
           <div className="rounded-2xl border bg-sidebar p-3 text-sidebar-foreground shadow-sm">
-            <div className="flex items-center gap-3 px-1 pb-3">
+            {/* Collapse toggle + profile */}
+            <div
+              className={cn(
+                "flex items-center gap-3 pb-3",
+                collapsed ? "justify-center px-0" : "px-1",
+              )}
+            >
               <span
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 font-bold text-primary-foreground"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 font-bold text-primary-foreground"
                 aria-hidden
               >
                 {user?.fullName?.charAt(0).toUpperCase() ?? "E"}
               </span>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">{user?.fullName ?? "Educator"}</p>
-                <p className="truncate text-xs text-muted-foreground">
-                  {user?.role === "HEAD_EDUCATOR" ? "Head Educator" : "Educator"} ·{" "}
-                  {user?.preferredLanguage?.toUpperCase() ?? "EN"}
-                </p>
-              </div>
+              {!collapsed && (
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold">{user?.fullName ?? "Educator"}</p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {user?.role === "HEAD_EDUCATOR" ? "Head Educator" : "Educator"} ·{" "}
+                    {user?.preferredLanguage?.toUpperCase() ?? "EN"}
+                  </p>
+                </div>
+              )}
+              <button
+                onClick={() => setCollapsed((c) => !c)}
+                className={cn(
+                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground",
+                  collapsed && "absolute -right-2.5 top-3 z-10 h-6 w-6 rounded-full border bg-background shadow-sm",
+                )}
+                title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+                aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                {collapsed ? (
+                  <PanelLeftOpen className="h-3.5 w-3.5" />
+                ) : (
+                  <PanelLeftClose className="h-4 w-4" />
+                )}
+              </button>
             </div>
 
-            <nav className="space-y-1">
+            <nav className={cn("space-y-1", collapsed && "mt-1")}>
               {NAV_ITEMS.map((item) => {
                 // Fuzzy match for nested courses links
                 const active = matchRoute({
@@ -113,24 +167,34 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
                   <Link
                     key={item.to}
                     to={item.to}
+                    title={collapsed ? item.label : undefined}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                      collapsed && "justify-center px-0",
                       active
                         ? "bg-primary text-primary-foreground shadow-sm"
                         : "text-sidebar-foreground hover:bg-sidebar-accent",
                     )}
                   >
                     <Icon className="h-4 w-4 shrink-0" />
-                    <span className="truncate">{item.label}</span>
+                    {!collapsed && <span className="truncate">{item.label}</span>}
                   </Link>
                 );
               })}
             </nav>
+
+            <div className="mt-3 border-t border-sidebar-border pt-3">
+              <div className={cn("flex", collapsed ? "justify-center" : "items-center justify-end")}>
+                <LogoutButton size="sm" variant="ghost" compact={collapsed} />
+              </div>
+            </div>
           </div>
 
-          <p className="px-2 text-[11px] text-muted-foreground">
-            Educator Portal · Curriculum Management
-          </p>
+          {!collapsed && (
+            <p className="px-2 text-[11px] text-muted-foreground">
+              Educator Portal · Curriculum Management
+            </p>
+          )}
         </div>
       </aside>
 

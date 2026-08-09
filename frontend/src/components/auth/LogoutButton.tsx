@@ -1,5 +1,9 @@
 import { useNavigate } from "@tanstack/react-router";
+<<<<<<< HEAD
 import { useState } from "react";
+=======
+import { LogOut } from "lucide-react";
+>>>>>>> 4aed270 (feat(frontend): Notion-style collapsible educator sidebar)
 import { useMutation } from "urql";
 import { LogoutConfirmModal } from "@/components/auth/LogoutConfirmModal";
 import { Button } from "@/components/ui/button";
@@ -10,9 +14,16 @@ interface LogoutButtonProps {
   variant?: "default" | "outline" | "ghost";
   size?: "default" | "sm" | "lg";
   className?: string;
+  /** Icon-only rendering for collapsed sidebars. */
+  compact?: boolean;
 }
 
-export function LogoutButton({ variant = "ghost", size = "sm", className }: LogoutButtonProps) {
+export function LogoutButton({
+  variant = "ghost",
+  size = "sm",
+  className,
+  compact = false,
+}: LogoutButtonProps) {
   const navigate = useNavigate();
   const logoutStore = useAuthStore((s) => s.logout);
   const [, logout] = useMutation(LOGOUT_MUTATION);
@@ -29,6 +40,7 @@ export function LogoutButton({ variant = "ghost", size = "sm", className }: Logo
   };
 
   return (
+<<<<<<< HEAD
     <>
       <Button
         variant={variant}
@@ -46,5 +58,17 @@ export function LogoutButton({ variant = "ghost", size = "sm", className }: Logo
         isSubmitting={isSubmitting}
       />
     </>
+=======
+    <Button
+      variant={variant}
+      size={size}
+      className={className}
+      onClick={handleLogout}
+      title={compact ? "Log out" : undefined}
+      aria-label={compact ? "Log out" : undefined}
+    >
+      {compact ? <LogOut className="h-4 w-4" /> : "Log out"}
+    </Button>
+>>>>>>> 4aed270 (feat(frontend): Notion-style collapsible educator sidebar)
   );
 }
