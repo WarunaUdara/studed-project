@@ -1,5 +1,6 @@
 import { Info } from "lucide-react";
 import { CodeBlock } from "@/components/learn/visualizations/CodeBlock";
+import { CoordinatePlaneBlock } from "@/components/learn/visualizations/CoordinatePlaneBlock";
 import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
 import { MatterPhysicsBlock } from "@/components/learn/visualizations/MatterPhysicsBlock";
 import { Mol3DBlock } from "@/components/learn/visualizations/Mol3DBlock";
@@ -72,6 +73,12 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
       );
 
     /* ---------------- Submodule Visualization Block Renderers ---------------- */
+
+    case "coordinate_plane":
+    case "coordinate_grid":
+    case "interactive_coordinates":
+    case "coordinates":
+      return <CoordinatePlaneBlock content={block.content} metadata={block.metadata} />;
 
     case "mathviz_manim":
     case "manim":

@@ -332,11 +332,59 @@ main() {
   publish_course "${EDUCATOR_JAR}" "${course_id}"
   echo "[mock] published Python 10 Challenges"
 
+  course_id=$(create_course "${EDUCATOR_JAR}" "Coordinate Geometry" "coordinate-geometry" "G10")
+  local coord_geom_id="${course_id}"
+
+  # Level 1: Coordinates
+  lesson_id=$(create_lesson "${EDUCATOR_JAR}" "${course_id}" "Level 1: Coordinates" 1)
+  publish_lesson "${EDUCATOR_JAR}" "${lesson_id}"
+  wave_id=$(graphql "${EDUCATOR_JAR}" \
+    'mutation CreateWave($lessonId: ID!, $input: CreateWaveInput!) { createWave(lessonId: $lessonId, input: $input) { id } }' \
+    "{\"lessonId\":\"${lesson_id}\",\"input\":{\"title\":\"1. Coordinates & Origin\",\"sequenceOrder\":1,\"xpReward\":150,\"maxReattempts\":3,\"passingThreshold\":50,\"estimatedDuration\":15,\"difficulty\":\"EASY\",\"learnBlocks\":[{\"id\":\"lb-coord-1\",\"type\":\"coordinate_plane\",\"content\":\"Interactive 2D Coordinate Grid Discovery\",\"metadata\":\"{\\\"title\\\":\\\"Coordinate Grid Discovery\\\"}\"}],\"evaluateBlocks\":[{\"id\":\"eb-coord-1\",\"type\":\"multiple_choice\",\"question\":\"What are the coordinates of the origin on a 2D Cartesian plane?\",\"options\":[\"(0, 0)\",\"(1, 1)\",\"(0, 1)\",\"(1, 0)\"],\"correctAnswer\":\"(0, 0)\",\"explanation\":\"The origin is defined as point (0, 0) where the x-axis and y-axis intersect.\"},{\"id\":\"eb-coord-2\",\"type\":\"multiple_choice\",\"question\":\"If you move 4 steps right along the x-axis and 2 steps up along the y-axis from origin, what is your coordinate pair?\",\"options\":[\"(4, 2)\",\"(2, 4)\",\"(4, 0)\",\"(0, 2)\"],\"correctAnswer\":\"(4, 2)\",\"explanation\":\"Coordinates are written as (x, y). First value = horizontal shift 4, second value = vertical shift 2.\"}]}}" | jq -r '.data.createWave.id // empty')
+  if [ -n "${wave_id}" ]; then publish_wave "${EDUCATOR_JAR}" "${wave_id}"; fi
+
+  wave_id=$(create_wave "${EDUCATOR_JAR}" "${lesson_id}" "2. Coordinate Pairs" 2 "In the coordinate pair (5, 3), what does the number 5 represent?" "The x-coordinate (horizontal position)")
+  publish_wave "${EDUCATOR_JAR}" "${wave_id}"
+  wave_id=$(create_wave "${EDUCATOR_JAR}" "${lesson_id}" "3. Axes" 3 "What is the vertical line on a coordinate plane called?" "y-axis")
+  publish_wave "${EDUCATOR_JAR}" "${wave_id}"
+  wave_id=$(create_wave "${EDUCATOR_JAR}" "${lesson_id}" "4. x and y Coordinates" 4 "Which coordinate comes first in a standard 2D coordinate pair (x, y)?" "x-coordinate")
+  publish_wave "${EDUCATOR_JAR}" "${wave_id}"
+
+  # Level 2: The 4 Quadrants
+  lesson_id=$(create_lesson "${EDUCATOR_JAR}" "${course_id}" "Level 2: The 4 Quadrants" 2)
+  publish_lesson "${EDUCATOR_JAR}" "${lesson_id}"
+  wave_id=$(create_wave "${EDUCATOR_JAR}" "${lesson_id}" "1. Negative Coordinates" 1 "Which direction do you move for a negative x-coordinate?" "Left")
+  publish_wave "${EDUCATOR_JAR}" "${wave_id}"
+  wave_id=$(create_wave "${EDUCATOR_JAR}" "${lesson_id}" "2. Points in Quadrants" 2 "In which quadrant do both x and y coordinates have positive values?" "Quadrant I")
+  publish_wave "${EDUCATOR_JAR}" "${wave_id}"
+
+  # Level 3: Lines
+  lesson_id=$(create_lesson "${EDUCATOR_JAR}" "${course_id}" "Level 3: Lines" 3)
+  publish_lesson "${EDUCATOR_JAR}" "${lesson_id}"
+  wave_id=$(create_wave "${EDUCATOR_JAR}" "${lesson_id}" "1. Horizontal & Vertical Lines" 1 "What is the equation of a horizontal line passing through y = 4?" "y = 4")
+  publish_wave "${EDUCATOR_JAR}" "${wave_id}"
+
+  # Level 4: Inequalities
+  lesson_id=$(create_lesson "${EDUCATOR_JAR}" "${course_id}" "Level 4: Inequalities" 4)
+  publish_lesson "${EDUCATOR_JAR}" "${lesson_id}"
+  wave_id=$(create_wave "${EDUCATOR_JAR}" "${lesson_id}" "1. Half-Planes & Regions" 1 "Which half-plane represents y > 2?" "The region strictly above the line y = 2")
+  publish_wave "${EDUCATOR_JAR}" "${wave_id}"
+
+  # Level 5: Gridline Distance
+  lesson_id=$(create_lesson "${EDUCATOR_JAR}" "${course_id}" "Level 5: Gridline Distance" 5)
+  publish_lesson "${EDUCATOR_JAR}" "${lesson_id}"
+  wave_id=$(create_wave "${EDUCATOR_JAR}" "${lesson_id}" "1. Distance Between Points" 1 "What is the horizontal distance between point A(2, 3) and point B(7, 3)?" "5 units")
+  publish_wave "${EDUCATOR_JAR}" "${wave_id}"
+
+  publish_course "${EDUCATOR_JAR}" "${course_id}"
+  echo "[mock] published Coordinate Geometry"
+
   echo "[mock] enrolling student and completing a wave..."
   grant_subscription "${STUDENT_JAR}" "STANDARD"
   enroll "${STUDENT_JAR}" "${science_id}"
   enroll "${STUDENT_JAR}" "${math_id}"
   enroll "${STUDENT_JAR}" "${python_id}"
+  enroll "${STUDENT_JAR}" "${coord_geom_id}"
 
   local wave_info wave_id_to_submit block_id_to_submit
   wave_info=$(graphql "${STUDENT_JAR}" \
