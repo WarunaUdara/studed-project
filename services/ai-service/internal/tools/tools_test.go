@@ -70,6 +70,8 @@ func TestLearnBlocksParsesBlocks(t *testing.T) {
 }
 
 func TestLearnBlocksRepairOnInvalid(t *testing.T) {
+	// A viz block with missing metadata degrades to text (no repair needed);
+	// only structurally broken JSON triggers a repair pass.
 	s := &scriptedProvider{jsonOuts: [][]byte{[]byte(`[
 		{"id":"l1","type":"chemviz_3dmol","content":"Water molecule"}
 	]`)}}
@@ -79,11 +81,31 @@ func TestLearnBlocksRepairOnInvalid(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Execute: %v", err)
 	}
-	if len(res.Blocks) != 0 {
-		t.Fatalf("blocks = %d, want 0 on invalid output", len(res.Blocks))
+	if len(res.Blocks) != 1 {
+		t.Fatalf("blocks = %d, want 1 (degraded to text)", len(res.Blocks))
 	}
-	if !strings.Contains(res.Content, "requires JSON metadata") {
-		t.Errorf("repair content = %q, want validation error text", res.Content)
+	if res.Blocks[0].Type != "text" {
+		t.Fatalf("block type = %q, want text after degradation", res.Blocks[0].Type)
+	}
+	if res.Blocks[0].Content != "Water molecule" {
+		t.Fatalf("block content must be preserved, got %q", res.Blocks[0].Content)
+	}
+}
+
+func TestLearnBlocksRepairOnBrokenJSON(t *testing.T) {
+	// Truly broken JSON (not a JSON array) still triggers the repair pass.
+	s := &scriptedProvider{jsonOuts: [][]byte{[]byte(`not json at all`)}}
+	tool := LearnBlocks(s)
+
+	res, err := tool.Execute(context.Background(), map[string]any{"prompt": "water"})
+	if err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	if len(res.Blocks) != 0 {
+		t.Fatalf("blocks = %d, want 0 on broken JSON", len(res.Blocks))
+	}
+	if !strings.Contains(res.Content, "not valid JSON") {
+		t.Errorf("repair content = %q, want JSON parse error text", res.Content)
 	}
 }
 

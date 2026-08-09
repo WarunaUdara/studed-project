@@ -122,10 +122,30 @@ func TestGenerateLearnBlocks_RejectsEmptyPrompt(t *testing.T) {
 }
 
 func TestGenerateLearnBlocks_BadGatewayOnInvalid(t *testing.T) {
+	// Chemviz without metadata now degrades to text instead of failing.
 	p := &scriptedProvider{jsonOuts: [][]byte{[]byte(`[{"id":"l1","type":"chemviz_3dmol","content":"no metadata"}]`)}}
 	rec := post(t, newTestHandler(p, nil), "/v1/generate-learn-blocks", map[string]any{"prompt": "water"})
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200 (degraded to text), got %d: %s", rec.Code, rec.Body.String())
+	}
+	var body struct {
+		Blocks []struct {
+			Type string `json:"type"`
+		} `json:"blocks"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("decode body: %v", err)
+	}
+	if len(body.Blocks) != 1 || body.Blocks[0].Type != "text" {
+		t.Fatalf("expected one text block, got %+v", body.Blocks)
+	}
+}
+
+func TestGenerateLearnBlocks_BadGatewayOnBrokenJSON(t *testing.T) {
+	p := &scriptedProvider{jsonOuts: [][]byte{[]byte(`not json`)}}
+	rec := post(t, newTestHandler(p, nil), "/v1/generate-learn-blocks", map[string]any{"prompt": "water"})
 	if rec.Code != http.StatusBadGateway {
-		t.Fatalf("expected 502, got %d: %s", rec.Code, rec.Body.String())
+		t.Fatalf("expected 502 for broken JSON, got %d: %s", rec.Code, rec.Body.String())
 	}
 }
 

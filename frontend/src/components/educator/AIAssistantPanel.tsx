@@ -111,10 +111,10 @@ export function AIAssistantPanel({
     setImages([]);
   };
 
-  const toolChip = (event: AgentEvent) => {
+  const toolChip = (event: AgentEvent, index: number) => {
     if (event.type === "ocr") {
       return (
-        <div key={`ocr-${event.message}`} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <div key={`ocr-${index}`} className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <ScanText className="h-3 w-3 text-primary" />
           <span>{event.message || "Analyzing uploaded images..."}</span>
         </div>
@@ -123,7 +123,7 @@ export function AIAssistantPanel({
     if (event.type !== "tool_start") return null;
     const label = TOOL_LABELS[event.tool ?? ""] ?? `Using tool: ${event.tool}`;
     return (
-      <div key={`tool-${event.tool}-${event.message}`} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      <div key={`tool-${index}`} className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Wand2 className="h-3 w-3 text-primary" />
         <span>{label}</span>
       </div>
@@ -207,7 +207,7 @@ export function AIAssistantPanel({
 
             {m.role === "assistant" && (
               <>
-                {m.events.filter((e) => e.type === "ocr" || e.type === "tool_start").map((e) => toolChip(e))}
+                {m.events.filter((e) => e.type === "ocr" || e.type === "tool_start").map((e, idx) => toolChip(e, idx))}
                 {m.error && (
                   <p className="rounded border border-destructive/20 bg-destructive/10 px-2 py-1.5 text-xs font-medium text-destructive">
                     {m.error}
@@ -298,7 +298,7 @@ export function AIAssistantPanel({
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask the assistant to build content..."
+            placeholder="Ask the assistant..."
             disabled={running}
             className="h-9 text-sm"
           />

@@ -2,7 +2,6 @@ package blocks
 
 import (
 	"encoding/json"
-	"strings"
 	"testing"
 )
 
@@ -25,27 +24,76 @@ func TestParseLearnBlocks_ValidatesVizMetadata(t *testing.T) {
 }
 
 func TestParseLearnBlocks_RejectsVizWithoutMetadata(t *testing.T) {
+	// A viz block without metadata degrades to a text block rather than
+	// failing the whole payload (one bad block must not discard valid
+	// content generated alongside it).
 	raw := []byte(`[{"id":"l1","type":"chemviz_3dmol","content":"Water molecule"}]`)
-	_, err := ParseLearnBlocks(raw)
-	if err == nil {
-		t.Fatal("expected error for chemviz block without metadata")
+	parsed, err := ParseLearnBlocks(raw)
+	if err != nil {
+		t.Fatalf("expected degrade-to-text, got error: %v", err)
 	}
-	if !strings.Contains(err.Error(), "requires JSON metadata") {
-		t.Fatalf("unexpected error: %v", err)
+	if len(parsed) != 1 || parsed[0].Type != "text" {
+		t.Fatalf("expected one text block, got %+v", parsed)
+	}
+	if parsed[0].Content != "Water molecule" {
+		t.Fatalf("content must be preserved: %q", parsed[0].Content)
 	}
 }
 
 func TestParseLearnBlocks_RejectsVizWithInvalidMetadata(t *testing.T) {
 	raw := []byte(`[
-		{"id":"l1","type":"elecsim_tscircuit","content":"LED circuit",
+		{"id":"l1","type":"text","content":"valid text block"},
+		{"id":"l2","type":"elecsim_tscircuit","content":"LED circuit",
 		 "metadata":"{\"title\":\"LED\",\"simulation\":{\"enabled\":true}}"}
 	]`)
-	_, err := ParseLearnBlocks(raw)
-	if err == nil {
-		t.Fatal("expected error for elecsim without circuit_code")
+	parsed, err := ParseLearnBlocks(raw)
+	if err != nil {
+		t.Fatalf("expected degrade-to-text, got error: %v", err)
 	}
-	if !strings.Contains(err.Error(), "circuit_code") {
-		t.Fatalf("unexpected error: %v", err)
+	if len(parsed) != 2 {
+		t.Fatalf("expected both blocks to survive, got %d", len(parsed))
+	}
+	if parsed[0].Type != "text" {
+		t.Fatalf("first block type = %q, want text", parsed[0].Type)
+	}
+	if parsed[1].Type != "text" || parsed[1].Metadata != "" {
+		t.Fatalf("bad viz block should degrade to text with cleared metadata, got %+v", parsed[1])
+	}
+}
+
+func TestParseEvaluateBlocks_ResolvesCorrectIndex(t *testing.T) {
+	raw := []byte(`[{"id":"q1","type":"mcq","question":"Pick one",
+		"options":["A","B","C"],"correctIndex":1,"explanation":"B is right"}]`)
+	parsed, err := ParseEvaluateBlocks(raw)
+	if err != nil {
+		t.Fatalf("expected correctIndex to resolve: %v", err)
+	}
+	if len(parsed) != 1 {
+		t.Fatalf("expected 1 block, got %d", len(parsed))
+	}
+	if parsed[0].CorrectAnswer != "B" {
+		t.Fatalf("correctAnswer = %q, want B (resolved from index 1)", parsed[0].CorrectAnswer)
+	}
+}
+
+func TestParseEvaluateBlocks_KeepsExplicitCorrectAnswer(t *testing.T) {
+	raw := []byte(`[{"id":"q1","type":"mcq","question":"Pick one",
+		"options":["A","B"],"correctAnswer":"A","correctIndex":1}]`)
+	parsed, err := ParseEvaluateBlocks(raw)
+	if err != nil {
+		t.Fatalf("expected parse: %v", err)
+	}
+	if parsed[0].CorrectAnswer != "A" {
+		t.Fatalf("explicit correctAnswer must win, got %q", parsed[0].CorrectAnswer)
+	}
+}
+
+func TestParseEvaluateBlocks_OutOfRangeCorrectIndexFails(t *testing.T) {
+	raw := []byte(`[{"id":"q1","type":"mcq","question":"Pick one",
+		"options":["A","B"],"correctIndex":5}]`)
+	_, err := ParseEvaluateBlocks(raw)
+	if err == nil {
+		t.Fatal("expected error when correctIndex is out of range and no correctAnswer")
 	}
 }
 

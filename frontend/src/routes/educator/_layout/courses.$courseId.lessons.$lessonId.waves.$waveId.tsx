@@ -5,6 +5,8 @@ import {
   findNodeById,
   Layout,
   removeNodeById,
+  type CloseTabsetPayload,
+  type LayoutAction,
   type LayoutModel,
   type LayoutNode,
 } from "layout-manager-react";
@@ -20,6 +22,7 @@ import {
   puckToWaveData,
   waveDataToPuck,
 } from "@/components/puck-blocks/puck-config";
+import type { PuckCanvasHandle } from "@/components/puck-blocks/PuckCanvas";
 import { Button } from "@/components/ui/button";
 import { PUBLISH_WAVE_MUTATION, UPDATE_WAVE_MUTATION, WAVE_QUERY } from "@/graphql/courses";
 import { useAIAssistant } from "@/stores/ai-assistant";
@@ -41,16 +44,23 @@ const AI_TABSET_ID = "ai-assistant-tabset";
 // The AI tabset is only present when the assistant is open; closing it
 // removes the node so the editor reclaims the full width.
 function buildLayoutModel(assistantOpen: boolean, aiFlex: number): LayoutModel {
-  const editorTabset: LayoutNode = createTabSet(EDITOR_TABSET_ID, [
-    createTab("wave-editor-tab", "wave-editor", "Wave Editor"),
-  ]);
+  // createTab's 4th arg is stored in `config`, not on the node, and the
+  // factory helpers hardcode enableClose: true — set the flags explicitly
+  // so the editor tab can never be closed into an empty layout.
+  const editorTab: LayoutNode = createTab("wave-editor-tab", "wave-editor", "Wave Editor");
+  editorTab.enableClose = false;
+  editorTab.enableDrag = false;
+
+  const editorTabset: LayoutNode = createTabSet(EDITOR_TABSET_ID, [editorTab]);
   editorTabset.flex = 1;
 
   const children: LayoutNode[] = [editorTabset];
   if (assistantOpen) {
-    const aiTabset: LayoutNode = createTabSet(AI_TABSET_ID, [
-      createTab("ai-assistant-tab", "ai-assistant", "AI Assistant"),
-    ]);
+    const aiTab: LayoutNode = createTab("ai-assistant-tab", "ai-assistant", "AI Assistant");
+    aiTab.enableClose = false;
+    aiTab.enableDrag = false;
+
+    const aiTabset: LayoutNode = createTabSet(AI_TABSET_ID, [aiTab]);
     aiTabset.flex = aiFlex;
     children.push(aiTabset);
   }
@@ -86,6 +96,7 @@ function WaveEditorPage() {
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [assistantOpen, setAssistantOpen] = useState(false);
+  const puckCanvasRef = useRef<PuckCanvasHandle | null>(null);
 
   // Remember the last AI tabset width so reopen restores the user's resize.
   const aiFlexRef = useRef(0.3);
@@ -104,15 +115,19 @@ function WaveEditorPage() {
   }, [wave]);
 
   // Insert AI-generated blocks at the end of the current editor content.
+  // The parent state is updated AND the new data is pushed into Puck's
+  // internal store (Puck's data prop is uncontrolled after mount).
   const handleInsertBlocks = useCallback(
     (learnBlocks: Parameters<typeof agentBlocksToPuckItems>[0], evaluateBlocks: Parameters<typeof agentBlocksToPuckItems>[1]) => {
       if (!puckData) return;
       const newItems = agentBlocksToPuckItems(learnBlocks, evaluateBlocks);
       if (newItems.length === 0) return;
-      setPuckData({
+      const next: PuckData = {
         ...puckData,
         content: [...(puckData.content ?? []), ...newItems],
-      });
+      };
+      setPuckData(next);
+      puckCanvasRef.current?.setData(next);
     },
     [puckData],
   );
@@ -141,6 +156,29 @@ function WaveEditorPage() {
       layout: removeNodeById(prev.layout, AI_TABSET_ID),
     }));
   };
+
+  // The layout-manager renders a close button on every tab (the enableClose
+  // flag is not honored by this library version) and dispatches closeTabset
+  // actions for them. Intercept: the editor tab must never close (it would
+  // leave an empty workspace), and closing the AI tabset should behave like
+  // the panel's own X button.
+  const handleLayoutAction = useCallback(
+    (action: LayoutAction) => {
+      if (action.type !== "closeTabset") return;
+      const payload = action.payload as CloseTabsetPayload;
+      if (payload?.nodeId === AI_TABSET_ID) {
+        closeAssistant();
+        return;
+      }
+      if (payload?.nodeId === EDITOR_TABSET_ID) {
+        // The editor tab must never close (it would leave an empty
+        // workspace); ignore the close action entirely.
+        return;
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [layoutModel, assistantOpen],
+  );
 
   const toggleAssistant = () => {
     if (assistantOpen) {
@@ -216,7 +254,7 @@ function WaveEditorPage() {
                 </div>
               }
             >
-              <PuckCanvas data={puckData} onChange={setPuckData} onPublish={handleSave} />
+              <PuckCanvas ref={puckCanvasRef} data={puckData} onChange={setPuckData} onPublish={handleSave} />
             </Suspense>
           );
         case "ai-assistant":
@@ -366,6 +404,7 @@ function WaveEditorPage() {
           model={layoutModel}
           factory={factory}
           onModelChange={setLayoutModel}
+          onAction={handleLayoutAction}
           style={{ height: "100%", width: "100%" }}
         />
       </div>
