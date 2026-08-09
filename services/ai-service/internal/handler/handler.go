@@ -242,6 +242,7 @@ func (h *Handler) agentTask(w http.ResponseWriter, r *http.Request) {
 		ocrCtx, ocrErr := h.ocrImages(r.Context(), req, events)
 		if ocrErr != nil {
 			events <- agent.Event{Type: "error", Error: ocrErr.Error()}
+			close(events)
 			return
 		}
 		h.agent.Run(r.Context(), agent.Request{
@@ -310,7 +311,10 @@ func (h *Handler) agentStream(w http.ResponseWriter, r *http.Request) {
 		// text becomes part of the generation context.
 		ocrCtx, ocrErr := h.ocrImages(ctx, req, events)
 		if ocrErr != nil {
+			// agent.Run owns closing the channel on the happy path; here we
+			// must close it ourselves so the SSE writer unblocks.
 			events <- agent.Event{Type: "error", Error: ocrErr.Error()}
+			close(events)
 			return
 		}
 		h.agent.Run(ctx, agent.Request{
@@ -341,8 +345,10 @@ func (h *Handler) agentStream(w http.ResponseWriter, r *http.Request) {
 // ocrImages runs high-effort vision analysis (qwen3.7-plus with
 // reasoning_effort=high) over uploaded images and returns a compact context
 // block summarizing the extracted text and detected structure. It streams an
-// "ocr" agent event so the UI can show progress. Failures are returned as
-// errors — an educator should not silently lose uploaded content.
+// "ocr" agent event so the UI can show progress. Only genuine vision API
+// failures abort the request; an image with no readable text still yields
+// structured context (contentType, subjects, concepts) and is surfaced as
+// "no text extracted" so the agent can proceed.
 func (h *Handler) ocrImages(ctx context.Context, req agentRequest, events chan<- agent.Event) (string, error) {
 	if len(req.Images) == 0 {
 		return "", nil
@@ -355,9 +361,6 @@ func (h *Handler) ocrImages(ctx context.Context, req agentRequest, events chan<-
 	analysis, err := h.vision.AnalyzeImages(ctx, req.Images, defaultOCRPrompt)
 	if err != nil {
 		return "", fmt.Errorf("image analysis failed: %w", err)
-	}
-	if strings.TrimSpace(analysis.ExtractedText) == "" {
-		return "", fmt.Errorf("image analysis returned no text")
 	}
 
 	var b strings.Builder
@@ -372,7 +375,11 @@ func (h *Handler) ocrImages(ctx context.Context, req agentRequest, events chan<-
 	if analysis.SuggestedVisualization != "" && analysis.SuggestedVisualization != "none" {
 		b.WriteString("suggestedVisualization: " + analysis.SuggestedVisualization + "\n")
 	}
-	b.WriteString("extractedText:\n" + analysis.ExtractedText)
+	if strings.TrimSpace(analysis.ExtractedText) != "" {
+		b.WriteString("extractedText:\n" + analysis.ExtractedText)
+	} else {
+		b.WriteString("extractedText: (no readable text detected in the images)")
+	}
 	return b.String(), nil
 }
 

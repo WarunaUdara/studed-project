@@ -5,12 +5,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/studed/ai-service/internal/agent"
 	"github.com/studed/ai-service/internal/provider"
@@ -328,5 +330,152 @@ func TestAgentStream_ToolRoundTrip(t *testing.T) {
 	}
 	if !strings.Contains(body, `"learnBlocks"`) {
 		t.Fatalf("expected learnBlocks in done event:\n%s", body)
+	}
+}
+
+func TestAgentStream_OCRThenDone(t *testing.T) {
+	// Vision mock returns a typed analysis; the provider streams a final
+	// answer. The stream must contain an "ocr" event and terminate cleanly,
+	// and the OCR text must reach the agent's prompt (provider messages).
+	var mu sync.Mutex
+	var gotUserContent string
+
+	visionSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, `{"choices":[{"message":{"content":"{\"contentType\":\"textbook\",\"detectedLanguage\":\"en\",\"subjects\":[\"physics\"],\"keyConcepts\":[\"gravity\"],\"hasEquations\":false,\"suggestedVisualization\":\"matterjs\",\"extractedText\":\"Gravity pulls objects down.\"}"}}]}`)
+	}))
+	defer visionSrv.Close()
+
+	t.Setenv("OPENCODE_API_KEY", "k")
+	vc := vision.NewClient().WithBaseURL(visionSrv.URL)
+
+	// Capture the first Stream call's user message to assert OCR context.
+	p := &capturingProvider{}
+	p.onStream = func(msgs []provider.Message) {
+		mu.Lock()
+		defer mu.Unlock()
+		for _, m := range msgs {
+			if m.Role == "user" {
+				gotUserContent += m.Content + "\n"
+			}
+		}
+	}
+	p.streamOuts = [][]provider.StreamEvent{
+		streamDone(`{"message":"done","learnBlocks":[],"evaluateBlocks":[]}`),
+	}
+	h := newTestHandler(p, vc)
+
+	payload, _ := json.Marshal(map[string]any{
+		"prompt": "make content",
+		"images": []string{"data:image/png;base64,QUJD"},
+	})
+	mux := http.NewServeMux()
+	h.Register(mux)
+	req := httptest.NewRequest(http.MethodPost, "/v1/agent/stream", bytes.NewReader(payload))
+	rec := httptest.NewRecorder()
+	mux.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+	body := rec.Body.String()
+	if !strings.Contains(body, `"ocr"`) {
+		t.Fatalf("expected ocr event:\n%s", body)
+	}
+	if !strings.Contains(body, `"done"`) {
+		t.Fatalf("expected done event after ocr:\n%s", body)
+	}
+
+	mu.Lock()
+	user := gotUserContent
+	mu.Unlock()
+	if !strings.Contains(user, "Gravity pulls objects down.") {
+		t.Fatalf("expected OCR extracted text in agent prompt, got:\n%s", user)
+	}
+	if !strings.Contains(user, "contentType: textbook") {
+		t.Fatalf("expected OCR contentType in agent prompt, got:\n%s", user)
+	}
+}
+
+// capturingProvider wraps scriptedProvider and invokes onStream with the
+// messages before delegating to the canned stream output.
+type capturingProvider struct {
+	scriptedProvider
+	onStream func(msgs []provider.Message)
+}
+
+func (c *capturingProvider) Stream(ctx context.Context, msgs []provider.Message, tl []provider.Tool, opts provider.Options) (<-chan provider.StreamEvent, error) {
+	if c.onStream != nil {
+		c.onStream(msgs)
+	}
+	return c.scriptedProvider.Stream(ctx, msgs, tl, opts)
+}
+
+func TestAgentStream_OCRErrorTerminates(t *testing.T) {
+	// Vision API fails: the stream must emit an error event and CLOSE (no
+	// hang). The recorder would block forever if the channel never closed,
+	// so this test fails by timeout if the regression returns.
+	visionSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, `{"error":"boom"}`)
+	}))
+	defer visionSrv.Close()
+
+	t.Setenv("OPENCODE_API_KEY", "k")
+	vc := vision.NewClient().WithBaseURL(visionSrv.URL)
+
+	p := &scriptedProvider{}
+	h := newTestHandler(p, vc)
+
+	payload, _ := json.Marshal(map[string]any{
+		"prompt": "make content",
+		"images": []string{"data:image/png;base64,QUJD"},
+	})
+	mux := http.NewServeMux()
+	h.Register(mux)
+	req := httptest.NewRequest(http.MethodPost, "/v1/agent/stream", bytes.NewReader(payload))
+	rec := httptest.NewRecorder()
+
+	done := make(chan struct{})
+	go func() {
+		mux.ServeHTTP(rec, req)
+		close(done)
+	}()
+	select {
+	case <-done:
+		// completed -> channel closed properly
+	case <-time.After(10 * time.Second):
+		t.Fatal("agent stream hung after OCR error (events channel not closed)")
+	}
+
+	body := rec.Body.String()
+	if !strings.Contains(body, `"error"`) {
+		t.Fatalf("expected error event:\n%s", body)
+	}
+}
+
+func TestAgentTask_OCRContextInRequest(t *testing.T) {
+	// The non-streaming agentTask must also run OCR and include the context.
+	visionSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, `{"choices":[{"message":{"content":"{\"contentType\":\"other\",\"detectedLanguage\":\"en\",\"subjects\":[],\"keyConcepts\":[],\"hasEquations\":false,\"suggestedVisualization\":\"none\",\"extractedText\":\"hello world\"}"}}]}`)
+	}))
+	defer visionSrv.Close()
+
+	t.Setenv("OPENCODE_API_KEY", "k")
+	vc := vision.NewClient().WithBaseURL(visionSrv.URL)
+
+	p := &scriptedProvider{streamOuts: [][]provider.StreamEvent{
+		streamDone(`{"message":"ok","learnBlocks":[],"evaluateBlocks":[]}`),
+	}}
+	h := newTestHandler(p, vc)
+
+	rec := post(t, h, "/v1/agent/task", map[string]any{
+		"prompt": "make content",
+		"images": []string{"data:image/png;base64,QUJD"},
+	})
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", rec.Code, rec.Body.String())
 	}
 }
