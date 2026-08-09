@@ -14,6 +14,13 @@
  dev-logs:
 	docker compose logs -f
 
+ floci-gcp-up:
+	@docker info >/dev/null 2>&1 || (echo "Docker Desktop is not running. Please start it and try again." && exit 1)
+	docker compose -f docker-compose.yml up -d floci-gcp
+
+ floci-gcp-down:
+	docker compose -f docker-compose.yml stop floci-gcp
+
  seed:
 	./scripts/mock-data-loader.sh
 

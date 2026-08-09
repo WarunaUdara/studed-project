@@ -56,3 +56,15 @@ variable "waf_rate_limit_per_ip" {
   type        = number
   default     = 120
 }
+
+variable "use_floci_gcp" {
+  description = "Set to true to point OpenTofu GCP provider at local floci-gcp emulator (:4588)"
+  type        = bool
+  default     = false
+}
+
+variable "floci_gcp_endpoint" {
+  description = "Endpoint URL for the local floci-gcp emulator"
+  type        = string
+  default     = "http://localhost:4588"
+}

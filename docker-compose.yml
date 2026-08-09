@@ -291,8 +291,28 @@ services:
       redis:
         condition: service_started
 
+  floci-gcp:
+    image: floci/floci-gcp:latest
+    container_name: studed-floci-gcp
+    ports:
+      - "127.0.0.1:4588:4588"
+    volumes:
+      - floci_gcp_data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      FLOCI_GCP_HOSTNAME: floci-gcp
+      FLOCI_GCP_BASE_URL: http://floci-gcp:4588
+      FLOCI_GCP_STORAGE_MODE: hybrid
+      FLOCI_GCP_DEFAULT_PROJECT_ID: floci-local
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4588/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
 volumes:
   postgres_data:
   elasticsearch_data:
   prometheus_data:
   grafana_data:
+  floci_gcp_data:
