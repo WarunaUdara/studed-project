@@ -1,4 +1,4 @@
-.PHONY: dev-up dev-down dev dev-stop launch test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint frontend-e2e go-build go-test shared-test proto-gen
+.PHONY: dev-up dev-down dev dev-stop launch test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint frontend-e2e go-build go-test shared-test proto-gen seed content-validate content-sync demo-public
 
 # Development
  dev-up:
@@ -23,6 +23,12 @@
 
  seed:
 	./scripts/mock-data-loader.sh
+
+ content-validate:
+	cd scripts/content-sync && bun run validate
+
+ content-sync:
+	cd scripts/content-sync && bun run sync
 
  demo-public:
 	./scripts/demo-public.sh

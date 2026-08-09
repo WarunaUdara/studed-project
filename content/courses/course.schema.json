@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://studed.lk/schemas/course-manifest.schema.json",
+  "title": "StudEd Course Manifest",
+  "description": "Declarative definition of a StudEd course (Course -> Lesson -> Wave). Synced to the backend by scripts/content-sync.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["slug", "title", "description", "gradeLevel", "lessons"],
+  "properties": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "URL-friendly unique identifier, e.g. 'thinking-in-python'"
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "gradeLevel": {
+      "type": "string",
+      "enum": ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "OL", "AL"]
+    },
+    "price": { "type": "number", "minimum": 0 },
+    "subject": {
+      "type": "string",
+      "description": "Free-text subject used for catalog categorization"
+    },
+    "version": { "type": "integer", "minimum": 1 },
+    "lessons": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/lesson" }
+    }
+  },
+  "definitions": {
+    "lesson": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "sequenceOrder", "waves"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "sequenceOrder": { "type": "integer", "minimum": 1 },
+        "status": { "type": "string", "enum": ["published", "draft"] },
+        "waves": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/wave" }
+        }
+      }
+    },
+    "wave": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "sequenceOrder",
+        "xpReward",
+        "maxReattempts",
+        "passingThreshold",
+        "estimatedDuration",
+        "difficulty",
+        "learnBlocks",
+        "evaluateBlocks"
+      ],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "sequenceOrder": { "type": "integer", "minimum": 1 },
+        "xpReward": { "type": "integer", "minimum": 0 },
+        "maxReattempts": { "type": "integer", "minimum": 1 },
+        "passingThreshold": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "estimatedDuration": { "type": "integer", "minimum": 1 },
+        "difficulty": { "type": "string", "enum": ["EASY", "MEDIUM", "HARD"] },
+        "status": { "type": "string", "enum": ["published", "draft"] },
+        "learnBlocks": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/learnBlock" }
+        },
+        "evaluateBlocks": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/evaluateBlock" }
+        }
+      }
+    },
+    "learnBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "content"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": {
+          "type": "string",
+          "enum": [
+            "heading",
+            "text",
+            "image",
+            "video",
+            "formula",
+            "code",
+            "callout",
+            "coordinate_plane",
+            "manim",
+            "molecule",
+            "circuit",
+            "physics"
+          ]
+        },
+        "content": { "type": "string" },
+        "metadata": {
+          "oneOf": [{ "type": "string" }, { "type": "object" }],
+          "description": "Optional JSON configuration for interactive blocks (e.g. coordinate_plane steps)"
+        }
+      }
+    },
+    "evaluateBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "question", "correctAnswer", "explanation"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": {
+          "type": "string",
+          "enum": ["multiple_choice", "fill_in_blank", "true_false", "numeric"]
+        },
+        "question": { "type": "string", "minLength": 1 },
+        "options": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 2,
+          "maxItems": 6,
+          "description": "Required for multiple_choice; correctAnswer must match one option verbatim"
+        },
+        "correctAnswer": { "type": "string" },
+        "explanation": { "type": "string" },
+        "metadata": {
+          "oneOf": [{ "type": "string" }, { "type": "object" }]
+        }
+      }
+    }
+  }
+}
