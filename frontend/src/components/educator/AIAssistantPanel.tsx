@@ -1,28 +1,21 @@
 import {
   ArrowDownToLine,
   Bot,
+  ImagePlus,
   Loader2,
+  ScanText,
   Sparkles,
+  Square,
   User,
   Wand2,
   X,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/Input";
-import {
-  type AgentEvent,
-  streamAgentChat,
-} from "@/lib/ai-chat";
 import { type PuckData } from "@/components/puck-blocks/puck-config";
-
-interface ChatMessage {
-  role: "user" | "assistant";
-  text: string;
-  events: AgentEvent[];
-  done: boolean;
-  error?: string;
-}
+import { type AgentEvent } from "@/lib/ai-chat";
+import { useAIAssistant } from "@/stores/ai-assistant";
 
 export interface AIAssistantPanelProps {
   waveTitle: string;
@@ -30,10 +23,6 @@ export interface AIAssistantPanelProps {
   grade?: string;
   language?: string;
   puckData: PuckData;
-  onInsertBlocks: (
-    learnBlocks: NonNullable<AgentEvent["learnBlocks"]>,
-    evaluateBlocks: NonNullable<AgentEvent["evaluateBlocks"]>,
-  ) => void;
   onClose: () => void;
 }
 
@@ -44,31 +33,23 @@ const TOOL_LABELS: Record<string, string> = {
   translate: "Translating content",
 };
 
+const MAX_IMAGES = 6;
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // 4MB per image
+
 export function AIAssistantPanel({
   waveTitle,
   waveContext,
   grade,
   language,
   puckData,
-  onInsertBlocks,
   onClose,
 }: AIAssistantPanelProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const { messages, running, lastGenerated, sendPrompt, stop, insertGenerated, clearGenerated } =
+    useAIAssistant();
   const [input, setInput] = useState("");
-  const [running, setRunning] = useState(false);
-  const [lastGenerated, setLastGenerated] = useState<{
-    learnBlocks: AgentEvent["learnBlocks"];
-    evaluateBlocks: AgentEvent["evaluateBlocks"];
-  } | null>(null);
-
-  const abortRef = useRef<AbortController | null>(null);
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, running]);
-
-  useEffect(() => () => abortRef.current?.abort(), []);
+  const [images, setImages] = useState<{ file: File; dataUrl: string }[]>([]);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const suggestions = [
     "Create 3 learn blocks and 2 questions about this topic",
@@ -76,107 +57,69 @@ export function AIAssistantPanel({
     "Create an example to illustrate the concept",
   ];
 
+  const addImages = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setImageError(null);
+
+    const pending: { file: File; dataUrl: string }[] = [];
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith("image/")) {
+        setImageError(`"${file.name}" is not an image.`);
+        continue;
+      }
+      if (file.size > MAX_IMAGE_BYTES) {
+        setImageError(`"${file.name}" is larger than 4MB.`);
+        continue;
+      }
+      pending.push({ file, dataUrl: "" });
+    }
+    if (pending.length === 0) return;
+
+    const remaining = MAX_IMAGES - images.length;
+    if (pending.length > remaining) {
+      setImageError(`You can attach up to ${MAX_IMAGES} images.`);
+    }
+    const toAdd = pending.slice(0, Math.max(0, remaining));
+
+    // Read each file as a data URL. Thumbnails render from the data URL, so
+    // the grid keeps fixed dimensions and never shifts while decoding.
+    for (const item of toAdd) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = String(reader.result ?? "");
+        setImages((prev) =>
+          prev.map((p) => (p.file === item.file ? { ...p, dataUrl } : p)),
+        );
+      };
+      reader.readAsDataURL(item.file);
+    }
+
+    setImages((prev) => [...prev, ...toAdd]);
+  };
+
+  const removeImage = (name: string) => {
+    setImages((prev) => prev.filter((i) => i.file.name !== name));
+    setImageError(null);
+  };
+
   const send = async (rawPrompt?: string) => {
     const prompt = (rawPrompt ?? input).trim();
     if (!prompt || running) return;
+    const attached = images.filter((i) => i.dataUrl).map((i) => i.dataUrl);
+    sendPrompt(prompt, { waveContext, grade, language, images: attached });
     setInput("");
-    setRunning(true);
-    setLastGenerated(null);
-
-    const userMsg: ChatMessage = { role: "user", text: prompt, events: [], done: true };
-    const assistantMsg: ChatMessage = { role: "assistant", text: "", events: [], done: false };
-    setMessages((prev) => [...prev, userMsg, assistantMsg]);
-
-    const abort = new AbortController();
-    abortRef.current = abort;
-
-    const updateAssistant = (updater: (m: ChatMessage) => ChatMessage) => {
-      setMessages((prev) => prev.map((m, i) => (i === prev.length - 1 ? updater(m) : m)));
-    };
-
-    // Grab the latest blocks the agent produced for the insert buttons.
-    const latestBlocks = {
-      learnBlocks: [] as NonNullable<AgentEvent["learnBlocks"]>,
-      evaluateBlocks: [] as NonNullable<AgentEvent["evaluateBlocks"]>,
-    };
-
-    let finalText = "";
-
-    await streamAgentChat(
-      {
-        prompt,
-        grade,
-        language,
-        waveContext: waveContext || `Wave: ${waveTitle}`,
-      },
-      {
-        signal: abort.signal,
-        onEvent: (event) => {
-          if (event.type === "delta") {
-            finalText += event.message ?? "";
-            updateAssistant((m) => ({ ...m, text: finalText, events: [...m.events, event] }));
-          } else if (event.type === "tool_start") {
-            updateAssistant((m) => ({ ...m, events: [...m.events, event] }));
-          } else if (event.type === "tool_end") {
-            updateAssistant((m) => ({ ...m, events: [...m.events, event] }));
-          } else if (event.type === "done") {
-            if (event.learnBlocks?.length) latestBlocks.learnBlocks.push(...event.learnBlocks);
-            if (event.evaluateBlocks?.length) latestBlocks.evaluateBlocks.push(...event.evaluateBlocks);
-            const blocks = event.learnBlocks?.length || event.evaluateBlocks?.length;
-            const summary = blocks
-              ? `Generated ${event.learnBlocks?.length ?? 0} Learn block(s) and ${event.evaluateBlocks?.length ?? 0} Evaluate block(s).`
-              : "";
-            updateAssistant((m) => ({
-              ...m,
-              text: finalText || event.message || summary || "Done.",
-              events: [...m.events, event],
-              done: true,
-            }));
-            setLastGenerated({
-              learnBlocks: latestBlocks.learnBlocks,
-              evaluateBlocks: latestBlocks.evaluateBlocks,
-            });
-          } else if (event.type === "error") {
-            updateAssistant((m) => ({
-              ...m,
-              text: m.text || "The assistant hit an error.",
-              error: event.error || "Unknown AI error",
-              events: [...m.events, event],
-              done: true,
-            }));
-          }
-        },
-        onError: (message) => {
-          updateAssistant((m) => ({
-            ...m,
-            text: m.text || "The assistant could not respond.",
-            error: message,
-            done: true,
-          }));
-        },
-        onComplete: () => {
-          setRunning(false);
-        },
-      },
-    );
-
-    // If the stream ended without a terminal event, mark done.
-    setMessages((prev) =>
-      prev.map((m, i) => (i === prev.length - 1 && !m.done ? { ...m, done: true } : m)),
-    );
-    setRunning(false);
-  };
-
-  const insertBlocks = () => {
-    if (!lastGenerated) return;
-    onInsertBlocks(
-      lastGenerated.learnBlocks ?? [],
-      lastGenerated.evaluateBlocks ?? [],
-    );
-    setLastGenerated(null);
+    setImages([]);
   };
 
   const toolChip = (event: AgentEvent) => {
+    if (event.type === "ocr") {
+      return (
+        <div key={`ocr-${event.message}`} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <ScanText className="h-3 w-3 text-primary" />
+          <span>{event.message || "Analyzing uploaded images..."}</span>
+        </div>
+      );
+    }
     if (event.type !== "tool_start") return null;
     const label = TOOL_LABELS[event.tool ?? ""] ?? `Using tool: ${event.tool}`;
     return (
@@ -188,28 +131,32 @@ export function AIAssistantPanel({
   };
 
   return (
-    <div className="flex h-full flex-col border-l bg-background">
+    <div className="flex h-full flex-col bg-background">
       {/* Header */}
       <div className="flex items-center justify-between border-b px-4 py-3 shrink-0">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-semibold">AI Assistant</h3>
-          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+        <div className="flex items-center gap-2 min-w-0">
+          <Sparkles className="h-4 w-4 shrink-0 text-primary" />
+          <h3 className="truncate text-sm font-semibold">AI Assistant</h3>
+          <span className="hidden rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary lg:inline">
             {waveTitle}
           </span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className="hidden text-[10px] text-muted-foreground sm:inline">
-            {puckData.content?.length ?? 0} block(s) in editor
+        <div className="flex items-center gap-1 shrink-0">
+          <span className="hidden text-[10px] text-muted-foreground xl:inline">
+            {puckData.content?.length ?? 0} block(s)
           </span>
-          <button onClick={onClose} className="rounded p-1 text-muted-foreground hover:bg-muted" aria-label="Close AI assistant">
+          <button
+            onClick={onClose}
+            className="rounded p-1 text-muted-foreground hover:bg-muted"
+            aria-label="Close AI assistant"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
+      <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
         {messages.length === 0 && (
           <div className="space-y-3">
             <div className="rounded-lg border bg-muted/40 p-3 text-sm text-muted-foreground">
@@ -217,16 +164,16 @@ export function AIAssistantPanel({
                 <Bot className="h-4 w-4" /> I can build this wave&apos;s content with you.
               </p>
               <p>
-                Ask me to create Learn blocks (text, formulas, images) and Evaluate blocks (MCQ, fill-in-the-blank,
-                drag-and-drop) for this wave. I&apos;ll generate them with the editor&apos;s block types so you can insert
-                them directly.
+                Ask me to create Learn blocks (text, formulas, images) and Evaluate blocks
+                (MCQ, fill-in-the-blank, drag-and-drop). Upload photos of notes or textbook
+                pages and I&apos;ll read them with high-effort OCR before generating.
               </p>
             </div>
             <div className="space-y-2">
               {suggestions.map((s) => (
                 <button
                   key={s}
-                  onClick={() => send(s)}
+                  onClick={() => void send(s)}
                   disabled={running}
                   className="w-full rounded-lg border border-dashed p-2.5 text-left text-xs text-muted-foreground hover:border-primary hover:text-primary disabled:opacity-50"
                 >
@@ -260,14 +207,14 @@ export function AIAssistantPanel({
 
             {m.role === "assistant" && (
               <>
-                {m.events.filter((e) => e.type === "tool_start").map((e) => toolChip(e))}
+                {m.events.filter((e) => e.type === "ocr" || e.type === "tool_start").map((e) => toolChip(e))}
                 {m.error && (
-                  <p className="text-xs font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded px-2 py-1.5">
+                  <p className="rounded border border-destructive/20 bg-destructive/10 px-2 py-1.5 text-xs font-medium text-destructive">
                     {m.error}
                   </p>
                 )}
                 {m.done && !m.error && m.events.some((e) => e.type === "done") && (
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <p className="flex items-center gap-1 text-xs text-muted-foreground">
                     <ArrowDownToLine className="h-3 w-3" />
                     Review the blocks below, then insert them into the editor.
                   </p>
@@ -287,19 +234,60 @@ export function AIAssistantPanel({
 
       {/* Insert actions */}
       {lastGenerated && (
-        <div className="border-t bg-muted/30 px-4 py-3 shrink-0">
+        <div className="shrink-0 border-t bg-muted/30 px-4 py-3">
           <p className="mb-2 text-xs font-medium text-foreground">
-            Ready to insert: {lastGenerated.learnBlocks?.length ?? 0} Learn,{" "}
-            {lastGenerated.evaluateBlocks?.length ?? 0} Evaluate block(s)
+            Ready to insert: {lastGenerated.learnBlocks.length} Learn,{" "}
+            {lastGenerated.evaluateBlocks.length} Evaluate block(s)
           </p>
-          <Button size="sm" className="w-full" onClick={insertBlocks}>
-            <ArrowDownToLine className="mr-1.5 h-4 w-4" /> Insert into editor
-          </Button>
+          <div className="flex gap-2">
+            <Button size="sm" className="flex-1" onClick={insertGenerated}>
+              <ArrowDownToLine className="mr-1.5 h-4 w-4" /> Insert
+            </Button>
+            <Button size="sm" variant="ghost" onClick={clearGenerated} className="shrink-0">
+              Dismiss
+            </Button>
+          </div>
         </div>
       )}
 
-      {/* Input */}
-      <div className="border-t p-3 shrink-0">
+      {/* Upload + Input */}
+      <div className="shrink-0 border-t p-3">
+        {imageError && (
+          <p className="mb-2 rounded border border-amber-300 bg-amber-50 px-2 py-1.5 text-xs text-amber-700 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-400">
+            {imageError}
+          </p>
+        )}
+
+        {/* Image thumbnails: fixed-height grid so adding/removing never
+            shifts the composer or the message list. */}
+        {images.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-2">
+            {images.map((img) => (
+              <div key={img.file.name} className="relative h-14 w-14 shrink-0">
+                {img.dataUrl ? (
+                  <img
+                    src={img.dataUrl}
+                    alt={img.file.name}
+                    className="h-full w-full rounded-md border object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center rounded-md border bg-muted">
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  </div>
+                )}
+                <button
+                  onClick={() => removeImage(img.file.name)}
+                  disabled={running}
+                  className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow disabled:opacity-50"
+                  aria-label={`Remove ${img.file.name}`}
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         <form
           className="flex gap-2"
           onSubmit={(e) => {
@@ -314,10 +302,45 @@ export function AIAssistantPanel({
             disabled={running}
             className="h-9 text-sm"
           />
-          <Button type="submit" size="sm" disabled={running || !input.trim()} className="h-9 shrink-0">
-            {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            hidden
+            onChange={(e) => {
+              addImages(e.target.files);
+              e.target.value = "";
+            }}
+          />
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-9 shrink-0 px-2.5"
+            disabled={running || images.length >= MAX_IMAGES}
+            onClick={() => fileInputRef.current?.click()}
+            aria-label="Upload images"
+            title="Upload images (up to 6)"
+          >
+            <ImagePlus className="h-4 w-4" />
+          </Button>
+          <Button type="submit" size="sm" disabled={running || (!input.trim() && images.length === 0)} className="h-9 shrink-0">
+            {running ? (
+              <Square className="h-3.5 w-3.5 fill-current" />
+            ) : (
+              <Sparkles className="h-4 w-4" />
+            )}
           </Button>
         </form>
+        {running && (
+          <button
+            onClick={stop}
+            className="mt-2 w-full rounded-md border border-dashed py-1.5 text-xs text-muted-foreground hover:border-destructive hover:text-destructive"
+          >
+            Stop generation
+          </button>
+        )}
       </div>
     </div>
   );
