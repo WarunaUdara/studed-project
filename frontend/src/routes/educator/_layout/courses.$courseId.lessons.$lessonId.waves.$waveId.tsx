@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "urql";
 
 import { AIAssistantPanel } from "@/components/educator/AIAssistantPanel";
 import { WavePreview } from "@/components/educator/WavePreview";
+import { pushPuckData } from "@/components/puck-blocks/PuckCanvas";
 import {
   agentBlocksToPuckItems,
   type PuckData,
@@ -53,9 +54,6 @@ function WaveEditorPage() {
   const [assistantOpen, setAssistantOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const [dockWidth, setDockWidth] = useState(DEFAULT_DOCK_WIDTH);
-  // Bumped on AI auto-insert: Puck's data prop is uncontrolled, so remounting
-  // with a new key makes it reinitialize from the updated data.
-  const [puckVersion, setPuckVersion] = useState(0);
 
   // Dock resize drag
   const dockDragRef = useRef<{ startX: number; startWidth: number } | null>(null);
@@ -77,17 +75,19 @@ function WaveEditorPage() {
 
   // Auto-insert AI-generated blocks at the end of the current content. Called
   // by the assistant store the moment a done event with blocks arrives, so
-  // blocks land in the editor without any manual insert step.
+  // blocks land in the editor without any manual insert step. Data is pushed
+  // into Puck's internal store (not a remount) so zoom/selection/undo stay.
   const handleAutoInsert = useCallback(
     (learnBlocks: Parameters<typeof agentBlocksToPuckItems>[0], evaluateBlocks: Parameters<typeof agentBlocksToPuckItems>[1]) => {
       if (!puckData) return;
       const newItems = agentBlocksToPuckItems(learnBlocks, evaluateBlocks);
       if (newItems.length === 0) return;
-      setPuckData({
+      const next: PuckData = {
         ...puckData,
         content: [...(puckData.content ?? []), ...newItems],
-      });
-      setPuckVersion((v) => v + 1);
+      };
+      setPuckData(next);
+      pushPuckData(next);
     },
     [puckData],
   );
@@ -341,7 +341,6 @@ function WaveEditorPage() {
                   }
                 >
                   <PuckCanvas
-                    key={puckVersion}
                     data={puckData}
                     onChange={setPuckData}
                     onPublish={handleSave}
