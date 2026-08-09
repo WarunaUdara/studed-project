@@ -8,12 +8,16 @@ import (
 
 // Block types the wave editor understands.
 var validLearnTypes = map[string]bool{
-	"text":    true,
-	"math":    true,
-	"image":   true,
-	"video":   true,
-	"callout": true,
-	"example": true,
+	"text":             true,
+	"math":             true,
+	"image":            true,
+	"video":            true,
+	"callout":          true,
+	"example":          true,
+	"heading":          true,
+	"formula":          true,
+	"code":             true,
+	"coordinate_plane": true,
 }
 
 var validEvaluateTypes = map[string]bool{
