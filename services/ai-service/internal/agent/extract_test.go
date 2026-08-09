@@ -50,3 +50,29 @@ func TestDoneEvent_CodeFencedLearnBlocks(t *testing.T) {
 		t.Fatalf("learn blocks = %d, want 1", len(ev.LearnBlocks))
 	}
 }
+
+func TestDoneEvent_LoneVizObject(t *testing.T) {
+	// The model frequently wraps a single visualization as a bare object
+	// (generateVisualization output) instead of a learnBlocks array; it
+	// must be captured as a one-item learn-block payload.
+	final := "Here is the visualization:\n```json\n{\"type\":\"mathviz_manim\",\"id\":\"balance-1\",\"title\":\"Balance Scale\",\"content\":\"Solving x + 5 = 9\",\"metadata\":{\"scene_spec\":{\"scene_title\":\"BalanceScaleEquation\",\"beats\":[{\"time\":0,\"action\":\"Display balanced scale\"}]}}}\n```\nEnjoy!"
+	ev := (&Agent{}).doneEvent(final)
+	if len(ev.LearnBlocks) != 1 {
+		t.Fatalf("learn blocks = %d, want 1 (lone viz object)", len(ev.LearnBlocks))
+	}
+	if ev.LearnBlocks[0].Type != "mathviz_manim" {
+		t.Fatalf("type = %q, want mathviz_manim", ev.LearnBlocks[0].Type)
+	}
+	if !strings.Contains(ev.LearnBlocks[0].Metadata, "BalanceScaleEquation") {
+		t.Fatalf("metadata = %q, want scene_spec preserved", ev.LearnBlocks[0].Metadata)
+	}
+}
+
+func TestDoneEvent_LoneTextObjectFallsBackToProse(t *testing.T) {
+	// A lone object that is NOT a valid block (e.g. arbitrary JSON) must not
+	// be forced into blocks — the prose is delivered as the message.
+	ev := (&Agent{}).doneEvent("The answer is 42.\n```json\n{\"explanation\":\"just a note\"}\n```")
+	if len(ev.LearnBlocks) != 0 || len(ev.EvaluateBlocks) != 0 {
+		t.Fatalf("expected no blocks, got learn=%d evaluate=%d", len(ev.LearnBlocks), len(ev.EvaluateBlocks))
+	}
+}

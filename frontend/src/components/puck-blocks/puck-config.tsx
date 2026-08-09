@@ -1,5 +1,9 @@
 import type { Config, Data } from "@puckeditor/core";
 import { MathFormula } from "@/components/ui/MathFormula";
+import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
+import { Mol3DBlock } from "@/components/learn/visualizations/Mol3DBlock";
+import { TsCircuitBlock } from "@/components/learn/visualizations/TsCircuitBlock";
+import { MatterPhysicsBlock } from "@/components/learn/visualizations/MatterPhysicsBlock";
 
 // ---------------------------------------------------------------------------
 // Block props
@@ -96,32 +100,24 @@ const VIZ_LABELS: Record<string, string> = {
   mechsim_matterjs: "Physics Simulation (Matter.js)",
 };
 
+// Renders the same interactive visualization components students see, right
+// inside the editor canvas, so educators can inspect them while editing.
 function VizBlockPreview({ vizType, content, metadata }: VizBlockProps) {
-  const label = VIZ_LABELS[vizType] ?? vizType;
-  let metaPreview = metadata;
-  try {
-    if (metadata) {
-      metaPreview = JSON.stringify(JSON.parse(metadata), null, 2);
-    }
-  } catch {
-    // keep raw
+  switch (vizType) {
+    case "chemviz_3dmol":
+    case "molecule_3dmol":
+      return <Mol3DBlock content={content} metadata={metadata} />;
+    case "elecsim_tscircuit":
+    case "circuit_tscircuit":
+      return <TsCircuitBlock content={content} metadata={metadata} />;
+    case "mechsim_matterjs":
+    case "simulation_matter":
+      return <MatterPhysicsBlock content={content} metadata={metadata} />;
+    case "mathviz_manim":
+    case "manim":
+    default:
+      return <ManimBlock content={content} metadata={metadata} />;
   }
-  return (
-    <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 text-card-foreground shadow-sm">
-      <LearnBadge label={label} />
-      <p className="text-sm whitespace-pre-wrap leading-relaxed">{content || "No content"}</p>
-      {metadata && (
-        <details className="mt-2">
-          <summary className="cursor-pointer text-xs font-medium text-primary">
-            View visualization config
-          </summary>
-          <pre className="mt-2 max-h-64 overflow-auto rounded bg-background/60 p-2 text-[10px] leading-snug whitespace-pre-wrap">
-            {metaPreview}
-          </pre>
-        </details>
-      )}
-    </div>
-  );
 }
 
 // ---------------------------------------------------------------------------

@@ -35,6 +35,47 @@ type LearnBlock struct {
 	Metadata string `json:"metadata,omitempty"`
 }
 
+// UnmarshalJSON tolerates the model's metadata variants: "metadata" may be a
+// plain string, a JSON object (e.g. a viz scene_spec), or missing entirely.
+// Object metadata is re-encoded as its JSON string so downstream consumers
+// (validation, Puck serialization) always see valid JSON or "". The model
+// often puts the title at block level ("title") while viz validation expects
+// it inside metadata — it is injected when the object lacks one.
+func (b *LearnBlock) UnmarshalJSON(raw []byte) error {
+	type alias LearnBlock
+	var a struct {
+		alias
+		Title    string          `json:"title"`
+		Metadata json.RawMessage `json:"metadata"`
+	}
+	if err := json.Unmarshal(raw, &a); err != nil {
+		return err
+	}
+	*b = LearnBlock(a.alias)
+	if len(a.Metadata) > 0 {
+		var s string
+		if json.Unmarshal(a.Metadata, &s) == nil {
+			b.Metadata = s
+		} else {
+			// Object/array metadata: keep the raw JSON as the string value.
+			var meta map[string]any
+			if json.Unmarshal(a.Metadata, &meta) == nil && a.Title != "" {
+				if _, ok := meta["title"]; !ok {
+					meta["title"] = a.Title
+				}
+				if injected, err := json.Marshal(meta); err == nil {
+					b.Metadata = string(injected)
+				} else {
+					b.Metadata = string(a.Metadata)
+				}
+			} else {
+				b.Metadata = string(a.Metadata)
+			}
+		}
+	}
+	return nil
+}
+
 type EvaluateBlock struct {
 	ID            string   `json:"id"`
 	Type          string   `json:"type"`

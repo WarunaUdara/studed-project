@@ -223,6 +223,14 @@ func (a *Agent) doneEvent(final string) Event {
 				}
 			}
 		}
+		// A lone block object (the model often wraps a single visualization
+		// in `{type,id,content,metadata}` rather than a learnBlocks array)
+		// is treated as a one-item learn-block payload.
+		if len(ev.LearnBlocks) == 0 && len(ev.EvaluateBlocks) == 0 {
+			if lbs, err := blocks.ParseLearnBlocks([]byte("[" + trimmed + "]")); err == nil {
+				ev.LearnBlocks = lbs
+			}
+		}
 	}
 	return ev
 }

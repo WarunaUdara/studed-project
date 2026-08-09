@@ -61,6 +61,32 @@ func TestParseLearnBlocks_RejectsVizWithInvalidMetadata(t *testing.T) {
 	}
 }
 
+func TestParseLearnBlocks_AcceptsObjectMetadata(t *testing.T) {
+	// The model often emits `"metadata": { ... }` (a JSON object) rather
+	// than a JSON string; it must be preserved as its JSON string.
+	raw := []byte(`[{"id":"l1","type":"mathviz_manim","content":"Pendulum",
+		"metadata":{"title":"Pendulum","scene_spec":{"beats":[{"time":0,"action":"create"}]}}}]`)
+	parsed, err := ParseLearnBlocks(raw)
+	if err != nil {
+		t.Fatalf("expected object metadata to parse: %v", err)
+	}
+	if len(parsed) != 1 {
+		t.Fatalf("expected 1 block, got %d", len(parsed))
+	}
+	if parsed[0].Type != "mathviz_manim" {
+		t.Fatalf("type = %q, want mathviz_manim", parsed[0].Type)
+	}
+	if !json.Valid([]byte(parsed[0].Metadata)) {
+		t.Fatalf("metadata should be valid JSON string, got %q", parsed[0].Metadata)
+	}
+	var meta struct {
+		Title string `json:"title"`
+	}
+	if err := json.Unmarshal([]byte(parsed[0].Metadata), &meta); err != nil || meta.Title != "Pendulum" {
+		t.Fatalf("metadata round-trip failed: %v, %+v", err, meta)
+	}
+}
+
 func TestParseEvaluateBlocks_ResolvesCorrectIndex(t *testing.T) {
 	raw := []byte(`[{"id":"q1","type":"mcq","question":"Pick one",
 		"options":["A","B","C"],"correctIndex":1,"explanation":"B is right"}]`)

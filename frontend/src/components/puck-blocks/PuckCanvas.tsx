@@ -1,5 +1,6 @@
 import { Puck } from "@puckeditor/core";
 import "@puckeditor/core/puck.css";
+import "@/styles/puck-theme.css";
 import { type PuckData, puckConfig } from "@/components/puck-blocks/puck-config";
 
 interface PuckCanvasProps {

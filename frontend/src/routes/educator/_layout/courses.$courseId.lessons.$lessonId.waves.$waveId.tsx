@@ -33,6 +33,9 @@ const DEFAULT_DOCK_WIDTH = 400;
 const MIN_DOCK_WIDTH = 320;
 const MAX_DOCK_WIDTH = 560;
 
+// Safe coercion for unknown props
+const str = (v: unknown, fallback = ""): string => (typeof v === "string" ? v : fallback);
+
 function WaveEditorPage() {
   const { courseId, lessonId, waveId } = Route.useParams();
 
@@ -65,6 +68,9 @@ function WaveEditorPage() {
   useEffect(() => {
     if (wave) {
       const formatted = waveDataToPuck(wave.learnBlocks, wave.evaluateBlocks);
+      // Mirror the wave title into the Puck root page so the properties
+      // panel shows it (and it is saved back as the wave title).
+      formatted.root = { props: { title: wave.title ?? "" } };
       setPuckData(formatted);
     }
   }, [wave]);
@@ -95,11 +101,12 @@ function WaveEditorPage() {
     setErrorMessage(null);
 
     const { learnBlocks, evaluateBlocks } = puckToWaveData(dataToSave);
+    const editedTitle = str(dataToSave.root?.props?.title) || wave.title;
 
     const result = await updateWave({
       id: waveId,
       input: {
-        title: wave.title,
+        title: editedTitle,
         sequenceOrder: wave.sequenceOrder,
         xpReward: wave.xpReward,
         maxReattempts: wave.maxReattempts,
