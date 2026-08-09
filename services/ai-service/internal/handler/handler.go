@@ -27,10 +27,10 @@ type Handler struct {
 }
 
 // New builds the handler. maxBodyBytes bounds request bodies; values <= 0
-// fall back to 2MB.
+// fall back to 15MB (multi-image uploads need headroom beyond 2MB).
 func New(p provider.Provider, a *agent.Agent, v *vision.Client, log *slog.Logger, maxBodyBytes int64) *Handler {
 	if maxBodyBytes <= 0 {
-		maxBodyBytes = 2 << 20
+		maxBodyBytes = 15 << 20
 	}
 	return &Handler{provider: p, agent: a, vision: v, log: log, maxBodyBytes: maxBodyBytes}
 }
@@ -78,10 +78,11 @@ type analyzeImageRequest struct {
 }
 
 type agentRequest struct {
-	Prompt      string `json:"prompt"`
-	Language    string `json:"language,omitempty"`
-	Grade       string `json:"grade,omitempty"`
-	WaveContext string `json:"waveContext,omitempty"`
+	Prompt      string   `json:"prompt"`
+	Language    string   `json:"language,omitempty"`
+	Grade       string   `json:"grade,omitempty"`
+	WaveContext string   `json:"waveContext,omitempty"`
+	Images      []string `json:"images,omitempty"` // base64 data URLs
 }
 
 // ---- Legacy endpoints ----------------------------------------------------------
@@ -237,12 +238,21 @@ func (h *Handler) agentTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	events := make(chan agent.Event)
-	go h.agent.Run(r.Context(), agent.Request{
-		Prompt:      req.Prompt,
-		Language:    req.Language,
-		Grade:       req.Grade,
-		WaveContext: req.WaveContext,
-	}, events)
+	go func() {
+		ocrCtx, ocrErr := h.ocrImages(r.Context(), req, events)
+		if ocrErr != nil {
+			events <- agent.Event{Type: "error", Error: ocrErr.Error()}
+			return
+		}
+		h.agent.Run(r.Context(), agent.Request{
+			Prompt:      req.Prompt,
+			Language:    req.Language,
+			Grade:       req.Grade,
+			WaveContext: req.WaveContext,
+			Images:      req.Images,
+			OCRContext:  ocrCtx,
+		}, events)
+	}()
 
 	var final agent.Event
 	lastErr := ""
@@ -295,14 +305,24 @@ func (h *Handler) agentStream(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 
 	events := make(chan agent.Event)
-	go h.agent.Run(ctx, agent.Request{
-		Prompt:      req.Prompt,
-		Language:    req.Language,
-		Grade:       req.Grade,
-		WaveContext: req.WaveContext,
-	}, events)
+	go func() {
+		// Run OCR (if images uploaded) before the agent loop, so extracted
+		// text becomes part of the generation context.
+		ocrCtx, ocrErr := h.ocrImages(ctx, req, events)
+		if ocrErr != nil {
+			events <- agent.Event{Type: "error", Error: ocrErr.Error()}
+			return
+		}
+		h.agent.Run(ctx, agent.Request{
+			Prompt:      req.Prompt,
+			Language:    req.Language,
+			Grade:       req.Grade,
+			WaveContext: req.WaveContext,
+			Images:      req.Images,
+			OCRContext:  ocrCtx,
+		}, events)
+	}()
 
-	enc := json.NewEncoder(w)
 	for ev := range events {
 		payload, err := json.Marshal(ev)
 		if err != nil {
@@ -313,11 +333,50 @@ func (h *Handler) agentStream(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		flusher.Flush()
-		_ = enc
 	}
 }
 
 // ---- helpers ---------------------------------------------------------------------
+
+// ocrImages runs high-effort vision analysis (qwen3.7-plus with
+// reasoning_effort=high) over uploaded images and returns a compact context
+// block summarizing the extracted text and detected structure. It streams an
+// "ocr" agent event so the UI can show progress. Failures are returned as
+// errors — an educator should not silently lose uploaded content.
+func (h *Handler) ocrImages(ctx context.Context, req agentRequest, events chan<- agent.Event) (string, error) {
+	if len(req.Images) == 0 {
+		return "", nil
+	}
+	if h.vision == nil {
+		return "", fmt.Errorf("vision is not configured")
+	}
+	events <- agent.Event{Type: "ocr", Message: "Analyzing uploaded images (high-effort OCR)..."}
+
+	analysis, err := h.vision.AnalyzeImages(ctx, req.Images, defaultOCRPrompt)
+	if err != nil {
+		return "", fmt.Errorf("image analysis failed: %w", err)
+	}
+	if strings.TrimSpace(analysis.ExtractedText) == "" {
+		return "", fmt.Errorf("image analysis returned no text")
+	}
+
+	var b strings.Builder
+	b.WriteString("contentType: " + analysis.ContentType + "\n")
+	b.WriteString("detectedLanguage: " + analysis.DetectedLanguage + "\n")
+	if len(analysis.Subjects) > 0 {
+		b.WriteString("subjects: " + strings.Join(analysis.Subjects, ", ") + "\n")
+	}
+	if len(analysis.KeyConcepts) > 0 {
+		b.WriteString("keyConcepts: " + strings.Join(analysis.KeyConcepts, ", ") + "\n")
+	}
+	if analysis.SuggestedVisualization != "" && analysis.SuggestedVisualization != "none" {
+		b.WriteString("suggestedVisualization: " + analysis.SuggestedVisualization + "\n")
+	}
+	b.WriteString("extractedText:\n" + analysis.ExtractedText)
+	return b.String(), nil
+}
+
+const defaultOCRPrompt = "Analyze the uploaded images and extract all educational content: transcribe handwritten or printed text verbatim (preserving equations and Sinhala/Tamil script), describe diagrams, and list the topics covered. Be thorough — this text will be used to generate lesson content."
 
 func (h *Handler) decode(w http.ResponseWriter, r *http.Request, dst any) error {
 	r.Body = http.MaxBytesReader(w, r.Body, h.maxBodyBytes)

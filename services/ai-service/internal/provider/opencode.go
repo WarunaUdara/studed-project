@@ -226,12 +226,13 @@ func readOpenCodeStream(ctx context.Context, body io.Reader, events chan<- Strea
 // OpenAI-compatible request body.
 func buildChatRequest(model string, msgs []Message, tools []Tool, opts Options, stream bool) chatRequest {
 	reqBody := chatRequest{
-		Model:       model,
-		Messages:    toChatMessages(msgs),
-		Tools:       toChatTools(tools),
-		Temperature: opts.Temperature,
-		MaxTokens:   opts.MaxTokens,
-		Stream:      stream,
+		Model:           model,
+		Messages:        toChatMessages(msgs),
+		Tools:           toChatTools(tools),
+		Temperature:     opts.Temperature,
+		MaxTokens:       opts.MaxTokens,
+		Stream:          stream,
+		ReasoningEffort: opts.ReasoningEffort,
 	}
 	if opts.JSONMode {
 		reqBody.ResponseFormat = &responseFormat{Type: "json_object"}
@@ -242,7 +243,20 @@ func buildChatRequest(model string, msgs []Message, tools []Tool, opts Options, 
 func toChatMessages(msgs []Message) []chatMessage {
 	out := make([]chatMessage, 0, len(msgs))
 	for _, m := range msgs {
-		cm := chatMessage{Role: m.Role, Content: m.Content, ToolCallID: m.ToolCallID, ReasoningContent: m.ReasoningContent}
+		cm := chatMessage{Role: m.Role, ToolCallID: m.ToolCallID, ReasoningContent: m.ReasoningContent}
+		if len(m.Images) > 0 {
+			// Multimodal: content becomes an array of parts (text + images).
+			parts := make([]chatContentPart, 0, len(m.Images)+1)
+			if m.Content != "" {
+				parts = append(parts, chatContentPart{Type: "text", Text: m.Content})
+			}
+			for _, img := range m.Images {
+				parts = append(parts, chatContentPart{Type: "image_url", ImageURL: &chatImageURL{URL: img}})
+			}
+			cm.Content = parts
+		} else {
+			cm.Content = m.Content
+		}
 		if len(m.ToolCalls) > 0 {
 			cm.ToolCalls = make([]chatToolCall, 0, len(m.ToolCalls))
 			for _, tc := range m.ToolCalls {
@@ -301,11 +315,26 @@ type chatRequest struct {
 	MaxTokens      int             `json:"max_tokens,omitempty"`
 	Stream         bool            `json:"stream"`
 	ResponseFormat *responseFormat `json:"response_format,omitempty"`
+	// ReasoningEffort requests extended thinking (low|medium|high) on models
+	// that support it; omitted when empty.
+	ReasoningEffort string `json:"reasoning_effort,omitempty"`
+}
+
+// chatContentPart is one element of a multimodal user message: either text
+// or an image_url reference.
+type chatContentPart struct {
+	Type     string          `json:"type"`
+	Text     string          `json:"text,omitempty"`
+	ImageURL *chatImageURL   `json:"image_url,omitempty"`
+}
+
+type chatImageURL struct {
+	URL string `json:"url"`
 }
 
 type chatMessage struct {
 	Role             string         `json:"role"`
-	Content          string         `json:"content"`
+	Content          any            `json:"content"`
 	ToolCallID       string         `json:"tool_call_id,omitempty"`
 	ToolCalls        []chatToolCall `json:"tool_calls,omitempty"`
 	ReasoningContent string         `json:"reasoning_content,omitempty"`

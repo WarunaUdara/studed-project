@@ -151,16 +151,17 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			r.Body = http.MaxBytesReader(w, r.Body, 1<<20) // 1MB payload cap (SEC-21)
-			// Request timeout. AI generation (learn blocks, visualizations,
-			// agent runs) can take 20-90s, so the default is generous; set
-			// REQUEST_TIMEOUT_SECONDS to tighten it (e.g. 15 in production).
-			// The AI chat stream is exempt: it is long-lived by design and
-			// terminates when the agent finishes or the client disconnects.
+			// The AI chat stream carries uploaded images (base64) and can be
+			// long-lived; exempt it from the 1MB payload cap and the request
+			// timeout. The proxy handler enforces its own 15MB read limit.
 			if r.URL.Path == "/ai/chat" {
 				next.ServeHTTP(w, r)
 				return
 			}
+			r.Body = http.MaxBytesReader(w, r.Body, 1<<20) // 1MB payload cap (SEC-21)
+			// Request timeout. AI generation (learn blocks, visualizations,
+			// agent runs) can take 20-90s, so the default is generous; set
+			// REQUEST_TIMEOUT_SECONDS to tighten it (e.g. 15 in production).
 			timeout := time.Duration(envInt("REQUEST_TIMEOUT_SECONDS", 100)) * time.Second
 			ctx, cancel := context.WithTimeout(r.Context(), timeout)
 			defer cancel()

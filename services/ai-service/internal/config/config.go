@@ -36,7 +36,7 @@ func Load() (*Config, error) {
 		GeminiAPIKey:       os.Getenv("GEMINI_API_KEY"),
 		GeminiModel:        getEnv("GEMINI_MODEL", "gemini-2.5-flash"),
 		MaxAgentIterations: getEnvInt("MAX_AGENT_ITERATIONS", 6),
-		MaxBodyBytes:       int64(getEnvInt("MAX_BODY_BYTES", 2<<20)),
+		MaxBodyBytes:       int64(getEnvInt("MAX_BODY_BYTES", 15<<20)),
 	}, nil
 }
 

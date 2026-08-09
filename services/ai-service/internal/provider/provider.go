@@ -21,12 +21,20 @@ type Options struct {
 	Temperature float64
 	MaxTokens   int
 	JSONMode    bool
+	// ReasoningEffort requests extended thinking on models that support it
+	// (low|medium|high). Only applied when non-empty; used for high-effort
+	// OCR via the vision model.
+	ReasoningEffort string
 }
 
 // Message is a single turn in a chat conversation.
 type Message struct {
 	Role    string // "system" | "user" | "assistant" | "tool"
 	Content string
+	// Images holds base64 data URLs (data:image/...;base64,...) attached to a
+	// user message for vision-capable models. When present, Content is sent
+	// alongside the images as the text part.
+	Images []string
 	// ToolCallID is set for Role == "tool" (the tool result being fed back).
 	ToolCallID string
 	// ToolCalls is set for Role == "assistant" when the model requested tools.

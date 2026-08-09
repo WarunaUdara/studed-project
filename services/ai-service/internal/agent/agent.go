@@ -22,10 +22,21 @@ type Request struct {
 	Language    string
 	Grade       string
 	WaveContext string // optional existing wave content (markdown/JSON summary)
+	// Images holds base64 data URLs of uploaded photos (handwritten notes,
+	// textbook pages, whiteboards). The handler runs high-effort OCR on them
+	// first (qwen3.7-plus) and injects the extracted text into the prompt via
+	// OCRContext; the raw images are also attached to the first user message
+	// so vision-capable models can inspect them directly.
+	Images []string
+	// OCRContext is the pre-computed vision analysis (extracted text,
+	// detected subjects, suggested visualization) used as context for the
+	// generation prompt. Kept separate from WaveContext so the agent can
+	// distinguish "what the photo says" from "what the wave already has".
+	OCRContext string
 }
 
-// Event is streamed to the caller. Type is one of plan|tool_start|tool_end|
-// delta|done|error. The done event carries the final blocks.
+// Event is streamed to the caller. Type is one of plan|ocr|tool_start|
+// tool_end|delta|done|error. The done event carries the final blocks.
 type Event struct {
 	Type    string `json:"type"`
 	Tool    string `json:"tool,omitempty"`
@@ -266,7 +277,8 @@ func extractJSON(s string) string {
 }
 
 // buildMessages assembles the system prompt and user message for the first
-// provider round trip.
+// provider round trip. Uploaded images are attached as multimodal parts and
+// the OCR context (if any) is included in the user text.
 func buildMessages(req Request) []provider.Message {
 	var user strings.Builder
 	user.WriteString("Prompt: " + req.Prompt + "\n")
@@ -276,12 +288,15 @@ func buildMessages(req Request) []provider.Message {
 	if req.Grade != "" {
 		user.WriteString("Grade: " + req.Grade + "\n")
 	}
+	if req.OCRContext != "" {
+		user.WriteString("Uploaded images (OCR analysis):\n" + req.OCRContext + "\n")
+	}
 	if req.WaveContext != "" {
 		user.WriteString("Wave context:\n" + req.WaveContext + "\n")
 	}
 	return []provider.Message{
 		{Role: "system", Content: systemPrompt},
-		{Role: "user", Content: user.String()},
+		{Role: "user", Content: user.String(), Images: req.Images},
 	}
 }
 

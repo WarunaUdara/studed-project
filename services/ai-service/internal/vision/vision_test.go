@@ -14,9 +14,10 @@ import (
 
 // decodeRequest is the decoded chat request body captured by the mock server.
 type decodeRequest struct {
-	Model          string          `json:"model"`
-	Messages       []decodeMessage `json:"messages"`
-	ResponseFormat *responseFormat `json:"response_format"`
+	Model           string          `json:"model"`
+	Messages        []decodeMessage `json:"messages"`
+	ResponseFormat  *responseFormat `json:"response_format"`
+	ReasoningEffort string          `json:"reasoning_effort"`
 }
 
 type decodeMessage struct {
@@ -269,5 +270,66 @@ func TestAnalyzeImageModelEnvOverride(t *testing.T) {
 	}
 	if got.Model != "custom-vision-model" {
 		t.Errorf("model = %q, want custom-vision-model", got.Model)
+	}
+}
+
+func TestAnalyzeImagesSendsAllImagesWithHighEffort(t *testing.T) {
+	var got decodeRequest
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		if err := json.Unmarshal(body, &got); err != nil {
+			t.Errorf("decode body: %v", err)
+		}
+		fmt.Fprint(w, `{"choices":[{"message":{"content":"{\"contentType\":\"handwritten_notes\",\"detectedLanguage\":\"en\",\"subjects\":[\"physics\"],\"keyConcepts\":[\"pendulum\"],\"hasEquations\":false,\"suggestedVisualization\":\"matterjs\",\"extractedText\":\"T = 2pi sqrt(L/g)\"}"}}]}`)
+	}))
+	defer srv.Close()
+
+	t.Setenv("OPENCODE_API_KEY", "k")
+	c := NewClient().WithBaseURL(srv.URL)
+
+	analysis, err := c.AnalyzeImages(context.Background(), []string{"QUJD", "data:image/png;base64,REVG"}, "extract")
+	if err != nil {
+		t.Fatalf("AnalyzeImages: %v", err)
+	}
+	if analysis.ExtractedText != "T = 2pi sqrt(L/g)" {
+		t.Errorf("extracted text = %q", analysis.ExtractedText)
+	}
+
+	if got.ReasoningEffort != "high" {
+		t.Errorf("reasoning_effort = %q, want high (OCR high-effort default)", got.ReasoningEffort)
+	}
+	userMsg := got.Messages[1]
+	parts, ok := userMsg.Content.([]any)
+	if !ok {
+		t.Fatalf("user content type = %T, want []any", userMsg.Content)
+	}
+	// text + 2 images
+	if len(parts) != 3 {
+		t.Fatalf("parts = %d, want 3", len(parts))
+	}
+	imgParts := 0
+	for _, p := range parts {
+		m := p.(map[string]any)
+		if m["type"] == "image_url" {
+			imgParts++
+			url, _ := m["image_url"].(map[string]any)["url"].(string)
+			if !strings.HasPrefix(url, "data:image") {
+				t.Errorf("image url missing data prefix: %q", url)
+			}
+		}
+	}
+	if imgParts != 2 {
+		t.Errorf("image parts = %d, want 2", imgParts)
+	}
+}
+
+func TestAnalyzeImagesRejectsEmptyInput(t *testing.T) {
+	t.Setenv("OPENCODE_API_KEY", "k")
+	c := NewClient()
+	if _, err := c.AnalyzeImages(context.Background(), nil, "extract"); err == nil {
+		t.Fatal("expected error for no images")
+	}
+	if _, err := c.AnalyzeImages(context.Background(), []string{"", "QUJD"}, "extract"); err == nil {
+		t.Fatal("expected error for empty image element")
 	}
 }

@@ -67,33 +67,63 @@ func (c *Client) WithBaseURL(url string) *Client {
 // schema. The model is explicitly told to output JSON only.
 const systemPrompt = "You are a curriculum analyst for StudEd, a Sri Lankan school platform (Grades 1-11, O/L, A/L). Analyze the provided image and return JSON exactly matching this schema: contentType (one of handwritten_notes|textbook|diagram|equations|molecule|circuit|physics_setup|other), detectedLanguage (en|si|ta), subjects (array), keyConcepts (array), hasEquations (bool), suggestedVisualization (one of manim|3dmol|tscircuit|matterjs|none), extractedText (string). Only output JSON."
 
-// AnalyzeImage sends the image (base64, with an optional data URL prefix)
-// plus an analysis prompt to the vision model with JSON mode enabled and
-// returns the parsed Analysis. If prompt is empty a default analysis prompt
-// is used.
+// AnalyzeImage sends a single image (base64, with an optional data URL
+// prefix) plus an analysis prompt to the vision model with JSON mode enabled
+// and returns the parsed Analysis. If prompt is empty a default analysis
+// prompt is used. Uses default reasoning effort (none).
 func (c *Client) AnalyzeImage(ctx context.Context, imageBase64, prompt string) (*Analysis, error) {
 	if strings.TrimSpace(imageBase64) == "" {
 		return nil, fmt.Errorf("vision: image data is empty")
 	}
+	return c.analyze(ctx, []string{imageBase64}, prompt, "")
+}
+
+// AnalyzeImages sends multiple images to the vision model in one request.
+// High reasoning effort is used by default: qwen3.7-plus supports extended
+// thinking, which materially improves OCR fidelity on handwritten notes,
+// whiteboard photos, and low-contrast textbook scans. The extracted text of
+// all images is merged into the returned Analysis.ExtractedText, prefixed by
+// the image index so downstream consumers can attribute content to a source
+// image.
+func (c *Client) AnalyzeImages(ctx context.Context, images []string, prompt string) (*Analysis, error) {
+	if len(images) == 0 {
+		return nil, fmt.Errorf("vision: no images provided")
+	}
+	for i, img := range images {
+		if strings.TrimSpace(img) == "" {
+			return nil, fmt.Errorf("vision: image %d is empty", i+1)
+		}
+	}
+	return c.analyze(ctx, images, prompt, "high")
+}
+
+// analyze is the shared implementation: builds a multimodal user message
+// (text prompt + one image_url part per image), requests JSON mode, and
+// parses the typed Analysis. When reasoningEffort is non-empty it is passed
+// through to the model.
+func (c *Client) analyze(ctx context.Context, images []string, prompt, reasoningEffort string) (*Analysis, error) {
 	if strings.TrimSpace(prompt) == "" {
 		prompt = defaultPrompt
 	}
 
-	dataURL := imageBase64
-	if !strings.HasPrefix(dataURL, "data:") {
-		dataURL = "data:image/jpeg;base64," + dataURL
+	parts := make([]contentPart, 0, len(images)+1)
+	parts = append(parts, contentPart{Type: "text", Text: prompt})
+	for _, img := range images {
+		dataURL := img
+		if !strings.HasPrefix(dataURL, "data:") {
+			dataURL = "data:image/jpeg;base64," + dataURL
+		}
+		parts = append(parts, contentPart{Type: "image_url", ImageURL: imageURL{URL: dataURL}})
 	}
 
 	reqBody := request{
 		Model: c.model,
 		Messages: []message{
 			{Role: "system", Content: systemPrompt},
-			{Role: "user", Content: []contentPart{
-				{Type: "text", Text: prompt},
-				{Type: "image_url", ImageURL: imageURL{URL: dataURL}},
-			}},
+			{Role: "user", Content: parts},
 		},
-		ResponseFormat: &responseFormat{Type: "json_object"},
+		ResponseFormat:  &responseFormat{Type: "json_object"},
+		ReasoningEffort: reasoningEffort,
 	}
 	payload, err := json.Marshal(reqBody)
 	if err != nil {
@@ -162,6 +192,9 @@ type request struct {
 	Model          string          `json:"model"`
 	Messages       []message       `json:"messages"`
 	ResponseFormat *responseFormat `json:"response_format,omitempty"`
+	// ReasoningEffort requests extended thinking (low|medium|high) on models
+	// that support it; omitted when empty.
+	ReasoningEffort string `json:"reasoning_effort,omitempty"`
 }
 
 type message struct {

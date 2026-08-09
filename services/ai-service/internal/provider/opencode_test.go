@@ -351,3 +351,51 @@ func TestOpenCodeConcurrentUse(t *testing.T) {
 		t.Errorf("concurrent GenerateJSON: %v", err)
 	}
 }
+
+func TestBuildChatRequestMultimodalAndReasoningEffort(t *testing.T) {
+	msgs := []Message{
+		{Role: "user", Content: "Look at these", Images: []string{
+			"data:image/png;base64,AAAA",
+			"data:image/jpeg;base64,BBBB",
+		}},
+		{Role: "user", Content: "plain text"},
+	}
+	req := buildChatRequest("qwen3.7-plus", msgs, nil, Options{ReasoningEffort: "high"}, false)
+
+	if req.ReasoningEffort != "high" {
+		t.Errorf("reasoning_effort = %q, want high", req.ReasoningEffort)
+	}
+	if len(req.Messages) != 2 {
+		t.Fatalf("messages = %d, want 2", len(req.Messages))
+	}
+
+	// First message: multimodal content parts.
+	parts, ok := req.Messages[0].Content.([]chatContentPart)
+	if !ok {
+		t.Fatalf("first message content is %T, want []chatContentPart", req.Messages[0].Content)
+	}
+	if len(parts) != 3 {
+		t.Fatalf("parts = %d, want 3 (text + 2 images)", len(parts))
+	}
+	if parts[0].Type != "text" || parts[0].Text != "Look at these" {
+		t.Errorf("first part = %+v, want text part", parts[0])
+	}
+	if parts[1].Type != "image_url" || parts[1].ImageURL == nil || parts[1].ImageURL.URL != "data:image/png;base64,AAAA" {
+		t.Errorf("second part = %+v, want first image", parts[1])
+	}
+	if parts[2].Type != "image_url" || parts[2].ImageURL == nil || parts[2].ImageURL.URL != "data:image/jpeg;base64,BBBB" {
+		t.Errorf("third part = %+v, want second image", parts[2])
+	}
+
+	// Second message: plain string content preserved.
+	if s, ok := req.Messages[1].Content.(string); !ok || s != "plain text" {
+		t.Errorf("second message content = %v, want string \"plain text\"", req.Messages[1].Content)
+	}
+}
+
+func TestBuildChatRequestNoReasoningEffortWhenEmpty(t *testing.T) {
+	req := buildChatRequest("m", []Message{{Role: "user", Content: "hi"}}, nil, Options{}, false)
+	if req.ReasoningEffort != "" {
+		t.Errorf("reasoning_effort = %q, want empty", req.ReasoningEffort)
+	}
+}
