@@ -10,7 +10,11 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
+<<<<<<< Updated upstream
 import { useEffect, useState, type ReactNode } from "react";
+=======
+import type { ReactNode } from "react";
+>>>>>>> Stashed changes
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";

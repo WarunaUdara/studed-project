@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, Moon, Sun, X, Zap } from "lucide-react";
 import { useState } from "react";
+import { LoginModal } from "@/components/auth/LoginModal";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { XPBar } from "@/components/gamification/XPBar";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ export function Navbar() {
   const theme = useUiPrefs((s) => s.theme);
   const toggleTheme = useUiPrefs((s) => s.toggleTheme);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   const pathname = useRouterState().location.pathname;
   const isHome = pathname === "/";
@@ -96,14 +98,13 @@ export function Navbar() {
 
           {!isAuthenticated ? (
             <>
-              <Link to="/login">
-                <Button variant="ghost" size="sm">
-                  Log in
-                </Button>
-              </Link>
+              <Button variant="ghost" size="sm" onClick={() => setLoginModalOpen(true)}>
+                Log in
+              </Button>
               <Link to="/register">
                 <Button size="sm">Sign up</Button>
               </Link>
+              <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
             </>
           ) : (
             <div className="flex items-center gap-2">

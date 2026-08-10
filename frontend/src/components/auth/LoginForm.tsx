@@ -19,7 +19,11 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-export function LoginForm() {
+interface LoginFormProps {
+  onSuccess?: () => void;
+}
+
+export function LoginForm({ onSuccess }: LoginFormProps = {}) {
   const navigate = useNavigate();
   const setUser = useAuthStore((s) => s.setUser);
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +49,9 @@ export function LoginForm() {
     if (result.data?.login?.user) {
       const user = result.data.login.user;
       setUser(user);
+      if (onSuccess) {
+        onSuccess();
+      }
       if (user.role === "EDUCATOR" || user.role === "HEAD_EDUCATOR" || user.role === "ADMIN") {
         navigate({ to: "/educator/courses" });
       } else {

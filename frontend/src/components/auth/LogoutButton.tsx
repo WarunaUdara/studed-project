@@ -29,11 +29,16 @@ export function LogoutButton({
 
   const handleLogout = async () => {
     setIsSubmitting(true);
-    await logout({});
-    logoutStore();
-    setIsSubmitting(false);
-    setShowConfirm(false);
-    navigate({ to: "/login" });
+    try {
+      await logout({});
+    } catch (err) {
+      console.error("Logout mutation failed:", err);
+    } finally {
+      logoutStore();
+      setIsSubmitting(false);
+      setShowConfirm(false);
+      navigate({ to: "/login" });
+    }
   };
 
   return (
