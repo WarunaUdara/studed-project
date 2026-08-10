@@ -224,7 +224,7 @@ func Visualization(p provider.Provider) Tool {
 
 			raw, err := p.GenerateJSON(ctx, system, user.String(), provider.JSONOptions())
 			if err != nil {
-				if vizType == "matterjs" && isProjectileConcept(concept) {
+				if vizType == "matterjs" {
 					return Result{Name: "generateVisualization", VizBlock: fallbackHTMLSimulation(concept, grade)}, nil
 				}
 				return Result{Name: "generateVisualization", Content: "tool error: " + err.Error()}, nil
@@ -236,14 +236,14 @@ func Visualization(p provider.Provider) Tool {
 				repairUser := user.String() + "\n\nYour previous output was invalid: " + err.Error() + "\nReturn ONLY valid JSON for the complete visualization block. Do not truncate. Include all required fields."
 				raw2, err2 := p.GenerateJSON(ctx, system, repairUser, provider.JSONOptions())
 				if err2 != nil {
-					if vizType == "matterjs" && isProjectileConcept(concept) {
+					if vizType == "matterjs" {
 						return Result{Name: "generateVisualization", VizBlock: fallbackHTMLSimulation(concept, grade)}, nil
 					}
 					return Result{Name: "generateVisualization", Content: "tool error: " + err2.Error()}, nil
 				}
 				block, err = parseVizBlock(raw2, vizType)
 				if err != nil {
-					if vizType == "matterjs" && isProjectileConcept(concept) {
+					if vizType == "matterjs" {
 						return Result{Name: "generateVisualization", VizBlock: fallbackHTMLSimulation(concept, grade)}, nil
 					}
 					return Result{Name: "generateVisualization", Content: err.Error()}, nil
@@ -281,9 +281,24 @@ Rules:
 	}
 }
 
-func isProjectileConcept(concept string) bool {
+func isChemistryConcept(concept string) bool {
 	c := strings.ToLower(concept)
-	return strings.Contains(c, "projectile") || strings.Contains(c, "parabolic") || strings.Contains(c, "launch")
+	for _, term := range []string{"chem", "sodium", "water reaction", "molecule", "acid", "base", "oxidation", "reaction"} {
+		if strings.Contains(c, term) {
+			return true
+		}
+	}
+	return false
+}
+
+func fallbackChemistrySimulation(concept, grade string) *blocks.LearnBlock {
+	title := "Interactive Chemistry Simulation"
+	if strings.TrimSpace(concept) != "" {
+		title = concept
+	}
+	html := `<!doctype html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body{margin:0;height:100%;font-family:system-ui;background:#0f172a;color:#e2e8f0}body{display:flex;flex-direction:column}header{padding:14px 16px;background:#1e293b}main{position:relative;flex:1;min-height:300px}canvas{width:100%;height:100%;display:block}.controls{padding:12px 16px;background:#1e293b;display:flex;gap:10px;align-items:center;flex-wrap:wrap}button{padding:7px 12px;border:0;border-radius:6px;background:#38bdf8;font-weight:700}</style></head><body><header><strong>Sodium + Water Reaction</strong><div style="font-size:12px;color:#94a3b8">2Na + 2H₂O → 2NaOH + H₂</div></header><main><canvas id="reaction"></canvas></main><div class="controls"><button id="reset">Reset</button><label><input id="run" type="checkbox" checked> Run reaction</label><span id="readout"></span></div><script>(()=>{const c=document.getElementById('reaction'),x=c.getContext('2d'),run=document.getElementById('run'),out=document.getElementById('readout');let t=0;function size(){c.width=c.clientWidth*devicePixelRatio;c.height=c.clientHeight*devicePixelRatio;x.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0)}addEventListener('resize',size);size();function draw(){const w=c.clientWidth,h=c.clientHeight;x.clearRect(0,0,w,h);x.fillStyle='#38bdf8';x.fillRect(0,h*.55,w,h*.45);x.fillStyle='#94a3b8';for(let i=0;i<8;i++){const bx=80+i*90,by=h*.68+Math.sin(t/12+i)*5;x.beginPath();x.arc(bx,by,25,0,7);x.fill()}const sx=110+Math.min(t,220)*1.2,sy=h*.48+Math.sin(t/8)*8;x.fillStyle='#cbd5e1';x.beginPath();x.arc(sx,sy,18,0,7);x.fill();if(run.checked){for(let i=0;i<12;i++){x.strokeStyle='#f8fafc';x.beginPath();x.arc(sx+(i%4-2)*12,sy-35-(i*13+t%20),3,0,7);x.stroke()}x.fillStyle='#fb923c';x.beginPath();x.arc(sx,sy-25,15+Math.sin(t/4)*5,0,7);x.fill();t++}out.textContent='Hydrogen bubbles · heat · sodium hydroxide';requestAnimationFrame(draw)}document.getElementById('reset').onclick=()=>t=0;draw()})()</script></body></html>`
+	meta, _ := json.Marshal(map[string]any{"title": title, "description": "A safe animated chemistry simulation for " + grade, "height": 560, "html": html})
+	return &blocks.LearnBlock{ID: "viz-html-chemistry", Type: "html_simulation", Content: title, Metadata: string(meta)}
 }
 
 // fallbackHTMLSimulation guarantees physics requests still produce a runnable
@@ -291,6 +306,9 @@ func isProjectileConcept(concept string) bool {
 // response. It is intentionally small and self-contained; the provider's
 // generated document remains the primary path.
 func fallbackHTMLSimulation(concept, grade string) *blocks.LearnBlock {
+	if isChemistryConcept(concept) {
+		return fallbackChemistrySimulation(concept, grade)
+	}
 	title := "Interactive Physics Simulation"
 	if strings.TrimSpace(concept) != "" {
 		title = concept

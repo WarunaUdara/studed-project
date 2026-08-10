@@ -99,27 +99,39 @@ function WaveEditorPage() {
       const newItems = agentBlocksToPuckItems(learnBlocks, evaluateBlocks);
       if (newItems.length === 0) return;
       const existing = puckData.content ?? [];
-      const existingByID = new Map(existing.map((item) => [String(item.props?.id ?? ""), item]));
-      const usedIDs = new Set(existingByID.keys());
-      const uniqueItems = newItems.flatMap((item) => {
-        const originalID = String(item.props?.id ?? "");
-        if (!originalID) return [];
-        const existingItem = existingByID.get(originalID);
-        if (existingItem && JSON.stringify(existingItem) === JSON.stringify(item)) return [];
-        if (!usedIDs.has(originalID)) {
-          usedIDs.add(originalID);
-          return [item];
+      const incomingHTML = newItems.find((item) => item.type === "HtmlSimulationBlock");
+      const incomingItems = incomingHTML
+        ? [incomingHTML, ...newItems.filter((item) => item !== incomingHTML && item.type !== "HtmlSimulationBlock")]
+        : newItems;
+      const existingIndexByID = new Map(
+        existing.map((item, index) => [String(item.props?.id ?? ""), index]),
+      );
+      const nextContent = [...existing];
+      let changed = false;
+      for (const item of incomingItems) {
+        const id = String(item.props?.id ?? "");
+        if (!id) continue;
+        const existingIndex = item.type === "HtmlSimulationBlock"
+          ? nextContent.findIndex((candidate) => candidate.type === "HtmlSimulationBlock")
+          : existingIndexByID.get(id);
+        if (existingIndex !== undefined && existingIndex >= 0) {
+          // A model retry or a later request may reuse the same generated id.
+          // Replace in place rather than appending/renaming, which used to
+          // leave the old HTML simulation and create a duplicate.
+          if (JSON.stringify(nextContent[existingIndex]) !== JSON.stringify(item)) {
+            nextContent[existingIndex] = item;
+            changed = true;
+          }
+        } else {
+          existingIndexByID.set(id, nextContent.length);
+          nextContent.push(item);
+          changed = true;
         }
-        let suffix = 2;
-        let nextID = `${originalID}-${suffix}`;
-        while (usedIDs.has(nextID)) nextID = `${originalID}-${++suffix}`;
-        usedIDs.add(nextID);
-        return [{ ...item, props: { ...item.props, id: nextID } }];
-      });
-      if (uniqueItems.length === 0) return;
+      }
+      if (!changed) return;
       const next: PuckData = {
         ...puckData,
-        content: [...existing, ...uniqueItems],
+        content: nextContent,
       };
       setPuckData(next);
       pushPuckData(next);

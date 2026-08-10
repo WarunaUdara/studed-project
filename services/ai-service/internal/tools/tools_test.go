@@ -246,6 +246,20 @@ func TestVisualizationRepairOnInvalidHTML(t *testing.T) {
 	}
 }
 
+func TestVisualizationChemistryFallbackIsNotProjectile(t *testing.T) {
+	s := &scriptedProvider{jsonErrs: []error{errors.New("empty response")}}
+	res, err := Visualization(s).Execute(context.Background(), map[string]any{"concept": "sodium water reaction", "vizType": "matterjs", "grade": "O/L"})
+	if err != nil || res.VizBlock == nil {
+		t.Fatalf("expected chemistry fallback block: result=%+v err=%v", res, err)
+	}
+	if strings.Contains(strings.ToLower(res.VizBlock.Metadata), "projectile") || !strings.Contains(res.VizBlock.Metadata, "Sodium + Water") {
+		t.Fatalf("chemistry fallback was not chemistry-specific: %s", res.VizBlock.Metadata)
+	}
+	if !strings.Contains(res.VizBlock.Metadata, "Hydrogen bubbles") || !strings.Contains(res.VizBlock.Metadata, "2Na") {
+		t.Fatalf("chemistry behavior missing: %s", res.VizBlock.Metadata)
+	}
+}
+
 func TestVisualizationMatterjsFallsBackToRunnableHTMLOnProviderError(t *testing.T) {
 	s := &scriptedProvider{jsonErrs: []error{errors.New("empty response")}}
 	res, err := Visualization(s).Execute(context.Background(), map[string]any{"concept": "projectile motion", "vizType": "matterjs", "grade": "8"})
