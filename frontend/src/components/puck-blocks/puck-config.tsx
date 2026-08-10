@@ -4,8 +4,7 @@ import { MarkdownContent } from "@/components/ui/MarkdownContent";
 import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
 import { Mol3DBlock } from "@/components/learn/visualizations/Mol3DBlock";
 import { TsCircuitBlock } from "@/components/learn/visualizations/TsCircuitBlock";
-import { MatterPhysicsBlock } from "@/components/learn/visualizations/MatterPhysicsBlock";
-import { NEWTONS_LAWS } from "@/components/learn/visualizations/newtonsLaws";
+import { HtmlSimulationBlock } from "@/components/learn/visualizations/HtmlSimulationBlock";
 
 // ---------------------------------------------------------------------------
 // Block props
@@ -39,7 +38,7 @@ export interface MathVizProps {
 }
 
 export interface VizBlockProps {
-  vizType: string; // mathviz_manim | chemviz_3dmol | elecsim_tscircuit | mechsim_matterjs
+  vizType: string; // mathviz_manim | chemviz_3dmol | elecsim_tscircuit | html_simulation
   content: string;
   metadata: string;
   // Convenience editor fields (merged into metadata at render time).
@@ -102,7 +101,7 @@ const VIZ_LABELS: Record<string, string> = {
   mathviz_manim: "Math Animation (Manim)",
   chemviz_3dmol: "3D Molecule (3Dmol.js)",
   elecsim_tscircuit: "Circuit Simulation (tscircuit)",
-  mechsim_matterjs: "Physics Simulation (Matter.js)",
+  html_simulation: "Interactive HTML Simulation",
 };
 
 // Renders the same interactive visualization components students see, right
@@ -115,9 +114,8 @@ function VizBlockPreview({ vizType, content, metadata }: VizBlockProps) {
     case "elecsim_tscircuit":
     case "circuit_tscircuit":
       return <TsCircuitBlock content={content} metadata={metadata} />;
-    case "mechsim_matterjs":
-    case "simulation_matter":
-      return <MatterPhysicsBlock content={content} metadata={metadata} />;
+    case "html_simulation":
+      return <HtmlSimulationBlock content={content} metadata={metadata} />;
     case "mathviz_manim":
     case "manim":
     default:
@@ -276,22 +274,6 @@ export const puckConfig: Config = {
           options: Object.entries(VIZ_LABELS).map(([value, label]) => ({ value, label })),
         },
         content: { type: "textarea", label: "Description / Content" },
-        // Physics (mechsim_matterjs): scenario + world config
-        scenarioType: {
-          type: "select",
-          label: "Physics Scenario",
-          options: [
-            { value: "pendulum", label: "Pendulum" },
-            { value: "collision", label: "Collision" },
-            { value: "projectile", label: "Projectile Motion" },
-            { value: "spring", label: "Spring" },
-            { value: "newtons_cradle", label: "Newton's Cradle" },
-            { value: "inclined_plane", label: "Inclined Plane" },
-            { value: "circular_motion", label: "Circular Motion" },
-            { value: "planetary_orbit", label: "Planetary Orbit" },
-            { value: "custom", label: "Custom" },
-          ],
-        },
         // Chemistry (chemviz_3dmol): molecule source
         moleculeSmiles: { type: "text", label: "Molecule SMILES (chemistry)" },
         // Advanced: raw config JSON
@@ -300,11 +282,10 @@ export const puckConfig: Config = {
       defaultProps: {
         vizType: "mathviz_manim",
         content: "Interactive visualization",
-        scenarioType: "custom",
         moleculeSmiles: "O",
         metadata: "{}",
       },
-      render: ({ vizType, content, scenarioType, moleculeSmiles, metadata }) => {
+      render: ({ vizType, content, moleculeSmiles, metadata }) => {
         // Merge convenience fields into the raw config so the renderers get
         // a complete metadata object even when only the quick fields were set.
         let merged: Record<string, unknown> = {};
@@ -312,15 +293,6 @@ export const puckConfig: Config = {
           merged = metadata ? JSON.parse(metadata) : {};
         } catch {
           merged = {};
-        }
-        if (vizType === "mechsim_matterjs" && scenarioType && !merged.scenario_type) {
-          merged.scenario_type = scenarioType;
-          merged.title = merged.title ?? content ?? "Physics Simulation";
-          merged.world_config = merged.world_config ?? {
-            gravity: { x: 0, y: 1, scale: 0.001 },
-            bounds: { width: 800, height: 400 },
-            bodies: [{ id: "ball", type: "circle", position: { x: 400, y: 100 }, radius: 25, density: 0.001, restitution: 0.8 }],
-          };
         }
         if (vizType === "chemviz_3dmol" && moleculeSmiles) {
           merged.title = merged.title ?? content ?? "Molecule";
@@ -331,55 +303,6 @@ export const puckConfig: Config = {
       },
     },
 
-    // Physics simulation (Matter.js) — first-class palette block.
-    PhysicsSimBlock: {
-      fields: {
-        scenarioType: {
-          type: "select",
-          label: "Physics Scenario",
-          options: [
-            { value: "pendulum", label: "Pendulum" },
-            { value: "collision", label: "Collision" },
-            { value: "projectile", label: "Projectile Motion" },
-            { value: "spring", label: "Spring" },
-            { value: "newtons_cradle", label: "Newton's Cradle" },
-            { value: "newtons_laws", label: "Newton's Three Laws" },
-            { value: "inclined_plane", label: "Inclined Plane" },
-            { value: "circular_motion", label: "Circular Motion" },
-            { value: "planetary_orbit", label: "Planetary Orbit" },
-            { value: "custom", label: "Custom" },
-          ],
-        },
-        content: { type: "textarea", label: "Description / Instructions" },
-        metadata: { type: "textarea", label: "Config JSON (advanced)" },
-      },
-      defaultProps: {
-        vizType: "mechsim_matterjs",
-        scenarioType: "newtons_laws",
-        content: "Interactive physics simulation",
-        metadata: "{}",
-      },
-      render: ({ content, scenarioType, metadata }) => {
-        let merged: Record<string, unknown> = {};
-        try {
-          merged = metadata ? JSON.parse(metadata) : {};
-        } catch {
-          merged = {};
-        }
-        if (scenarioType && !merged.scenario_type) {
-          merged.scenario_type = scenarioType;
-          merged.title = merged.title ?? content ?? "Physics Simulation";
-        }
-        // Newton's Three Laws: attach the preset law configs so the renderer
-        // shows the 1st/2nd/3rd law switcher with the real demonstrations.
-        if (scenarioType === "newtons_laws" && !merged.laws) {
-          merged.laws = NEWTONS_LAWS;
-          merged.title = merged.title ?? "Newton's Three Laws of Motion";
-          merged.description = merged.description ?? "Pick a law to explore";
-        }
-        return <VizBlockPreview vizType="mechsim_matterjs" content={content} metadata={JSON.stringify(merged)} />;
-      },
-    },
 
     // 3D molecule (3Dmol.js) — first-class palette block.
     MoleculeBlock: {
@@ -699,22 +622,11 @@ function learnBlockToItem(lb: LearnBlockRaw): PuckData["content"][number] {
     case "chemviz_3dmol":
       return { type: "MoleculeBlock", props: { ...common, vizType: type, moleculeSmiles: moleculeSmilesFrom(lb), content: lb.content, metadata: lb.metadata || "{}" } };
     case "elecsim_tscircuit":
-      return { type: "CircuitBlock", props: { ...common, vizType: type, circuitCode: circuitCodeFrom(lb), content: lb.content, metadata: lb.metadata || "{}" } };
-    case "mechsim_matterjs":
-      return { type: "PhysicsSimBlock", props: { ...common, vizType: type, scenarioType: scenarioTypeFrom(lb), content: lb.content, metadata: lb.metadata || "{}" } };
+    return { type: "CircuitBlock", props: { ...common, vizType: type, circuitCode: circuitCodeFrom(lb), content: lb.content, metadata: lb.metadata || "{}" } };
+    case "html_simulation":
+    return { type: "HtmlSimulationBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
     default:
       return { type: "TextBlock", props: { ...common, content: lb.content } };
-  }
-}
-
-// Pull the scenario_type out of a mechsim block's metadata so the palette
-// select shows the right value when a saved wave loads into the editor.
-function scenarioTypeFrom(lb: LearnBlockRaw): string {
-  try {
-    const meta = JSON.parse(lb.metadata || "{}");
-    return typeof meta.scenario_type === "string" ? meta.scenario_type : "custom";
-  } catch {
-    return "custom";
   }
 }
 
@@ -883,21 +795,12 @@ export function puckToWaveData(puckData: PuckData) {
           metadata: str(block.props.metadata) || null,
         });
         break;
-      case "PhysicsSimBlock": {
-        let meta: Record<string, unknown> = {};
-        try {
-          meta = JSON.parse(str(block.props.metadata) || "{}");
-        } catch {
-          meta = {};
-        }
-        const scenario = str(block.props.scenarioType);
-        if (scenario && !meta.scenario_type) meta.scenario_type = scenario;
-        if (!meta.title) meta.title = str(block.props.content) || "Physics Simulation";
+      case "HtmlSimulationBlock": {
         learnBlocks.push({
           id,
-          type: "mechsim_matterjs",
+          type: "html_simulation",
           content: str(block.props.content),
-          metadata: JSON.stringify(meta),
+          metadata: str(block.props.metadata) || null,
         });
         break;
       }

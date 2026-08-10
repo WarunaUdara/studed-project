@@ -11,8 +11,8 @@ import (
 func TestGenerateVisualization(t *testing.T) {
 	expectedBlock := map[string]any{
 		"id":   "viz-1",
-		"type": "mechsim_matterjs",
-		"data": map[string]any{"world_config": map[string]any{"gravity": 9.8}},
+		"type": "html_simulation",
+		"metadata": map[string]any{"title": "Projectile", "html": "<!doctype html><html><body><canvas></canvas></body></html>"},
 	}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -41,8 +41,8 @@ func TestGenerateVisualization(t *testing.T) {
 	if err := json.Unmarshal([]byte(got), &parsed); err != nil {
 		t.Fatalf("result is not valid JSON: %v", err)
 	}
-	if parsed["type"] != "mechsim_matterjs" {
-		t.Errorf("expected type mechsim_matterjs, got %v", parsed["type"])
+	if parsed["type"] != "html_simulation" {
+		t.Errorf("expected type html_simulation, got %v", parsed["type"])
 	}
 }
 

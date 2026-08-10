@@ -17,7 +17,7 @@ var validLearnTypes = map[string]bool{
 	"mathviz_manim":     true,
 	"chemviz_3dmol":     true,
 	"elecsim_tscircuit": true,
-	"mechsim_matterjs":  true,
+	"html_simulation":   true,
 }
 
 var validEvaluateTypes = map[string]bool{

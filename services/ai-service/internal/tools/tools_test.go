@@ -200,9 +200,9 @@ func TestVisualizationAllFamilies(t *testing.T) {
 			metaWant: "LED circuit",
 		},
 		{
-			vizType: "matterjs", blockType: "mechsim_matterjs",
-			raw:      `{"id":"v1","type":"mechsim_matterjs","content":"Pendulum","metadata":{"title":"Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1},"bounds":{"width":800,"height":600},"bodies":[{"id":"bob","type":"circle","position":{"x":400,"y":300},"radius":20,"density":0.04,"isStatic":false},{"id":"pivot","type":"circle","position":{"x":400,"y":50},"radius":10,"isStatic":true}],"constraints":[{"id":"string","bodyA":"pivot","bodyB":"bob","length":250,"stiffness":0.8}]}}}`,
-			metaWant: "Pendulum",
+			vizType: "matterjs", blockType: "html_simulation",
+			raw:      `{"id":"v1","type":"html_simulation","content":"Projectile Motion","metadata":{"title":"Projectile Motion","description":"Interactive projectile","height":560,"html":"<!doctype html><html><body><canvas id=\"sim\"></canvas><script>const canvas=document.getElementById('sim');const ctx=canvas.getContext('2d');let x=10;function tick(){x+=2;ctx.fillRect(x,10,8,8);requestAnimationFrame(tick)}tick();</script></body></html>"}}`,
+			metaWant: "Projectile Motion",
 		},
 	}
 	for _, tc := range cases {
@@ -227,24 +227,22 @@ func TestVisualizationAllFamilies(t *testing.T) {
 	}
 }
 
-func TestVisualizationRepairOnInvalidMetadata(t *testing.T) {
-	// mechsim without bodies must fail schema validation (both attempts
-	// invalid -> final error reports the bodies requirement).
+func TestVisualizationRepairOnInvalidHTML(t *testing.T) {
 	s := &scriptedProvider{jsonOuts: [][]byte{
-		[]byte(`{"id":"v1","type":"mechsim_matterjs","content":"Pendulum","metadata":{"title":"Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1}}}}`),
-		[]byte(`{"id":"v1","type":"mechsim_matterjs","content":"Pendulum","metadata":{"title":"Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1}}}}`),
+		[]byte(`{"id":"v1","type":"html_simulation","content":"Projectile Motion","metadata":{"title":"Projectile Motion"}}`),
+		[]byte(`{"id":"v1","type":"html_simulation","content":"Projectile Motion","metadata":{"title":"Projectile Motion","height":560,"html":"<!doctype html><html><body><canvas id=\"sim\"></canvas><script>requestAnimationFrame(()=>{});</script></body></html>"}}`),
 	}}
 	tool := Visualization(s)
 
-	res, err := tool.Execute(context.Background(), map[string]any{"concept": "pendulum", "vizType": "matterjs"})
+	res, err := tool.Execute(context.Background(), map[string]any{"concept": "projectile", "vizType": "matterjs"})
 	if err != nil {
 		t.Fatalf("Execute: %v", err)
 	}
-	if res.VizBlock != nil {
-		t.Fatal("VizBlock should be nil on invalid metadata")
+	if res.VizBlock == nil || res.VizBlock.Type != "html_simulation" {
+		t.Fatalf("expected repaired html simulation, got %+v content=%q", res.VizBlock, res.Content)
 	}
-	if !strings.Contains(res.Content, "bodies") {
-		t.Errorf("repair content = %q, want bodies validation error", res.Content)
+	if s.jsonCalls != 2 {
+		t.Errorf("provider calls = %d, want 2", s.jsonCalls)
 	}
 }
 
@@ -254,56 +252,6 @@ func TestVisualizationUnknownVizType(t *testing.T) {
 	res, _ := tool.Execute(context.Background(), map[string]any{"concept": "x", "vizType": "hologram"})
 	if !strings.Contains(res.Content, "unknown visualization type") {
 		t.Errorf("content = %q, want unknown type error", res.Content)
-	}
-}
-
-func TestVisualizationMatterjsVerificationFailure(t *testing.T) {
-	// Schema-valid config (bodies present) but physics-broken: constraint
-	// references a missing body. The tool must run headless verification and
-	// return the report as Content instead of a VizBlock.
-	const broken = `{"id":"v1","type":"mechsim_matterjs","content":"Broken Pendulum","metadata":{"title":"Broken Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1,"scale":0.001},"bounds":{"width":800,"height":600},"bodies":[{"id":"bob","type":"circle","position":{"x":400,"y":300},"radius":20,"density":0.04,"isStatic":false}],"constraints":[{"id":"string","bodyA":"ghostPivot","bodyB":"bob","length":200,"stiffness":0.8}]}}}`
-	s := &scriptedProvider{jsonOuts: [][]byte{[]byte(broken)}}
-	tool := Visualization(s)
-
-	res, err := tool.Execute(context.Background(), map[string]any{"concept": "pendulum", "vizType": "matterjs"})
-	if err != nil {
-		t.Fatalf("Execute: %v", err)
-	}
-	if res.VizBlock != nil {
-		t.Fatal("VizBlock must be nil when headless verification fails")
-	}
-	if !strings.Contains(res.Content, "verification failed") || !strings.Contains(res.Content, "ghostPivot") {
-		t.Errorf("content = %q, want verification failure naming the missing body", res.Content)
-	}
-}
-
-func TestVisualizationRetriesOnBrokenJSON(t *testing.T) {
-	// First response is truncated/invalid; the tool must retry once with a
-	// repair instruction and succeed on the second attempt.
-	const valid = `{"id":"v2","type":"mechsim_matterjs","content":"Pendulum","metadata":{"title":"Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1,"scale":0.001},"bounds":{"width":800,"height":400},"bodies":[{"id":"bob","type":"circle","position":{"x":400,"y":350},"radius":30,"density":0.04,"restitution":0.8,"isStatic":false,"render":{"fillStyle":"#3B82F6"}},{"id":"pivot","type":"circle","position":{"x":400,"y":50},"radius":10,"isStatic":true}],"constraints":[{"id":"string","bodyA":"pivot","bodyB":"bob","length":300,"stiffness":1}]},"editable_params":[{"label":"Gravity","property":"gravity.scale","type":"slider","min":0,"max":0.002,"step":0.0001,"default":0.001}],"measurements":[{"label":"Velocity","type":"live","source":"bob.velocity"}],"educational_overlays":{"show_forces":true,"show_velocity":true,"show_trajectory":true,"show_energy_bar":true}}}`
-	s := &scriptedProvider{jsonOuts: [][]byte{
-		// Truncated JSON (broken) -> triggers the repair retry.
-		[]byte(`{"id":"v1","type":"mechsim_matterjs","content":"Pendulum","metadata":{"title":"Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1,"scale":0.001},"bounds":{"width":800,"height":400},"bodies":[`),
-		[]byte(valid),
-	}}
-	tool := Visualization(s)
-
-	res, err := tool.Execute(context.Background(), map[string]any{"concept": "pendulum", "vizType": "matterjs", "grade": "A/L"})
-	if err != nil {
-		t.Fatalf("Execute: %v", err)
-	}
-	if res.VizBlock == nil {
-		t.Fatalf("expected VizBlock after repair retry, got content %q", res.Content)
-	}
-	if s.jsonCalls != 2 {
-		t.Errorf("provider calls = %d, want 2 (initial + repair)", s.jsonCalls)
-	}
-	if res.VizBlock.Type != "mechsim_matterjs" || res.VizBlock.Content != "Pendulum" {
-		t.Errorf("viz block = %+v", res.VizBlock)
-	}
-	meta := res.VizBlock.Metadata
-	if !strings.Contains(meta, "editable_params") || !strings.Contains(meta, "educational_overlays") {
-		t.Errorf("metadata missing full schema: %s", meta)
 	}
 }
 

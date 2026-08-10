@@ -2,7 +2,7 @@ import { Info } from "lucide-react";
 import { CodeBlock } from "@/components/learn/visualizations/CodeBlock";
 import { CoordinatePlaneBlock } from "@/components/learn/visualizations/CoordinatePlaneBlock";
 import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
-import { MatterPhysicsBlock } from "@/components/learn/visualizations/MatterPhysicsBlock";
+import { HtmlSimulationBlock } from "@/components/learn/visualizations/HtmlSimulationBlock";
 import { Mol3DBlock } from "@/components/learn/visualizations/Mol3DBlock";
 import { TsCircuitBlock } from "@/components/learn/visualizations/TsCircuitBlock";
 import { MathFormula } from "@/components/ui/MathFormula";
@@ -108,12 +108,9 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
     case "circuit":
       return <TsCircuitBlock content={block.content} metadata={block.metadata} />;
 
-    case "simulation_matter":
-    case "mechsim_matterjs":
-    case "matter_js":
-    case "physics":
-    case "simulation":
-      return <MatterPhysicsBlock content={block.content} metadata={block.metadata} />;
+    case "html_simulation":
+    case "simulation_html":
+      return <HtmlSimulationBlock content={block.content} metadata={block.metadata} />;
 
     case "code":
       return <CodeBlock content={block.content} />;

@@ -12,7 +12,7 @@ var validVizTypes = map[string]bool{
 	"mathviz_manim":     true,
 	"chemviz_3dmol":     true,
 	"elecsim_tscircuit": true,
-	"mechsim_matterjs":  true,
+	"html_simulation":   true,
 }
 
 // IsVizType reports whether t is one of the four visualization families.
@@ -80,16 +80,14 @@ type ElecSimMetadata struct {
 	Dimensions     *Dimensions     `json:"dimensions,omitempty"`
 }
 
-// MechSimMetadata is the payload for mechsim_matterjs blocks.
-type MechSimMetadata struct {
-	Title               string           `json:"title"`
-	Description         string           `json:"description,omitempty"`
-	ScenarioType        string           `json:"scenario_type"`
-	WorldConfig         map[string]any   `json:"world_config"`
-	EditableParams      []EditableParam  `json:"editable_params,omitempty"`
-	Measurements        []map[string]any `json:"measurements,omitempty"`
-	EducationalOverlays map[string]any   `json:"educational_overlays,omitempty"`
-	Dimensions          *Dimensions      `json:"dimensions,omitempty"`
+// HTMLSimulationMetadata is a self-contained runnable document. It is
+// rendered in a sandboxed iframe and may include its own CSS, JavaScript,
+// Matter.js CDN import, controls, and canvas/SVG renderer.
+type HTMLSimulationMetadata struct {
+	Title       string `json:"title"`
+	Description string `json:"description,omitempty"`
+	HTML        string `json:"html"`
+	Height      int    `json:"height,omitempty"`
 }
 
 // ValidateVizMetadata parses and validates the JSON payload for a
@@ -148,22 +146,22 @@ func ValidateVizMetadata(vizType string, raw json.RawMessage) (any, error) {
 		}
 		return &m, nil
 
-	case "mechsim_matterjs":
-		var m MechSimMetadata
+	case "html_simulation":
+		var m HTMLSimulationMetadata
 		if err := json.Unmarshal(raw, &m); err != nil {
-			return nil, fmt.Errorf("mechsim metadata is not valid JSON: %w", err)
-		}
-		if strings.TrimSpace(m.ScenarioType) == "" {
-			return nil, fmt.Errorf("mechsim block requires metadata.scenario_type")
-		}
-		bodies, ok := m.WorldConfig["bodies"].([]any)
-		if !ok || len(bodies) == 0 {
-			return nil, fmt.Errorf("mechsim block requires metadata.world_config.bodies to be a non-empty array")
+			return nil, fmt.Errorf("html simulation metadata is not valid JSON: %w", err)
 		}
 		if strings.TrimSpace(m.Title) == "" {
-			return nil, fmt.Errorf("mechsim block requires metadata.title")
+			return nil, fmt.Errorf("html simulation requires metadata.title")
+		}
+		if strings.TrimSpace(m.HTML) == "" {
+			return nil, fmt.Errorf("html simulation requires metadata.html")
+		}
+		if len(m.HTML) > 500_000 {
+			return nil, fmt.Errorf("html simulation metadata.html exceeds 500KB")
 		}
 		return &m, nil
+
 	}
 	return nil, fmt.Errorf("unsupported visualization type %q", vizType)
 }

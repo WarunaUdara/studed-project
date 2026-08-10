@@ -83,14 +83,14 @@ func TestDoneEvent_MergesToolAccumulatedBlocks(t *testing.T) {
 	// The model's final text has no JSON payload, but the loop accumulated
 	// blocks from generation tools — they MUST land in the done event.
 	accLearn := []blocks.LearnBlock{
-		{ID: "viz-1", Type: "mechsim_matterjs", Content: "Pendulum", Metadata: `{"title":"Pendulum","scenario_type":"pendulum","world_config":{"bodies":[{"id":"b","type":"circle"}]}}`},
+		{ID: "viz-1", Type: "html_simulation", Content: "Projectile Motion", Metadata: `{"title":"Projectile Motion","html":"<!doctype html><html><body><canvas></canvas></body></html>"}`},
 		{ID: "chem-1", Type: "chemviz_3dmol", Content: "Water", Metadata: `{"title":"Water","molecule":{"source_type":"smiles","source_value":"O"}}`},
 	}
 	ev := (&Agent{}).doneEvent("Added both visualizations to the wave.", accLearn, nil, nil)
 	if len(ev.LearnBlocks) != 2 {
 		t.Fatalf("learn blocks = %d, want 2 (from tool results)", len(ev.LearnBlocks))
 	}
-	if ev.LearnBlocks[0].Type != "mechsim_matterjs" || ev.LearnBlocks[1].Type != "chemviz_3dmol" {
+	if ev.LearnBlocks[0].Type != "html_simulation" || ev.LearnBlocks[1].Type != "chemviz_3dmol" {
 		t.Fatalf("types = %s, %s", ev.LearnBlocks[0].Type, ev.LearnBlocks[1].Type)
 	}
 }
@@ -99,9 +99,9 @@ func TestDoneEvent_DedupesMergedBlocks(t *testing.T) {
 	// Text echoed one block and the tool result carries the same id — the
 	// merged payload must not contain duplicates.
 	accLearn := []blocks.LearnBlock{
-		{ID: "viz-1", Type: "mechsim_matterjs", Content: "Pendulum", Metadata: `{"title":"Pendulum","scenario_type":"pendulum","world_config":{"bodies":[{"id":"b","type":"circle"}]}}`},
+		{ID: "viz-1", Type: "html_simulation", Content: "Projectile Motion", Metadata: `{"title":"Projectile Motion","html":"<!doctype html><html><body><canvas></canvas></body></html>"}`},
 	}
-	final := "```json\n[{\"id\":\"viz-1\",\"type\":\"mechsim_matterjs\",\"content\":\"Pendulum\",\"metadata\":{\"title\":\"Pendulum\",\"scenario_type\":\"pendulum\",\"world_config\":{\"bodies\":[{\"id\":\"b\",\"type\":\"circle\"}]}}}]\n```"
+	final := "```json\n[{\"id\":\"viz-1\",\"type\":\"html_simulation\",\"content\":\"Projectile Motion\",\"metadata\":{\"title\":\"Projectile Motion\",\"html\":\"<!doctype html><html><body><canvas></canvas></body></html>\"}}]\n```"
 	ev := (&Agent{}).doneEvent(final, accLearn, nil, nil)
 	if len(ev.LearnBlocks) != 1 {
 		t.Fatalf("learn blocks = %d, want 1 (deduped)", len(ev.LearnBlocks))

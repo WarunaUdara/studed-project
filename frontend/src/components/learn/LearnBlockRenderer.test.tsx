@@ -44,11 +44,17 @@ describe("LearnBlockRenderer", () => {
     expect(el.props.content).toBe("Op-Amp Circuit");
   });
 
-  it("renders Matter.js physics simulation block element", () => {
+  it("renders self-contained HTML simulation block element", () => {
     const el = LearnBlockRenderer({
-      block: { id: "6", type: "physics", content: "2D Collision demo" },
+      block: {
+        id: "6",
+        type: "html_simulation",
+        content: "Projectile Motion",
+        metadata: JSON.stringify({ title: "Projectile Motion", html: "<!doctype html><html><body><canvas></canvas></body></html>" }),
+      },
     });
-    expect(el.props.content).toBe("2D Collision demo");
+    expect(el.props.content).toBe("Projectile Motion");
+    expect(el.props.metadata).toContain("<canvas>");
   });
 
   it("renders callout block content as markdown", () => {

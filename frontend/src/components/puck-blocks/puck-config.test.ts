@@ -22,7 +22,7 @@ const AGENT_LEARN: LearnBlockRaw[] = [
   { id: "learn-7", type: "mathviz_manim", content: "Pendulum animation", metadata: JSON.stringify({ title: "Pendulum", scene_spec: { beats: [{ time: 0, action: "create" }] } }) },
   { id: "learn-8", type: "chemviz_3dmol", content: "Water molecule", metadata: JSON.stringify({ title: "H2O", source_type: "smiles", source: "O" }) },
   { id: "learn-9", type: "elecsim_tscircuit", content: "LED circuit", metadata: JSON.stringify({ title: "LED", circuit_code: "..." }) },
-  { id: "learn-10", type: "mechsim_matterjs", content: "Bouncing ball", metadata: JSON.stringify({ title: "Ball", bodies: [{ shape: "circle" }] }) },
+  { id: "learn-10", type: "html_simulation", content: "Bouncing ball", metadata: JSON.stringify({ title: "Ball", html: "<!doctype html><html><body><canvas></canvas><script>requestAnimationFrame(()=>{});</script></body></html>" }) },
 ];
 
 const AGENT_EVALUATE: EvaluateBlockRaw[] = [
@@ -137,7 +137,7 @@ describe("insert-then-save round trip (the chat agent auto-insert flow)", () => 
     expect(learnBlocks[7].metadata).toContain("Pendulum");
     expect(learnBlocks[8].type).toBe("chemviz_3dmol");
     expect(learnBlocks[9].type).toBe("elecsim_tscircuit");
-    expect(learnBlocks[10].type).toBe("mechsim_matterjs");
+    expect(learnBlocks[10].type).toBe("html_simulation");
 
     expect(evaluateBlocks[0]).toEqual({
       id: "eval-1",
@@ -208,16 +208,15 @@ describe("insert-then-save round trip (the chat agent auto-insert flow)", () => 
     expect(manimViz?.props.vizType).toBe("mathviz_manim");
     expect(manimViz?.props.id).toBe("learn-7");
     // Dedicated first-class blocks: chemistry → MoleculeBlock, circuits →
-    // CircuitBlock, physics → PhysicsSimBlock (each carries its vizType).
+    // CircuitBlock, physics → HtmlSimulationBlock.
     const chemViz = rebuilt.content.find((i) => i.type === "MoleculeBlock" && i.props.vizType === "chemviz_3dmol");
     expect(chemViz?.props.vizType).toBe("chemviz_3dmol");
     expect(chemViz?.props.moleculeSmiles).toBe("O");
     const circuitViz = rebuilt.content.find((i) => i.type === "CircuitBlock" && i.props.vizType === "elecsim_tscircuit");
     expect(circuitViz?.props.vizType).toBe("elecsim_tscircuit");
     expect(circuitViz?.props.circuitCode).toBe("...");
-    const physicsViz = rebuilt.content.find((i) => i.type === "PhysicsSimBlock" && i.props.vizType === "mechsim_matterjs");
-    expect(physicsViz?.props.vizType).toBe("mechsim_matterjs");
-    expect(physicsViz?.props.scenarioType).toBe("custom");
+    const physicsViz = rebuilt.content.find((i) => i.type === "HtmlSimulationBlock");
+    expect(physicsViz?.type).toBe("HtmlSimulationBlock");
     expect(byType.get("MCQBlock")?.props.question).toBe(AGENT_EVALUATE[0].question);
     expect(byType.get("FillBlankBlock")?.props.question).toBe(AGENT_EVALUATE[1].question);
     expect(byType.get("TrueFalseBlock")?.props.correctAnswer).toBe("True");

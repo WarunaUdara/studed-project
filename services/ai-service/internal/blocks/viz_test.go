@@ -199,23 +199,21 @@ func TestValidateVizMetadata_ElecSim(t *testing.T) {
 	}
 }
 
-func TestValidateVizMetadata_MechSim(t *testing.T) {
-	meta := `{"title":"Pendulum","scenario_type":"pendulum",
-		"world_config":{"gravity":{"x":0,"y":1},"bodies":[{"id":"bob","type":"circle","position":{"x":0,"y":0}}]}}`
-	got, err := ValidateVizMetadata("mechsim_matterjs", json.RawMessage(meta))
+func TestValidateVizMetadata_HTMLSimulation(t *testing.T) {
+	meta := `{"title":"Projectile Motion","description":"Interactive","height":560,"html":"<!doctype html><html><body><canvas></canvas><script>requestAnimationFrame(()=>{});</script></body></html>"}`
+	got, err := ValidateVizMetadata("html_simulation", json.RawMessage(meta))
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if _, ok := got.(*MechSimMetadata); !ok {
-		t.Fatalf("expected *MechSimMetadata, got %T", got)
+	if _, ok := got.(*HTMLSimulationMetadata); !ok {
+		t.Fatalf("expected *HTMLSimulationMetadata, got %T", got)
 	}
 }
 
-func TestValidateVizMetadata_MechSimRequiresBodies(t *testing.T) {
-	_, err := ValidateVizMetadata("mechsim_matterjs", json.RawMessage(
-		`{"title":"X","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1}}}`))
+func TestValidateVizMetadata_HTMLSimulationRequiresHTML(t *testing.T) {
+	_, err := ValidateVizMetadata("html_simulation", json.RawMessage(`{"title":"X"}`))
 	if err == nil {
-		t.Fatal("expected error for mechsim without bodies")
+		t.Fatal("expected error for html simulation without html")
 	}
 }
 
@@ -231,63 +229,25 @@ func TestValidateVizMetadata_RejectsEmptyPayload(t *testing.T) {
 	}
 }
 
-func TestValidateVizMetadata_FullMechSimSchema(t *testing.T) {
-	// Matches the full documented Matter.js schema: gravity, bounds, bodies
-	// (circle + static rectangle), constraints, editable_params, live
-	// measurements, educational overlays, dimensions.
-	meta := `{
-		"title": "Newton's Cradle",
-		"description": "Elastic collisions and momentum conservation",
-		"scenario_type": "newtons_cradle",
-		"world_config": {
-			"gravity": {"x": 0, "y": 1, "scale": 0.001},
-			"bounds": {"width": 800, "height": 400},
-			"bodies": [
-				{"id": "frame", "type": "rectangle", "position": {"x": 400, "y": 20}, "width": 600, "height": 10, "isStatic": true, "render": {"fillStyle": "#333"}},
-				{"id": "ball_1", "type": "circle", "position": {"x": 250, "y": 250}, "radius": 25, "restitution": 0.95, "friction": 0.005, "density": 0.08, "render": {"fillStyle": "#C0C0C0"}}
-			],
-			"constraints": [
-				{"id": "string_1", "bodyA": "frame", "bodyB": "ball_1", "length": 220, "stiffness": 1, "render": {"strokeStyle": "#444", "lineWidth": 1}}
-			]
-		},
-		"editable_params": [
-			{"label": "Restitution", "property": "global.restitution", "type": "slider", "min": 0.5, "max": 1.0, "step": 0.01, "default": 0.95}
-		],
-		"measurements": [
-			{"label": "Velocity", "type": "live", "source": "ball_1.velocity"},
-			{"label": "Period", "type": "computed", "formula": "2 * PI * sqrt(length / gravity)"}
-		],
-		"educational_overlays": {"show_forces": true, "show_velocity": true, "show_trajectory": true, "show_energy_bar": true},
-		"dimensions": {"width": 100, "height": 400}
-	}`
-	got, err := ValidateVizMetadata("mechsim_matterjs", json.RawMessage(meta))
+func TestValidateVizMetadata_FullHTMLSimulationSchema(t *testing.T) {
+	meta := `{"title":"Newton's First Law","description":"Interactive inertia simulation","height":560,"html":"<!doctype html><html><body><canvas id=\"sim\"></canvas><script>const canvas=document.getElementById('sim');const ctx=canvas.getContext('2d');let x=10;function loop(){x+=1;ctx.fillRect(x,10,10,10);requestAnimationFrame(loop)}loop();</script></body></html>"}`
+	got, err := ValidateVizMetadata("html_simulation", json.RawMessage(meta))
 	if err != nil {
-		t.Fatalf("full mechsim schema should validate: %v", err)
+		t.Fatalf("full html simulation schema should validate: %v", err)
 	}
-	m, ok := got.(*MechSimMetadata)
+	m, ok := got.(*HTMLSimulationMetadata)
 	if !ok {
-		t.Fatalf("expected *MechSimMetadata, got %T", got)
+		t.Fatalf("expected *HTMLSimulationMetadata, got %T", got)
 	}
-	if m.ScenarioType != "newtons_cradle" {
-		t.Errorf("scenario_type = %q", m.ScenarioType)
+	if m.Title != "Newton's First Law" || len(m.HTML) == 0 {
+		t.Fatalf("metadata = %+v", m)
 	}
-	if len(m.EditableParams) != 1 || m.EditableParams[0].Property != "global.restitution" {
-		t.Errorf("editable_params = %+v", m.EditableParams)
-	}
-	if len(m.Measurements) != 2 {
-		t.Errorf("measurements = %+v", m.Measurements)
-	}
-	if m.EducationalOverlays["show_energy_bar"] != true {
-		t.Errorf("educational_overlays = %+v", m.EducationalOverlays)
-	}
-	bodies, _ := m.WorldConfig["bodies"].([]any)
-	if len(bodies) != 2 {
-		t.Errorf("bodies = %+v", bodies)
-	}
-	// Constraints round-trip through the free-form world_config.
-	constraints, _ := m.WorldConfig["constraints"].([]any)
-	if len(constraints) != 1 {
-		t.Errorf("constraints = %+v", constraints)
+}
+
+func TestValidateVizMetadata_FullHTMLSimulationLegacySchema(t *testing.T) {
+	meta := `{"title":"Newton's Cradle","description":"Interactive","height":560,"html":"<!doctype html><html><body><canvas></canvas><script>requestAnimationFrame(()=>{});</script></body></html>"}`
+	if _, err := ValidateVizMetadata("html_simulation", json.RawMessage(meta)); err != nil {
+		t.Fatalf("html simulation should validate: %v", err)
 	}
 }
 

@@ -13,7 +13,6 @@ import (
 
 	"github.com/studed/ai-service/internal/blocks"
 	"github.com/studed/ai-service/internal/provider"
-	"github.com/studed/ai-service/internal/verify"
 )
 
 // Result is the outcome of a tool execution. Exactly one of the payload
@@ -64,7 +63,7 @@ func DefaultSet(p provider.Provider) []Tool {
 	}
 }
 
-const learnSystemPrompt = `You are a curriculum designer for StudEd, a Sri Lankan school platform (Grades 1-11, O/L, A/L). Create Brilliant.org-style interactive lesson content tailored to the requested grade and language. Output JSON only: an array of learn blocks, each with fields: id (string), type (one of text, math, image, video, callout, example, mathviz_manim, chemviz_3dmol, elecsim_tscircuit, mechsim_matterjs), content (markdown text, LaTeX math with $...$), and metadata (object; required for visualization types). For mathviz_manim, metadata must be {"title": ..., "scene_spec": {"scene_title": ..., "duration_seconds": ..., "style": ..., "beats": [{"time": ..., "action": ...}], "color_palette": [...]}}. For chemviz_3dmol, metadata must include {"title": ..., "molecule": {"source_type": "smiles", "source_value": "<SMILES string>"}, "style": {"stick": {...}}, "surface": {"type": "VDW", "opacity": 0.7}, "camera": {"position": {"x": 0, "y": 0, "z": 50}, "zoom": 1}, "interactivity": {"rotate": true, "zoom": true, "pan": true, "click_to_identify": true}, "annotations": [...]}. For elecsim_tscircuit, metadata must be {"title": ..., "circuit_code": "..."}. For mechsim_matterjs, metadata must include {"title": ..., "scenario_type": "<pendulum|collision|projectile|spring|newtons_cradle|inclined_plane|circular_motion|planetary_orbit|custom>", "world_config": {"gravity": {"x": ..., "y": ..., "scale": 0.001}, "bounds": {"width": ..., "height": ...}, "bodies": [{"id": ..., "type": "circle|rectangle", "position": {"x": ..., "y": ...}, "radius": ..., "density": ..., "restitution": ..., "isStatic": ..., "render": {"fillStyle": "..."}}], "constraints": [{"id": ..., "bodyA": ..., "bodyB": ..., "length": ..., "stiffness": ...}]}, "editable_params": [{"label": ..., "property": ..., "type": "slider", "min": ..., "max": ..., "step": ..., "default": ...}], "measurements": [{"label": ..., "type": "live", "source": ...}], "educational_overlays": {"show_forces": ..., "show_velocity": ..., "show_trajectory": ..., "show_energy_bar": ...}}}. Keep content concise, accurate, and grade-appropriate. Do not use emojis.
+const learnSystemPrompt = `You are a curriculum designer for StudEd, a Sri Lankan school platform (Grades 1-11, O/L, A/L). Create Brilliant.org-style interactive lesson content tailored to the requested grade and language. Output JSON only: an array of learn blocks, each with fields: id (string), type (one of text, math, image, video, callout, example, mathviz_manim, chemviz_3dmol, elecsim_tscircuit, html_simulation), content (markdown text, LaTeX math with $...$), and metadata (object; required for visualization types). For mathviz_manim, metadata must be {"title": ..., "scene_spec": {"scene_title": ..., "duration_seconds": ..., "style": ..., "beats": [{"time": ..., "action": ...}], "color_palette": [...]}}. For chemviz_3dmol, metadata must include {"title": ..., "molecule": {"source_type": "smiles", "source_value": "<SMILES string>"}, "style": {"stick": {...}}, "surface": {"type": "VDW", "opacity": 0.7}, "camera": {"position": {"x": 0, "y": 0, "z": 50}, "zoom": 1}, "interactivity": {"rotate": true, "zoom": true, "pan": true, "click_to_identify": true}, "annotations": [...]}. For elecsim_tscircuit, metadata must be {"title": ..., "circuit_code": "..."}. For html_simulation, metadata must be {"title": ..., "description": ..., "height": 560, "html": "<complete escaped HTML/CSS/JS document>"}. Keep content concise, accurate, and grade-appropriate. Do not use emojis.
 
 FIDELITY: Generate exactly the block types and count specified in the prompt. If the prompt names a type (e.g. "a callout"), output that type and nothing else. If a count is given, output exactly that many blocks — no more, no fewer, no substitutes. If no count is given, output a minimal reasonable amount (1-3 blocks). Never pad with extra blocks.`
 
@@ -192,17 +191,18 @@ func EvaluateBlocks(p provider.Provider) Tool {
 }
 
 // Visualization builds the generateVisualization tool: it generates a single
-// interactive visualization block (manim, 3dmol, tscircuit, or matterjs) for
-// a concept. The metadata object is validated against the block schemas.
+// interactive visualization block for a concept. Physics requests produce a
+// self-contained runnable HTML/CSS/JS document; the metadata is validated
+// against the block schemas.
 func Visualization(p provider.Provider) Tool {
 	return Tool{
 		Name:        "generateVisualization",
-		Description: "Generate a single interactive visualization block (manim, 3dmol, tscircuit, or matterjs) for a concept.",
+		Description: "Generate a self-contained interactive HTML/CSS/JavaScript simulation for a concept. Physics simulations run in a sandboxed iframe and may use Matter.js.",
 		Parameters: map[string]any{
 			"type": "object",
 			"properties": map[string]any{
 				"concept": map[string]any{"type": "string", "description": "The concept to visualize"},
-				"vizType": map[string]any{"type": "string", "enum": []string{"manim", "3dmol", "tscircuit", "matterjs"}, "description": "Visualization family"},
+				"vizType": map[string]any{"type": "string", "enum": []string{"manim", "3dmol", "tscircuit", "matterjs"}, "description": "Use matterjs for physics; it generates a runnable HTML document"},
 				"grade":   map[string]any{"type": "string", "description": "Target grade or exam level"},
 			},
 			"required": []string{"concept", "vizType"},
@@ -241,17 +241,6 @@ func Visualization(p provider.Provider) Tool {
 				}
 			}
 
-			// Headless verification: run matterjs configs through a real
-			// physics loop before handing them to the editor. A failed
-			// simulation is reported back to the agent (not inserted) so it
-			// can repair the config and call the tool again.
-			if vizType == "matterjs" && block.Metadata != "" {
-				report := verify.MatterConfig(json.RawMessage(block.Metadata))
-				if !report.OK {
-					msg := "verification failed: " + report.IssuesText() + ". Fix the world_config (bodies, constraints, bounds, physics values) and call generateVisualization again with a corrected config."
-					return Result{Name: "generateVisualization", Content: msg}, nil
-				}
-			}
 			return Result{Name: "generateVisualization", VizBlock: block}, nil
 		},
 	}
@@ -280,40 +269,16 @@ Requirements: molecule.source_type must be "smiles" (preferred — give a valid 
 	case "tscircuit":
 		return `You are an expert tscircuit circuit code generator for physics education at StudEd (Grades 1-11, O/L, A/L). Output JSON only: a single object with fields id, type, content, metadata where type is elecsim_tscircuit, content is the circuit title, and metadata is {"title": ..., "circuit_code": "<tsx component code>"}. Do not use emojis.`, nil
 	case "matterjs":
-		return `You are an expert Matter.js physics simulation generator for physics education at StudEd (Grades 1-11, O/L, A/L). The educator may ask for ANY physics system — pendulums, projectiles, springs, collisions, inclined planes, circular motion, planetary orbits, Newton's cradle, Newton's laws, rocket thrust, fluid drag, or anything else. You design the simulation dynamically for the requested concept.
+		return `You are an expert interactive physics simulation author for StudEd (Grades 1-11, O/L, A/L). The educator may ask for ANY physics system. Build a complete runnable HTML document, not an abstract config.
 
-Output JSON only: a single object with fields id, type, content, metadata where type is mechsim_matterjs, content is the simulation title, and metadata has this shape:
-{
-  "title": "<simulation title>",
-  "description": "<one-line description>",
-  "scenario_type": "<pendulum|collision|projectile|spring|newtons_cradle|newtons_laws|inclined_plane|circular_motion|planetary_orbit|rocket|drag|custom>",
-  "world_config": {
-    "gravity": {"x": 0, "y": 1, "scale": 0.001},
-    "bounds": {"width": 800, "height": 500},
-    "bodies": [
-      {"id": "body1", "type": "circle", "position": {"x": 400, "y": 250}, "radius": 30, "density": 0.04, "restitution": 0.8, "friction": 0.01, "isStatic": false, "render": {"fillStyle": "#3B82F6"}}
-    ],
-    "constraints": [
-      {"id": "c1", "bodyA": "anchor", "bodyB": "body1", "length": 200, "stiffness": 0.02}
-    ]
-  },
-  "editable_params": [
-    {"label": "Param", "property": "gravity.scale", "type": "slider", "min": 0, "max": 0.002, "step": 0.0001, "default": 0.001}
-  ],
-  "measurements": [
-    {"label": "Velocity", "type": "live", "source": "body1.velocity"}
-  ],
-  "educational_overlays": {"show_forces": true, "show_velocity": true, "show_trajectory": true, "show_energy_bar": true},
-  "dimensions": {"width": 100, "height": 400}
-}
-Design rules:
-- bodies: id, type (circle|rectangle), position, radius (circle) or width/height (rectangle), density, restitution, friction, isStatic. Add a static floor/ground unless the concept is gravity-free. Use 2-4 bodies for multi-body systems (collisions, cradle, orbits).
-- constraints: use for pendulums (bodyA static pivot, bodyB bob, length, stiffness 0.5-1), springs (stiffness < 0.1), Newton's cradle chains.
-- world_config.thrust {x,y}: optional applied force for rockets/Newton's 2nd law; wire it to an editable_param with property "thrust.x".
-- editable_params: 1-3 sliders bound to properties like gravity.scale, bodies.<id>.density, bodies.<id>.restitution, constraints.<id>.stiffness, or thrust.x. Include the concept's key variable (e.g. launch angle, mass, spring constant).
-- measurements: 1-3 entries; live ones reference "bodies.<id>" (e.g. source "bob.velocity"), computed ones use simple arithmetic formulas like "thrust/density" or "2*3.14159*sqrt(length/gravity)".
-- The renderer runs a real 2D physics loop; keep bounds within 800x600 and positions inside.
-Never emit placeholder text or markdown — only the JSON object. Do not use emojis.`, nil
+Output JSON only: a single object with fields id, type, content, metadata where type is html_simulation, content is the simulation title, and metadata is:
+{"title":"<simulation title>","description":"<one-line description>","height":560,"html":"<!doctype html><html><head><meta charset=\\"UTF-8\\"><meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\"><style>...</style></head><body>...</body></html>"}
+
+Rules:
+- Include the complete UI, simulation loop, controls, labels, reset button, and educational readouts in the HTML itself.
+- Use a responsive canvas or SVG. You may load Matter.js from https://cdnjs.cloudflare.com or implement a focused simulation with vanilla JavaScript. Do not rely on StudEd globals or React.
+- Make the requested concept physically meaningful and interactive. Projectile motion must initialize nonzero velocity and visibly show a trajectory; pendulums need a constraint or equivalent; collisions need multiple bodies.
+- Do not use placeholders. Escape the HTML as a JSON string. Keep it below 500KB. Do not use emojis.`, nil
 	default:
 		return "", fmt.Errorf("unknown visualization type %q (must be manim, 3dmol, tscircuit, or matterjs)", vizType)
 	}
@@ -368,7 +333,7 @@ func vizLearnType(vizType string) string {
 	case "tscircuit":
 		return "elecsim_tscircuit"
 	case "matterjs":
-		return "mechsim_matterjs"
+		return "html_simulation"
 	}
 	return ""
 }
