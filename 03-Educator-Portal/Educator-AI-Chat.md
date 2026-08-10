@@ -329,6 +329,29 @@ After generation, educators can:
   the educator requested (verified live: "one true/false question"
   produces exactly one `true_false` block; "2 learn blocks" produces
   exactly two).
+- **Conversation**: the agent receives up to 8 prior chat turns, so
+  follow-ups ("make it simpler", "now add a numeric question too") are
+  answered in context instead of in isolation.
+- **Model thoughts**: the agent's reasoning is streamed as a `thinking`
+  event and shown in a collapsible "View thoughts" section per assistant
+  message (partial visibility — the summary of what the model considered
+  before acting).
+- **Full markdown + LaTeX in chat**: assistant messages render with
+  react-markdown + GFM (tables, task lists, strikethrough) and KaTeX
+  math ($...$ inline, $$...$$ block).
+- **Edit/delete existing blocks**: the new `manageBlocks` tool upserts
+  (update-or-add by id) and deletes blocks; the agent accumulates ops
+  into the done event and the editor applies them in place via
+  `applyBlockOpsToData` (verified live: edited the `summary` block text
+  and removed duplicate question blocks, then Save persisted the result).
+- **Editor ergonomics**: the wave editor spans the full viewport (shell
+  padding cancelled, `100dvh - navbar`), so Puck's canvas scrolls
+  internally and bottom blocks are always reachable; Puck opens in
+  full-width viewport with only the full-width control; opening the AI
+  assistant auto-collapses Puck's blocks panel; Edit/Preview is a
+  segmented shadcn ButtonGroup; Puck's internal Publish button is
+  removed so the header has one Save (persist) and one Publish (go
+  live) action.
 
 ### Frontend files
 
