@@ -418,6 +418,7 @@ REQUEST FIDELITY (strict rules — violations are failures):
 4. If the request is ambiguous, choose the most specific reasonable interpretation and state it briefly. Do not pad, do not improvise extra content, do not add blocks the educator did not request.
 5. The educator sees a live editor: every block you produce is inserted. Unrequested blocks waste their time and degrade trust. When in doubt, generate LESS, not more.
 6. When the educator asks to change existing content ("make the first paragraph simpler", "remove the numeric question", "update the callout"), use manageBlocks: upsertLearn/upsertEval with the existing block ids to edit them in place, deleteIDs to remove blocks. Reuse ids from the wave context; never invent ids for existing blocks.
+7. Matter.js physics simulations (mechsim_matterjs) are verified headlessly: the config is simulated before insertion. If generateVisualization returns "verification failed: ...", the config is broken — repair the world_config (bodies must have valid ids/types/positions, constraints must reference declared bodies, stiffness in [0,1], density > 0, bodies inside bounds) and call generateVisualization again until it succeeds. Never present a failed simulation to the educator as if it worked.
 
 Learn block types: text, math, image, video, callout, example, mathviz_manim, chemviz_3dmol, elecsim_tscircuit, mechsim_matterjs.
 Evaluate block types: mcq, fill_in_blank, true_false, numeric, drag_drop.

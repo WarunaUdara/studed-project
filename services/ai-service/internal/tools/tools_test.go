@@ -257,6 +257,26 @@ func TestVisualizationUnknownVizType(t *testing.T) {
 	}
 }
 
+func TestVisualizationMatterjsVerificationFailure(t *testing.T) {
+	// Schema-valid config (bodies present) but physics-broken: constraint
+	// references a missing body. The tool must run headless verification and
+	// return the report as Content instead of a VizBlock.
+	const broken = `{"id":"v1","type":"mechsim_matterjs","content":"Broken Pendulum","metadata":{"title":"Broken Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1,"scale":0.001},"bounds":{"width":800,"height":600},"bodies":[{"id":"bob","type":"circle","position":{"x":400,"y":300},"radius":20,"density":0.04,"isStatic":false}],"constraints":[{"id":"string","bodyA":"ghostPivot","bodyB":"bob","length":200,"stiffness":0.8}]}}}`
+	s := &scriptedProvider{jsonOuts: [][]byte{[]byte(broken)}}
+	tool := Visualization(s)
+
+	res, err := tool.Execute(context.Background(), map[string]any{"concept": "pendulum", "vizType": "matterjs"})
+	if err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	if res.VizBlock != nil {
+		t.Fatal("VizBlock must be nil when headless verification fails")
+	}
+	if !strings.Contains(res.Content, "verification failed") || !strings.Contains(res.Content, "ghostPivot") {
+		t.Errorf("content = %q, want verification failure naming the missing body", res.Content)
+	}
+}
+
 func TestVisualizationRetriesOnBrokenJSON(t *testing.T) {
 	// First response is truncated/invalid; the tool must retry once with a
 	// repair instruction and succeed on the second attempt.

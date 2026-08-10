@@ -13,6 +13,7 @@ import (
 
 	"github.com/studed/ai-service/internal/blocks"
 	"github.com/studed/ai-service/internal/provider"
+	"github.com/studed/ai-service/internal/verify"
 )
 
 // Result is the outcome of a tool execution. Exactly one of the payload
@@ -237,6 +238,18 @@ func Visualization(p provider.Provider) Tool {
 				block, err = parseVizBlock(raw2, vizType)
 				if err != nil {
 					return Result{Name: "generateVisualization", Content: err.Error()}, nil
+				}
+			}
+
+			// Headless verification: run matterjs configs through a real
+			// physics loop before handing them to the editor. A failed
+			// simulation is reported back to the agent (not inserted) so it
+			// can repair the config and call the tool again.
+			if vizType == "matterjs" && block.Metadata != "" {
+				report := verify.MatterConfig(json.RawMessage(block.Metadata))
+				if !report.OK {
+					msg := "verification failed: " + report.IssuesText() + ". Fix the world_config (bodies, constraints, bounds, physics values) and call generateVisualization again with a corrected config."
+					return Result{Name: "generateVisualization", Content: msg}, nil
 				}
 			}
 			return Result{Name: "generateVisualization", VizBlock: block}, nil
