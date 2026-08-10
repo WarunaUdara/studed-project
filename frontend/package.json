@@ -24,11 +24,13 @@
     "@urql/exchange-auth": "^3.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "feral-blob": "^0.1.0",
     "framer-motion": "^12.42.2",
     "katex": "^0.18.0",
     "lucide-react": "^1.23.0",
     "nanoid": "^6.0.1",
     "postcss": "^8.5.26",
+    "pullcord": "^0.1.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-hook-form": "^7.80.0",
@@ -56,5 +58,8 @@
   },
   "trustedDependencies": [
     "@swc/core"
-  ]
+  ],
+  "overrides": {
+    "postcss": "^8.5.26"
+  }
 }
