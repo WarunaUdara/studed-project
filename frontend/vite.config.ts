@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [TanStackRouterVite(), react(), tailwindcss()],
     resolve: {
+      dedupe: ["react", "react-dom"],
       alias: {
         "@": path.resolve(__dirname, "./src"),
       },

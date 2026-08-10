@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-
+import { LogOut } from "lucide-react";
 import { useState } from "react";
 import { useMutation } from "urql";
 import { LogoutConfirmModal } from "@/components/auth/LogoutConfirmModal";
@@ -37,15 +37,24 @@ export function LogoutButton({
   };
 
   return (
-    <Button
-      variant={variant}
-      size={size}
-      className={className}
-      onClick={handleLogout}
-      title={compact ? "Log out" : undefined}
-      aria-label={compact ? "Log out" : undefined}
-    >
-      {compact ? <LogOut className="h-4 w-4" /> : "Log out"}
-    </Button>
+    <>
+      <Button
+        variant={variant}
+        size={size}
+        className={className}
+        onClick={() => setShowConfirm(true)}
+        title={compact ? "Log out" : undefined}
+        aria-label={compact ? "Log out" : undefined}
+      >
+        {compact ? <LogOut className="h-4 w-4" /> : "Log out"}
+      </Button>
+
+      <LogoutConfirmModal
+        isOpen={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={handleLogout}
+        isSubmitting={isSubmitting}
+      />
+    </>
   );
 }
