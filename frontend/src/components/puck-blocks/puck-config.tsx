@@ -361,6 +361,22 @@ export const puckConfig: Config = {
       },
     },
 
+    HtmlSimulationBlock: {
+      fields: {
+        content: { type: "text", label: "Simulation Title" },
+        metadata: { type: "textarea", label: "HTML/CSS/JS Document JSON" },
+      },
+      defaultProps: {
+        content: "Interactive simulation",
+        metadata: JSON.stringify({
+          title: "Interactive simulation",
+          html: "<!doctype html><html><body><p>Simulation</p></body></html>",
+          height: 560,
+        }),
+      },
+      render: ({ content, metadata }) => <HtmlSimulationBlock content={content} metadata={metadata} />,
+    },
+
     MCQBlock: {
       fields: {
         question: { type: "textarea", label: "Question Text" },
