@@ -19,6 +19,7 @@ import (
 	"github.com/studed/auth-service/internal/service"
 	"github.com/studed/shared/go/grpcauth"
 	"github.com/studed/shared/go/logger"
+	"github.com/studed/shared/go/otel"
 	authpb "github.com/studed/shared/proto/gen/go/auth"
 	"google.golang.org/grpc"
 	"gorm.io/driver/postgres"
@@ -29,6 +30,16 @@ func main() {
 	_ = godotenv.Load()
 
 	log := logger.New("auth-service")
+
+	tracerShutdown, err := otel.SetupTracerProvider(otel.TracerProviderConfig{
+		ServiceName:    "auth-service",
+		Environment:    otel.Env("APP_ENV", "development"),
+		SampleFraction: 1.0,
+	})
+	if err != nil {
+		log.Error("failed to init tracer provider", slog.Any("error", err))
+		os.Exit(1)
+	}
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -133,5 +144,8 @@ func main() {
 
 	_ = httpServer.Shutdown(shutdownCtx)
 	grpcServer.GracefulStop()
+	if err := tracerShutdown(shutdownCtx); err != nil {
+		log.Error("failed to flush tracer", slog.Any("error", err))
+	}
 	log.Info("auth-service shutdown complete")
 }

@@ -21,6 +21,7 @@ import (
 	"github.com/studed/progress-service/internal/service"
 	"github.com/studed/shared/go/grpcauth"
 	"github.com/studed/shared/go/logger"
+	"github.com/studed/shared/go/otel"
 	coursepb "github.com/studed/shared/proto/gen/go/course"
 	gampb "github.com/studed/shared/proto/gen/go/gamification"
 	progresspb "github.com/studed/shared/proto/gen/go/progress"
@@ -37,6 +38,16 @@ func main() {
 	_ = godotenv.Load()
 
 	log := logger.New("progress-service")
+
+	tracerShutdown, err := otel.SetupTracerProvider(otel.TracerProviderConfig{
+		ServiceName:    "progress-service",
+		Environment:    otel.Env("APP_ENV", "development"),
+		SampleFraction: 1.0,
+	})
+	if err != nil {
+		log.Error("failed to init tracer provider", slog.Any("error", err))
+		os.Exit(1)
+	}
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -196,5 +207,8 @@ func main() {
 
 	_ = httpServer.Shutdown(shutdownCtx)
 	grpcServer.GracefulStop()
+	if err := tracerShutdown(shutdownCtx); err != nil {
+		log.Error("failed to flush tracer", slog.Any("error", err))
+	}
 	log.Info("progress-service shutdown complete")
 }

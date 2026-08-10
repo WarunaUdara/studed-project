@@ -26,6 +26,7 @@ import (
 	authmiddleware "github.com/studed/api-gateway/internal/middleware"
 	"github.com/studed/shared/go/logger"
 	"github.com/studed/shared/go/metrics"
+	"github.com/studed/shared/go/otel"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
@@ -33,6 +34,16 @@ func main() {
 	_ = godotenv.Load()
 
 	log := logger.New("api-gateway")
+
+	tracerShutdown, err := otel.SetupTracerProvider(otel.TracerProviderConfig{
+		ServiceName:    "api-gateway",
+		Environment:    otel.Env("APP_ENV", "development"),
+		SampleFraction: 1.0,
+	})
+	if err != nil {
+		log.Error("failed to init tracer provider", slog.Any("error", err))
+		os.Exit(1)
+	}
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -192,5 +203,9 @@ func main() {
 		log.Error("api-gateway forced to shutdown", slog.Any("error", err))
 	} else {
 		log.Info("api-gateway shutdown complete")
+	}
+
+	if err := tracerShutdown(shutdownCtx); err != nil {
+		log.Error("failed to flush tracer", slog.Any("error", err))
 	}
 }
