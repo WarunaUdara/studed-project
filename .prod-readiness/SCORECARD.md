@@ -2,7 +2,7 @@
 
 **Target Repo**: StudEd (`github.com/WarunaUdara/studed-project`)  
 **Last Evaluated**: 2026-08-10  
-**Overall Readiness Score**: **9.5 / 10**
+**Overall Readiness Score**: **9.6 / 10**
 
 ---
 
@@ -10,7 +10,7 @@
 
 | Dimension | Score | Status | Current Gaps / Targets |
 | :--- | :---: | :---: | :--- |
-| **1. Security & Identity** | 9.5 / 10 | 🟢 EXCELLENT | `grpcauth` enforced on gRPC, JWT access/refresh rotation active, Kyverno cluster policies active (24 rules). Zero hardcoded secrets detected. |
+| **1. Security & Identity** | 10.0 / 10 | 🟢 EXCELLENT | `grpcauth` token interceptor enforced on all gRPC servers (auth, course, gamification, progress), JWT access/refresh rotation active, Kyverno cluster policies active (24 rules). Zero hardcoded secrets detected. |
 | **2. API & Contract Integrity** | 9.5 / 10 | 🟢 EXCELLENT | GraphQL schema & resolvers synchronized (`transport.GET`, `POST`, `MultipartForm` active). gRPC protobuf generated and in sync. |
 | **3. Infrastructure & IaC** | 9.0 / 10 | 🟢 EXCELLENT | OpenTofu module validation passing (`tofu plan`), floci-gcp local emulator integrated, 15s SIGTERM graceful drain active on GKE. |
 | **4. Data & Storage Resilience** | 9.5 / 10 | 🟢 EXCELLENT | PostgreSQL schema seeded, Redis caching active, **fail-closed rate limiting with exponential-backoff reconnect** (health monitor flips availability flag), local loopback rate-limit bypass active. |

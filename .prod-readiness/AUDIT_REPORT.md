@@ -26,6 +26,15 @@ This report is automatically updated by autonomous development agents during eve
   - Trace context is propagated but no OTel SDK exporter is initialized in service mains yet.
 - **Verification Status**: `make ci-local` passed 100%; middleware suite now 22 tests, grpcauth suite 3 tests.
 
+### Iteration 3 — 2026-08-10
+- **Scanned Dimension**: Security & Identity (closing iteration-2 residual finding)
+- **Findings**:
+  1. `auth-service` and `course-service` gRPC servers registered only the trace extractor, silently accepting unauthenticated inter-service calls. Added `ServiceToken` to both configs (`SERVICE_TOKEN` env, already provisioned by `docker-compose.yml` lines 55/78) and chained `grpcauth.UnaryServerInterceptor(cfg.ServiceToken)` after the trace interceptor so trace context is still extracted from rejected calls.
+  2. Confirmed all 4 gRPC servers (auth, course, gamification, progress) now enforce the fail-closed token interceptor; api-gateway clients attach the token + trace context. `content-service` and `payment-service` are plain HTTP stubs (no gRPC server) and are covered by `httpauth`.
+- **Residual Findings**:
+  - Trace context is propagated but no OTel SDK exporter is initialized in service mains yet.
+- **Verification Status**: `go build` + `go test -race ./...` pass for auth-service and course-service; full `make ci-local` re-run below.
+
 ---
 
 ## 🛡️ Attack Surface & Flaw Matrix
