@@ -230,3 +230,105 @@ func TestValidateVizMetadata_RejectsEmptyPayload(t *testing.T) {
 		t.Fatal("expected error for empty payload")
 	}
 }
+
+func TestValidateVizMetadata_FullMechSimSchema(t *testing.T) {
+	// Matches the full documented Matter.js schema: gravity, bounds, bodies
+	// (circle + static rectangle), constraints, editable_params, live
+	// measurements, educational overlays, dimensions.
+	meta := `{
+		"title": "Newton's Cradle",
+		"description": "Elastic collisions and momentum conservation",
+		"scenario_type": "newtons_cradle",
+		"world_config": {
+			"gravity": {"x": 0, "y": 1, "scale": 0.001},
+			"bounds": {"width": 800, "height": 400},
+			"bodies": [
+				{"id": "frame", "type": "rectangle", "position": {"x": 400, "y": 20}, "width": 600, "height": 10, "isStatic": true, "render": {"fillStyle": "#333"}},
+				{"id": "ball_1", "type": "circle", "position": {"x": 250, "y": 250}, "radius": 25, "restitution": 0.95, "friction": 0.005, "density": 0.08, "render": {"fillStyle": "#C0C0C0"}}
+			],
+			"constraints": [
+				{"id": "string_1", "bodyA": "frame", "bodyB": "ball_1", "length": 220, "stiffness": 1, "render": {"strokeStyle": "#444", "lineWidth": 1}}
+			]
+		},
+		"editable_params": [
+			{"label": "Restitution", "property": "global.restitution", "type": "slider", "min": 0.5, "max": 1.0, "step": 0.01, "default": 0.95}
+		],
+		"measurements": [
+			{"label": "Velocity", "type": "live", "source": "ball_1.velocity"},
+			{"label": "Period", "type": "computed", "formula": "2 * PI * sqrt(length / gravity)"}
+		],
+		"educational_overlays": {"show_forces": true, "show_velocity": true, "show_trajectory": true, "show_energy_bar": true},
+		"dimensions": {"width": 100, "height": 400}
+	}`
+	got, err := ValidateVizMetadata("mechsim_matterjs", json.RawMessage(meta))
+	if err != nil {
+		t.Fatalf("full mechsim schema should validate: %v", err)
+	}
+	m, ok := got.(*MechSimMetadata)
+	if !ok {
+		t.Fatalf("expected *MechSimMetadata, got %T", got)
+	}
+	if m.ScenarioType != "newtons_cradle" {
+		t.Errorf("scenario_type = %q", m.ScenarioType)
+	}
+	if len(m.EditableParams) != 1 || m.EditableParams[0].Property != "global.restitution" {
+		t.Errorf("editable_params = %+v", m.EditableParams)
+	}
+	if len(m.Measurements) != 2 {
+		t.Errorf("measurements = %+v", m.Measurements)
+	}
+	if m.EducationalOverlays["show_energy_bar"] != true {
+		t.Errorf("educational_overlays = %+v", m.EducationalOverlays)
+	}
+	bodies, _ := m.WorldConfig["bodies"].([]any)
+	if len(bodies) != 2 {
+		t.Errorf("bodies = %+v", bodies)
+	}
+	// Constraints round-trip through the free-form world_config.
+	constraints, _ := m.WorldConfig["constraints"].([]any)
+	if len(constraints) != 1 {
+		t.Errorf("constraints = %+v", constraints)
+	}
+}
+
+func TestValidateVizMetadata_FullChemVizSchema(t *testing.T) {
+	// Matches the full documented 3Dmol schema: molecule source, style,
+	// surface, camera, interactivity, annotations, dimensions.
+	meta := `{
+		"title": "Water Molecule (H2O)",
+		"description": "Interactive 3D view of water molecule",
+		"molecule": {"source_type": "smiles", "source_value": "O"},
+		"style": {"stick": {"radius": 0.15, "colorscheme": "Jmol"}, "sphere": {"scale": 0.25}},
+		"surface": {"type": "VDW", "opacity": 0.7, "color": "white"},
+		"camera": {"position": {"x": 0, "y": 0, "z": 50}, "zoom": 1.0},
+		"interactivity": {"rotate": true, "zoom": true, "pan": true, "click_to_identify": true, "hover_labels": true},
+		"annotations": [{"type": "label", "text": "Hydrogen Bond", "position": {"x": 1.0, "y": 0.5, "z": 0.0}, "color": "red"}],
+		"dimensions": {"width": 100, "height": 400}
+	}`
+	got, err := ValidateVizMetadata("chemviz_3dmol", json.RawMessage(meta))
+	if err != nil {
+		t.Fatalf("full chemviz schema should validate: %v", err)
+	}
+	m, ok := got.(*ChemVizMetadata)
+	if !ok {
+		t.Fatalf("expected *ChemVizMetadata, got %T", got)
+	}
+	if m.Molecule.SourceType != "smiles" || m.Molecule.SourceValue != "O" {
+		t.Errorf("molecule = %+v", m.Molecule)
+	}
+	if len(m.Style) == 0 || m.Style["stick"] == nil {
+		t.Errorf("style = %+v", m.Style)
+	}
+	if m.Surface["type"] != "VDW" {
+		t.Errorf("surface = %+v", m.Surface)
+	}
+	if m.Camera["zoom"] != 1.0 {
+		t.Errorf("camera = %+v", m.Camera)
+	}
+	if m.Interactivity["click_to_identify"] != true {
+		t.Errorf("interactivity = %+v", m.Interactivity)
+	}
+	if len(m.Annotations) != 1 {
+		t.Errorf("annotations = %+v", m.Annotations)
+	}
+}

@@ -46,7 +46,7 @@ func DefaultSet(p provider.Provider) []Tool {
 	}
 }
 
-const learnSystemPrompt = `You are a curriculum designer for StudEd, a Sri Lankan school platform (Grades 1-11, O/L, A/L). Create Brilliant.org-style interactive lesson content tailored to the requested grade and language. Output JSON only: an array of learn blocks, each with fields: id (string), type (one of text, math, image, video, callout, example, mathviz_manim, chemviz_3dmol, elecsim_tscircuit, mechsim_matterjs), content (markdown text, LaTeX math with $...$), and metadata (object; required for visualization types). For mathviz_manim, metadata must be {"title": ..., "scene_spec": {"scene_title": ..., "duration_seconds": ..., "style": ..., "beats": [{"time": ..., "action": ...}], "color_palette": [...]}}. For chemviz_3dmol, metadata must be {"title": ..., "molecule": {"source_type": "smiles", "source_value": "..."}, "style": {"stick": {}}}. For elecsim_tscircuit, metadata must be {"title": ..., "circuit_code": "..."}. For mechsim_matterjs, metadata must be {"title": ..., "scenario_type": "...", "world_config": {"gravity": {"x": ..., "y": ...}, "bounds": {"width": ..., "height": ...}, "bodies": [{"id": ..., "type": ..., "position": {"x": ..., "y": ...}}]}}. Keep content concise, accurate, and grade-appropriate. Do not use emojis.
+const learnSystemPrompt = `You are a curriculum designer for StudEd, a Sri Lankan school platform (Grades 1-11, O/L, A/L). Create Brilliant.org-style interactive lesson content tailored to the requested grade and language. Output JSON only: an array of learn blocks, each with fields: id (string), type (one of text, math, image, video, callout, example, mathviz_manim, chemviz_3dmol, elecsim_tscircuit, mechsim_matterjs), content (markdown text, LaTeX math with $...$), and metadata (object; required for visualization types). For mathviz_manim, metadata must be {"title": ..., "scene_spec": {"scene_title": ..., "duration_seconds": ..., "style": ..., "beats": [{"time": ..., "action": ...}], "color_palette": [...]}}. For chemviz_3dmol, metadata must include {"title": ..., "molecule": {"source_type": "smiles", "source_value": "<SMILES string>"}, "style": {"stick": {...}}, "surface": {"type": "VDW", "opacity": 0.7}, "camera": {"position": {"x": 0, "y": 0, "z": 50}, "zoom": 1}, "interactivity": {"rotate": true, "zoom": true, "pan": true, "click_to_identify": true}, "annotations": [...]}. For elecsim_tscircuit, metadata must be {"title": ..., "circuit_code": "..."}. For mechsim_matterjs, metadata must include {"title": ..., "scenario_type": "<pendulum|collision|projectile|spring|newtons_cradle|inclined_plane|circular_motion|planetary_orbit|custom>", "world_config": {"gravity": {"x": ..., "y": ..., "scale": 0.001}, "bounds": {"width": ..., "height": ...}, "bodies": [{"id": ..., "type": "circle|rectangle", "position": {"x": ..., "y": ...}, "radius": ..., "density": ..., "restitution": ..., "isStatic": ..., "render": {"fillStyle": "..."}}], "constraints": [{"id": ..., "bodyA": ..., "bodyB": ..., "length": ..., "stiffness": ...}]}, "editable_params": [{"label": ..., "property": ..., "type": "slider", "min": ..., "max": ..., "step": ..., "default": ...}], "measurements": [{"label": ..., "type": "live", "source": ...}], "educational_overlays": {"show_forces": ..., "show_velocity": ..., "show_trajectory": ..., "show_energy_bar": ...}}}. Keep content concise, accurate, and grade-appropriate. Do not use emojis.
 
 FIDELITY: Generate exactly the block types and count specified in the prompt. If the prompt names a type (e.g. "a callout"), output that type and nothing else. If a count is given, output exactly that many blocks — no more, no fewer, no substitutes. If no count is given, output a minimal reasonable amount (1-3 blocks). Never pad with extra blocks.`
 
@@ -224,11 +224,48 @@ func vizSystemPrompt(vizType string) (string, error) {
 	case "manim":
 		return `You are an expert Manim animation generator for mathematics education at StudEd (Grades 1-11, O/L, A/L). Output JSON only: a single object with fields id, type, content, metadata where type is mathviz_manim, content is the animation title, and metadata is {"title": ..., "scene_spec": {"scene_title": ..., "duration_seconds": ..., "style": ..., "beats": [{"time": ..., "action": ...}], "color_palette": [...]}}. Do not use emojis.`, nil
 	case "3dmol":
-		return `You are an expert 3D molecule generator for chemistry education at StudEd (Grades 1-11, O/L, A/L). Output JSON only: a single object with fields id, type, content, metadata where type is chemviz_3dmol, content is the molecule title, and metadata is {"title": ..., "molecule": {"source_type": "smiles", "source_value": "<SMILES string>"}, "style": {"stick": {}}}. Do not use emojis.`, nil
+		return `You are an expert 3D molecule generator for chemistry education at StudEd (Grades 1-11, O/L, A/L). Output JSON only: a single object with fields id, type, content, metadata where type is chemviz_3dmol, content is the molecule title, and metadata follows this full schema:
+{
+  "title": "<molecule name, e.g. Water Molecule (H2O)>",
+  "description": "<one-line description>",
+  "molecule": {"source_type": "smiles", "source_value": "<SMILES string>"},
+  "style": {"stick": {"radius": 0.15, "colorscheme": "Jmol"}, "sphere": {"scale": 0.25}},
+  "surface": {"type": "VDW", "opacity": 0.7, "color": "white"},
+  "camera": {"position": {"x": 0, "y": 0, "z": 50}, "zoom": 1.0},
+  "interactivity": {"rotate": true, "zoom": true, "pan": true, "click_to_identify": true, "hover_labels": true},
+  "annotations": [{"type": "label", "text": "Hydrogen Bond", "position": {"x": 1.0, "y": 0.5, "z": 0.0}, "color": "red"}],
+  "dimensions": {"width": 100, "height": 400}
+}
+Requirements: molecule.source_type must be "smiles" (preferred — give a valid SMILES string) or "pdb" (source_value like "pdb:1UBQ"). Choose a style appropriate to the molecule: stick for small molecules, cartoon for proteins. Add 0-2 annotations highlighting pedagogically important features (bonds, functional groups). Keep everything grade-appropriate. Do not use emojis.`, nil
 	case "tscircuit":
 		return `You are an expert tscircuit circuit code generator for physics education at StudEd (Grades 1-11, O/L, A/L). Output JSON only: a single object with fields id, type, content, metadata where type is elecsim_tscircuit, content is the circuit title, and metadata is {"title": ..., "circuit_code": "<tsx component code>"}. Do not use emojis.`, nil
 	case "matterjs":
-		return `You are an expert Matter.js physics simulation generator for physics education at StudEd (Grades 1-11, O/L, A/L). Output JSON only: a single object with fields id, type, content, metadata where type is mechsim_matterjs, content is the simulation title, and metadata is {"title": ..., "scenario_type": "<type>", "world_config": {"gravity": {"x": ..., "y": ...}, "bounds": {"width": ..., "height": ...}, "bodies": [{"id": ..., "type": ..., "position": {"x": ..., "y": ...}}]}}. Do not use emojis.`, nil
+		return `You are an expert Matter.js physics simulation generator for physics education at StudEd (Grades 1-11, O/L, A/L). Output JSON only: a single object with fields id, type, content, metadata where type is mechsim_matterjs, content is the simulation title, and metadata follows this full schema:
+{
+  "title": "<simulation title>",
+  "description": "<one-line description>",
+  "scenario_type": "<pendulum|collision|projectile|spring|newtons_cradle|inclined_plane|circular_motion|planetary_orbit|custom>",
+  "world_config": {
+    "gravity": {"x": 0, "y": 1, "scale": 0.001},
+    "bounds": {"width": 800, "height": 600},
+    "bodies": [
+      {"id": "bob", "type": "circle", "position": {"x": 400, "y": 350}, "radius": 30, "density": 0.04, "restitution": 0.8, "friction": 0.005, "isStatic": false, "render": {"fillStyle": "#3B82F6"}},
+      {"id": "ground", "type": "rectangle", "position": {"x": 400, "y": 580}, "width": 800, "height": 20, "isStatic": true, "render": {"fillStyle": "#333"}}
+    ],
+    "constraints": [
+      {"id": "string", "bodyA": "pivot", "bodyB": "bob", "length": 300, "stiffness": 1, "render": {"strokeStyle": "#666", "lineWidth": 2}}
+    ]
+  },
+  "editable_params": [
+    {"label": "Gravity", "property": "gravity.scale", "type": "slider", "min": 0, "max": 0.002, "step": 0.0001, "default": 0.001}
+  ],
+  "measurements": [
+    {"label": "Velocity", "type": "live", "source": "bob.velocity"}
+  ],
+  "educational_overlays": {"show_forces": true, "show_velocity": true, "show_trajectory": true, "show_energy_bar": true},
+  "dimensions": {"width": 100, "height": 600}
+}
+Requirements: bodies need id, type (circle|rectangle), position, and physical props (radius for circle; width/height for rectangle; density, restitution, friction, isStatic as appropriate). Use constraints for pendulums, springs, and Newton's cradle. Provide 1-3 editable_params and 1-3 measurements relevant to the physics concept. Keep everything grade-appropriate. Do not use emojis.`, nil
 	default:
 		return "", fmt.Errorf("unknown visualization type %q (must be manim, 3dmol, tscircuit, or matterjs)", vizType)
 	}

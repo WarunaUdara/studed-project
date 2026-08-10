@@ -40,6 +40,9 @@ export interface VizBlockProps {
   vizType: string; // mathviz_manim | chemviz_3dmol | elecsim_tscircuit | mechsim_matterjs
   content: string;
   metadata: string;
+  // Convenience editor fields (merged into metadata at render time).
+  scenarioType?: string;
+  moleculeSmiles?: string;
 }
 
 export interface MCQBlockProps {
@@ -268,16 +271,59 @@ export const puckConfig: Config = {
           options: Object.entries(VIZ_LABELS).map(([value, label]) => ({ value, label })),
         },
         content: { type: "textarea", label: "Description / Content" },
-        metadata: { type: "textarea", label: "Config JSON" },
+        // Physics (mechsim_matterjs): scenario + world config
+        scenarioType: {
+          type: "select",
+          label: "Physics Scenario",
+          options: [
+            { value: "pendulum", label: "Pendulum" },
+            { value: "collision", label: "Collision" },
+            { value: "projectile", label: "Projectile Motion" },
+            { value: "spring", label: "Spring" },
+            { value: "newtons_cradle", label: "Newton's Cradle" },
+            { value: "inclined_plane", label: "Inclined Plane" },
+            { value: "circular_motion", label: "Circular Motion" },
+            { value: "planetary_orbit", label: "Planetary Orbit" },
+            { value: "custom", label: "Custom" },
+          ],
+        },
+        // Chemistry (chemviz_3dmol): molecule source
+        moleculeSmiles: { type: "text", label: "Molecule SMILES (chemistry)" },
+        // Advanced: raw config JSON
+        metadata: { type: "textarea", label: "Config JSON (advanced)" },
       },
       defaultProps: {
         vizType: "mathviz_manim",
         content: "Interactive visualization",
+        scenarioType: "custom",
+        moleculeSmiles: "O",
         metadata: "{}",
       },
-      render: ({ vizType, content, metadata }) => (
-        <VizBlockPreview vizType={vizType} content={content} metadata={metadata} />
-      ),
+      render: ({ vizType, content, scenarioType, moleculeSmiles, metadata }) => {
+        // Merge convenience fields into the raw config so the renderers get
+        // a complete metadata object even when only the quick fields were set.
+        let merged: Record<string, unknown> = {};
+        try {
+          merged = metadata ? JSON.parse(metadata) : {};
+        } catch {
+          merged = {};
+        }
+        if (vizType === "mechsim_matterjs" && scenarioType && !merged.scenario_type) {
+          merged.scenario_type = scenarioType;
+          merged.title = merged.title ?? content ?? "Physics Simulation";
+          merged.world_config = merged.world_config ?? {
+            gravity: { x: 0, y: 1, scale: 0.001 },
+            bounds: { width: 800, height: 400 },
+            bodies: [{ id: "ball", type: "circle", position: { x: 400, y: 100 }, radius: 25, density: 0.001, restitution: 0.8 }],
+          };
+        }
+        if (vizType === "chemviz_3dmol" && moleculeSmiles) {
+          merged.title = merged.title ?? content ?? "Molecule";
+          merged.molecule = merged.molecule ?? { source_type: "smiles", source_value: moleculeSmiles };
+          merged.style = merged.style ?? { stick: { radius: 0.15, colorscheme: "Jmol" } };
+        }
+        return <VizBlockPreview vizType={vizType} content={content} metadata={JSON.stringify(merged)} />;
+      },
     },
 
     MCQBlock: {
