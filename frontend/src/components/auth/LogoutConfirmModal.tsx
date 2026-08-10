@@ -194,12 +194,9 @@ export function LogoutConfirmModal({
                 onClick={(e) => {
                   e.stopPropagation();
                   playSuccessSound();
-                  handleDismiss();
+                  onClose();
                 }}
-                onMouseEnter={() => {
-                  playClickSound();
-                  setHoverTarget("cancel");
-                }}
+                onMouseEnter={handleHoverCancel}
                 onMouseLeave={() => setHoverTarget(null)}
                 className={`flex-1 rounded-2xl h-11 text-sm font-bold transition-all duration-200 border ${
                   hoverTarget === "cancel"
@@ -221,10 +218,7 @@ export function LogoutConfirmModal({
                   playClickSound();
                   onConfirm();
                 }}
-                onMouseEnter={() => {
-                  playClickSound();
-                  setHoverTarget("confirm");
-                }}
+                onMouseEnter={handleHoverConfirm}
                 onMouseLeave={() => setHoverTarget(null)}
                 className={`flex-1 rounded-2xl h-11 text-sm font-bold transition-all duration-200 border ${
                   hoverTarget === "confirm"

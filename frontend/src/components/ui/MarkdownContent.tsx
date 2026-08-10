@@ -24,7 +24,7 @@ export function MarkdownContent({ content, className }: MarkdownContentProps) {
         rehypePlugins={[rehypeKatex]}
         components={{
           // KaTeX math elements
-          span({ className: cn_, children, ...props }) {
+          span({ className: cn_, children, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
             if (cn_?.includes("math")) {
               return (
                 <span className={cn_} {...props}>
@@ -34,17 +34,17 @@ export function MarkdownContent({ content, className }: MarkdownContentProps) {
             }
             return <span className={cn_} {...props}>{children}</span>;
           },
-          a: ({ href, children }) => (
+          a: ({ href, children }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
             <a href={href} target="_blank" rel="noreferrer" className="text-primary underline underline-offset-2">
               {children}
             </a>
           ),
-          pre: ({ children }) => (
+          pre: ({ children }: React.HTMLAttributes<HTMLPreElement>) => (
             <pre className="overflow-x-auto rounded-lg border bg-muted/50 p-3 text-xs leading-relaxed">
               {children}
             </pre>
           ),
-          code: ({ className: cn_, children }) => {
+          code: ({ className: cn_, children }: React.HTMLAttributes<HTMLElement>) => {
             const isBlock = cn_?.includes("language-");
             return (
               <code
@@ -57,15 +57,15 @@ export function MarkdownContent({ content, className }: MarkdownContentProps) {
               </code>
             );
           },
-          table: ({ children }) => (
+          table: ({ children }: React.TableHTMLAttributes<HTMLTableElement>) => (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-sm">{children}</table>
             </div>
           ),
-          th: ({ children }) => (
+          th: ({ children }: React.ThHTMLAttributes<HTMLTableCellElement>) => (
             <th className="border bg-muted/50 px-2 py-1 text-left font-semibold">{children}</th>
           ),
-          td: ({ children }) => <td className="border px-2 py-1">{children}</td>,
+          td: ({ children }: React.TdHTMLAttributes<HTMLTableCellElement>) => <td className="border px-2 py-1">{children}</td>,
         }}
       >
         {content}
