@@ -76,7 +76,10 @@
     --secondary: oklch(0.95 0.015 145);
     --secondary-foreground: oklch(0.209 0.041 145);
     --muted: oklch(0.95 0.015 145);
-    --muted-foreground: oklch(0.417 0.145 145);
+    /* Secondary text keeps only a trace of the forest hue. Chroma here must stay
+       far below --primary (0.164), or every caption reads as a link and the
+       primary/secondary text hierarchy collapses. */
+    --muted-foreground: oklch(0.44 0.022 145);
     --accent: oklch(0.919 0.063 145);
     --accent-foreground: oklch(0.272 0.076 145);
     --destructive: oklch(0.577 0.245 27.3);
@@ -160,7 +163,7 @@
     --secondary: oklch(0.25 0.05 145);
     --secondary-foreground: oklch(0.935 0.05 145);
     --muted: oklch(0.25 0.05 145);
-    --muted-foreground: oklch(0.843 0.107 145);
+    --muted-foreground: oklch(0.78 0.022 145);
     --accent: oklch(0.3 0.07 145);
     --accent-foreground: oklch(0.935 0.05 145);
     --destructive: oklch(0.704 0.19 22);
