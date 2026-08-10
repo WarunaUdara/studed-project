@@ -32,8 +32,8 @@ func TestOpenCodeGenerateJSON(t *testing.T) {
 		if err := json.Unmarshal(body, &gotBody); err != nil {
 			t.Errorf("decode body: %v", err)
 		}
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, `{"choices":[{"message":{"content":"{\"ok\":true}"}}]}`)
+		w.Header().Set("Content-Type", "text/event-stream")
+		fmt.Fprint(w, "data: {\"choices\":[{\"delta\":{\"content\":\"{\\\"ok\\\":true}\"}}]}\n\ndata: [DONE]\n\n")
 	}))
 	defer srv.Close()
 
@@ -53,8 +53,8 @@ func TestOpenCodeGenerateJSON(t *testing.T) {
 	if gotBody.Model != "deepseek-v4-flash" {
 		t.Errorf("model = %q, want deepseek-v4-flash", gotBody.Model)
 	}
-	if gotBody.Stream {
-		t.Error("expected stream=false for GenerateJSON")
+	if !gotBody.Stream {
+		t.Error("expected stream=true for GenerateJSON (streams internally so reasoning models return content reliably)")
 	}
 	if gotBody.ResponseFormat == nil || gotBody.ResponseFormat.Type != "json_object" {
 		t.Errorf("response_format = %+v, want json_object", gotBody.ResponseFormat)
@@ -78,7 +78,8 @@ func TestOpenCodeGenerateJSONWithoutJSONMode(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		body, _ := io.ReadAll(r.Body)
 		_ = json.Unmarshal(body, &gotBody)
-		fmt.Fprint(w, `{"choices":[{"message":{"content":"plain text"}}]}`)
+		w.Header().Set("Content-Type", "text/event-stream")
+		fmt.Fprint(w, "data: {\"choices\":[{\"delta\":{\"content\":\"plain text\"}}]}\n\ndata: [DONE]\n\n")
 	}))
 	defer srv.Close()
 
@@ -164,12 +165,15 @@ func TestOpenCodeStream(t *testing.T) {
 	}
 
 	var deltas []string
+	var reasoningDeltas []string
 	var toolCalls []ToolCall
 	var final, errMsg string
 	for ev := range ch {
 		switch ev.Type {
 		case "text_delta":
 			deltas = append(deltas, ev.Delta)
+		case "reasoning_delta":
+			reasoningDeltas = append(reasoningDeltas, ev.Delta)
 		case "tool_call":
 			if ev.ToolCall != nil {
 				toolCalls = append(toolCalls, *ev.ToolCall)
@@ -185,6 +189,9 @@ func TestOpenCodeStream(t *testing.T) {
 	}
 	if joined := strings.Join(deltas, ""); joined != "Hello world" {
 		t.Errorf("deltas = %q, want %q", joined, "Hello world")
+	}
+	if joinedReasoning := strings.Join(reasoningDeltas, ""); joinedReasoning != "deepseek thinking..." {
+		t.Errorf("reasoning deltas = %q, want %q", joinedReasoning, "deepseek thinking...")
 	}
 	if final != "Hello world" {
 		t.Errorf("final content = %q (reasoning_content must not be accumulated)", final)
@@ -326,8 +333,8 @@ func TestOpenCodeStreamContextCancellation(t *testing.T) {
 
 func TestOpenCodeConcurrentUse(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, `{"choices":[{"message":{"content":"{}"}}]}`)
+		w.Header().Set("Content-Type", "text/event-stream")
+		fmt.Fprint(w, "data: {\"choices\":[{\"delta\":{\"content\":\"{}\"}}]}\n\ndata: [DONE]\n\n")
 	}))
 	defer srv.Close()
 

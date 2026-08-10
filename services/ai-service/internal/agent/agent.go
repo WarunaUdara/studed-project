@@ -197,6 +197,12 @@ func (a *Agent) streamOnce(ctx context.Context, msgs []provider.Message, events 
 		case "text_delta":
 			text.WriteString(ev.Delta)
 			events <- Event{Type: "delta", Message: ev.Delta}
+		case "reasoning_delta":
+			// Stream the model's reasoning live as thinking events so the
+			// chat shows the thought process progressively (agentic style),
+			// not one blob at the end.
+			reasoning.WriteString(ev.Delta)
+			events <- Event{Type: "thinking", Message: ev.Delta}
 		case "tool_call":
 			if ev.ToolCall == nil {
 				continue
@@ -213,13 +219,12 @@ func (a *Agent) streamOnce(ctx context.Context, msgs []provider.Message, events 
 				streamErr = ev.Error
 			}
 		case "done":
-			reasoning.WriteString(ev.Reasoning)
-			// Surface the model's reasoning as a thinking event so the chat
-			// can show a collapsible "thoughts" section (partial visibility —
-			// the full chain-of-thought stays local, only a summary-style
-			// text is delivered).
-			if trimmedReasoning := strings.TrimSpace(ev.Reasoning); trimmedReasoning != "" {
-				events <- Event{Type: "thinking", Message: trimmedReasoning}
+			// Reasoning already streamed live via reasoning_delta events;
+			// this only backfills when the backend delivers it at the end
+			// (some providers don't stream reasoning chunk-by-chunk).
+			if reasoning.Len() == 0 && strings.TrimSpace(ev.Reasoning) != "" {
+				reasoning.WriteString(ev.Reasoning)
+				events <- Event{Type: "thinking", Message: strings.TrimSpace(ev.Reasoning)}
 			}
 		}
 	}

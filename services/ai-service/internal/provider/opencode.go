@@ -48,7 +48,10 @@ func (c *OpenCodeClient) WithBaseURL(url string) *OpenCodeClient {
 }
 
 // GenerateJSON sends a chat completion request with JSON mode enabled and
-// returns the raw JSON text produced by the model.
+// returns the raw JSON text produced by the model. It streams internally
+// (rather than a single non-streaming call): reasoning models such as
+// deepseek-v4-flash frequently return an empty `content` on non-streaming
+// responses while the streamed deltas carry the full output reliably.
 func (c *OpenCodeClient) GenerateJSON(ctx context.Context, system, user string, opts Options) ([]byte, error) {
 	msgs := make([]Message, 0, 2)
 	if system != "" {
@@ -56,15 +59,36 @@ func (c *OpenCodeClient) GenerateJSON(ctx context.Context, system, user string, 
 	}
 	msgs = append(msgs, Message{Role: "user", Content: user})
 
-	resp, err := c.chatCompletion(ctx, msgs, nil, opts, false)
+	events, err := c.Stream(ctx, msgs, nil, opts)
 	if err != nil {
 		return nil, err
 	}
-	content := resp.Choices[0].Message.Content
-	if strings.TrimSpace(content) == "" {
+
+	var content strings.Builder
+	var streamErr error
+	for ev := range events {
+		switch ev.Type {
+		case "text_delta":
+			content.WriteString(ev.Delta)
+		case "error":
+			if ev.Error != nil {
+				streamErr = ev.Error
+			}
+		case "done":
+			// If the model emitted no text deltas but the done event carries
+			// content (some backends only fill content at the end), use it.
+			if content.Len() == 0 && strings.TrimSpace(ev.Content) != "" {
+				content.WriteString(ev.Content)
+			}
+		}
+	}
+	if streamErr != nil {
+		return nil, streamErr
+	}
+	if strings.TrimSpace(content.String()) == "" {
 		return nil, fmt.Errorf("opencode returned empty content")
 	}
-	return []byte(content), nil
+	return []byte(content.String()), nil
 }
 
 // Stream posts a streaming chat completion and returns a channel of events
@@ -173,10 +197,12 @@ func readOpenCodeStream(ctx context.Context, body io.Reader, events chan<- Strea
 			continue
 		}
 		delta := chunk.Choices[0].Delta
-		// reasoning_content is accumulated but never treated as final
-		// content; it must be echoed back to the API on tool round trips.
+		// reasoning_content is accumulated (echoed back on tool round trips) and
+		// ALSO streamed as reasoning_delta so the UI can show the model thinking
+		// live instead of a single blob at the end.
 		if delta.ReasoningContent != "" {
 			reasoning.WriteString(delta.ReasoningContent)
+			events <- StreamEvent{Type: "reasoning_delta", Delta: delta.ReasoningContent}
 		}
 		if delta.Content != "" {
 			full.WriteString(delta.Content)

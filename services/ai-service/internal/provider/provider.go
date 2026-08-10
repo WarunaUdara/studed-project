@@ -62,7 +62,7 @@ type Tool struct {
 
 // StreamEvent is a single event emitted on the stream channel.
 type StreamEvent struct {
-	Type     string // "text_delta" | "tool_call" | "done" | "error"
+	Type     string // "text_delta" | "reasoning_delta" | "tool_call" | "done" | "error"
 	Delta    string
 	ToolCall *ToolCall
 	Error    error
