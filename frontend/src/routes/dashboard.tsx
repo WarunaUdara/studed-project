@@ -14,7 +14,6 @@ import { useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PomodoroTimer } from "@/components/gamification/PomodoroTimer";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
-import { XPBar } from "@/components/gamification/XPBar";
 import { StudentShell } from "@/components/layout/StudentShell";
 import { AchievementBadge, type UserAchievement } from "@/components/ui/achievement-badge";
 import { Button } from "@/components/ui/button";
@@ -180,9 +179,10 @@ function DashboardPage() {
                 total)
               </p>
             </div>
+            {/* Streak only — XP and level live in the Navbar, and the line
+                above already states progress to the next level in words. */}
             <div className="flex items-center gap-3 shrink-0">
               <StreakFlame dayCount={user?.streak ?? 0} size="md" />
-              <XPBar totalXp={totalXp} className="min-w-[140px]" compact />
             </div>
           </div>
 
@@ -197,7 +197,11 @@ function DashboardPage() {
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <Button variant="outline" size="sm" className="rounded-full border-primary/30 text-primary hover:bg-primary/10">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-full border-primary/30 text-primary hover:bg-primary/10"
+              >
                 Review with AI
               </Button>
             </div>
@@ -517,6 +521,86 @@ function DashboardPage() {
                   </CardContent>
                 </Card>
               </div>
+
+              {/* Gamification Hub Card — lives in the main column so the two
+                  columns end at roughly the same height. */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Gamification Hub</CardTitle>
+                  <CardDescription>Manage achievements and path progress</CardDescription>
+                  <div className="mt-3 flex border-b">
+                    {(["stats", "badges", "timeline"] as const).map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => setGamifyTab(t)}
+                        className={cn(
+                          "flex-1 pb-2 text-xs font-medium border-b-2 capitalize transition-all",
+                          gamifyTab === t
+                            ? "border-primary text-primary font-bold"
+                            : "border-transparent text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        {t === "timeline" ? "path" : t}
+                      </button>
+                    ))}
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-3">
+                  {gamifyTab === "stats" && (
+                    <div className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
+                      <StatRow
+                        label="Total XP"
+                        value={totalXp.toLocaleString()}
+                        icon={<Zap className="h-4 w-4 text-primary" />}
+                      />
+                      <StatRow
+                        label="Level"
+                        value={`${level} — ${levelName(level)}`}
+                        icon={<Sparkles className="h-4 w-4 text-purple" />}
+                      />
+                      <StatRow
+                        label="Waves Completed"
+                        value={String(completedWaves)}
+                        icon={<BookOpen className="h-4 w-4 text-success" />}
+                      />
+                      <StatRow
+                        label="Courses Done"
+                        value={String(completedCourses)}
+                        icon={<TrophyIcon className="h-4 w-4 text-gold" />}
+                      />
+                      <StatRow
+                        label="Badges Earned"
+                        value={`${badgesEarned}/${BADGE_DEFS.length}`}
+                        icon={<Sparkles className="h-4 w-4 text-orange" />}
+                      />
+                    </div>
+                  )}
+
+                  {gamifyTab === "badges" && (
+                    <div>
+                      <div className="mb-2 text-xs text-muted-foreground">
+                        {badgesEarned} of {BADGE_DEFS.length} badges unlocked
+                      </div>
+                      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+                        {trophyAchievements.map((a) => (
+                          <AchievementBadge key={a.id} achievement={a} badgeSize="sm" />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {gamifyTab === "timeline" && (
+                    <div className="max-h-[300px] overflow-y-auto pr-1">
+                      <PointsLevelsTimeline
+                        levels={levelTimeline}
+                        currentPoints={totalXp}
+                        currentLevelLabel="You are here"
+                      />
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </div>
 
             {/* Right column (1/3) */}
@@ -574,85 +658,6 @@ function DashboardPage() {
 
               {/* Pomodoro Focus Timer */}
               <PomodoroTimer onXpEarned={handleXpEarned} />
-
-              {/* Gamification Hub Card */}
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">Gamification Hub</CardTitle>
-                  <CardDescription>Manage achievements and path progress</CardDescription>
-                  <div className="mt-3 flex border-b">
-                    {(["stats", "badges", "timeline"] as const).map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => setGamifyTab(t)}
-                        className={cn(
-                          "flex-1 pb-2 text-xs font-medium border-b-2 capitalize transition-all",
-                          gamifyTab === t
-                            ? "border-primary text-primary font-bold"
-                            : "border-transparent text-muted-foreground hover:text-foreground",
-                        )}
-                      >
-                        {t === "timeline" ? "path" : t}
-                      </button>
-                    ))}
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-3">
-                  {gamifyTab === "stats" && (
-                    <div className="space-y-4">
-                      <StatRow
-                        label="Total XP"
-                        value={totalXp.toLocaleString()}
-                        icon={<Zap className="h-4 w-4 text-primary" />}
-                      />
-                      <StatRow
-                        label="Level"
-                        value={`${level} — ${levelName(level)}`}
-                        icon={<Sparkles className="h-4 w-4 text-purple" />}
-                      />
-                      <StatRow
-                        label="Waves Completed"
-                        value={String(completedWaves)}
-                        icon={<BookOpen className="h-4 w-4 text-success" />}
-                      />
-                      <StatRow
-                        label="Courses Done"
-                        value={String(completedCourses)}
-                        icon={<TrophyIcon className="h-4 w-4 text-gold" />}
-                      />
-                      <StatRow
-                        label="Badges Earned"
-                        value={`${badgesEarned}/${BADGE_DEFS.length}`}
-                        icon={<Sparkles className="h-4 w-4 text-orange" />}
-                      />
-                    </div>
-                  )}
-
-                  {gamifyTab === "badges" && (
-                    <div>
-                      <div className="mb-2 text-xs text-muted-foreground">
-                        {badgesEarned} of {BADGE_DEFS.length} badges unlocked
-                      </div>
-                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                        {trophyAchievements.map((a) => (
-                          <AchievementBadge key={a.id} achievement={a} badgeSize="sm" />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {gamifyTab === "timeline" && (
-                    <div className="max-h-[300px] overflow-y-auto pr-1">
-                      <PointsLevelsTimeline
-                        levels={levelTimeline}
-                        currentPoints={totalXp}
-                        currentLevelLabel="You are here"
-                      />
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
             </div>
           </div>
         </div>

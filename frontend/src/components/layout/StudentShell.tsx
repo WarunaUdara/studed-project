@@ -9,9 +9,6 @@ import {
   Users,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { LogoutButton } from "@/components/auth/LogoutButton";
-import { StreakFlame } from "@/components/gamification/StreakFlame";
-import { XPBar } from "@/components/gamification/XPBar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
@@ -50,8 +47,11 @@ export interface StudentShellProps {
 /**
  * StudentShell — the per-page student layout: left sidebar (desktop) +
  * bottom tab bar (mobile). Used by dashboard, leaderboard, achievements,
- * settings and the courses catalog. The global top Navbar still renders the
- * brand + XP bar; this shell adds the contextual navigation chrome.
+ * settings and the courses catalog.
+ *
+ * Navigation and identity only. Progression state (XP, level, streak) and the
+ * logout action live in the global Navbar and the dashboard greeting band; the
+ * sidebar deliberately does not repeat them.
  */
 export function StudentShell({ children, banner, className }: StudentShellProps) {
   const { user } = useAuthStore();
@@ -99,14 +99,6 @@ export function StudentShell({ children, banner, className }: StudentShellProps)
                 );
               })}
             </nav>
-
-            <div className="mt-3 border-t border-sidebar-border pt-3">
-              <XPBar totalXp={user?.totalXp ?? 0} compact />
-              <div className="mt-2 flex items-center justify-between gap-2">
-                <StreakFlame dayCount={user?.streak ?? 0} size="sm" />
-                <LogoutButton size="sm" variant="ghost" />
-              </div>
-            </div>
           </div>
 
           <p className="px-2 text-[11px] text-muted-foreground">Grade 1–11 · O/L · A/L</p>

@@ -6,7 +6,6 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { QuizBlock } from "@/components/evaluate/QuizBlock";
 import { Confetti } from "@/components/gamification/Confetti";
 import { ProficiencyBadge } from "@/components/gamification/ProficiencyBadge";
-import { XPBar } from "@/components/gamification/XPBar";
 import { XPToast } from "@/components/gamification/XPToast";
 import { LearnBlockRenderer } from "@/components/learn/LearnBlockRenderer";
 import { Button } from "@/components/ui/button";
@@ -227,9 +226,6 @@ function WavePlayerPage() {
           >
             <ArrowLeft className="h-4 w-4" /> {wave.lesson?.course?.title ?? "Course"}
           </Link>
-          <div className="hidden w-48 sm:block">
-            <XPBar totalXp={user?.totalXp ?? 0} compact />
-          </div>
         </div>
 
         {/* Title block */}
