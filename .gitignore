@@ -36,6 +36,7 @@ logs/
 
 # Test artifacts
 frontend/test-results/
+frontend/.audit-shots/
 
 # Test coverage
 coverage/
