@@ -246,6 +246,20 @@ func TestVisualizationRepairOnInvalidHTML(t *testing.T) {
 	}
 }
 
+func TestVisualizationMatterjsFallsBackToRunnableHTMLOnProviderError(t *testing.T) {
+	s := &scriptedProvider{jsonErrs: []error{errors.New("empty response")}}
+	res, err := Visualization(s).Execute(context.Background(), map[string]any{"concept": "projectile motion", "vizType": "matterjs", "grade": "8"})
+	if err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	if res.VizBlock == nil || res.VizBlock.Type != "html_simulation" {
+		t.Fatalf("expected fallback HTML block, got %+v", res.VizBlock)
+	}
+	if !strings.Contains(res.VizBlock.Metadata, "canvas") || !strings.Contains(res.VizBlock.Metadata, "requestAnimationFrame") {
+		t.Fatalf("fallback is not runnable HTML: %s", res.VizBlock.Metadata)
+	}
+}
+
 func TestVisualizationUnknownVizType(t *testing.T) {
 	s := &scriptedProvider{}
 	tool := Visualization(s)

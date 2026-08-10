@@ -95,6 +95,15 @@ func TestDoneEvent_MergesToolAccumulatedBlocks(t *testing.T) {
 	}
 }
 
+func TestDoneEvent_DedupesRepeatedToolBlocksByID(t *testing.T) {
+	first := blocks.LearnBlock{ID: "viz-1", Type: "html_simulation", Content: "Projectile", Metadata: `{"title":"Projectile","html":"projectile"}`}
+	second := blocks.LearnBlock{ID: "viz-1", Type: "html_simulation", Content: "Sodium Water", Metadata: `{"title":"Sodium Water","html":"sodium-water"}`}
+	got := mergeLearnBlocks([]blocks.LearnBlock{first}, second)
+	if len(got) != 1 || got[0].Content != "Sodium Water" {
+		t.Fatalf("repeated tool block was not replaced: %+v", got)
+	}
+}
+
 func TestDoneEvent_DedupesMergedBlocks(t *testing.T) {
 	// Text echoed one block and the tool result carries the same id — the
 	// merged payload must not contain duplicates.

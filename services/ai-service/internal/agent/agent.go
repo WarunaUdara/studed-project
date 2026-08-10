@@ -155,11 +155,12 @@ func (a *Agent) Run(ctx context.Context, req Request, events chan<- Event) {
 
 			// Accumulate blocks returned by generation tools so the done
 			// event carries them even when the model does not echo the JSON
-			// payload in its final text (common for visualization blocks).
-			accLearn = append(accLearn, res.Blocks...)
-			accEval = append(accEval, res.EvalBlocks...)
+			// payload in its final text. Replace by id: retries of the same
+			// request must never create duplicate blocks.
+			accLearn = mergeLearnBlocks(accLearn, res.Blocks...)
+			accEval = mergeEvalBlocks(accEval, res.EvalBlocks...)
 			if res.VizBlock != nil {
-				accLearn = append(accLearn, *res.VizBlock)
+				accLearn = mergeLearnBlocks(accLearn, *res.VizBlock)
 			}
 			// Accumulate explicit upsert/delete operations from manageBlocks.
 			if res.BlockOps != nil && !res.BlockOps.IsEmpty() {
@@ -232,6 +233,38 @@ func (a *Agent) streamOnce(ctx context.Context, msgs []provider.Message, events 
 		return "", "", nil, streamErr
 	}
 	return text.String(), reasoning.String(), calls, nil
+}
+
+func mergeLearnBlocks(existing []blocks.LearnBlock, incoming ...blocks.LearnBlock) []blocks.LearnBlock {
+	byID := make(map[string]int, len(existing))
+	for i, b := range existing {
+		byID[b.ID] = i
+	}
+	for _, b := range incoming {
+		if i, ok := byID[b.ID]; ok {
+			existing[i] = b
+		} else {
+			byID[b.ID] = len(existing)
+			existing = append(existing, b)
+		}
+	}
+	return existing
+}
+
+func mergeEvalBlocks(existing []blocks.EvaluateBlock, incoming ...blocks.EvaluateBlock) []blocks.EvaluateBlock {
+	byID := make(map[string]int, len(existing))
+	for i, b := range existing {
+		byID[b.ID] = i
+	}
+	for _, b := range incoming {
+		if i, ok := byID[b.ID]; ok {
+			existing[i] = b
+		} else {
+			byID[b.ID] = len(existing)
+			existing = append(existing, b)
+		}
+	}
+	return existing
 }
 
 // doneEvent builds the final done event. If the assistant text looks like a

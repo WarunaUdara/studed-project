@@ -224,6 +224,9 @@ func Visualization(p provider.Provider) Tool {
 
 			raw, err := p.GenerateJSON(ctx, system, user.String(), provider.JSONOptions())
 			if err != nil {
+				if vizType == "matterjs" && isProjectileConcept(concept) {
+					return Result{Name: "generateVisualization", VizBlock: fallbackHTMLSimulation(concept, grade)}, nil
+				}
 				return Result{Name: "generateVisualization", Content: "tool error: " + err.Error()}, nil
 			}
 			block, err := parseVizBlock(raw, vizType)
@@ -233,10 +236,16 @@ func Visualization(p provider.Provider) Tool {
 				repairUser := user.String() + "\n\nYour previous output was invalid: " + err.Error() + "\nReturn ONLY valid JSON for the complete visualization block. Do not truncate. Include all required fields."
 				raw2, err2 := p.GenerateJSON(ctx, system, repairUser, provider.JSONOptions())
 				if err2 != nil {
+					if vizType == "matterjs" && isProjectileConcept(concept) {
+						return Result{Name: "generateVisualization", VizBlock: fallbackHTMLSimulation(concept, grade)}, nil
+					}
 					return Result{Name: "generateVisualization", Content: "tool error: " + err2.Error()}, nil
 				}
 				block, err = parseVizBlock(raw2, vizType)
 				if err != nil {
+					if vizType == "matterjs" && isProjectileConcept(concept) {
+						return Result{Name: "generateVisualization", VizBlock: fallbackHTMLSimulation(concept, grade)}, nil
+					}
 					return Result{Name: "generateVisualization", Content: err.Error()}, nil
 				}
 			}
@@ -282,6 +291,27 @@ Rules:
 	default:
 		return "", fmt.Errorf("unknown visualization type %q (must be manim, 3dmol, tscircuit, or matterjs)", vizType)
 	}
+}
+
+func isProjectileConcept(concept string) bool {
+	c := strings.ToLower(concept)
+	return strings.Contains(c, "projectile") || strings.Contains(c, "parabolic") || strings.Contains(c, "launch")
+}
+
+// fallbackHTMLSimulation guarantees physics requests still produce a runnable
+// document when the upstream reasoning provider returns an empty or malformed
+// response. It is intentionally small and self-contained; the provider's
+// generated document remains the primary path.
+func fallbackHTMLSimulation(concept, grade string) *blocks.LearnBlock {
+	title := "Interactive Physics Simulation"
+	if strings.TrimSpace(concept) != "" {
+		title = concept
+	}
+	html := `<!doctype html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>
+html,body{margin:0;height:100%;font-family:system-ui,sans-serif;background:#0f172a;color:#e2e8f0}body{display:flex;flex-direction:column}header{padding:12px 16px;background:#1e293b}main{position:relative;flex:1;min-height:320px}canvas{display:block;width:100%;height:100%}.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 16px;background:#1e293b;font-size:13px}input{accent-color:#38bdf8}button{border:0;border-radius:6px;padding:6px 10px;background:#38bdf8;color:#082f49;font-weight:600}.readout{margin-left:auto;color:#bae6fd}</style></head><body><header><strong>Projectile Motion</strong><div style="font-size:12px;color:#94a3b8">Interactive HTML simulation</div></header><main><canvas id="sim"></canvas></main><div class="controls"><label>Launch speed <input id="speed" type="range" min="4" max="20" step="0.5" value="12"></label><label>Angle <input id="angle" type="range" min="15" max="75" step="1" value="45"></label><button id="reset">Reset</button><span class="readout" id="readout"></span></div><script>
+(()=>{const c=document.getElementById('sim'),x=c.getContext('2d'),speed=document.getElementById('speed'),angle=document.getElementById('angle'),readout=document.getElementById('readout');let dpr=1,w=800,h=420,t=0;function size(){dpr=devicePixelRatio||1;w=c.clientWidth;h=c.clientHeight;c.width=w*dpr;c.height=h*dpr;x.setTransform(dpr,0,0,dpr,0,0)}addEventListener('resize',size);size();function draw(){const s=+speed.value,a=+angle.value*Math.PI/180,g=9.8,scale=7,ground=h-42,ox=42,oy=ground-4,tt=t/60,px=ox+s*Math.cos(a)*tt*scale,py=oy-(s*Math.sin(a)*tt-.5*g*tt*tt)*scale;x.clearRect(0,0,w,h);x.fillStyle='#334155';x.fillRect(0,ground,w,2);x.strokeStyle='#38bdf8';x.lineWidth=2;x.beginPath();for(let u=0;u<=tt;u+=.04){const qx=ox+s*Math.cos(a)*u*scale,qy=oy-(s*Math.sin(a)*u-.5*g*u*u)*scale;u?x.lineTo(qx,qy):x.moveTo(qx,qy)}x.stroke();x.fillStyle='#fbbf24';x.beginPath();x.arc(px,py,10,0,Math.PI*2);x.fill();readout.textContent='v₀ '+s.toFixed(1)+' m/s · θ '+a*180/Math.PI.toFixed(0)+'°';if(py<ground&&px<w+20){t++;requestAnimationFrame(draw)}else{t=0;requestAnimationFrame(draw)}}document.getElementById('reset').onclick=()=>{t=0};draw()})()</script></body></html>`
+	meta, _ := json.Marshal(map[string]any{"title": title, "description": "A runnable projectile-motion simulation for " + grade, "height": 560, "html": html})
+	return &blocks.LearnBlock{ID: "viz-html-fallback", Type: "html_simulation", Content: title, Metadata: string(meta)}
 }
 
 // parseVizBlock decodes model output into a single LearnBlock. The type is

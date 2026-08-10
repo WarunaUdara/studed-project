@@ -98,9 +98,28 @@ function WaveEditorPage() {
       if (!puckData) return;
       const newItems = agentBlocksToPuckItems(learnBlocks, evaluateBlocks);
       if (newItems.length === 0) return;
+      const existing = puckData.content ?? [];
+      const existingByID = new Map(existing.map((item) => [String(item.props?.id ?? ""), item]));
+      const usedIDs = new Set(existingByID.keys());
+      const uniqueItems = newItems.flatMap((item) => {
+        const originalID = String(item.props?.id ?? "");
+        if (!originalID) return [];
+        const existingItem = existingByID.get(originalID);
+        if (existingItem && JSON.stringify(existingItem) === JSON.stringify(item)) return [];
+        if (!usedIDs.has(originalID)) {
+          usedIDs.add(originalID);
+          return [item];
+        }
+        let suffix = 2;
+        let nextID = `${originalID}-${suffix}`;
+        while (usedIDs.has(nextID)) nextID = `${originalID}-${++suffix}`;
+        usedIDs.add(nextID);
+        return [{ ...item, props: { ...item.props, id: nextID } }];
+      });
+      if (uniqueItems.length === 0) return;
       const next: PuckData = {
         ...puckData,
-        content: [...(puckData.content ?? []), ...newItems],
+        content: [...existing, ...uniqueItems],
       };
       setPuckData(next);
       pushPuckData(next);
