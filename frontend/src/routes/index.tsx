@@ -36,6 +36,8 @@ import { ScrollXpMeter } from "@/components/public/ScrollXpMeter";
 import { WaveMapHero } from "@/components/public/WaveMapHero";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/Card";
+import { PixelBlast } from "@/components/ui/PixelBlast";
+import { ScrollExpand } from "@/components/ui/ScrollExpand";
 import { SplitText } from "@/components/ui/SplitText";
 import { TextLoop } from "@/components/ui/TextLoop";
 import { ProgressRing } from "@/components/ui/ProgressRing";
@@ -961,65 +963,92 @@ function FinalCta({ authed }: { authed: boolean }) {
   const reduce = useReducedMotion();
 
   return (
-    <section className="px-4 pb-24 pt-4 sm:px-6">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border bg-gradient-to-br from-primary via-primary/85 to-purple/70 p-10 text-center shadow-2xl sm:p-16"
-      >
+    <section className="relative px-4 pb-20 pt-8 sm:px-6">
+      <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] border border-primary/20 bg-card/60 backdrop-blur-md shadow-2xl">
+        {/* PixelBlast interactive shader background customized to theme */}
         {!reduce && (
-          <>
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -left-12 -top-12 h-48 w-48 rounded-full bg-gold/30 blur-3xl"
+          <div className="absolute inset-0 z-0 opacity-35 pointer-events-auto">
+            <PixelBlast
+              variant="circle"
+              color="#10b981"
+              pixelSize={4}
+              patternScale={2.2}
+              patternDensity={1.2}
+              liquid
+              liquidStrength={0.12}
+              liquidWobbleSpeed={4.5}
+              enableRipples
+              rippleSpeed={0.3}
+              speed={0.45}
+              edgeFade={0.35}
             />
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -bottom-16 -right-12 h-64 w-64 rounded-full bg-purple/40 blur-3xl"
-            />
-          </>
-        )}
-        <div className="relative space-y-6">
-          <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-white/90 ring-1 ring-white/20">
-            <Zap className="h-3.5 w-3.5 fill-gold text-gold" />
-            +250 XP
-          </p>
-          <h2 className="font-serif text-4xl text-white sm:text-6xl">{t("finalCtaHeading")}</h2>
-          <p className="mx-auto max-w-xl text-pretty text-white/80">{t("finalCtaSubhead")}</p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {authed ? (
-              <Link to="/dashboard">
-                <Button size="lg" className="rounded-full bg-white text-primary hover:bg-white/90">
-                  {t("ctaPortal")}
-                </Button>
-              </Link>
-            ) : (
-              <>
-                <Link to="/register">
-                  <Button
-                    size="lg"
-                    className="rounded-full bg-white text-primary hover:bg-white/90"
-                    onClick={() => playSuccessSound()}
-                  >
-                    {t("finalCtaCreate")}
-                  </Button>
-                </Link>
-                <Link to="/login">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="rounded-full border-white/30 bg-white/10 text-white hover:bg-white/20"
-                  >
-                    {t("finalCtaSignin")}
-                  </Button>
-                </Link>
-              </>
-            )}
           </div>
+        )}
+
+        <div className="relative z-10 py-8 px-4 sm:py-12">
+          {/* ScrollExpand framed media card stopping comfortably before screen edge max */}
+          <ScrollExpand
+            useWindowScroll
+            startWidth={48}
+            startHeight={56}
+            maxWidth={90}
+            maxHeight={85}
+            startRadius={24}
+            endRadius={18}
+            mediaZoom={1.3}
+            scrollDistance={1.1}
+            holdDistance={0.3}
+            title={t("finalCtaHeading")}
+            scrollHint="Scroll to Expand"
+            className="w-full h-[520px] sm:h-[600px]"
+            src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop"
+            alt="StudEd Learning Platform"
+          >
+            <div className="relative space-y-6 max-w-xl mx-auto text-center px-4">
+              <p className="inline-flex items-center gap-2 rounded-full bg-primary/20 backdrop-blur-md px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-white ring-1 ring-primary/40 shadow-sm">
+                <Zap className="h-3.5 w-3.5 fill-gold text-gold" />
+                +250 XP
+              </p>
+              <h2 className="font-serif text-3xl font-bold text-white sm:text-5xl drop-shadow-md">
+                {t("finalCtaHeading")}
+              </h2>
+              <p className="mx-auto max-w-lg text-pretty text-sm text-white/90 sm:text-base drop-shadow-sm">
+                {t("finalCtaSubhead")}
+              </p>
+              <div className="flex flex-wrap justify-center gap-3 pt-2">
+                {authed ? (
+                  <Link to="/dashboard">
+                    <Button size="lg" className="rounded-full bg-white text-primary hover:bg-white/90 shadow-lg font-semibold">
+                      {t("ctaPortal")}
+                    </Button>
+                  </Link>
+                ) : (
+                  <>
+                    <Link to="/register">
+                      <Button
+                        size="lg"
+                        className="rounded-full bg-white text-primary hover:bg-white/90 shadow-lg font-semibold"
+                        onClick={() => playSuccessSound()}
+                      >
+                        {t("finalCtaCreate")}
+                      </Button>
+                    </Link>
+                    <Link to="/login">
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        className="rounded-full border-white/40 bg-white/10 text-white backdrop-blur-md hover:bg-white/20 font-semibold"
+                      >
+                        {t("finalCtaSignin")}
+                      </Button>
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          </ScrollExpand>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
