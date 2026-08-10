@@ -98,6 +98,7 @@ func main() {
 	log.Info("migrations ran successfully")
 
 	dialInterceptors := []grpc.UnaryClientInterceptor{
+		grpcauth.UnaryClientTraceInterceptor(),
 		grpcauth.UnaryClientTimeoutInterceptor(5 * time.Second),
 	}
 	if cfg.ServiceToken != "" {
@@ -135,7 +136,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			grpcauth.UnaryServerTraceInterceptor(),
+			grpcauth.UnaryServerInterceptor(cfg.ServiceToken),
+		),
+	)
 	progresspb.RegisterProgressServiceServer(grpcServer, grpcHandler)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)

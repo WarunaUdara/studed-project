@@ -17,6 +17,7 @@ import (
 	"github.com/studed/auth-service/internal/model"
 	"github.com/studed/auth-service/internal/repository"
 	"github.com/studed/auth-service/internal/service"
+	"github.com/studed/shared/go/grpcauth"
 	"github.com/studed/shared/go/logger"
 	authpb "github.com/studed/shared/proto/gen/go/auth"
 	"google.golang.org/grpc"
@@ -72,7 +73,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(grpcauth.UnaryServerTraceInterceptor()),
+	)
 	authpb.RegisterAuthServiceServer(grpcServer, grpcHandler)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)

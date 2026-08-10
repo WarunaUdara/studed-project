@@ -17,6 +17,7 @@ import (
 	"github.com/studed/course-service/internal/repository"
 	"github.com/studed/course-service/internal/search"
 	"github.com/studed/course-service/internal/service"
+	"github.com/studed/shared/go/grpcauth"
 	"github.com/studed/shared/go/logger"
 	coursepb "github.com/studed/shared/proto/gen/go/course"
 	"google.golang.org/grpc"
@@ -104,7 +105,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(grpcauth.UnaryServerTraceInterceptor()),
+	)
 	coursepb.RegisterCourseServiceServer(grpcServer, grpcHandler)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)

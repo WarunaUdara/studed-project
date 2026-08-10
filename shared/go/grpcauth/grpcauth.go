@@ -1,6 +1,7 @@
 // Package grpcauth provides a small service-to-service token interceptor for
 // gRPC servers and the matching client-side interceptor that injects the
-// token into outgoing metadata.
+// token into outgoing metadata. It also carries OpenTelemetry trace context
+// across the wire so distributed traces span service boundaries.
 package grpcauth
 
 import (
@@ -9,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -61,3 +64,58 @@ func UnaryClientTimeoutInterceptor(defaultTimeout time.Duration) grpc.UnaryClien
 	}
 }
 
+// metadataCarrier adapts gRPC metadata to the OpenTelemetry TextMapCarrier
+// interface so trace context can be injected and extracted in both directions.
+type metadataCarrier struct {
+	md metadata.MD
+}
+
+func (c *metadataCarrier) Get(key string) string {
+	values := c.md.Get(key)
+	if len(values) == 0 {
+		return ""
+	}
+	return values[0]
+}
+
+func (c *metadataCarrier) Set(key, value string) {
+	c.md.Set(key, value)
+}
+
+func (c *metadataCarrier) Keys() []string {
+	out := make([]string, 0, len(c.md))
+	for k := range c.md {
+		out = append(out, k)
+	}
+	return out
+}
+
+// UnaryClientTraceInterceptor injects the current OpenTelemetry span context
+// into outgoing gRPC metadata (traceparent / baggage). It should be placed
+// early in the client interceptor chain so downstream interceptors and the
+// actual call see the trace context.
+func UnaryClientTraceInterceptor() grpc.UnaryClientInterceptor {
+	return func(ctx context.Context, method string, req, reply any, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+		md, ok := metadata.FromOutgoingContext(ctx)
+		if !ok {
+			md = metadata.MD{}
+		} else {
+			md = md.Copy()
+		}
+		otel.GetTextMapPropagator().Inject(ctx, &metadataCarrier{md: md})
+		ctx = metadata.NewOutgoingContext(ctx, md)
+		return invoker(ctx, method, req, reply, cc, opts...)
+	}
+}
+
+// UnaryServerTraceInterceptor extracts OpenTelemetry trace context from
+// incoming gRPC metadata so the server's spans continue the client's trace.
+func UnaryServerTraceInterceptor() grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		md, _ := metadata.FromIncomingContext(ctx)
+		ctx = otel.GetTextMapPropagator().Extract(ctx, &metadataCarrier{md: md})
+		return handler(ctx, req)
+	}
+}
+
+var _ propagation.TextMapCarrier = (*metadataCarrier)(nil)

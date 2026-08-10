@@ -105,7 +105,7 @@ func main() {
 	achievementRepo := repository.NewAchievementRepository(db)
 	eventPublisher := events.NewPublisher(redisClient)
 	gamificationSvc := service.NewGamificationService(xpRepo, leaderboardRepo, achievementRepo, service.WithEventPublisher(eventPublisher))
-	
+
 	// Self-healing rebuild for Redis leaderboards on start (REL-10)
 	go func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -127,7 +127,10 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer(
-		grpc.ChainUnaryInterceptor(grpcauth.UnaryServerInterceptor(cfg.ServiceToken)),
+		grpc.ChainUnaryInterceptor(
+			grpcauth.UnaryServerTraceInterceptor(),
+			grpcauth.UnaryServerInterceptor(cfg.ServiceToken),
+		),
 	)
 	gampb.RegisterGamificationServiceServer(grpcServer, grpcHandler)
 
