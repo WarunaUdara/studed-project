@@ -36,10 +36,16 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*
 	}
 	setAuthCookies(ctx, payload.AccessToken, payload.RefreshToken)
 
-	// Advance the daily-login streak; streak failures never block login.
+	// Advance the daily-login streak and attach current XP, matching what `me`
+	// returns. Without the XP lookup the client stores totalXp=0 at sign-in and
+	// renders 0 until the first `me` query lands. Gamification failures never
+	// block login.
 	if payload.User != nil {
 		if streak, err := r.GamificationClient.GetUserStreak(ctx, payload.User.ID); err == nil {
 			payload.User.Streak = streak
+		}
+		if totalXp, err := r.GamificationClient.GetUserXp(ctx, payload.User.ID); err == nil {
+			payload.User.TotalXp = totalXp
 		}
 	}
 
