@@ -289,9 +289,29 @@ After generation, educators can:
   MathViz (formula), VizBlock (Manim / 3Dmol / tscircuit / Matter.js),
   MCQ, Fill-in-the-blank, True/False, Numeric, Drag-and-drop — with full
   bidirectional serialization between Puck items and the GraphQL wave input.
-  VizBlock renders the **same interactive components students see** (playable
-  Manim steps, rotatable 3D molecules, live tscircuit, Matter.js physics)
-  right inside the editor canvas.
+  VizBlock renders the **same interactive components students see** right
+  inside the editor canvas:
+  - **Matter.js physics** (`MatterPhysicsBlock`): config-driven engine
+    honoring the full documented world_config — circle/rectangle bodies
+    with physical props, static floors, gravity x/y/scale, constraints
+    (pendulum/spring pulls), editable parameter sliders, live + computed
+    measurements, and educational overlays (force arrows, velocity
+    arrows, trajectory trails, energy bar).
+  - **3Dmol molecules** (`Mol3DBlock`): self-contained CSS-3D viewer —
+    SMILES → 3D atoms/bonds via a curated molecule library (H2O, CO2,
+    CH4, NH3, benzene, ethanol) plus a generic element parser fallback,
+    style switcher (Ball & Stick / Spacefill / Wireframe), surface
+    toggle, config annotations (e.g. "104.5° bond angle"), drag-to-
+    rotate, zoom, hover labels, click-to-identify.
+  - The AI prompts emit the **full documented schemas** for both families
+    (constraints, editable_params, measurements, overlays for physics;
+    style, surface, camera, interactivity, annotations for chemistry),
+    and the agent's done event now carries tool-produced blocks even when
+    the model omits the JSON echo (verified live: generated water
+    molecule + pendulum land in the editor with all controls).
+  - VizBlock editor fields include quick Physics Scenario select and
+    Molecule SMILES inputs merged into the config JSON at render time,
+    plus the advanced raw-config textarea.
 - **Puck themed to the app**: `src/styles/puck-theme.css` maps Puck's CSS
   custom properties onto the StudEd OKLCH tokens, so the editor chrome
   (blocks palette, header, property fields, actionbar) blends with the
