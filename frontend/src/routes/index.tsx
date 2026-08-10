@@ -36,6 +36,7 @@ import { ScrollXpMeter } from "@/components/public/ScrollXpMeter";
 import { WaveMapHero } from "@/components/public/WaveMapHero";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/Card";
+import { SplitText } from "@/components/ui/SplitText";
 import { TextLoop } from "@/components/ui/TextLoop";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { FEATURED_COURSES, type FeaturedCourse } from "@/lib/demoData";
@@ -133,7 +134,19 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
           >
             {t("heroTitleA")}
             <br />
-            <span className="italic text-primary">{t("heroTitleB")}</span>
+            <span className="italic text-primary">
+              <SplitText
+                text={t("heroTitleB")}
+                tag="span"
+                splitType="chars"
+                delay={35}
+                duration={0.65}
+                ease="power3.out"
+                from={{ opacity: 0, y: 28 }}
+                to={{ opacity: 1, y: 0 }}
+                className="inline-block"
+              />
+            </span>
             <span className="text-primary">.</span>
           </motion.h1>
 
@@ -251,20 +264,20 @@ function TextLoopBanner() {
   if (reduce) return null;
 
   return (
-    <div className="relative py-4 overflow-hidden bg-card/30 backdrop-blur-md border-y border-border/20">
+    <div className="relative py-2 overflow-hidden bg-card/30 backdrop-blur-md border-y border-border/20">
       <TextLoop
         text="StudEd ✦ Interactive STEM Learning ✦ Gamified Waves ✦ Real-Time Mastery ✦ Sri Lanka's Modern Platform ✦"
         shape="wave"
-        speed={85}
-        curviness={70}
-        fontSize={36}
-        fontWeight={800}
-        letterSpacing={3}
+        speed={75}
+        curviness={28}
+        fontSize={18}
+        fontWeight={700}
+        letterSpacing={2}
         color="var(--primary)"
         ribbon
         ribbonColor="rgba(16, 185, 129, 0.08)"
-        ribbonWidth={72}
-        pauseOnHover
+        ribbonWidth={32}
+        pauseOnHover={false}
       />
     </div>
   );
