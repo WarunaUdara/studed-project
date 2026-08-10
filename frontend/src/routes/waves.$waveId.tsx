@@ -285,7 +285,7 @@ function WavePlayerPage() {
                 setLearnViewed(true);
                 setActiveTab("evaluate");
               }}
-              className="w-full"
+              className="w-full sm:w-auto sm:min-w-56"
               size="lg"
             >
               Start Evaluation
