@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Layers, Loader2, Plus, Send, Zap } from "lucide-react";
+import { ArrowLeft, Layers, Loader2, Plus, Send, Trash2, Zap } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,12 @@ import { Label } from "@/components/ui/Label";
 import { Select, type SelectOption } from "@/components/ui/Select";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
-import { CREATE_WAVE_MUTATION, LESSON_QUERY, PUBLISH_WAVE_MUTATION } from "@/graphql/courses";
+import {
+  CREATE_WAVE_MUTATION,
+  DELETE_WAVE_MUTATION,
+  LESSON_QUERY,
+  PUBLISH_WAVE_MUTATION,
+} from "@/graphql/courses";
 import { sanitizeGraphQLError } from "@/lib/errors";
 
 interface Wave {
@@ -51,7 +56,9 @@ function LessonDetailPage() {
   });
   const [createResult, createWave] = useMutation(CREATE_WAVE_MUTATION);
   const [publishWaveResult, publishWave] = useMutation(PUBLISH_WAVE_MUTATION);
+  const [deleteWaveResult, deleteWave] = useMutation(DELETE_WAVE_MUTATION);
   const [publishingWaveId, setPublishingWaveId] = useState<string | null>(null);
+  const [deletingWaveId, setDeletingWaveId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
 
   const [title, setTitle] = useState("");
@@ -75,6 +82,24 @@ function LessonDetailPage() {
       toast({ type: "error", title: e.title, message: e.message });
     } else {
       toast({ type: "success", title: "Published", message: "Wave is now visible to students." });
+      reexecuteQuery({ requestPolicy: "network-only" });
+    }
+  };
+
+  const handleDeleteWave = async (id: string, title: string) => {
+    const confirmed = window.confirm(
+      `Delete wave "${title}"? This cannot be undone.`,
+    );
+    if (!confirmed) return;
+
+    setDeletingWaveId(id);
+    const result = await deleteWave({ id });
+    setDeletingWaveId(null);
+    if (result.error) {
+      const e = sanitizeGraphQLError(result.error);
+      toast({ type: "error", title: e.title, message: e.message });
+    } else {
+      toast({ type: "success", title: "Deleted", message: "Wave deleted." });
       reexecuteQuery({ requestPolicy: "network-only" });
     }
   };
@@ -319,6 +344,20 @@ function LessonDetailPage() {
                         )}
                       </Button>
                     )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      aria-label={`Delete wave ${wave.title}`}
+                      disabled={deletingWaveId === wave.id || deleteWaveResult.fetching}
+                      onClick={() => handleDeleteWave(wave.id, wave.title)}
+                      className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      {deletingWaveId === wave.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </Button>
                   </div>
                 </div>
               ))}

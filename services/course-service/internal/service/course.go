@@ -26,12 +26,14 @@ type CourseService interface {
 	ListCourses(ctx context.Context, req *coursepb.ListCoursesRequest) (*coursepb.CourseListResponse, error)
 	UpdateCourse(ctx context.Context, req *coursepb.UpdateCourseRequest) (*coursepb.CourseResponse, error)
 	PublishCourse(ctx context.Context, req *coursepb.PublishCourseRequest) (*coursepb.CourseResponse, error)
+	DeleteCourse(ctx context.Context, req *coursepb.DeleteCourseRequest) (*coursepb.DeleteResponse, error)
 
 	CreateLesson(ctx context.Context, req *coursepb.CreateLessonRequest) (*coursepb.LessonResponse, error)
 	GetLesson(ctx context.Context, req *coursepb.GetLessonRequest) (*coursepb.LessonResponse, error)
 	ListLessons(ctx context.Context, req *coursepb.ListLessonsRequest) (*coursepb.LessonListResponse, error)
 	UpdateLesson(ctx context.Context, req *coursepb.UpdateLessonRequest) (*coursepb.LessonResponse, error)
 	PublishLesson(ctx context.Context, req *coursepb.PublishLessonRequest) (*coursepb.LessonResponse, error)
+	DeleteLesson(ctx context.Context, req *coursepb.DeleteLessonRequest) (*coursepb.DeleteResponse, error)
 
 	CreateWave(ctx context.Context, req *coursepb.CreateWaveRequest) (*coursepb.WaveResponse, error)
 	GetWave(ctx context.Context, req *coursepb.GetWaveRequest) (*coursepb.WaveResponse, error)
@@ -39,6 +41,7 @@ type CourseService interface {
 	ListWavesByLessonIds(ctx context.Context, req *coursepb.ListWavesByLessonIdsRequest) (*coursepb.WaveListResponse, error)
 	UpdateWave(ctx context.Context, req *coursepb.UpdateWaveRequest) (*coursepb.WaveResponse, error)
 	PublishWave(ctx context.Context, req *coursepb.PublishWaveRequest) (*coursepb.WaveResponse, error)
+	DeleteWave(ctx context.Context, req *coursepb.DeleteWaveRequest) (*coursepb.DeleteResponse, error)
 }
 
 type courseService struct {
@@ -598,4 +601,90 @@ func (s *courseService) PublishWave(ctx context.Context, req *coursepb.PublishWa
 	}
 
 	return &coursepb.WaveResponse{Wave: wave.ToProto()}, nil
+}
+
+// --- Delete methods (cascade via DB foreign keys) ---
+
+func (s *courseService) DeleteCourse(ctx context.Context, req *coursepb.DeleteCourseRequest) (*coursepb.DeleteResponse, error) {
+	if req.Id == "" {
+		return nil, fmt.Errorf("course id is required")
+	}
+	if req.EducatorId == "" {
+		return nil, fmt.Errorf("educator id is required")
+	}
+
+	course, err := s.courseRepo.GetByID(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if course.EducatorID != req.EducatorId {
+		return nil, fmt.Errorf("unauthorized to delete this course")
+	}
+
+	if err := s.courseRepo.Delete(ctx, req.Id); err != nil {
+		return nil, err
+	}
+	// The search index is eventually consistent; a deleted course simply
+	// stops matching on the next search reindex. SQL search (the fallback)
+	// never returns it.
+	return &coursepb.DeleteResponse{Success: true}, nil
+}
+
+func (s *courseService) DeleteLesson(ctx context.Context, req *coursepb.DeleteLessonRequest) (*coursepb.DeleteResponse, error) {
+	if req.Id == "" {
+		return nil, fmt.Errorf("lesson id is required")
+	}
+	if req.EducatorId == "" {
+		return nil, fmt.Errorf("educator id is required")
+	}
+
+	lesson, err := s.lessonRepo.GetByID(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	course, err := s.courseRepo.GetByID(ctx, lesson.CourseID)
+	if err != nil {
+		return nil, err
+	}
+	if course.EducatorID != req.EducatorId {
+		return nil, fmt.Errorf("unauthorized to delete this lesson")
+	}
+
+	if err := s.lessonRepo.Delete(ctx, req.Id); err != nil {
+		return nil, err
+	}
+	return &coursepb.DeleteResponse{Success: true}, nil
+}
+
+func (s *courseService) DeleteWave(ctx context.Context, req *coursepb.DeleteWaveRequest) (*coursepb.DeleteResponse, error) {
+	if req.Id == "" {
+		return nil, fmt.Errorf("wave id is required")
+	}
+	if req.EducatorId == "" {
+		return nil, fmt.Errorf("educator id is required")
+	}
+
+	wave, err := s.waveRepo.GetByID(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	lesson, err := s.lessonRepo.GetByID(ctx, wave.LessonID)
+	if err != nil {
+		return nil, err
+	}
+
+	course, err := s.courseRepo.GetByID(ctx, lesson.CourseID)
+	if err != nil {
+		return nil, err
+	}
+	if course.EducatorID != req.EducatorId {
+		return nil, fmt.Errorf("unauthorized to delete this wave")
+	}
+
+	if err := s.waveRepo.Delete(ctx, req.Id); err != nil {
+		return nil, err
+	}
+	return &coursepb.DeleteResponse{Success: true}, nil
 }

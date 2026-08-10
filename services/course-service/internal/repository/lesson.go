@@ -15,6 +15,7 @@ type LessonRepository interface {
 	ListByCourse(ctx context.Context, courseID string, publishedOnly bool) ([]*model.Lesson, error)
 	Update(ctx context.Context, lesson *model.Lesson) error
 	GetCourseID(ctx context.Context, id string) (string, error)
+	Delete(ctx context.Context, id string) error
 }
 
 type gormLessonRepository struct {
@@ -72,4 +73,15 @@ func (r *gormLessonRepository) GetCourseID(ctx context.Context, id string) (stri
 		return "", fmt.Errorf("failed to get lesson: %w", err)
 	}
 	return lesson.CourseID, nil
+}
+
+func (r *gormLessonRepository) Delete(ctx context.Context, id string) error {
+	res := r.db.WithContext(ctx).Where("id = ?", id).Delete(&model.Lesson{})
+	if res.Error != nil {
+		return fmt.Errorf("failed to delete lesson: %w", res.Error)
+	}
+	if res.RowsAffected == 0 {
+		return fmt.Errorf("lesson not found")
+	}
+	return nil
 }

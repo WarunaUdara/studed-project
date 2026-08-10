@@ -356,12 +356,15 @@ type Mutation {
   createCourse(input: CreateCourseInput!): Course!
   updateCourse(id: ID!, input: UpdateCourseInput!): Course!
   publishCourse(id: ID!): Course!
+  deleteCourse(id: ID!): Boolean!
   createLesson(courseId: ID!, input: CreateLessonInput!): Lesson!
   updateLesson(id: ID!, input: UpdateLessonInput!): Lesson!
   publishLesson(id: ID!): Lesson!
+  deleteLesson(id: ID!): Boolean!
   createWave(lessonId: ID!, input: CreateWaveInput!): Wave!
   updateWave(id: ID!, input: UpdateWaveInput!): Wave!
   publishWave(id: ID!): Wave!
+  deleteWave(id: ID!): Boolean!
 
   submitWaveAnswers(waveId: ID!, answers: [AnswerInput!]!, submissionId: String): WaveResult!
   enrollInCourse(courseId: ID!): Course!

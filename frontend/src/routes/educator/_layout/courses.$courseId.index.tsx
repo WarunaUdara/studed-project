@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BookOpen, Loader2, Pencil, Plus, Send } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { ArrowLeft, BookOpen, Loader2, Pencil, Plus, Send, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,13 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
-import { COURSE_QUERY, CREATE_LESSON_MUTATION, PUBLISH_LESSON_MUTATION } from "@/graphql/courses";
+import {
+  COURSE_QUERY,
+  CREATE_LESSON_MUTATION,
+  DELETE_COURSE_MUTATION,
+  DELETE_LESSON_MUTATION,
+  PUBLISH_LESSON_MUTATION,
+} from "@/graphql/courses";
 import { sanitizeGraphQLError } from "@/lib/errors";
 
 interface Lesson {
@@ -43,6 +49,11 @@ function CourseDetailPage() {
   });
   const [createResult, createLesson] = useMutation(CREATE_LESSON_MUTATION);
   const [publishLessonResult, publishLesson] = useMutation(PUBLISH_LESSON_MUTATION);
+  const [deleteLessonResult, deleteLesson] = useMutation(DELETE_LESSON_MUTATION);
+  const [deleteCourseResult, deleteCourse] = useMutation(DELETE_COURSE_MUTATION);
+  const navigate = useNavigate();
+  const [deletingLessonId, setDeletingLessonId] = useState<string | null>(null);
+  const [deletingCourse, setDeletingCourse] = useState(false);
   const [publishingLessonId, setPublishingLessonId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
@@ -63,6 +74,42 @@ function CourseDetailPage() {
     } else {
       toast({ type: "success", title: "Published", message: "Lesson is now visible to students." });
       reexecuteQuery({ requestPolicy: "network-only" });
+    }
+  };
+
+  const handleDeleteLesson = async (id: string, title: string) => {
+    const confirmed = window.confirm(
+      `Delete lesson "${title}"? This will also delete all its waves. This cannot be undone.`,
+    );
+    if (!confirmed) return;
+
+    setDeletingLessonId(id);
+    const result = await deleteLesson({ id });
+    setDeletingLessonId(null);
+    if (result.error) {
+      const e = sanitizeGraphQLError(result.error);
+      toast({ type: "error", title: e.title, message: e.message });
+    } else {
+      toast({ type: "success", title: "Deleted", message: "Lesson deleted." });
+      reexecuteQuery({ requestPolicy: "network-only" });
+    }
+  };
+
+  const handleDeleteCourse = async () => {
+    const confirmed = window.confirm(
+      `Delete course "${course?.title}"? This will also delete all its lessons and waves. This cannot be undone.`,
+    );
+    if (!confirmed) return;
+
+    setDeletingCourse(true);
+    const result = await deleteCourse({ id: courseId });
+    setDeletingCourse(false);
+    if (result.error) {
+      const e = sanitizeGraphQLError(result.error);
+      toast({ type: "error", title: e.title, message: e.message });
+    } else {
+      toast({ type: "success", title: "Deleted", message: "Course deleted." });
+      navigate({ to: "/educator/courses" });
     }
   };
 
@@ -155,6 +202,20 @@ function CourseDetailPage() {
                   Edit
                 </Button>
               </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-label="Delete course"
+                disabled={deletingCourse || deleteCourseResult.fetching}
+                onClick={handleDeleteCourse}
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+              >
+                {deletingCourse ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
+              </Button>
               <span className={course.isPublished ? "text-green-600" : "text-amber-600"}>
                 {course.isPublished ? "Published" : "Draft"}
               </span>
@@ -257,6 +318,20 @@ function CourseDetailPage() {
                         )}
                       </Button>
                     )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      aria-label={`Delete lesson ${lesson.title}`}
+                      disabled={deletingLessonId === lesson.id || deleteLessonResult.fetching}
+                      onClick={() => handleDeleteLesson(lesson.id, lesson.title)}
+                      className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      {deletingLessonId === lesson.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </Button>
                   </div>
                 </div>
               ))}

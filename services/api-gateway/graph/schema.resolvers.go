@@ -145,6 +145,22 @@ func (r *mutationResolver) PublishCourse(ctx context.Context, id string) (*model
 	return r.CourseClient.PublishCourse(ctx, userCtx.UserID, id)
 }
 
+// DeleteCourse is the resolver for the deleteCourse field.
+func (r *mutationResolver) DeleteCourse(ctx context.Context, id string) (bool, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return false, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return false, err
+	}
+
+	if err := r.CourseClient.DeleteCourse(ctx, userCtx.UserID, id); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // CreateLesson is the resolver for the createLesson field.
 func (r *mutationResolver) CreateLesson(ctx context.Context, courseID string, input model.CreateLessonInput) (*model.Lesson, error) {
 	userCtx, err := requireUser(ctx)
@@ -184,6 +200,22 @@ func (r *mutationResolver) PublishLesson(ctx context.Context, id string) (*model
 	return r.CourseClient.PublishLesson(ctx, userCtx.UserID, id)
 }
 
+// DeleteLesson is the resolver for the deleteLesson field.
+func (r *mutationResolver) DeleteLesson(ctx context.Context, id string) (bool, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return false, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return false, err
+	}
+
+	if err := r.CourseClient.DeleteLesson(ctx, userCtx.UserID, id); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // CreateWave is the resolver for the createWave field.
 func (r *mutationResolver) CreateWave(ctx context.Context, lessonID string, input model.CreateWaveInput) (*model.Wave, error) {
 	userCtx, err := requireUser(ctx)
@@ -221,6 +253,22 @@ func (r *mutationResolver) PublishWave(ctx context.Context, id string) (*model.W
 	}
 
 	return r.CourseClient.PublishWave(ctx, userCtx.UserID, id)
+}
+
+// DeleteWave is the resolver for the deleteWave field.
+func (r *mutationResolver) DeleteWave(ctx context.Context, id string) (bool, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return false, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return false, err
+	}
+
+	if err := r.CourseClient.DeleteWave(ctx, userCtx.UserID, id); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // SubmitWaveAnswers is the resolver for the submitWaveAnswers field.
@@ -373,21 +421,6 @@ func (r *mutationResolver) GenerateVisualization(ctx context.Context, concept st
 		gradeValue = *grade
 	}
 	return r.AIClient.GenerateVisualization(ctx, concept, vizTypeToService(vizType), gradeValue)
-}
-
-// vizTypeToService maps the GraphQL VizType enum to the ai-service's
-// lowercase wire values (manim|3dmol|tscircuit|matterjs).
-func vizTypeToService(vt model.VizType) string {
-	switch vt {
-	case model.VizTypeThreedmol:
-		return "3dmol"
-	case model.VizTypeTscircuit:
-		return "tscircuit"
-	case model.VizTypeMatterjs:
-		return "matterjs"
-	default:
-		return "manim"
-	}
 }
 
 // AnalyzeImage is the resolver for the analyzeImage field.

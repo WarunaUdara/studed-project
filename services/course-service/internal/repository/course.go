@@ -15,6 +15,7 @@ type CourseRepository interface {
 	List(ctx context.Context, filters ListFilters) ([]*model.Course, error)
 	ListByIDs(ctx context.Context, ids []string) ([]*model.Course, error)
 	Update(ctx context.Context, course *model.Course) error
+	Delete(ctx context.Context, id string) error
 }
 
 type ListFilters struct {
@@ -111,6 +112,17 @@ func (r *gormCourseRepository) ListByIDs(ctx context.Context, ids []string) ([]*
 func (r *gormCourseRepository) Update(ctx context.Context, course *model.Course) error {
 	if err := r.db.WithContext(ctx).Save(course).Error; err != nil {
 		return fmt.Errorf("failed to update course: %w", err)
+	}
+	return nil
+}
+
+func (r *gormCourseRepository) Delete(ctx context.Context, id string) error {
+	res := r.db.WithContext(ctx).Where("id = ?", id).Delete(&model.Course{})
+	if res.Error != nil {
+		return fmt.Errorf("failed to delete course: %w", res.Error)
+	}
+	if res.RowsAffected == 0 {
+		return fmt.Errorf("course not found")
 	}
 	return nil
 }

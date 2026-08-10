@@ -141,3 +141,18 @@ func (r *Resolver) publishWaveEvents(ctx context.Context, userCtx middleware.Use
 		})
 	}
 }
+
+// vizTypeToService maps the GraphQL viz type enum to the ai-service endpoint
+// string used by the generateVisualization proxy.
+func vizTypeToService(vt model.VizType) string {
+	switch vt {
+	case model.VizTypeThreedmol:
+		return "3dmol"
+	case model.VizTypeTscircuit:
+		return "tscircuit"
+	case model.VizTypeMatterjs:
+		return "matterjs"
+	default:
+		return "manim"
+	}
+}

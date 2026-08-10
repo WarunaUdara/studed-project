@@ -16,6 +16,7 @@ type WaveRepository interface {
 	ListByLessonIDs(ctx context.Context, lessonIDs []string, publishedOnly bool) ([]*model.Wave, error)
 	Update(ctx context.Context, wave *model.Wave) error
 	GetLessonID(ctx context.Context, id string) (string, error)
+	Delete(ctx context.Context, id string) error
 }
 
 type gormWaveRepository struct {
@@ -90,4 +91,15 @@ func (r *gormWaveRepository) GetLessonID(ctx context.Context, id string) (string
 		return "", fmt.Errorf("failed to get wave: %w", err)
 	}
 	return wave.LessonID, nil
+}
+
+func (r *gormWaveRepository) Delete(ctx context.Context, id string) error {
+	res := r.db.WithContext(ctx).Where("id = ?", id).Delete(&model.Wave{})
+	if res.Error != nil {
+		return fmt.Errorf("failed to delete wave: %w", res.Error)
+	}
+	if res.RowsAffected == 0 {
+		return fmt.Errorf("wave not found")
+	}
+	return nil
 }
