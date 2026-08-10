@@ -64,7 +64,7 @@ function IndexPage() {
   return (
     <div className={cn(isSinhala && "font-sinhala")}>
       <Hero ctaLink={ctaLink} authed={isAuthenticated} />
-      <TextLoopBanner />
+      
       <StatsBar />
       <HowItWorks />
       <PlayableWaveSection />
@@ -72,6 +72,7 @@ function IndexPage() {
       <CatalogPreview />
       <AudienceSegments />
       <PricingPreview authed={isAuthenticated} />
+      <TextLoopBanner />
       <Testimonials />
       <FinalCta authed={isAuthenticated} />
       <PublicFooter />
@@ -264,19 +265,19 @@ function TextLoopBanner() {
   if (reduce) return null;
 
   return (
-    <div className="relative py-2 overflow-hidden bg-card/30 backdrop-blur-md border-y border-border/20">
+    <div className="relative py-1 overflow-hidden bg-card/30 backdrop-blur-md border-y border-border/20">
       <TextLoop
         text="StudEd ✦ Interactive STEM Learning ✦ Gamified Waves ✦ Real-Time Mastery ✦ Sri Lanka's Modern Platform ✦"
         shape="wave"
-        speed={75}
-        curviness={28}
-        fontSize={18}
+        speed={70}
+        curviness={16}
+        fontSize={16}
         fontWeight={700}
         letterSpacing={2}
         color="var(--primary)"
         ribbon
         ribbonColor="rgba(16, 185, 129, 0.08)"
-        ribbonWidth={32}
+        ribbonWidth={26}
         pauseOnHover={false}
       />
     </div>

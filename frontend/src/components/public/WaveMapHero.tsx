@@ -100,7 +100,7 @@ export function WaveMapHero() {
             aria-hidden
             animate={{ y: [0, 9, 0] }}
             transition={{ duration: 6.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-            className="absolute -right-3 bottom-28 z-20 hidden items-center gap-1.5 rounded-full glass px-3 py-1.5 text-xs font-bold text-foreground shadow-md sm:inline-flex"
+            className="absolute -right-4 top-24 z-20 hidden items-center gap-1.5 rounded-full glass px-3 py-1.5 text-xs font-bold text-foreground shadow-md sm:inline-flex"
           >
             <Trophy className="h-3.5 w-3.5 text-primary" />
             #12
