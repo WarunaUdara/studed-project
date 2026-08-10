@@ -15,6 +15,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PomodoroTimer } from "@/components/gamification/PomodoroTimer";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { StudentShell } from "@/components/layout/StudentShell";
+import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
 import { AchievementBadge, type UserAchievement } from "@/components/ui/achievement-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -24,7 +25,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
 import { ACHIEVEMENTS_QUERY, LEADERBOARD_QUERY, MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
 import { sanitizeGraphQLError } from "@/lib/errors";
-import { BADGE_DEFS, levelFromXp } from "@/lib/gamification";
+import { BADGE_DEFS, levelFromXp, privateLeaderboardName } from "@/lib/gamification";
 import {
   buildLevelTimeline,
   type CourseEnrollment,
@@ -208,7 +209,8 @@ function DashboardPage() {
           </div>
 
           {/* 2. Continue Learning — Hero Card spanning full width */}
-          <Card className="rounded-[24px] overflow-hidden">
+          <Card className="relative rounded-[24px] overflow-visible">
+            <HelmetCompanion peeking size="md" mood="neutral" className="right-8 -top-11 hidden md:flex" />
             <CardContent className="p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               {enrollmentsFetching ? (
                 <Skeleton className="h-24 w-full" />
@@ -512,7 +514,7 @@ function DashboardPage() {
                         >
                           <span className="flex items-center gap-2 font-medium">
                             <span className="text-muted-foreground w-4">#{e.rank}</span>
-                            <span className="truncate max-w-[100px]">{e.user.fullName}</span>
+                            <span className="truncate max-w-[100px]">{privateLeaderboardName(e.user.fullName)}</span>
                           </span>
                           <span className="tabular-nums text-muted-foreground">{e.totalXp} XP</span>
                         </div>

@@ -25,6 +25,7 @@ type progressRepository struct {
 }
 
 func NewProgressRepository(db *gorm.DB) ProgressRepository {
+	_ = model.AutoMigrate(db)
 	return &progressRepository{db: db}
 }
 

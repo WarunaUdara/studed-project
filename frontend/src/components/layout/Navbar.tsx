@@ -22,10 +22,10 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "z-40 transition-all",
+        "z-40 transition-all border-b border-border/20 dark:border-border/10",
         isHome
           ? "absolute top-0 left-0 right-0 bg-transparent border-none shadow-none"
-          : "sticky top-0 glass border-x-0 border-t-0 border-b border-border/40",
+          : "sticky top-0 glass",
       )}
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 sm:px-6">

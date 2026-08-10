@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "urql";
 import { z } from "zod";
+import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
@@ -22,6 +23,7 @@ export function LoginForm() {
   const navigate = useNavigate();
   const setUser = useAuthStore((s) => s.setUser);
   const [error, setError] = useState<string | null>(null);
+  const [focusedField, setFocusedField] = useState<"email" | "password" | null>(null);
 
   const {
     register,
@@ -51,17 +53,56 @@ export function LoginForm() {
     }
   };
 
+  const mascotMood = error
+    ? "sad"
+    : focusedField === "password"
+      ? "password"
+      : focusedField === "email"
+        ? "happy"
+        : "neutral";
+
+  const mascotGaze =
+    focusedField === "email" ? { x: 16, y: -4 } : { x: 0, y: 0 };
+
+  const emailReg = register("email");
+  const passReg = register("password");
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      {/* Helmet Form Companion */}
+      <div className="flex justify-center -mb-2">
+        <HelmetCompanion size="md" mood={mascotMood} gaze={mascotGaze} />
+      </div>
+
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" placeholder="you@example.com" {...register("email")} />
+        <Input
+          id="email"
+          type="email"
+          placeholder="you@example.com"
+          {...emailReg}
+          onFocus={() => setFocusedField("email")}
+          onBlur={(e) => {
+            emailReg.onBlur(e);
+            setFocusedField(null);
+          }}
+        />
         {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" placeholder="••••••••" {...register("password")} />
+        <Input
+          id="password"
+          type="password"
+          placeholder="••••••••"
+          {...passReg}
+          onFocus={() => setFocusedField("password")}
+          onBlur={(e) => {
+            passReg.onBlur(e);
+            setFocusedField(null);
+          }}
+        />
         {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
       </div>
 

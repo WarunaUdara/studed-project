@@ -30,20 +30,39 @@ func leaderboardKey(scope, courseID string, grade int32) string {
 		return fmt.Sprintf("leaderboard:course:%s", courseID)
 	case "GRADE":
 		return fmt.Sprintf("leaderboard:grade:%d", grade)
+	case "WEEKLY":
+		return "leaderboard:weekly"
+	case "FRIENDS":
+		return "leaderboard:friends"
 	default:
 		return "leaderboard:global"
 	}
 }
 
 func memberKey(userID, fullName string) string {
+	if fullName == "" || isUUID(fullName) {
+		fullName = "Student Scholar"
+	}
 	return fmt.Sprintf("%s|%s", userID, fullName)
+}
+
+func isUUID(s string) bool {
+	return len(s) == 36 && strings.Count(s, "-") == 4
 }
 
 func parseMemberKey(key string) (string, string) {
 	key = strings.TrimSpace(key)
 	parts := splitKey(key, '|')
-	if len(parts) == 2 {
-		return parts[0], strings.TrimSpace(parts[1])
+	if len(parts) >= 2 {
+		userID := parts[0]
+		name := strings.TrimSpace(parts[1])
+		if name == "" || isUUID(name) {
+			name = "Student Scholar"
+		}
+		return userID, name
+	}
+	if isUUID(key) {
+		return key, "Student Scholar"
 	}
 	return key, ""
 }

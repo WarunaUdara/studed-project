@@ -70,7 +70,9 @@ infra/gcp/terraform/tfplan
 
 # Kubernetes Secrets
 infra/k8s/secret.yaml
+# Temporary & Audit Directories
 .audit/
+.opencode/
 
 # Go build artifacts
 scripts/tools/**/rotate-*

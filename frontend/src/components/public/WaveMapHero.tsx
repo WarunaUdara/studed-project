@@ -185,21 +185,23 @@ export function WaveMapHero() {
               return (
                 <div
                   key={node.titleKey}
-                  className="absolute"
+                  className="absolute z-20"
                   style={{ left, top, transform: "translate(-50%, -50%)" }}
+                  onMouseEnter={() => setActiveIdx(i)}
+                  onMouseLeave={() => setActiveIdx(null)}
                 >
                   <motion.button
                     type="button"
                     initial={{ opacity: 0, scale: 0 }}
                     animate={{ opacity: 1, scale: 1 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                     transition={{
                       delay: 0.25 + i * 0.12,
                       type: "spring",
                       stiffness: 260,
                       damping: 18,
                     }}
-                    onMouseEnter={() => setActiveIdx(i)}
-                    onMouseLeave={() => setActiveIdx(null)}
                     onFocus={() => setActiveIdx(i)}
                     onBlur={() => setActiveIdx(null)}
                     onClick={() => {
@@ -236,7 +238,11 @@ export function WaveMapHero() {
 
                   {/* Wave tooltip card */}
                   {isActive && (
-                    <div
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.92, y: tooltipBelow ? -6 : 6 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.92, y: tooltipBelow ? -6 : 6 }}
+                      transition={{ duration: 0.15, ease: "easeOut" }}
                       role="tooltip"
                       className={cn(
                         "pointer-events-none absolute left-1/2 z-30 w-48 -translate-x-1/2 rounded-xl glass p-3 text-left shadow-lg",
@@ -262,7 +268,7 @@ export function WaveMapHero() {
                           {statusLabel(node.state)}
                         </span>
                       </div>
-                    </div>
+                    </motion.div>
                   )}
                 </div>
               );

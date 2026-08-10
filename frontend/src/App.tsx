@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { OfflineBanner } from "@/components/ui/OfflineBanner";
 import { PomodoroInitializer } from "@/components/gamification/PomodoroInitializer";
 import { Navbar } from "@/components/layout/Navbar";
+import { ThemePullCord } from "@/components/layout/ThemePullCord";
 import { ToastProvider } from "@/components/ui/Toast";
 import { useUiPrefs } from "@/stores/uiPrefs";
 
@@ -24,6 +25,7 @@ export function App() {
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <ToastProvider>
+        <ThemePullCord />
         <OfflineBanner />
         {!hideChrome && <Navbar />}
         <main>

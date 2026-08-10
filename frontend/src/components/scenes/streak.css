@@ -1,0 +1,592 @@
+/* Calm, polished occasion screens — original design, "soft & gentle" genre.
+   Warm dawn palette + a soft content-expression orb. */
+.wc {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--sc-bg, #f7f1ea);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* warm gradient that wells up from the bottom */
+.wc-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, transparent 0%, var(--sc-g1, #f3ddc8) 24%, var(--sc-g2, #dfa17c) 54%, var(--sc-g3, #b8674c) 100%);
+  will-change: transform;
+}
+
+.wc-orb-wrap {
+  position: absolute;
+  z-index: 2;
+  top: 14%;
+  left: 50%;
+  translate: -50% 0;
+  width: 150px;
+  height: 150px;
+  will-change: transform, opacity;
+}
+
+.wc-orb-breathe {
+  position: absolute;
+  inset: 0;
+  transform-origin: center;
+  animation: wc-breathe 4.2s ease-in-out infinite;
+}
+
+/* living body — a PERFECT circle (clean, minimal; life comes from the breath,
+   not a wobbling silhouette). Crisp edge: softness comes from the gradient +
+   shadows, never from defocusing. */
+.wc-orb {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 32%, var(--sc-orb-a, #fff0e2) 0%, var(--sc-orb-b, #fbc9a8) 46%, var(--sc-orb-c, #f0a983) 74%, var(--sc-orb-d, #e0916c) 96%);
+  box-shadow:
+    0 24px 52px -14px rgb(var(--sc-orb-sh, 214 128 96) / 0.55),
+    0 3px 8px -3px rgb(var(--sc-orb-sh, 214 128 96) / 0.3),
+    inset 0 -14px 30px rgb(var(--sc-orb-sh, 198 106 78) / 0.26),
+    inset 0 12px 24px rgba(255, 255, 255, 0.65),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+/* glossy crescent highlight — gives the body a soft, plush sheen */
+.wc-orb::after {
+  content: '';
+  position: absolute;
+  top: 8%;
+  left: 20%;
+  width: 32%;
+  height: 18%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0));
+  filter: blur(2px);
+  transform: rotate(-14deg);
+}
+
+/* soft halo behind the orb */
+.wc-orb-halo {
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--sc-orb-halo, rgba(246, 172, 132, 0.5)), transparent 62%);
+  filter: blur(12px);
+}
+
+.wc-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.wc-face path {
+  fill: none;
+  stroke: var(--sc-orb-face, #7c4630);
+  stroke-width: 4.6;
+  stroke-linecap: round;
+}
+
+/* whisper of blush under the eyes — warmth without turning cartoonish.
+   Kept faint: smaller, softer, and at reduced opacity so it melts into the
+   body instead of reading as smudges. */
+.wc-blush {
+  position: absolute;
+  top: 50.5%;
+  width: 10%;
+  height: 4.8%;
+  border-radius: 50%;
+  background: var(--sc-orb-blush, rgba(240, 126, 95, 0.44));
+  filter: blur(4px);
+  opacity: 0.55;
+}
+.wc-blush-l {
+  left: 22%;
+}
+.wc-blush-r {
+  right: 22%;
+}
+
+.wc-content {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 30px 36px;
+  display: flex;
+  flex-direction: column;
+}
+
+.wc-content h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.72rem;
+  font-weight: 700;
+  line-height: 1.16;
+  letter-spacing: -0.015em;
+  /* themed shadow tint — a hardcoded warm glow reads as an orange smudge on
+     the green/violet/blue palettes */
+  text-shadow: 0 1px 12px rgb(var(--sc-sh, 140 65 40) / 0.25);
+}
+
+.wc-content p {
+  margin: 12px 0 0;
+  max-width: 84%;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.wc-btn {
+  margin-top: 22px;
+  height: 52px;
+  border: 0;
+  border-radius: 26px;
+  background: linear-gradient(180deg, #ffffff 0%, color-mix(in srgb, var(--sc-accent, #c67f68) 9%, #ffffff) 100%);
+  color: var(--sc-btn-ink, #a85a44);
+  font: inherit;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  box-shadow:
+    0 14px 28px -14px rgb(var(--sc-sh, 120 55 40) / 0.55),
+    0 2px 5px rgb(var(--sc-sh, 120 55 40) / 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: scale 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.wc-btn:active {
+  scale: 0.97;
+  box-shadow:
+    0 8px 18px -12px rgb(var(--sc-sh, 120 55 40) / 0.55),
+    0 1px 3px rgb(var(--sc-sh, 120 55 40) / 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.wc-link {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 4px;
+  border: 0;
+  background: transparent;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.92);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+.wc-link:hover {
+  color: #ffffff;
+}
+.wc-link:active {
+  scale: 0.97;
+}
+
+/* breathing — a slow, even expand and contract, like a calm breath */
+@keyframes wc-breathe {
+  0%,
+  100% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(1.055) translateY(-1.5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wc-orb-breathe {
+    animation: none;
+  }
+}
+
+/* ---- Liquid glass material (aave.com/design/building-glass-for-the-web):
+   each .glass surface gets its OWN displacement map, generated at runtime from
+   its real box + border-radius (see useLiquidGlass). The map's R/G channels
+   push backdrop pixels near the rim, so the background refracts through the
+   edge like a lens; the interior stays neutral and clear. The element's own
+   translucent background acts as the tint; --lg carries the per-element filter
+   and falls back to plain blur where url() backdrop-filters are unsupported. */
+.lg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.glass {
+  position: relative;
+  isolation: isolate;
+}
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  /* keep saturate LOW: backdrop sampling is suspended during ancestor opacity
+     animations, so a strong saturate makes the glass visibly "fill in" when the
+     entrance finishes. A subtle boost keeps that switch imperceptible. */
+  -webkit-backdrop-filter: var(--lg, blur(3px) saturate(1.08));
+  backdrop-filter: var(--lg, blur(3px) saturate(1.08));
+}
+/* specular rim: the bright catch-light along the top-left edge of the glass */
+.glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.85),
+    inset -1.5px -1.5px 1px -1px rgba(255, 255, 255, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+/* ---- Streak celebration ---- */
+.st {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--sc-bg, #fdf4e3);
+  color: var(--sc-text, #8a5a20);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.st-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 16%, rgba(255, 180, 80, 0.16) 0%, transparent 34%),
+    radial-gradient(circle at 86% 42%, rgba(255, 150, 70, 0.13) 0%, transparent 36%),
+    radial-gradient(circle at 30% 88%, rgba(255, 195, 70, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 50% 30%, var(--sc-g1, #fffaf0) 0%, var(--sc-g2, #fcf0d8) 56%, var(--sc-g3, #f8e6c0) 100%);
+}
+
+/* everything but the CTA lives in one centred cluster — no dead zone */
+.st-stage {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 26px 22px 0;
+}
+
+.st-confetti {
+  position: absolute;
+  top: 36%;
+  left: 50%;
+}
+.st-confetti span {
+  position: absolute;
+}
+
+/* the icon art has built-in padding (content spans ~3..22 of the 24 viewBox),
+   so the box is oversized to keep the visible flame at true hero scale */
+.st-flame {
+  position: relative;
+  width: 118px;
+  filter: drop-shadow(0 12px 26px rgba(240, 110, 30, 0.45)) drop-shadow(0 3px 8px rgba(240, 110, 30, 0.25));
+}
+.st-flame-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+/* the shell breathes slowly... */
+.stf-shell-p {
+  transform-box: fill-box;
+  transform-origin: 50% 96%;
+  animation: st-sway 2.8s ease-in-out infinite alternate;
+}
+/* ...while the molten core flickers with a livelier multi-step dance */
+.stf-core-p {
+  transform-box: fill-box;
+  transform-origin: 50% 92%;
+  animation: stf-flicker 1.5s ease-in-out infinite;
+}
+
+@keyframes st-sway {
+  0% {
+    transform: scaleY(1) rotate(-1.1deg);
+  }
+  100% {
+    transform: scaleY(1.025) rotate(1.1deg);
+  }
+}
+
+@keyframes stf-flicker {
+  0%,
+  100% {
+    transform: scaleY(1) scaleX(1) rotate(0deg);
+  }
+  28% {
+    transform: scaleY(1.09) scaleX(0.96) rotate(-2deg);
+  }
+  55% {
+    transform: scaleY(0.96) scaleX(1.04) rotate(1.6deg);
+  }
+  78% {
+    transform: scaleY(1.06) scaleX(0.98) rotate(-1deg);
+  }
+}
+
+.st-num {
+  margin-top: 4px;
+  font-size: 3.9rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+/* the gradient clip lives ON the same span that animates: clipping text
+   through an animated (composited) child boundary blanks the digits in
+   Chromium, so fill and motion must share one element.
+   Exactly the icon core gradient — flame and count read as one system. */
+.st-num-value {
+  display: inline-block;
+  background: linear-gradient(180deg, var(--sc-val-start, #ffb340) 0%, var(--sc-val-end, #ef5a1e) 92%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* one-shot landing thump: fires exactly when the count-up settles on 7 */
+.st-num-thump {
+  animation: st-thump 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) 1.25s;
+}
+@keyframes st-thump {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  38% {
+    transform: scale(1.1);
+  }
+}
+
+.st-cap {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sc-cap-color, rgba(160, 100, 30, 0.75));
+}
+
+.st-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.st-dot {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--sc-dot-start, #ffb340), var(--sc-dot-end, #f4781f));
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  box-shadow:
+    0 4px 9px -4px rgba(224, 100, 20, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.st-dot svg {
+  width: 12px;
+  height: 12px;
+}
+/* today lands last, with a soft halo ring — a highlight, not a target */
+.st-dot.is-today {
+  box-shadow:
+    0 0 0 2px rgba(255, 253, 247, 0.98),
+    0 0 0 3.5px rgba(239, 90, 30, 0.6),
+    0 4px 9px -4px rgba(224, 100, 20, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+/* the once-only "week complete" ripple rolling off today's check */
+.st-dot-ripple {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(239, 90, 30, 0.8);
+  pointer-events: none;
+}
+.st-day-l {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--sc-day-color, rgba(122, 78, 26, 0.78));
+}
+.st-day:last-child .st-day-l {
+  color: var(--sc-day-active, #d2621f);
+}
+
+.st-content {
+  position: relative;
+  z-index: 1;
+  padding: 0 22px 36px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+/* liquid-glass week card: the checks live on a real material, not bare gradient */
+.st-week {
+  align-self: stretch;
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  padding: 11px 16px 12px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.5));
+  box-shadow: 0 14px 28px -20px rgba(190, 110, 20, 0.55);
+}
+
+/* one shared stat card, iOS-Fitness style: big gradient numerals over small-caps labels */
+.st-stats {
+  align-self: stretch;
+  display: flex;
+  align-items: stretch;
+  margin-top: 10px;
+  padding: 11px 0 10px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.42));
+  box-shadow: 0 12px 26px -20px rgba(190, 110, 20, 0.5);
+}
+.st-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.st-stat b {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(180deg, var(--sc-val-start, #ffb340) 0%, var(--sc-val-end, #ef5a1e) 92%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-variant-numeric: tabular-nums;
+}
+.st-stat span {
+  font-size: 0.6rem;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--sc-stat-label, rgba(138, 90, 32, 0.72));
+}
+.st-stat-div {
+  width: 1px;
+  margin: 4px 0;
+  background: rgba(138, 90, 32, 0.2);
+}
+
+/* warm the shared white pill to match the amber scene (wc-btn's default is
+   the Welcome screen's mauve-tinted white) */
+.st-btn {
+  color: var(--sc-btn-ink, #d2621f);
+  margin-top: 0;
+  background: linear-gradient(180deg, #fffdf8 0%, #fff3df 100%);
+  box-shadow:
+    0 14px 28px -14px rgba(220, 110, 30, 0.5),
+    0 2px 5px rgba(220, 110, 30, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+.st-btn:active {
+  box-shadow:
+    0 8px 18px -12px rgba(220, 110, 30, 0.5),
+    0 1px 3px rgba(220, 110, 30, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.st-dot.is-empty {
+  background: transparent;
+  border: 1.5px dashed var(--sc-day-color, rgba(122, 78, 26, 0.4));
+  box-shadow: none;
+}
+.st-dot-inner-empty {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sc-day-color, rgba(122, 78, 26, 0.4));
+}
+
+/* StudEd Brand Theme Overrides via --sc-* variables */
+.studed-theme-scene {
+  --sc-bg: #fdf6ec;
+  --sc-text: #2d4533;
+  --sc-g1: #fefcf8;
+  --sc-g2: #fcf1df;
+  --sc-g3: #f5dfba;
+  --sc-val-start: #f59e0b;
+  --sc-val-end: #d97706;
+  --sc-cap-color: #78350f;
+  --sc-dot-start: #f59e0b;
+  --sc-dot-end: #d97706;
+  --sc-day-color: #57534e;
+  --sc-day-active: #b45309;
+  --sc-stat-label: #78350f;
+  --sc-btn-ink: #92400e;
+}
+
+.dark .studed-theme-scene {
+  --sc-bg: #0b150f;
+  --sc-text: #f0fdf4;
+  --sc-g1: #0f2218;
+  --sc-g2: #142d20;
+  --sc-g3: #1a3a2a;
+  --sc-val-start: #fbbf24;
+  --sc-val-end: #f59e0b;
+  --sc-cap-color: #fde047;
+  --sc-dot-start: #f59e0b;
+  --sc-dot-end: #d97706;
+  --sc-day-color: #cbd5e1;
+  --sc-day-active: #fbbf24;
+  --sc-stat-label: #e2e8f0;
+  --sc-btn-ink: #064e3b;
+}
+
+.dark .studed-theme-scene .st-week,
+.dark .studed-theme-scene .st-stats {
+  background: linear-gradient(180deg, rgba(15, 28, 20, 0.85), rgba(20, 40, 29, 0.85));
+  box-shadow: 0 14px 28px -20px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Desktop Modal Host Container */
+.scene-host-modal {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 720px;
+  max-height: 90vh;
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.45);
+}
+
+@media (min-width: 640px) {
+  .scene-host-modal {
+    height: 750px;
+  }
+}

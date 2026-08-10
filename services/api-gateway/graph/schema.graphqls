@@ -304,6 +304,8 @@ enum LeaderboardScope {
   GLOBAL
   COURSE
   GRADE
+  WEEKLY
+  FRIENDS
 }
 
 type XpEvent {

@@ -1,0 +1,73 @@
+# StudEd Least-Privilege RBAC Configuration
+# Dedicated ServiceAccounts per microservice with auto-mounting disabled by default
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: studed-api-gateway-sa
+  namespace: studed
+automountServiceAccountToken: false
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: studed-auth-service-sa
+  namespace: studed
+automountServiceAccountToken: false
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: studed-course-service-sa
+  namespace: studed
+automountServiceAccountToken: false
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: studed-progress-service-sa
+  namespace: studed
+automountServiceAccountToken: false
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: studed-gamification-service-sa
+  namespace: studed
+automountServiceAccountToken: false
+
+---
+# Minimal ConfigMap Reader Role for microservices loading dynamic configs
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: config-reader
+  namespace: studed
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+    resourceNames: ["studed-config"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-studed-config
+  namespace: studed
+subjects:
+  - kind: ServiceAccount
+    name: studed-api-gateway-sa
+    namespace: studed
+  - kind: ServiceAccount
+    name: studed-course-service-sa
+    namespace: studed
+roleRef:
+  kind: Role
+  name: config-reader
+  apiGroup: rbac.authorization.k8s.io

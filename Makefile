@@ -1,8 +1,8 @@
 .PHONY: dev-up dev-down dev dev-stop launch test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint frontend-e2e go-build go-test shared-test proto-gen seed content-validate content-sync demo-public
 
 # Development
- dev-up:
-	@docker info >/dev/null 2>&1 || (echo "Docker Desktop is not running. Please start it and try again." && exit 1)
+dev-up:
+	@docker info >/dev/null 2>&1 || podman info >/dev/null 2>&1 || (echo "Container engine (Docker or Podman) is not running. Please start it and try again." && exit 1)
 	docker compose -f docker-compose.yml up --build -d --remove-orphans
 
  launch:
@@ -15,7 +15,7 @@
 	docker compose logs -f
 
  floci-gcp-up:
-	@docker info >/dev/null 2>&1 || (echo "Docker Desktop is not running. Please start it and try again." && exit 1)
+	@docker info >/dev/null 2>&1 || podman info >/dev/null 2>&1 || (echo "Container engine (Docker or Podman) is not running. Please start it and try again." && exit 1)
 	docker compose -f docker-compose.yml up -d floci-gcp
 
  floci-gcp-down:
@@ -73,7 +73,7 @@
 	@echo "Checking development environment toolchain..."
 	@go version
 	@bun --version
-	@docker --version
+	@(docker --version || podman --version) 2>/dev/null
 	@echo "Environment doctor check passed!"
 
 # The observability stack sits behind the `monitoring` compose profile so a bad
@@ -87,11 +87,11 @@
 	docker compose --profile monitoring stop prometheus grafana tempo postgres-exporter redis-exporter
 
  promtool-check:
-	@if docker info >/dev/null 2>&1; then \
+	@if docker info >/dev/null 2>&1 || podman info >/dev/null 2>&1; then \
 		docker run --rm --entrypoint promtool -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 check config /etc/prometheus/prometheus.yml && \
 		docker run --rm --entrypoint promtool -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 check rules /etc/prometheus/rules/studed.rules.yml; \
 	else \
-		echo "Skipping containerized promtool-check (Docker daemon not running)"; \
+		echo "Skipping containerized promtool-check (Container engine daemon not running)"; \
 	fi
 
  graph-refresh:

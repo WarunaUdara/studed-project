@@ -89,6 +89,11 @@ const LANGUAGE_LABELS: Record<string, string> = {
 const KNOWN_COVERS: Record<string, string> = {
   "coordinate-geometry": "/covers/coordinate-geometry.jpg",
   "g10-mathematics": "/covers/g10-mathematics.jpg",
+  "thinking-in-python": "/covers/thinking-in-python.jpg",
+  "python-10-challenges": "/covers/python-10-challenges.jpg",
+  "al-physics": "/covers/al-physics.jpg",
+  "g10-science": "/covers/g10-science.jpg",
+  "ol-english": "/covers/ol-english.jpg",
 };
 
 export const Route = createFileRoute("/courses/")({

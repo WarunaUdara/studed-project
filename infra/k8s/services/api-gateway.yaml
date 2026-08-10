@@ -15,10 +15,22 @@ spec:
       labels:
         app: api-gateway
     spec:
+      serviceAccountName: studed-api-gateway-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
       containers:
         - name: api-gateway
-          image: studed-doc-api-gateway:latest
+          image: studed-doc-api-gateway:v1.0.0
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
           envFrom:

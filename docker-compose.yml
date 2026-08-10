@@ -340,6 +340,7 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
   elasticsearch_data:
   prometheus_data:
   grafana_data:
