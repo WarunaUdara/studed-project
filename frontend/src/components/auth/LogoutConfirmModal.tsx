@@ -215,7 +215,6 @@ export function LogoutConfirmModal({
                 disabled={isSubmitting}
                 onClick={(e) => {
                   e.stopPropagation();
-                  playClickSound();
                   onConfirm();
                 }}
                 onMouseEnter={handleHoverConfirm}

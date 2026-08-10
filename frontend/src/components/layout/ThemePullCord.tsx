@@ -12,10 +12,12 @@ export function ThemePullCord() {
       pulled={theme === "dark"}
       ariaLabel="Toggle dark and light theme"
       config={{
-        gravity: 1250,
-        damping: 0.94,
-        iterations: 20,
-        stretchMax: 26,
+        gravity: 1350,
+        damping: 0.95,
+        iterations: 25,
+        stretchMax: 65,
+        stretchToggle: 25,
+        maxVelocity: 25,
       }}
     />
   );

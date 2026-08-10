@@ -36,6 +36,7 @@ import { ScrollXpMeter } from "@/components/public/ScrollXpMeter";
 import { WaveMapHero } from "@/components/public/WaveMapHero";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/Card";
+import { TextLoop } from "@/components/ui/TextLoop";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { FEATURED_COURSES, type FeaturedCourse } from "@/lib/demoData";
 import { type ProficiencyLevel, proficiencyMeta } from "@/lib/gamification";
@@ -62,6 +63,7 @@ function IndexPage() {
   return (
     <div className={cn(isSinhala && "font-sinhala")}>
       <Hero ctaLink={ctaLink} authed={isAuthenticated} />
+      <TextLoopBanner />
       <StatsBar />
       <HowItWorks />
       <PlayableWaveSection />
@@ -239,6 +241,32 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
         </motion.div>
       )}
     </section>
+  );
+}
+
+/* ------------------------------ Text Loop Ribbon --------------------------- */
+
+function TextLoopBanner() {
+  const reduce = useReducedMotion();
+  if (reduce) return null;
+
+  return (
+    <div className="relative py-4 overflow-hidden bg-card/30 backdrop-blur-md border-y border-border/20">
+      <TextLoop
+        text="StudEd ✦ Interactive STEM Learning ✦ Gamified Waves ✦ Real-Time Mastery ✦ Sri Lanka's Modern Platform ✦"
+        shape="wave"
+        speed={85}
+        curviness={70}
+        fontSize={36}
+        fontWeight={800}
+        letterSpacing={3}
+        color="var(--primary)"
+        ribbon
+        ribbonColor="rgba(16, 185, 129, 0.08)"
+        ribbonWidth={72}
+        pauseOnHover
+      />
+    </div>
   );
 }
 

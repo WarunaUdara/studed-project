@@ -132,8 +132,8 @@
 
     /* PullCord interactive theme toggle variables */
     --pullcord-top: 0px;
-    --pullcord-right: 2.5rem;
-    --pullcord-z: 100;
+    --pullcord-right: 4.5rem;
+    --pullcord-z: 1000;
     --pullcord-ink: rgba(30, 41, 59, 0.45);
   }
 
