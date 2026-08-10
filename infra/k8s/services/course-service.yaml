@@ -15,10 +15,22 @@ spec:
       labels:
         app: course-service
     spec:
+      serviceAccountName: studed-course-service-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
       containers:
         - name: course-service
-          image: studed-doc-course-service:latest
+          image: studed-doc-course-service:v1.0.0
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8083
             - containerPort: 8084
@@ -34,6 +46,19 @@ spec:
             limits:
               memory: "48Mi"
               cpu: "100m"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8084
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8084
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
 ---
 apiVersion: v1
 kind: Service
