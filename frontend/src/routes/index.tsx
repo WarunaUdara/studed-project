@@ -90,8 +90,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage:
-              "radial-gradient(oklch(0.484 0.164 145 / 0.07) 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(oklch(0.484 0.164 145 / 0.07) 1px, transparent 1px)",
             backgroundSize: "28px 28px",
             maskImage: "linear-gradient(to bottom, black 0%, transparent 80%)",
             WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 80%)",
@@ -153,7 +152,10 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
           >
             {authed ? (
               <Link to={ctaLink}>
-                <Button size="lg" className="h-11 gap-2 rounded-full px-6 text-sm font-semibold shadow-md">
+                <Button
+                  size="lg"
+                  className="h-11 gap-2 rounded-full px-6 text-sm font-semibold shadow-md"
+                >
                   <Zap className="h-4 w-4" />
                   {t("ctaPortal")}
                 </Button>
@@ -161,13 +163,20 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             ) : (
               <>
                 <Link to="/register">
-                  <Button size="lg" className="h-11 gap-2 rounded-full px-6 text-sm font-semibold shadow-md">
+                  <Button
+                    size="lg"
+                    className="h-11 gap-2 rounded-full px-6 text-sm font-semibold shadow-md"
+                  >
                     <Zap className="h-4 w-4" />
                     {t("ctaGetStarted")}
                   </Button>
                 </Link>
                 <Link to="/courses">
-                  <Button size="lg" variant="outline" className="h-11 gap-2 rounded-full border-border/80 bg-card/80 px-6 text-sm font-semibold shadow-xs hover:bg-card">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="h-11 gap-2 rounded-full border-border/80 bg-card/80 px-6 text-sm font-semibold shadow-xs hover:bg-card"
+                  >
                     <Compass className="h-4 w-4 text-muted-foreground" />
                     {t("ctaBrowseCourses")}
                   </Button>
@@ -186,7 +195,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
               {["a", "b", "c", "d"].map((k) => (
                 <span
                   key={k}
-                  className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary/50 to-purple/50 text-[10px] font-bold text-white ring-2 ring-background"
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary to-purple text-[10px] font-bold text-white ring-2 ring-background"
                 >
                   {k.toUpperCase()}
                 </span>
