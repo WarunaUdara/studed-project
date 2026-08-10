@@ -49,8 +49,8 @@ func TestGeminiGenerateJSON(t *testing.T) {
 	if gotBody.GenerationConfig.ResponseMimeType != "application/json" {
 		t.Errorf("response mime type = %q, want application/json", gotBody.GenerationConfig.ResponseMimeType)
 	}
-	if gotBody.GenerationConfig.Temperature != 0.4 || gotBody.GenerationConfig.MaxOutputTokens != 2048 {
-		t.Errorf("temperature/max tokens = %v/%d, want 0.4/2048",
+	if gotBody.GenerationConfig.Temperature != 0.4 || gotBody.GenerationConfig.MaxOutputTokens != 8192 {
+		t.Errorf("temperature/max tokens = %v/%d, want 0.4/8192",
 			gotBody.GenerationConfig.Temperature, gotBody.GenerationConfig.MaxOutputTokens)
 	}
 }

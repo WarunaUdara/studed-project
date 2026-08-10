@@ -59,8 +59,8 @@ func TestOpenCodeGenerateJSON(t *testing.T) {
 	if gotBody.ResponseFormat == nil || gotBody.ResponseFormat.Type != "json_object" {
 		t.Errorf("response_format = %+v, want json_object", gotBody.ResponseFormat)
 	}
-	if gotBody.Temperature != 0.4 || gotBody.MaxTokens != 2048 {
-		t.Errorf("temperature/max_tokens = %v/%d, want 0.4/2048", gotBody.Temperature, gotBody.MaxTokens)
+	if gotBody.Temperature != 0.4 || gotBody.MaxTokens != 8192 {
+		t.Errorf("temperature/max_tokens = %v/%d, want 0.4/8192", gotBody.Temperature, gotBody.MaxTokens)
 	}
 	if len(gotBody.Messages) != 2 {
 		t.Fatalf("messages = %+v", gotBody.Messages)
