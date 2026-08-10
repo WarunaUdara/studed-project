@@ -6,6 +6,7 @@ import { MatterPhysicsBlock } from "@/components/learn/visualizations/MatterPhys
 import { Mol3DBlock } from "@/components/learn/visualizations/Mol3DBlock";
 import { TsCircuitBlock } from "@/components/learn/visualizations/TsCircuitBlock";
 import { MathFormula } from "@/components/ui/MathFormula";
+import { MarkdownContent } from "@/components/ui/MarkdownContent";
 
 interface LearnBlock {
   id: string;
@@ -24,7 +25,7 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
       return <h3 className="text-xl font-semibold text-foreground font-serif">{block.content}</h3>;
 
     case "text":
-      return <p className="whitespace-pre-wrap text-foreground leading-relaxed">{block.content}</p>;
+      return <MarkdownContent content={block.content} className="text-foreground leading-relaxed" />;
 
     case "image":
       return (
@@ -72,6 +73,16 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
         </div>
       );
 
+    case "example":
+      return (
+        <div className="rounded-2xl border bg-card p-4 shadow-sm">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+            Example
+          </p>
+          <MarkdownContent content={block.content} className="text-foreground leading-relaxed" />
+        </div>
+      );
+
     /* ---------------- Submodule Visualization Block Renderers ---------------- */
 
     case "coordinate_plane":
@@ -112,7 +123,7 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
       return (
         <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 shadow-sm flex items-start gap-3">
           <Info className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-          <div className="text-sm text-foreground leading-relaxed">{block.content}</div>
+          <MarkdownContent content={block.content} className="text-sm text-foreground leading-relaxed" />
         </div>
       );
 

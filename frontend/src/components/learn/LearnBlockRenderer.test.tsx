@@ -13,7 +13,9 @@ describe("LearnBlockRenderer", () => {
     const el = LearnBlockRenderer({
       block: { id: "2", type: "text", content: "Calculus study content" },
     });
-    expect(el.props.children).toBe("Calculus study content");
+    // Text blocks render markdown (agent output often contains markdown).
+    expect(el.type.name).toBe("MarkdownContent");
+    expect(el.props.content).toBe("Calculus study content");
   });
 
   it("renders Math-To-Manim animation block element", () => {
@@ -47,5 +49,14 @@ describe("LearnBlockRenderer", () => {
       block: { id: "6", type: "physics", content: "2D Collision demo" },
     });
     expect(el.props.content).toBe("2D Collision demo");
+  });
+
+  it("renders callout block content as markdown", () => {
+    const el = LearnBlockRenderer({
+      block: { id: "7", type: "callout", content: "Remember: **mass attracts mass**" },
+    });
+    const md = el.props.children.find((c: { type?: { name?: string } }) => c?.type?.name === "MarkdownContent");
+    expect(md).toBeTruthy();
+    expect(md.props.content).toBe("Remember: **mass attracts mass**");
   });
 });

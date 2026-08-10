@@ -1,5 +1,6 @@
 import type { Config, Data } from "@puckeditor/core";
 import { MathFormula } from "@/components/ui/MathFormula";
+import { MarkdownContent } from "@/components/ui/MarkdownContent";
 import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
 import { Mol3DBlock } from "@/components/learn/visualizations/Mol3DBlock";
 import { TsCircuitBlock } from "@/components/learn/visualizations/TsCircuitBlock";
@@ -140,7 +141,10 @@ export const puckConfig: Config = {
       render: ({ content }) => (
         <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
           <LearnBadge label="Text" />
-          <p className="whitespace-pre-wrap leading-relaxed">{content || "No content"}</p>
+          <MarkdownContent
+            content={content || "No content"}
+            className="text-[0.95rem] leading-relaxed"
+          />
         </div>
       ),
     },
@@ -225,7 +229,7 @@ export const puckConfig: Config = {
       render: ({ content }) => (
         <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 text-card-foreground shadow-sm">
           <LearnBadge label="Callout" />
-          <p className="whitespace-pre-wrap leading-relaxed">{content || "No content"}</p>
+          <MarkdownContent content={content || "No content"} className="leading-relaxed" />
         </div>
       ),
     },
@@ -240,7 +244,7 @@ export const puckConfig: Config = {
       render: ({ content }) => (
         <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
           <LearnBadge label="Example" />
-          <p className="whitespace-pre-wrap leading-relaxed">{content || "No content"}</p>
+          <MarkdownContent content={content || "No content"} className="leading-relaxed" />
         </div>
       ),
     },
