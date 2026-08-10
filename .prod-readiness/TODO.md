@@ -46,6 +46,25 @@ Ordered by value. Each item is atomic and independently verifiable.
 - [x] **VIS-17 — Rebalance the dashboard grid.** Moved the Gamification Hub into
   the main column: columns now end within ~60px of each other (was ~750px
   apart) and page height dropped 4210px to 3416px with no content removed.
+- [x] **VIS-22 — Fix `--muted-foreground`.** Chroma was 0.145 against `--primary`
+  0.164, so every caption in the app rendered as near-brand green and the
+  primary/secondary text hierarchy inverted. Now 0.022 in both themes.
+- [x] **VIS-23 — Remove the educator sidebar's duplicate logout** (same pattern
+  as VIS-16, in `EducatorShell`).
+- [x] **VIS-24 — Replace off-palette colours on the educator dashboard.**
+  `amber-500` to `--warning`, `blue-500` to `--info`, XP figure to `--gold`;
+  8 of the 185 VIS-05 raw-palette usages cleared.
+- [ ] **VIS-25 — Fix the "Completion Rate" metric.** It computes published/total
+  *courses*, so the demo reads 100% while all 24 courses contain 0 waves and the
+  neighbouring card reads "0 XP across 0 published waves". "Content Health" has
+  the same flaw. Rename it or compute `publishedWaves / totalWaves` (the loop at
+  `educator/_layout/index.tsx:61-75` already gathers both).
+- [ ] **VIS-26 — Delete or repurpose the educator "Quick Actions" card.** All
+  three entries duplicate on-screen navigation, and "Dashboard" links to the
+  current page.
+- [ ] **VIS-27 — Unify publish-status treatment.** Dashboard uses "Live"/"Draft"
+  pill badges; course detail uses plain "Published" text. One component, one
+  vocabulary.
 - [ ] **VIS-19 — Resolve duplicated navigation.** Three destinations appear in
   both navbar and sidebar with inconsistent labels ("Courses" vs "My Courses").
   Make the sidebar primary on authenticated routes.

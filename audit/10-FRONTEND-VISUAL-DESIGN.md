@@ -4,12 +4,16 @@
 screenshot capture at 2x DPR across `1440x900` / `390x844`, light and dark, plus
 computed-style extraction from the live DOM.
 
-**21 findings · 0 Critical · 4 High · 11 Medium · 6 Low** — 7 fixed.
+**27 findings · 0 Critical · 5 High · 15 Medium · 7 Low** — 11 fixed.
 
-> **Update, same day — authenticated surface now covered.** The original pass
+> **Update 1, same day — authenticated surface now covered.** The original pass
 > could only reach public routes. The backend stack was subsequently brought up
 > and the protected surface audited for the first time; findings VIS-14 to
 > VIS-21 come from that pass. VIS-09 (the coverage gap) is closed.
+>
+> **Update 2 — educator portal.** VIS-22 to VIS-27 come from auditing
+> `/educator/*`. VIS-22 is the most consequential colour finding in this
+> document and affects every screen in the product, student and educator alike.
 
 ---
 
@@ -352,6 +356,131 @@ target.
 
 **Fixed** — `w-full sm:w-auto sm:min-w-56`: still full-width on mobile where that
 is correct, intrinsically sized above `sm`.
+
+---
+
+## 🟠 VIS-22 — `--muted-foreground` is not muted: all secondary text renders as brand green *(fixed)*
+
+**Severity: High · `frontend/src/styles/index.css:79,163` · affects every screen**
+
+The single most consequential colour defect in the codebase, and the reason the
+whole product read as a flat green wash:
+
+```
+--muted-foreground: oklch(0.417 0.145 145)   /* chroma 0.145 */
+--primary:          oklch(0.484 0.164 145)   /* chroma 0.164 */
+--foreground:       oklch(0.178 0.029 145)   /* chroma 0.029 */
+```
+
+Secondary text was **88% as saturated as the primary brand colour and 5x more
+saturated than primary body text**. Every caption, description, stat sublabel,
+metadata line, and placeholder in the app rendered as a strong green — including
+`"Manage your courses, lessons, and track content performance."`, `"0 lessons ·
+0 waves · 0 published"`, `"Slug: g10-mathematics"`, and `"You're 55 XP from
+Level 6"`.
+
+Two consequences:
+
+1. **The text hierarchy inverted.** Secondary text was *more* chromatic than
+   primary text, so the eye was pulled to captions over content.
+2. **Non-interactive text looked interactive.** Static metadata was rendered in
+   very nearly the link/primary colour, so nothing signalled what was clickable.
+
+Dark mode had the same problem (`oklch(0.843 0.107 145)`).
+
+**Fixed** — `oklch(0.44 0.022 145)` light, `oklch(0.78 0.022 145)` dark. Chroma
+now sits alongside `--foreground` (0.029) rather than `--primary` (0.164), so
+secondary text reads as a lighter grade of the same ink with only a trace of
+forest hue. Contrast improves in light mode (L 0.44 on L 0.988 ≈ 7.8:1). Green
+is now reserved for genuinely interactive and brand elements.
+
+This one token change visibly improved every screen in the application.
+
+---
+
+## ✅ VIS-23 — Educator sidebar duplicated logout *(fixed)*
+
+**Severity: Medium · `frontend/src/components/layout/EducatorShell.tsx:131-135`**
+
+`EducatorShell` carried the same duplication VIS-16 fixed in `StudentShell`: a
+sidebar "Log out" alongside the Navbar's. **Fixed** the same way — the sidebar is
+now navigation and identity only.
+
+---
+
+## ✅ VIS-24 — Educator dashboard used off-palette raw Tailwind colours *(fixed)*
+
+**Severity: Medium · `frontend/src/routes/educator/_layout/index.tsx`**
+
+Two of the four stat cards used tokens (`text-primary`, `text-success`) and two
+used raw palette (`text-amber-500`, `text-blue-500`), plus three more `amber-500`
+usages further down. The blue "Completion Rate" icon was conspicuously foreign
+against the emerald theme, especially in dark mode.
+
+**Fixed** — mapped to existing tokens: `amber-500` → `--warning`, `blue-500` →
+`--info`, and the XP figure → `--gold`. This file held 8 of the 185 raw-palette
+usages catalogued in VIS-05; it is now clean.
+
+---
+
+## 🟡 VIS-25 — "Completion Rate" measures the wrong thing
+
+**Severity: Medium · `frontend/src/routes/educator/_layout/index.tsx:108-116`**
+
+```ts
+`${Math.round((stats.published.length / courses.length) * 100)}%`
+```
+
+The metric is *published courses / total courses*, but it is labelled
+"Completion Rate" with the sublabel "Published / total". On the seeded demo it
+reads **100%** while all 24 courses contain 0 lessons and 0 waves — and the card
+directly beside it reads "Total XP available: 0 XP across 0 published waves".
+
+"Content Health" has the same flaw: a full green "Published Courses 24/24" bar
+for courses with no content.
+
+An educator is told their content is complete and healthy when none of it
+exists. This is the opposite of what the dashboard is for.
+
+**Fix.** Either rename to "Published Rate", or compute genuine completeness from
+`publishedWaves / totalWaves` — the loop at lines 61-75 already gathers both.
+Flag courses with zero waves explicitly, since they are the actionable case.
+
+---
+
+## 🟡 VIS-26 — The "Quick Actions" card is entirely redundant
+
+**Severity: Medium · `frontend/src/routes/educator/_layout/index.tsx`**
+
+All three entries duplicate navigation already on screen:
+
+| Quick Action | Already available as |
+| :--- | :--- |
+| New Course | Primary header button (top right) |
+| Manage Courses | Header "My Courses" button **and** sidebar "My Courses" |
+| Dashboard | The page the user is currently on |
+
+The third is a link to the current page. The card occupies prime right-rail
+space and adds nothing.
+
+**Fix.** Delete it, or replace with genuinely useful shortcuts — resume the last
+edited draft, jump to a course missing waves, or view the newest enrolments.
+
+---
+
+## 🔵 VIS-27 — Publish status has two different visual treatments
+
+**Severity: Low · educator routes**
+
+The dashboard course list renders status as a pill badge ("Live" / "Draft"),
+while the course detail page renders "Published" as plain green body text, in
+two places (course header and each lesson row). Same concept, two treatments,
+neither cross-referencing the other's vocabulary — "Live" versus "Published".
+
+The course detail page also ends at ~55% of viewport height with no
+short-content treatment, the same issue as VIS-18.
+
+**Fix.** One status component with one vocabulary, used everywhere.
 
 ---
 
