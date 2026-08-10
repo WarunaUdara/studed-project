@@ -4,9 +4,10 @@
  *
  * Usage: bun run e2e/tools/shoot.ts [tag]
  */
-import { chromium, type Page } from "@playwright/test";
+
 import { mkdirSync } from "node:fs";
 import path from "node:path";
+import { chromium, type Page } from "@playwright/test";
 
 const BASE = process.env.SHOOT_BASE_URL ?? "http://localhost:5173";
 const OUT = path.resolve(import.meta.dirname, "../../.audit-shots", process.argv[2] ?? "base");
@@ -25,15 +26,25 @@ const ROUTES = [
 
 const THEMES = ["light", "dark"] as const;
 
+/**
+ * Landing sections reveal via framer-motion `whileInView`, which fires from an
+ * IntersectionObserver against the real viewport. A fullPage screenshot alone
+ * never triggers them, so scroll the page in viewport-sized steps first; every
+ * reveal uses `viewport={{ once: true }}`, so they stay visible afterwards.
+ */
 async function settle(page: Page): Promise<void> {
   await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {});
-  // Freeze entrance animations so shots are deterministic.
-  await page.evaluate(() => {
-    window.scrollTo(0, document.body.scrollHeight);
-  });
-  await page.waitForTimeout(900);
+  const height = await page.evaluate(() => window.innerHeight);
+  const total = await page.evaluate(() => document.body.scrollHeight);
+  for (let y = 0; y < total; y += Math.floor(height * 0.75)) {
+    await page.evaluate((to) => window.scrollTo(0, to), y);
+    await page.waitForTimeout(220);
+  }
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.waitForTimeout(500);
   await page.evaluate(() => window.scrollTo(0, 0));
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(700);
+  await page.evaluate(() => document.fonts.ready);
 }
 
 async function main(): Promise<void> {
@@ -66,7 +77,9 @@ async function main(): Promise<void> {
       page.on("console", (m) => {
         if (m.type() === "error") consoleIssues.push(`[${vp.name}/${theme}] ${m.text()}`);
       });
-      page.on("pageerror", (e) => consoleIssues.push(`[${vp.name}/${theme}] PAGEERROR ${e.message}`));
+      page.on("pageerror", (e) =>
+        consoleIssues.push(`[${vp.name}/${theme}] PAGEERROR ${e.message}`),
+      );
 
       for (const route of ROUTES) {
         await page.goto(`${BASE}${route.url}`, { waitUntil: "domcontentloaded", timeout: 30000 });
