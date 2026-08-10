@@ -35,6 +35,16 @@ This report is automatically updated by autonomous development agents during eve
   - Trace context is propagated but no OTel SDK exporter is initialized in service mains yet.
 - **Verification Status**: `go build` + `go test -race ./...` pass for auth-service and course-service; full `make ci-local` re-run below.
 
+### Iteration 4 — 2026-08-10
+- **Scanned Dimension**: Observability & Telemetry (closing iteration-2 residual finding)
+- **Findings**:
+  1. Trace context was propagated between services but no OTel SDK was initialized, so spans were silently dropped. Added `shared/go/otel` (global `TracerProvider` backed by a `stdouttrace` exporter, `service.name`/`deployment.environment` resource attributes, parent-based trace-id-ratio sampler) and wired it into api-gateway, auth, course, gamification, and progress mains, flushing on graceful shutdown.
+  2. Documented the inter-service communication contract (traceparent/baggage/service-token headers, trace-first interceptor order, fail-closed semantics) in `docs/ARCHITECTURE.md`.
+- **Residual Findings**:
+  - No OTLP collector / tracing backend is provisioned yet; spans export to stdout. Switch to `OTEL_EXPORTER_OTLP_ENDPOINT` when Grafana Tempo / Jaeger is available.
+  - Production resource detection should enrich attributes (service.version, k8s namespace) when deployed.
+- **Verification Status**: `make ci-local` passed 100%; `shared/go/otel` suite added (2 tests).
+
 ---
 
 ## 🛡️ Attack Surface & Flaw Matrix

@@ -16,10 +16,12 @@ This TODO list is maintained dynamically by long-running agents during autonomou
 - [x] Add OpenTelemetry trace propagation context across gRPC client interceptors in `shared/go/grpcauth` (client + server trace interceptors wired into api-gateway, auth, course, gamification, progress).
 - [x] Enforce `grpcauth.UnaryServerInterceptor` on `auth-service` and `course-service` gRPC servers (token interceptor chained after trace extractor; `SERVICE_TOKEN` added to configs).
 - [x] Add a shared `go-test` target to `Makefile` that runs every Go microservice test suite in one command (already present; iterates `services/*` with `go.mod`, verified working).
+- [x] Add OpenTelemetry SDK initialization/export to service mains so propagated spans are exported (new `shared/go/otel` package with stdout exporter, wired into api-gateway, auth, course, gamification, progress).
+- [x] Document the gRPC trace propagation + token auth contract in `docs/ARCHITECTURE.md` (traceparent header, interceptor order, SERVICE_TOKEN requirement).
 
 ---
 
 ## 🟡 Open Backlog Tasks
-- [ ] Add OpenTelemetry SDK initialization/export to service mains so propagated spans are exported (only context propagation is wired today).
 - [ ] Run `govulncheck` + `bun audit` on the next iteration and refresh dependency pins.
-- [ ] Document the gRPC trace propagation + token auth contract in `docs/ARCHITECTURE.md` (traceparent header, interceptor order, SERVICE_TOKEN requirement).
+- [ ] Add an OTLP collector or switch the stdout exporter to `OTEL_EXPORTER_OTLP_ENDPOINT` when the tracing backend is provisioned (Grafana Tempo / Jaeger).
+- [ ] Ensure all OTel resource attributes (service.version, host, k8s namespace) are populated in production resource detection.

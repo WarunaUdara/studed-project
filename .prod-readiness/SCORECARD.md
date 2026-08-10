@@ -2,7 +2,7 @@
 
 **Target Repo**: StudEd (`github.com/WarunaUdara/studed-project`)  
 **Last Evaluated**: 2026-08-10  
-**Overall Readiness Score**: **9.6 / 10**
+**Overall Readiness Score**: **9.7 / 10**
 
 ---
 
@@ -14,7 +14,7 @@
 | **2. API & Contract Integrity** | 9.5 / 10 | 🟢 EXCELLENT | GraphQL schema & resolvers synchronized (`transport.GET`, `POST`, `MultipartForm` active). gRPC protobuf generated and in sync. |
 | **3. Infrastructure & IaC** | 9.0 / 10 | 🟢 EXCELLENT | OpenTofu module validation passing (`tofu plan`), floci-gcp local emulator integrated, 15s SIGTERM graceful drain active on GKE. |
 | **4. Data & Storage Resilience** | 9.5 / 10 | 🟢 EXCELLENT | PostgreSQL schema seeded, Redis caching active, **fail-closed rate limiting with exponential-backoff reconnect** (health monitor flips availability flag), local loopback rate-limit bypass active. |
-| **5. Observability & Telemetry** | 9.5 / 10 | 🟢 EXCELLENT | Prometheus scraping (`/metrics`), Grafana dashboards provisioned, container healthchecks configured, **W3C trace context propagated across all gRPC service boundaries** (`shared/go/grpcauth`). Gap: no OTel SDK exporter initialized in service mains. |
+| **5. Observability & Telemetry** | 9.7 / 10 | 🟢 EXCELLENT | Prometheus scraping (`/metrics`), Grafana dashboards provisioned, container healthchecks configured, **W3C trace context propagated across all gRPC service boundaries** (`shared/go/grpcauth`) and **exported via a shared OTel SDK (`shared/go/otel`, stdout exporter)** initialized in all 5 service mains. Gap: no OTLP collector/tracing backend provisioned yet. |
 | **6. Build & CI/CD Pipeline** | 9.5 / 10 | 🟢 EXCELLENT | `make ci-local` passing 100%, zero `govulncheck` vulnerabilities, `bun audit` clean. |
 | **7. Frontend UX & Resilience** | 9.5 / 10 | 🟢 EXCELLENT | React 19 SPA, OKLCH color design system, Web Audio API sound synthesis, 2D interactive Coordinate Plane engine active. |
 
