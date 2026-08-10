@@ -1,9 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
-<<<<<<< HEAD
+
 import { useState } from "react";
-=======
-import { LogOut } from "lucide-react";
->>>>>>> 4aed270 (feat(frontend): Notion-style collapsible educator sidebar)
 import { useMutation } from "urql";
 import { LogoutConfirmModal } from "@/components/auth/LogoutConfirmModal";
 import { Button } from "@/components/ui/button";
@@ -40,25 +37,6 @@ export function LogoutButton({
   };
 
   return (
-<<<<<<< HEAD
-    <>
-      <Button
-        variant={variant}
-        size={size}
-        className={className}
-        onClick={() => setShowConfirm(true)}
-      >
-        Log out
-      </Button>
-
-      <LogoutConfirmModal
-        isOpen={showConfirm}
-        onClose={() => setShowConfirm(false)}
-        onConfirm={handleLogout}
-        isSubmitting={isSubmitting}
-      />
-    </>
-=======
     <Button
       variant={variant}
       size={size}
@@ -69,6 +47,5 @@ export function LogoutButton({
     >
       {compact ? <LogOut className="h-4 w-4" /> : "Log out"}
     </Button>
->>>>>>> 4aed270 (feat(frontend): Notion-style collapsible educator sidebar)
   );
 }
