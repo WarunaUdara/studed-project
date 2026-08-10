@@ -57,6 +57,18 @@ This report is automatically updated by autonomous development agents during eve
   - Local dev machine still runs Go 1.26.1 (Docker/CI are at 1.26.2); upgrade recommended.
 - **Verification Status**: `make ci-local` passed 100%; `bun run typecheck` + Vitest (47 tests) pass.
 
+### Iteration 6 — 2026-08-10
+- **Scanned Dimension**: Infrastructure & IaC
+- **Findings**:
+  1. Only `api-gateway` had a probe in the k3s `infra/k8s/services/` manifests. auth, course, gamification, progress, and frontend deployments had none, so the cluster would silently route traffic to unhealthy pods and never restart wedged containers.
+  2. The GKE primary node pool had no autoscaling — fixed node count only (idle-scout could scale to 0 but there was no upper bound for burst traffic).
+- **Remediation**:
+  1. Added readiness + liveness HTTP probes (`/health` on each service's HTTP port, `/` for the static frontend) to all 5 deployments.
+  2. Enabled `autoscaling { min_node_count = var.node_min_count, max_node_count = var.node_max_count }` on the primary node pool (1–3 default).
+- **Residual Findings**:
+  - No HorizontalPodAutoscaler manifests for high-traffic deployments yet (api-gateway, progress, gamification).
+- **Verification Status**: `tofu validate` + `tofu plan` pass; Kyverno 24/24 rules pass; `make ci-local` passed 100%.
+
 ---
 
 ## 🛡️ Attack Surface & Flaw Matrix
