@@ -3,6 +3,8 @@ import {
   Bot,
   Brain,
   Check,
+  ChevronDown,
+  ChevronRight,
   ImagePlus,
   Loader2,
   ScanText,
@@ -251,19 +253,37 @@ export function AIAssistantPanel({
 
             {m.role === "assistant" && (
               <>
-                {/* Model thoughts (reasoning) — collapsible, shown partially */}
+                {/* Model thoughts (reasoning) — agentic-style: a distinct,
+                    muted, italic block that reads like Claude/Codex thinking
+                    (NOT a chat bubble). Collapsed by default with a chevron;
+                    expands inline. */}
                 {m.thinking && (
-                  <div className="ml-9">
+                  <div className="ml-9 mt-1.5">
                     <button
                       onClick={() => toggleThoughts(i)}
-                      className="flex items-center gap-1.5 rounded-md px-1 py-0.5 text-[11px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                      className="group flex items-center gap-1 rounded-md px-1.5 py-1 text-[11px] font-medium text-muted-foreground hover:bg-muted/70 hover:text-foreground"
                     >
-                      <Brain className="h-3 w-3" />
-                      {expandedThoughts.has(i) ? "Hide thoughts" : "View thoughts"}
+                      <Brain className="h-3 w-3 text-primary/70" />
+                      {expandedThoughts.has(i) ? (
+                        <ChevronDown className="h-3 w-3 transition-transform" />
+                      ) : (
+                        <ChevronRight className="h-3 w-3 transition-transform" />
+                      )}
+                      Thought
+                      {!expandedThoughts.has(i) && (
+                        <span className="ml-1 max-w-[220px] truncate italic text-muted-foreground/70">
+                          {m.thinking.replace(/\s+/g, " ").slice(0, 80)}…
+                        </span>
+                      )}
                     </button>
                     {expandedThoughts.has(i) && (
-                      <div className="mt-1 rounded-lg border-l-2 border-primary/40 bg-muted/30 p-2 text-xs leading-relaxed text-muted-foreground whitespace-pre-wrap">
-                        {m.thinking}
+                      <div className="mt-1.5 rounded-md border border-dashed border-muted-foreground/25 bg-muted/40 px-3 py-2.5">
+                        <p className="mb-1.5 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                          <Brain className="h-3 w-3" /> Model reasoning
+                        </p>
+                        <p className="whitespace-pre-wrap text-xs italic leading-relaxed text-muted-foreground">
+                          {m.thinking}
+                        </p>
                       </div>
                     )}
                   </div>

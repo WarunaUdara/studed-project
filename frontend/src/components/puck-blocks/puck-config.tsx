@@ -4,6 +4,7 @@ import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
 import { Mol3DBlock } from "@/components/learn/visualizations/Mol3DBlock";
 import { TsCircuitBlock } from "@/components/learn/visualizations/TsCircuitBlock";
 import { MatterPhysicsBlock } from "@/components/learn/visualizations/MatterPhysicsBlock";
+import { NEWTONS_LAWS } from "@/components/learn/visualizations/newtonsLaws";
 
 // ---------------------------------------------------------------------------
 // Block props
@@ -326,6 +327,113 @@ export const puckConfig: Config = {
       },
     },
 
+    // Physics simulation (Matter.js) — first-class palette block.
+    PhysicsSimBlock: {
+      fields: {
+        scenarioType: {
+          type: "select",
+          label: "Physics Scenario",
+          options: [
+            { value: "pendulum", label: "Pendulum" },
+            { value: "collision", label: "Collision" },
+            { value: "projectile", label: "Projectile Motion" },
+            { value: "spring", label: "Spring" },
+            { value: "newtons_cradle", label: "Newton's Cradle" },
+            { value: "newtons_laws", label: "Newton's Three Laws" },
+            { value: "inclined_plane", label: "Inclined Plane" },
+            { value: "circular_motion", label: "Circular Motion" },
+            { value: "planetary_orbit", label: "Planetary Orbit" },
+            { value: "custom", label: "Custom" },
+          ],
+        },
+        content: { type: "textarea", label: "Description / Instructions" },
+        metadata: { type: "textarea", label: "Config JSON (advanced)" },
+      },
+      defaultProps: {
+        vizType: "mechsim_matterjs",
+        scenarioType: "newtons_laws",
+        content: "Interactive physics simulation",
+        metadata: "{}",
+      },
+      render: ({ content, scenarioType, metadata }) => {
+        let merged: Record<string, unknown> = {};
+        try {
+          merged = metadata ? JSON.parse(metadata) : {};
+        } catch {
+          merged = {};
+        }
+        if (scenarioType && !merged.scenario_type) {
+          merged.scenario_type = scenarioType;
+          merged.title = merged.title ?? content ?? "Physics Simulation";
+        }
+        // Newton's Three Laws: attach the preset law configs so the renderer
+        // shows the 1st/2nd/3rd law switcher with the real demonstrations.
+        if (scenarioType === "newtons_laws" && !merged.laws) {
+          merged.laws = NEWTONS_LAWS;
+          merged.title = merged.title ?? "Newton's Three Laws of Motion";
+          merged.description = merged.description ?? "Pick a law to explore";
+        }
+        return <VizBlockPreview vizType="mechsim_matterjs" content={content} metadata={JSON.stringify(merged)} />;
+      },
+    },
+
+    // 3D molecule (3Dmol.js) — first-class palette block.
+    MoleculeBlock: {
+      fields: {
+        moleculeSmiles: { type: "text", label: "Molecule SMILES" },
+        content: { type: "textarea", label: "Description / Instructions" },
+        metadata: { type: "textarea", label: "Config JSON (advanced)" },
+      },
+      defaultProps: {
+        vizType: "chemviz_3dmol",
+        moleculeSmiles: "O",
+        content: "Interactive 3D molecule",
+        metadata: "{}",
+      },
+      render: ({ moleculeSmiles, content, metadata }) => {
+        let merged: Record<string, unknown> = {};
+        try {
+          merged = metadata ? JSON.parse(metadata) : {};
+        } catch {
+          merged = {};
+        }
+        if (moleculeSmiles) {
+          merged.title = merged.title ?? content ?? "Molecule";
+          merged.molecule = merged.molecule ?? { source_type: "smiles", source_value: moleculeSmiles };
+          merged.style = merged.style ?? { stick: { radius: 0.15, colorscheme: "Jmol" } };
+        }
+        return <VizBlockPreview vizType="chemviz_3dmol" content={content} metadata={JSON.stringify(merged)} />;
+      },
+    },
+
+    // Circuit (tscircuit) — first-class palette block.
+    CircuitBlock: {
+      fields: {
+        circuitCode: { type: "textarea", label: "Circuit Code (tscircuit)" },
+        content: { type: "textarea", label: "Description / Instructions" },
+        metadata: { type: "textarea", label: "Config JSON (advanced)" },
+      },
+      defaultProps: {
+        vizType: "elecsim_tscircuit",
+        circuitCode: "",
+        content: "Interactive circuit simulation",
+        metadata: "{}",
+      },
+      render: ({ circuitCode, content, metadata }) => {
+        let merged: Record<string, unknown> = {};
+        try {
+          merged = metadata ? JSON.parse(metadata) : {};
+        } catch {
+          merged = {};
+        }
+        if (circuitCode) {
+          merged.title = merged.title ?? content ?? "Circuit";
+          merged.circuit_code = merged.circuit_code ?? circuitCode;
+        }
+        return <VizBlockPreview vizType="elecsim_tscircuit" content={content} metadata={JSON.stringify(merged)} />;
+      },
+    },
+
     MCQBlock: {
       fields: {
         question: { type: "textarea", label: "Question Text" },
@@ -583,12 +691,46 @@ function learnBlockToItem(lb: LearnBlockRaw): PuckData["content"][number] {
     case "example":
       return { type: "ExampleBlock", props: { ...common, content: lb.content } };
     case "mathviz_manim":
-    case "chemviz_3dmol":
-    case "elecsim_tscircuit":
-    case "mechsim_matterjs":
       return { type: "VizBlock", props: { ...common, vizType: type, content: lb.content, metadata: lb.metadata || "{}" } };
+    case "chemviz_3dmol":
+      return { type: "MoleculeBlock", props: { ...common, vizType: type, moleculeSmiles: moleculeSmilesFrom(lb), content: lb.content, metadata: lb.metadata || "{}" } };
+    case "elecsim_tscircuit":
+      return { type: "CircuitBlock", props: { ...common, vizType: type, circuitCode: circuitCodeFrom(lb), content: lb.content, metadata: lb.metadata || "{}" } };
+    case "mechsim_matterjs":
+      return { type: "PhysicsSimBlock", props: { ...common, vizType: type, scenarioType: scenarioTypeFrom(lb), content: lb.content, metadata: lb.metadata || "{}" } };
     default:
       return { type: "TextBlock", props: { ...common, content: lb.content } };
+  }
+}
+
+// Pull the scenario_type out of a mechsim block's metadata so the palette
+// select shows the right value when a saved wave loads into the editor.
+function scenarioTypeFrom(lb: LearnBlockRaw): string {
+  try {
+    const meta = JSON.parse(lb.metadata || "{}");
+    return typeof meta.scenario_type === "string" ? meta.scenario_type : "custom";
+  } catch {
+    return "custom";
+  }
+}
+
+// Pull the SMILES out of a chemviz block's metadata.
+function moleculeSmilesFrom(lb: LearnBlockRaw): string {
+  try {
+    const meta = JSON.parse(lb.metadata || "{}");
+    return typeof meta.molecule?.source_value === "string" ? meta.molecule.source_value : "O";
+  } catch {
+    return "O";
+  }
+}
+
+// Pull the circuit code out of an elecsim block's metadata.
+function circuitCodeFrom(lb: LearnBlockRaw): string {
+  try {
+    const meta = JSON.parse(lb.metadata || "{}");
+    return typeof meta.circuit_code === "string" ? meta.circuit_code : "";
+  } catch {
+    return "";
   }
 }
 
@@ -737,6 +879,63 @@ export function puckToWaveData(puckData: PuckData) {
           metadata: str(block.props.metadata) || null,
         });
         break;
+      case "PhysicsSimBlock": {
+        let meta: Record<string, unknown> = {};
+        try {
+          meta = JSON.parse(str(block.props.metadata) || "{}");
+        } catch {
+          meta = {};
+        }
+        const scenario = str(block.props.scenarioType);
+        if (scenario && !meta.scenario_type) meta.scenario_type = scenario;
+        if (!meta.title) meta.title = str(block.props.content) || "Physics Simulation";
+        learnBlocks.push({
+          id,
+          type: "mechsim_matterjs",
+          content: str(block.props.content),
+          metadata: JSON.stringify(meta),
+        });
+        break;
+      }
+      case "MoleculeBlock": {
+        let meta: Record<string, unknown> = {};
+        try {
+          meta = JSON.parse(str(block.props.metadata) || "{}");
+        } catch {
+          meta = {};
+        }
+        const smiles = str(block.props.moleculeSmiles);
+        if (smiles && !meta.molecule) {
+          meta.molecule = { source_type: "smiles", source_value: smiles };
+        }
+        if (!meta.title) meta.title = str(block.props.content) || "Molecule";
+        if (!meta.style) meta.style = { stick: { radius: 0.15, colorscheme: "Jmol" } };
+        learnBlocks.push({
+          id,
+          type: "chemviz_3dmol",
+          content: str(block.props.content),
+          metadata: JSON.stringify(meta),
+        });
+        break;
+      }
+      case "CircuitBlock": {
+        let meta: Record<string, unknown> = {};
+        try {
+          meta = JSON.parse(str(block.props.metadata) || "{}");
+        } catch {
+          meta = {};
+        }
+        const code = str(block.props.circuitCode);
+        if (code && !meta.circuit_code) meta.circuit_code = code;
+        if (!meta.title) meta.title = str(block.props.content) || "Circuit";
+        learnBlocks.push({
+          id,
+          type: "elecsim_tscircuit",
+          content: str(block.props.content),
+          metadata: JSON.stringify(meta),
+        });
+        break;
+      }
       case "MCQBlock": {
         const rawOptions = str(block.props.options);
         const parsedOptions = rawOptions

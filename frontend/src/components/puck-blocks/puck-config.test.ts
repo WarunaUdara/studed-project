@@ -207,8 +207,17 @@ describe("insert-then-save round trip (the chat agent auto-insert flow)", () => 
     const manimViz = rebuilt.content.find((i) => i.type === "VizBlock" && i.props.vizType === "mathviz_manim");
     expect(manimViz?.props.vizType).toBe("mathviz_manim");
     expect(manimViz?.props.id).toBe("learn-7");
-    const chemViz = rebuilt.content.find((i) => i.type === "VizBlock" && i.props.vizType === "chemviz_3dmol");
+    // Dedicated first-class blocks: chemistry → MoleculeBlock, circuits →
+    // CircuitBlock, physics → PhysicsSimBlock (each carries its vizType).
+    const chemViz = rebuilt.content.find((i) => i.type === "MoleculeBlock" && i.props.vizType === "chemviz_3dmol");
     expect(chemViz?.props.vizType).toBe("chemviz_3dmol");
+    expect(chemViz?.props.moleculeSmiles).toBe("O");
+    const circuitViz = rebuilt.content.find((i) => i.type === "CircuitBlock" && i.props.vizType === "elecsim_tscircuit");
+    expect(circuitViz?.props.vizType).toBe("elecsim_tscircuit");
+    expect(circuitViz?.props.circuitCode).toBe("...");
+    const physicsViz = rebuilt.content.find((i) => i.type === "PhysicsSimBlock" && i.props.vizType === "mechsim_matterjs");
+    expect(physicsViz?.props.vizType).toBe("mechsim_matterjs");
+    expect(physicsViz?.props.scenarioType).toBe("custom");
     expect(byType.get("MCQBlock")?.props.question).toBe(AGENT_EVALUATE[0].question);
     expect(byType.get("FillBlankBlock")?.props.question).toBe(AGENT_EVALUATE[1].question);
     expect(byType.get("TrueFalseBlock")?.props.correctAnswer).toBe("True");

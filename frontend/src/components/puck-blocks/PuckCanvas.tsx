@@ -43,6 +43,18 @@ export function setPuckSidebarVisible(visible: boolean) {
   });
 }
 
+/**
+ * Programmatically collapse/expand BOTH of Puck's side panels (blocks
+ * palette left + properties right). Used when the AI dock opens so the
+ * editor canvas gets the full remaining width.
+ */
+export function setPuckPanelsVisible(visible: boolean) {
+  puckDispatch?.({
+    type: "setUi",
+    ui: { leftSideBarVisible: visible, rightSideBarVisible: visible },
+  });
+}
+
 // Rendered inside Puck's header via overrides.headerActions. Captures the
 // dispatch handle and renders the Notion-style sidebar collapse toggle.
 // Puck's own Publish button is NOT rendered: saving is a single explicit

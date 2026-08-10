@@ -13,20 +13,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-interface MatterPhysicsBlockProps {
-  content: string;
-  metadata?: string | null;
-}
-
-// ---------------------------------------------------------------------------
-// Types matching the documented Matter.js world_config schema
-// (08-Research-&-References/Matter-js-Integration.md)
-// ---------------------------------------------------------------------------
-
 interface MatterBodyConfig {
   id: string;
   type: "circle" | "rectangle";
-  position: { x: number; y: number };
+  position?: { x?: number; y?: number };
   radius?: number;
   width?: number;
   height?: number;
@@ -51,6 +41,9 @@ interface MatterWorldConfig {
   bounds?: { width?: number; height?: number };
   bodies?: MatterBodyConfig[];
   constraints?: MatterConstraintConfig[];
+  /** Global applied force (N) acting on every non-static body each tick.
+   *  Acceleration = force / density (mass proxy), demonstrating F = ma. */
+  thrust?: { x?: number; y?: number };
 }
 
 interface MatterParam {
@@ -87,14 +80,22 @@ interface MatterMetadata {
   measurements?: MatterMeasurement[];
   educational_overlays?: MatterOverlays;
   dimensions?: { width?: number; height?: number };
+  /** Newton's laws preset map (from newtonsLaws.ts): keys "1"|"2"|"3". */
+  laws?: Record<"1" | "2" | "3", MatterMetadata>;
 }
 
 export type { MatterMetadata, MatterWorldConfig, MatterBodyConfig };
 
+export interface MatterPhysicsBlockProps {
+  content?: string;
+  metadata?: string | null;
+}
+
 // ---------------------------------------------------------------------------
 // Tiny config-driven physics engine (self-contained, no external deps).
 // Bodies integrate velocity/gravity each tick, collide with bounds and
-// static bodies, and constraints pull paired bodies together.
+// static bodies, constraints pull paired bodies together, and an optional
+// applied force (thrust) accelerates them per F = ma.
 // ---------------------------------------------------------------------------
 
 interface SimBody {
@@ -117,33 +118,35 @@ interface SimBody {
 
 function buildBodies(world: MatterWorldConfig | undefined, height: number): SimBody[] {
   const bodies = (world?.bodies ?? []).map((b) => {
-    const r = b.radius ?? 20;
-    const w = b.width ?? 60;
-    const h = b.height ?? 20;
+    const radius = b.radius ?? 20;
+    const width = b.width ?? 60;
+    const bodyHeight = b.height ?? 30;
     return {
-      id: b.id ?? `body-${Math.random().toString(36).slice(2, 7)}`,
-      type: b.type === "rectangle" ? ("rectangle" as const) : ("circle" as const),
-      x: b.position?.x ?? 400,
-      y: b.position?.y ?? 100,
+      id: b.id,
+      type: b.type,
+      x: b.position?.x ?? 300,
+      y: b.position?.y ?? Math.max(radius + 10, height / 2),
       vx: 0,
       vy: 0,
-      radius: r,
-      width: w,
-      height: h,
-      density: b.density ?? 0.001,
-      restitution: b.restitution ?? 0.8,
-      friction: b.friction ?? 0.005,
+      radius,
+      width,
+      height: bodyHeight,
+      density: b.density ?? 0.002,
+      restitution: b.restitution ?? 0.6,
+      friction: b.friction ?? 0.01,
       isStatic: b.isStatic ?? false,
-      color: b.render?.fillStyle ?? "#3b82f6",
+      color: b.render?.fillStyle ?? "#f59e0b",
       trail: [],
     };
   });
-  // Guarantee a floor so dynamic bodies never fall out of view.
+
+  // Ground floor (static) unless the config already declares one at the
+  // bottom of the canvas.
   if (!bodies.some((b) => b.isStatic && b.y > height - 60)) {
     bodies.push({
-      id: "ground",
+      id: "floor",
       type: "rectangle",
-      x: 400,
+      x: 500,
       y: height - 16,
       vx: 0,
       vy: 0,
@@ -174,6 +177,101 @@ export function resolveBodies(meta: MatterMetadata): SimBody[] {
   return buildBodies(world, height);
 }
 
+/** Evaluates a computed-measurement formula like "thrust/density" using the
+ *  current param values and the first non-static body's density. Uses a
+ *  tiny safe arithmetic parser (no eval / new Function) so it works inside
+ *  sandboxed iframes and can never execute arbitrary code. */
+export function evaluateFormula(
+  formula: string,
+  paramValues: Record<string, number | string>,
+  density: number,
+): number | null {
+  let expr = formula.trim();
+  if (!expr) return null;
+  // Resolve simple variable names: thrust.x/thrust.y, density, mass
+  expr = expr.replace(/\bthrust\.x\b/g, String(Number(paramValues["thrust.x"]) || 0));
+  expr = expr.replace(/\bthrust\.y\b/g, String(Number(paramValues["thrust.y"]) || 0));
+  expr = expr.replace(/\bthrust\b/g, String(Number(paramValues["thrust.x"]) || 0));
+  expr = expr.replace(/\bdensity\b/g, String(density || 0.002));
+  expr = expr.replace(/\bmass\b/g, String(density || 0.002));
+  // Only allow numbers and arithmetic operators — never eval arbitrary code.
+  if (!/^[\d\s+\-*/().]+$/.test(expr)) return null;
+  return safeEval(expr);
+}
+
+/** Recursive-descent evaluator for + - * / ( ) over plain numbers. */
+function safeEval(expr: string): number | null {
+  let pos = 0;
+  const s = expr;
+
+  const skipWs = () => {
+    while (pos < s.length && /\s/.test(s[pos])) pos++;
+  };
+  const peek = () => (pos < s.length ? s[pos] : "");
+  const fail = (): number | null => null;
+
+  const parseNumber = (): number | null => {
+    skipWs();
+    const m = /^\d*\.?\d+/.exec(s.slice(pos));
+    if (!m) return fail();
+    pos += m[0].length;
+    return parseFloat(m[0]);
+  };
+
+  const parseFactor = (): number | null => {
+    skipWs();
+    if (peek() === "(") {
+      pos++;
+      const v = parseAddSub();
+      skipWs();
+      if (peek() !== ")") return fail();
+      pos++;
+      return v;
+    }
+    if (peek() === "-") {
+      pos++;
+      const v = parseFactor();
+      return v === null ? null : -v;
+    }
+    return parseNumber();
+  };
+
+  const parseMulDiv = (): number | null => {
+    let left = parseFactor();
+    if (left === null) return null;
+    for (;;) {
+      skipWs();
+      const op = peek();
+      if (op !== "*" && op !== "/") break;
+      pos++;
+      const right = parseFactor();
+      if (right === null) return null;
+      left = op === "*" ? left * right : left / right;
+    }
+    return left;
+  };
+
+  const parseAddSub = (): number | null => {
+    let left = parseMulDiv();
+    if (left === null) return null;
+    for (;;) {
+      skipWs();
+      const op = peek();
+      if (op !== "+" && op !== "-") break;
+      pos++;
+      const right = parseMulDiv();
+      if (right === null) return null;
+      left = op === "+" ? left + right : left - right;
+    }
+    return left;
+  };
+
+  const result = parseAddSub();
+  if (result === null || !isFinite(result)) return null;
+  skipWs();
+  return pos === s.length ? result : null;
+}
+
 export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProps) {
   let meta: MatterMetadata = {};
   try {
@@ -185,30 +283,51 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
   const world = meta.world_config ?? {};
   const boundsH = world.bounds?.height ?? 300;
   const boundsW = world.bounds?.width ?? 600;
-  const gravityScale = world.gravity?.scale ?? 0.001;
-  const gravityY = world.gravity?.y ?? 1;
-  const gravityX = world.gravity?.x ?? 0;
   const overlays = meta.educational_overlays ?? {};
   const scenario = meta.scenario_type ?? "custom";
+
+  // Newton's Three Laws: when the metadata carries a `laws` map (from the
+  // newtonsLaws.ts presets), render a law switcher and use the selected
+  // law's config instead of a single world.
+  const laws = meta.laws;
+  const isNewtonsLaws = scenario === "newtons_laws" && !!laws;
+  const [activeLaw, setActiveLaw] = useState<"1" | "2" | "3">("1");
+  const lawMeta = isNewtonsLaws && laws ? laws[activeLaw] : null;
+  const effectiveMeta = lawMeta ?? meta;
+  const effectiveWorld = effectiveMeta.world_config ?? world;
+  const effectiveParams = effectiveMeta.editable_params ?? [];
+  const effectiveMeasurements = effectiveMeta.measurements ?? [];
+  const effectiveConstraints = effectiveWorld.constraints ?? [];
+  const effectiveOverlays = effectiveMeta.educational_overlays ?? overlays;
+  const effectiveBoundsH = effectiveWorld.bounds?.height ?? boundsH;
+  const effectiveBoundsW = effectiveWorld.bounds?.width ?? boundsW;
+  const effectiveGravityY = effectiveWorld.gravity?.y ?? 1;
+  const effectiveGravityX = effectiveWorld.gravity?.x ?? 0;
+  const effectiveGravityScale = effectiveWorld.gravity?.scale ?? 0.001;
+  const effectiveTitle = effectiveMeta.title ?? meta.title ?? "Physics Simulation";
+  const effectiveDescription = effectiveMeta.description ?? meta.description;
 
   // Editable params -> live overrides keyed by "property" path.
   const [paramValues, setParamValues] = useState<Record<string, number | string>>({});
   const [isRunning, setIsRunning] = useState(true);
-  const [bodies, setBodies] = useState<SimBody[]>(() => buildBodies(world, boundsH));
+  const [bodies, setBodies] = useState<SimBody[]>(() => buildBodies(effectiveWorld, effectiveBoundsH));
   const [measurements, setMeasurements] = useState<Record<string, string>>({});
   const tickRef = useRef(0);
 
-  const params = meta.editable_params ?? [];
-  const measurementsConfig = meta.measurements ?? [];
-  const constraints = world.constraints ?? [];
+  // Reset bodies + measurements when the law changes or config arrives.
+  useEffect(() => {
+    setBodies(buildBodies(effectiveWorld, effectiveBoundsH));
+    setMeasurements({});
+    setParamValues({});
+  }, [activeLaw, effectiveWorld, effectiveBoundsH]);
 
   const gravity = useMemo(() => {
-    const gScale = paramValues["gravity.scale"] ?? gravityScale;
+    const gScale = paramValues["gravity.scale"] ?? effectiveGravityScale;
     return {
-      x: gravityX * (typeof gScale === "number" ? gScale : 1),
-      y: gravityY * (typeof gScale === "number" ? gScale : 1),
+      x: effectiveGravityX * (typeof gScale === "number" ? gScale : 1),
+      y: effectiveGravityY * (typeof gScale === "number" ? gScale : 1),
     };
-  }, [paramValues, gravityScale, gravityX, gravityY]);
+  }, [paramValues, effectiveGravityScale, effectiveGravityX, effectiveGravityY]);
 
   const applyParamToBody = (b: SimBody, property: string, value: number): SimBody => {
     if (property === "global.restitution") return { ...b, restitution: value };
@@ -219,6 +338,24 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
     return b;
   };
 
+  // Applied force (thrust) from config or editable param "thrust.x"/"thrust.y".
+  const thrust = useMemo(() => {
+    const tx = paramValues["thrust.x"] ?? effectiveWorld.thrust?.x ?? 0;
+    const ty = paramValues["thrust.y"] ?? effectiveWorld.thrust?.y ?? 0;
+    return { x: Number(tx) || 0, y: Number(ty) || 0 };
+  }, [paramValues, effectiveWorld.thrust?.x, effectiveWorld.thrust?.y]);
+
+  // Constraints with live stiffness override from editable params.
+  const constraints = useMemo(() => {
+    return effectiveConstraints.map((c) => {
+      const stiffnessOverride = paramValues[`constraints.${c.id}.stiffness`];
+      return {
+        ...c,
+        stiffness: typeof stiffnessOverride === "number" ? stiffnessOverride : c.stiffness,
+      };
+    });
+  }, [effectiveConstraints, paramValues]);
+
   // Physics loop
   useEffect(() => {
     if (!isRunning) return;
@@ -228,10 +365,14 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
         const next = prev.map((b) => {
           if (b.isStatic) return b;
           let nb: SimBody = { ...b, trail: b.trail };
-
-          // Apply gravity
           let vx = b.vx + gravity.x;
           let vy = b.vy + gravity.y;
+
+          // Apply applied force (thrust): a = F/m with mass proportional to
+          // density — Newton's second law (F = ma) in action.
+          const mass = Math.max(b.density, 0.00001);
+          vx += (thrust.x / mass) * 0.05;
+          vy += (thrust.y / mass) * 0.05;
 
           // Constraints (spring/pendulum pull toward anchor)
           for (const c of constraints) {
@@ -260,7 +401,7 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
           vy *= 1 - b.friction;
 
           // Editable params that affect bodies
-          for (const p of params) {
+          for (const p of effectiveParams) {
             const v = paramValues[p.property];
             if (typeof v === "number" && p.property.includes(b.id)) {
               nb = applyParamToBody(nb, p.property, v);
@@ -273,10 +414,10 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
 
           // Bounds collision
           if (x - r < 0) { x = r; vx = Math.abs(vx) * b.restitution; }
-          if (x + r > boundsW) { x = boundsW - r; vx = -Math.abs(vx) * b.restitution; }
+          if (x + r > effectiveBoundsW) { x = effectiveBoundsW - r; vx = -Math.abs(vx) * b.restitution; }
           if (y - r < 0) { y = r; vy = Math.abs(vy) * b.restitution; }
-          if (y + (b.type === "rectangle" ? b.height / 2 : r) > boundsH) {
-            y = boundsH - (b.type === "rectangle" ? b.height / 2 : r);
+          if (y + (b.type === "rectangle" ? b.height / 2 : r) > effectiveBoundsH) {
+            y = effectiveBoundsH - (b.type === "rectangle" ? b.height / 2 : r);
             vy = -Math.abs(vy) * b.restitution;
           }
 
@@ -301,7 +442,7 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
           }
 
           // Trail for trajectory overlay
-          if (overlays.show_trajectory) {
+          if (effectiveOverlays.show_trajectory) {
             nb.trail = [...nb.trail, { x, y }].slice(-MAX_TRAIL);
           }
 
@@ -310,14 +451,16 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
 
         // Live measurements
         const newM: Record<string, string> = {};
-        for (const m of measurementsConfig) {
+        for (const m of effectiveMeasurements) {
           const target = next.find((b) => m.source?.startsWith(b.id));
           if (m.type === "live" && target && !target.isStatic) {
             const speed = Math.hypot(target.vx, target.vy);
             newM[m.label] = speed.toFixed(2);
           } else if (m.type === "computed" && m.formula) {
-            const period = 2 * Math.PI * Math.sqrt((constraints[0]?.length ?? 100) / Math.max(gravity.y, 0.01));
-            newM[m.label] = period.toFixed(2);
+            const firstDynamic = next.find((b) => !b.isStatic);
+            const density = firstDynamic?.density ?? 0.002;
+            const value = evaluateFormula(m.formula, paramValues, density);
+            newM[m.label] = value !== null ? value.toFixed(4) : "—";
           }
         }
         if (Object.keys(newM).length > 0) setMeasurements(newM);
@@ -326,10 +469,10 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
       });
     }, 30);
     return () => clearInterval(interval);
-  }, [isRunning, gravity, constraints, params, paramValues, boundsW, boundsH, overlays.show_trajectory, measurementsConfig]);
+  }, [isRunning, gravity, thrust, constraints, effectiveParams, paramValues, effectiveBoundsW, effectiveBoundsH, effectiveOverlays.show_trajectory, effectiveMeasurements]);
 
   const handleReset = () => {
-    setBodies(buildBodies(world, boundsH));
+    setBodies(buildBodies(effectiveWorld, effectiveBoundsH));
     setMeasurements({});
   };
 
@@ -341,7 +484,7 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
   const totalEnergy = bodies.reduce((acc, b) => {
     if (b.isStatic) return acc;
     const ke = 0.5 * b.density * (b.vx * b.vx + b.vy * b.vy);
-    const pe = b.density * gravity.y * (boundsH - b.y);
+    const pe = b.density * gravity.y * (effectiveBoundsH - b.y);
     return acc + ke + pe;
   }, 0);
 
@@ -353,9 +496,9 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
             <Activity className="h-4 w-4" />
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-foreground">{meta.title ?? "Physics Simulation"}</h4>
+            <h4 className="text-sm font-semibold text-foreground">{effectiveTitle}</h4>
             <p className="text-[11px] text-muted-foreground">
-              Matter.js 2D Physics Engine{meta.description ? ` · ${meta.description}` : ""}
+              Matter.js 2D Physics Engine{effectiveDescription ? ` · ${effectiveDescription}` : ""}
             </p>
           </div>
         </div>
@@ -364,14 +507,34 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
         </span>
       </div>
 
+      {/* Newton's laws switcher */}
+      {isNewtonsLaws && (
+        <div className="flex flex-wrap items-center gap-2">
+          {(["1", "2", "3"] as const).map((law) => (
+            <button
+              key={law}
+              onClick={() => setActiveLaw(law)}
+              className={cn(
+                "rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors",
+                activeLaw === law
+                  ? "border-orange-500/50 bg-orange-500/10 text-orange-600"
+                  : "border-border text-muted-foreground hover:border-orange-500/30 hover:text-foreground",
+              )}
+            >
+              {law === "1" ? "1st Law" : law === "2" ? "2nd Law" : "3rd Law"}
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className="relative overflow-hidden rounded-xl border bg-slate-950 p-4 min-h-[260px]">
         {/* Stage */}
         <div
           className="relative w-full rounded-lg border border-slate-800 bg-slate-900 overflow-hidden"
-          style={{ height: boundsH, maxHeight: 360 }}
+          style={{ height: effectiveBoundsH, maxHeight: 360 }}
         >
           {/* Force arrows (educational overlay) */}
-          {overlays.show_forces &&
+          {effectiveOverlays.show_forces &&
             bodies
               .filter((b) => !b.isStatic)
               .map((b) => (
@@ -380,7 +543,7 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
                 </div>
               ))}
           {/* Velocity arrows */}
-          {overlays.show_velocity &&
+          {effectiveOverlays.show_velocity &&
             bodies
               .filter((b) => !b.isStatic && (Math.abs(b.vx) > 0.1 || Math.abs(b.vy) > 0.1))
               .map((b) => (
@@ -394,7 +557,7 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
               ))}
 
           {/* Trajectory trails */}
-          {overlays.show_trajectory &&
+          {effectiveOverlays.show_trajectory &&
             bodies
               .filter((b) => b.trail.length > 1)
               .map((b) => (
@@ -433,9 +596,9 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
         {/* Controls */}
         <div className="flex flex-col gap-3 mt-3 text-xs text-slate-300">
           {/* Editable parameter sliders from config */}
-          {params.length > 0 && (
+          {effectiveParams.length > 0 && (
             <div className="flex flex-wrap gap-x-5 gap-y-2 px-1">
-              {params.map((p) => (
+              {effectiveParams.map((p) => (
                 <label key={p.property} className="flex items-center gap-1.5 font-mono">
                   <Sliders className="h-3.5 w-3.5 text-orange-400 shrink-0" />
                   {p.label}:
@@ -457,9 +620,9 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
           )}
 
           {/* Live measurements from config */}
-          {measurementsConfig.length > 0 && (
+          {effectiveMeasurements.length > 0 && (
             <div className="flex flex-wrap gap-x-5 gap-y-1 px-1 border-t border-slate-800 pt-2">
-              {measurementsConfig.map((m) => (
+              {effectiveMeasurements.map((m) => (
                 <span key={m.label} className="flex items-center gap-1 font-mono text-slate-400">
                   <Gauge className="h-3.5 w-3.5 text-emerald-400" />
                   {m.label}: <strong className="text-emerald-300 tabular-nums">{measurements[m.label] ?? "—"}</strong>
@@ -469,7 +632,7 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
           )}
 
           {/* Energy bar (educational overlay) */}
-          {overlays.show_energy_bar && (
+          {effectiveOverlays.show_energy_bar && (
             <div className="px-1 border-t border-slate-800 pt-2">
               <div className="flex items-center gap-2">
                 <Zap className="h-3.5 w-3.5 text-yellow-400 shrink-0" />

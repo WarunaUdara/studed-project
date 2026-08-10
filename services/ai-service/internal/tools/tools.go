@@ -271,7 +271,7 @@ Requirements: molecule.source_type must be "smiles" (preferred — give a valid 
 {
   "title": "<simulation title>",
   "description": "<one-line description>",
-  "scenario_type": "<pendulum|collision|projectile|spring|newtons_cradle|inclined_plane|circular_motion|planetary_orbit|custom>",
+  "scenario_type": "<pendulum|collision|projectile|spring|newtons_cradle|newtons_laws|inclined_plane|circular_motion|planetary_orbit|custom>",
   "world_config": {
     "gravity": {"x": 0, "y": 1, "scale": 0.001},
     "bounds": {"width": 800, "height": 600},
@@ -292,7 +292,7 @@ Requirements: molecule.source_type must be "smiles" (preferred — give a valid 
   "educational_overlays": {"show_forces": true, "show_velocity": true, "show_trajectory": true, "show_energy_bar": true},
   "dimensions": {"width": 100, "height": 600}
 }
-Requirements: bodies need id, type (circle|rectangle), position, and physical props (radius for circle; width/height for rectangle; density, restitution, friction, isStatic as appropriate). Use constraints for pendulums, springs, and Newton's cradle. Provide 1-3 editable_params and 1-3 measurements relevant to the physics concept. Keep everything grade-appropriate. Do not use emojis.`, nil
+Requirements: bodies need id, type (circle|rectangle), position, and physical props (radius for circle; width/height for rectangle; density, restitution, friction, isStatic as appropriate). Use constraints for pendulums, springs, and Newton's cradle. For newtons_laws, set gravity to {x:0,y:0} and include a thrust force {x:0,y:0} in world_config plus editable_params with property "thrust.x" (applied force slider) and a computed measurement with formula "thrust/density" (acceleration, a=F/m); the renderer demonstrates the 1st law (no force = no motion), 2nd law (acceleration slider), and 3rd law (compressed spring between two carts). Provide 1-3 editable_params and 1-3 measurements relevant to the physics concept. Keep everything grade-appropriate. Do not use emojis.`, nil
 	default:
 		return "", fmt.Errorf("unknown visualization type %q (must be manim, 3dmol, tscircuit, or matterjs)", vizType)
 	}

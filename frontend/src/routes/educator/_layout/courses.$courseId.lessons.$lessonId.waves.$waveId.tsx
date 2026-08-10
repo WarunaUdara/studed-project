@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "urql";
 
 import { AIAssistantPanel } from "@/components/educator/AIAssistantPanel";
 import { WavePreview } from "@/components/educator/WavePreview";
-import { pushPuckData, setPuckSidebarVisible } from "@/components/puck-blocks/PuckCanvas";
+import { pushPuckData, setPuckPanelsVisible } from "@/components/puck-blocks/PuckCanvas";
 import {
   agentBlocksToPuckItems,
   applyBlockOpsToData,
@@ -158,12 +158,13 @@ function WaveEditorPage() {
     reexecuteQuery({ requestPolicy: "network-only" });
   };
 
-  // Opening the AI assistant auto-collapses Puck's left (blocks) panel so
-  // the docked chat gets room without squeezing the canvas; closing the
-  // assistant restores it.
+  // Opening the AI assistant auto-collapses BOTH of Puck's side panels
+  // (blocks palette + properties) so the docked chat gets room and the
+  // editor canvas keeps the full remaining width; closing the assistant
+  // restores both panels.
   const toggleAssistant = (open: boolean) => {
     setAssistantOpen(open);
-    setPuckSidebarVisible(!open);
+    setPuckPanelsVisible(!open);
   };
 
   // Dock drag handlers (pointer-based, so it works with mouse + touch).
