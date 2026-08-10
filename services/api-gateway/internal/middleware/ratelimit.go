@@ -18,10 +18,10 @@ import (
 // RateLimitConfig holds the tunable rate-limit values. Production defaults
 // match the original hardcoded limits; development can raise them via env.
 type RateLimitConfig struct {
-	GlobalLimit    int64
-	GlobalWindow   time.Duration
-	UserLimit      int64
-	UserWindow     time.Duration
+	GlobalLimit  int64
+	GlobalWindow time.Duration
+	UserLimit    int64
+	UserWindow   time.Duration
 }
 
 // RateLimitConfigFromEnv builds a config from environment variables with
@@ -41,8 +41,14 @@ func RateLimitConfigFromEnv() RateLimitConfig {
 }
 
 type RateLimiter struct {
-	rdb    *redis.Client
-	config RateLimitConfig
+	rdb     *redis.Client
+	config  RateLimitConfig
+	healthy atomic.Bool
+	log     *slog.Logger
+
+	initialBackoff time.Duration
+	maxBackoff     time.Duration
+	backoffFactor  float64
 }
 
 func NewRateLimiter(rdb *redis.Client) *RateLimiter {
@@ -50,7 +56,53 @@ func NewRateLimiter(rdb *redis.Client) *RateLimiter {
 }
 
 func NewRateLimiterWithConfig(rdb *redis.Client, cfg RateLimitConfig) *RateLimiter {
-	return &RateLimiter{rdb: rdb, config: cfg}
+	rl := &RateLimiter{
+		rdb:            rdb,
+		config:         cfg,
+		log:            slog.Default(),
+		initialBackoff: 250 * time.Millisecond,
+		maxBackoff:     30 * time.Second,
+		backoffFactor:  2.0,
+	}
+	if rdb != nil {
+		rl.healthy.Store(true)
+	}
+	return rl
+}
+
+// StartReconnectLoop monitors Redis connectivity with exponential backoff and
+// restores rate limiting once Redis becomes available again.
+func (rl *RateLimiter) StartReconnectLoop(ctx context.Context) {
+	if rl.rdb == nil {
+		return
+	}
+
+	backoff := rl.initialBackoff
+	for {
+		err := rl.rdb.Ping(ctx).Err()
+		if err == nil {
+			if !rl.healthy.Load() {
+				rl.healthy.Store(true)
+				rl.log.Info("redis reconnected", slog.String("component", "ratelimit"))
+			}
+			backoff = rl.initialBackoff
+		} else {
+			if rl.healthy.Load() {
+				rl.healthy.Store(false)
+				rl.log.Warn("redis unreachable, rate limiting disabled", slog.Any("error", err))
+			}
+			backoff = time.Duration(float64(backoff) * rl.backoffFactor)
+			if backoff > rl.maxBackoff {
+				backoff = rl.maxBackoff
+			}
+		}
+
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(backoff):
+		}
+	}
 }
 
 // RateLimit returns a middleware enforcing rate limits based on path and user context.
