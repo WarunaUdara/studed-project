@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   agentBlocksToPuckItems,
+  applyBlockOpsToData,
   puckToWaveData,
   waveDataToPuck,
   type LearnBlockRaw,
@@ -213,5 +214,64 @@ describe("insert-then-save round trip (the chat agent auto-insert flow)", () => 
     expect(byType.get("TrueFalseBlock")?.props.correctAnswer).toBe("True");
     expect(byType.get("NumericBlock")?.props.correctAnswer).toBe("9.8");
     expect(byType.get("DragDropBlock")?.props.question).toBe(AGENT_EVALUATE[4].question);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Block operations (agent edit / delete) applied to a Puck document
+// ---------------------------------------------------------------------------
+
+function sampleDoc(): PuckData {
+  return waveDataToPuck(
+    [
+      { id: "l1", type: "text", content: "Intro" },
+      { id: "l2", type: "callout", content: "Tip" },
+    ],
+    [{ id: "q1", type: "mcq", question: "Which?", options: ["A", "B"], correctAnswer: "A" }],
+  );
+}
+
+describe("applyBlockOpsToData", () => {
+  it("deletes blocks by id", () => {
+    const doc = sampleDoc();
+    const next = applyBlockOpsToData(doc, { deleteIDs: ["l1", "q1"] });
+    expect(next.content.map((i) => i.props.id)).toEqual(["l2"]);
+  });
+
+  it("updates existing blocks in place by id", () => {
+    const doc = sampleDoc();
+    const next = applyBlockOpsToData(doc, {
+      upsertLearn: [{ id: "l1", type: "text", content: "Updated intro" }],
+    });
+    expect(next.content).toHaveLength(3);
+    const l1 = next.content.find((i) => i.props.id === "l1");
+    expect(l1?.props.content).toBe("Updated intro");
+    // unchanged blocks keep their position/content
+    expect(next.content.map((i) => i.props.id)).toEqual(["l1", "l2", "q1"]);
+  });
+
+  it("appends new blocks and preserves order", () => {
+    const doc = sampleDoc();
+    const next = applyBlockOpsToData(doc, {
+      upsertLearn: [{ id: "l3", type: "example", content: "New example" }],
+      upsertEval: [{ id: "q2", type: "true_false", question: "True?", correctAnswer: "True" }],
+    });
+    expect(next.content.map((i) => i.props.id)).toEqual(["l1", "l2", "q1", "l3", "q2"]);
+  });
+
+  it("combines delete + upsert in one op set", () => {
+    const doc = sampleDoc();
+    const next = applyBlockOpsToData(doc, {
+      deleteIDs: ["q1"],
+      upsertLearn: [{ id: "l2", type: "callout", content: "Better tip" }],
+    });
+    expect(next.content.map((i) => i.props.id)).toEqual(["l1", "l2"]);
+    expect(next.content.find((i) => i.props.id === "l2")?.props.content).toBe("Better tip");
+  });
+
+  it("is a no-op for empty ops", () => {
+    const doc = sampleDoc();
+    const next = applyBlockOpsToData(doc, {});
+    expect(next.content).toEqual(doc.content);
   });
 });

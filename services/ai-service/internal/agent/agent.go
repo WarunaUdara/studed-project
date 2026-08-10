@@ -33,10 +33,21 @@ type Request struct {
 	// generation prompt. Kept separate from WaveContext so the agent can
 	// distinguish "what the photo says" from "what the wave already has".
 	OCRContext string
+	// History holds prior chat turns (role + content) so the assistant can
+	// converse with the educator across messages ("make it easier", "now add
+	// a numeric question too") instead of treating each prompt in isolation.
+	History []ChatTurn
+}
+
+// ChatTurn is one prior exchange in the assistant conversation.
+type ChatTurn struct {
+	Role    string `json:"role"` // user | assistant
+	Content string `json:"content"`
 }
 
 // Event is streamed to the caller. Type is one of plan|ocr|tool_start|
-// tool_end|delta|done|error. The done event carries the final blocks.
+// tool_end|delta|thinking|done|error. The done event carries the final
+// blocks.
 type Event struct {
 	Type    string `json:"type"`
 	Tool    string `json:"tool,omitempty"`
@@ -44,7 +55,10 @@ type Event struct {
 
 	LearnBlocks    []blocks.LearnBlock    `json:"learnBlocks,omitempty"`
 	EvaluateBlocks []blocks.EvaluateBlock `json:"evaluateBlocks,omitempty"`
-	Error          string                 `json:"error,omitempty"`
+	// BlockOps carries explicit upsert/delete operations from manageBlocks so
+	// the frontend can update or remove existing editor blocks in place.
+	BlockOps *tools.BlockOps `json:"blockOps,omitempty"`
+	Error    string          `json:"error,omitempty"`
 }
 
 // Agent runs the tool-calling loop against a provider. It is safe for
@@ -92,6 +106,7 @@ func (a *Agent) Run(ctx context.Context, req Request, events chan<- Event) {
 	msgs := buildMessages(req)
 	var accLearn []blocks.LearnBlock
 	var accEval []blocks.EvaluateBlock
+	var accOps *tools.BlockOps
 	for iter := 0; iter < a.maxIterations; iter++ {
 		if ctx.Err() != nil {
 			return
@@ -110,7 +125,7 @@ func (a *Agent) Run(ctx context.Context, req Request, events chan<- Event) {
 		})
 
 		if len(calls) == 0 {
-			events <- a.doneEvent(assistantText, accLearn, accEval)
+			events <- a.doneEvent(assistantText, accLearn, accEval, accOps)
 			return
 		}
 
@@ -145,6 +160,15 @@ func (a *Agent) Run(ctx context.Context, req Request, events chan<- Event) {
 			accEval = append(accEval, res.EvalBlocks...)
 			if res.VizBlock != nil {
 				accLearn = append(accLearn, *res.VizBlock)
+			}
+			// Accumulate explicit upsert/delete operations from manageBlocks.
+			if res.BlockOps != nil && !res.BlockOps.IsEmpty() {
+				if accOps == nil {
+					accOps = &tools.BlockOps{}
+				}
+				accOps.UpsertLearn = append(accOps.UpsertLearn, res.BlockOps.UpsertLearn...)
+				accOps.UpsertEval = append(accOps.UpsertEval, res.BlockOps.UpsertEval...)
+				accOps.DeleteIDs = append(accOps.DeleteIDs, res.BlockOps.DeleteIDs...)
 			}
 		}
 	}
@@ -190,6 +214,13 @@ func (a *Agent) streamOnce(ctx context.Context, msgs []provider.Message, events 
 			}
 		case "done":
 			reasoning.WriteString(ev.Reasoning)
+			// Surface the model's reasoning as a thinking event so the chat
+			// can show a collapsible "thoughts" section (partial visibility —
+			// the full chain-of-thought stays local, only a summary-style
+			// text is delivered).
+			if trimmedReasoning := strings.TrimSpace(ev.Reasoning); trimmedReasoning != "" {
+				events <- Event{Type: "thinking", Message: trimmedReasoning}
+			}
 		}
 	}
 	if streamErr != nil {
@@ -203,8 +234,11 @@ func (a *Agent) streamOnce(ctx context.Context, msgs []provider.Message, events 
 // text is delivered as-is. Markdown code fences around the JSON are stripped.
 // Blocks returned by generation tools during the loop are merged in when the
 // model did not echo them in its final text (common for viz blocks).
-func (a *Agent) doneEvent(final string, accLearn []blocks.LearnBlock, accEval []blocks.EvaluateBlock) Event {
+func (a *Agent) doneEvent(final string, accLearn []blocks.LearnBlock, accEval []blocks.EvaluateBlock, accOps *tools.BlockOps) Event {
 	ev := Event{Type: "done", Message: final}
+	if accOps != nil && !accOps.IsEmpty() {
+		ev.BlockOps = accOps
+	}
 	trimmed := extractJSON(strings.TrimSpace(final))
 	switch {
 	case strings.HasPrefix(trimmed, "["):
@@ -324,10 +358,34 @@ func extractJSON(s string) string {
 	return s
 }
 
-// buildMessages assembles the system prompt and user message for the first
-// provider round trip. Uploaded images are attached as multimodal parts and
-// the OCR context (if any) is included in the user text.
+// buildMessages assembles the system prompt, prior conversation turns, and
+// the user message for the first provider round trip. Uploaded images are
+// attached as multimodal parts and the OCR context (if any) is included in
+// the user text.
 func buildMessages(req Request) []provider.Message {
+	msgs := []provider.Message{
+		{Role: "system", Content: systemPrompt},
+	}
+
+	// Prior conversation (capped to keep the context window sane): the
+	// assistant can reference earlier requests/results when the educator
+	// follows up.
+	const maxHistoryTurns = 8
+	start := 0
+	if len(req.History) > maxHistoryTurns {
+		start = len(req.History) - maxHistoryTurns
+	}
+	for _, turn := range req.History[start:] {
+		role := strings.ToLower(strings.TrimSpace(turn.Role))
+		if role != "user" && role != "assistant" {
+			continue
+		}
+		if strings.TrimSpace(turn.Content) == "" {
+			continue
+		}
+		msgs = append(msgs, provider.Message{Role: role, Content: turn.Content})
+	}
+
 	var user strings.Builder
 	user.WriteString("Prompt: " + req.Prompt + "\n")
 	if req.Language != "" {
@@ -342,10 +400,8 @@ func buildMessages(req Request) []provider.Message {
 	if req.WaveContext != "" {
 		user.WriteString("Wave context:\n" + req.WaveContext + "\n")
 	}
-	return []provider.Message{
-		{Role: "system", Content: systemPrompt},
-		{Role: "user", Content: user.String(), Images: req.Images},
-	}
+	msgs = append(msgs, provider.Message{Role: "user", Content: user.String(), Images: req.Images})
+	return msgs
 }
 
 const systemPrompt = `You are StudEd's educator assistant, helping Sri Lankan educators (Grades 1-11, O/L, A/L) build lesson content. You have tools for generating Learn blocks, Evaluate blocks, interactive visualizations, and translations. Use the tools to fulfil the educator's request, then reply with the final result.
@@ -356,6 +412,7 @@ REQUEST FIDELITY (strict rules — violations are failures):
 3. Honor explicit counts. If no count is given, generate a minimal reasonable amount (1-3 blocks), never a large batch.
 4. If the request is ambiguous, choose the most specific reasonable interpretation and state it briefly. Do not pad, do not improvise extra content, do not add blocks the educator did not request.
 5. The educator sees a live editor: every block you produce is inserted. Unrequested blocks waste their time and degrade trust. When in doubt, generate LESS, not more.
+6. When the educator asks to change existing content ("make the first paragraph simpler", "remove the numeric question", "update the callout"), use manageBlocks: upsertLearn/upsertEval with the existing block ids to edit them in place, deleteIDs to remove blocks. Reuse ids from the wave context; never invent ids for existing blocks.
 
 Learn block types: text, math, image, video, callout, example, mathviz_manim, chemviz_3dmol, elecsim_tscircuit, mechsim_matterjs.
 Evaluate block types: mcq, fill_in_blank, true_false, numeric, drag_drop.

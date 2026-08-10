@@ -1,6 +1,8 @@
 import {
   ArrowDownToLine,
   Bot,
+  Brain,
+  Check,
   ImagePlus,
   Loader2,
   ScanText,
@@ -11,10 +13,12 @@ import {
   X,
 } from "lucide-react";
 import { useRef, useState } from "react";
+import { ChatMarkdown } from "@/components/educator/ChatMarkdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/Input";
 import { type PuckData } from "@/components/puck-blocks/puck-config";
 import { type AgentEvent } from "@/lib/ai-chat";
+import { cn } from "@/lib/utils";
 import { useAIAssistant } from "@/stores/ai-assistant";
 
 export interface AIAssistantPanelProps {
@@ -31,6 +35,7 @@ const TOOL_LABELS: Record<string, string> = {
   generate_evaluate_blocks: "Generating Evaluate blocks",
   generate_visualization: "Creating interactive visualization",
   translate: "Translating content",
+  manage_blocks: "Updating editor blocks",
 };
 
 const MAX_IMAGES = 6;
@@ -44,16 +49,19 @@ export function AIAssistantPanel({
   puckData,
   onClose,
 }: AIAssistantPanelProps) {
-  const { messages, running, lastInserted, sendPrompt, stop, clearInserted } = useAIAssistant();
+  const { messages, running, lastInserted, lastOps, sendPrompt, stop, clearInserted, clearOps } =
+    useAIAssistant();
   const [input, setInput] = useState("");
   const [images, setImages] = useState<{ file: File; dataUrl: string }[]>([]);
   const [imageError, setImageError] = useState<string | null>(null);
+  const [expandedThoughts, setExpandedThoughts] = useState<Set<number>>(new Set());
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const suggestions = [
     "Create 3 learn blocks and 2 questions about this topic",
     "Generate a multiple choice question for this wave",
     "Create an example to illustrate the concept",
+    "Make the first paragraph simpler for Grade 6",
   ];
 
   const addImages = (files: FileList | null) => {
@@ -84,9 +92,7 @@ export function AIAssistantPanel({
       const reader = new FileReader();
       reader.onload = () => {
         const dataUrl = String(reader.result ?? "");
-        setImages((prev) =>
-          prev.map((p) => (p.file === item.file ? { ...p, dataUrl } : p)),
-        );
+        setImages((prev) => prev.map((p) => (p.file === item.file ? { ...p, dataUrl } : p)));
       };
       reader.readAsDataURL(item.file);
     }
@@ -108,6 +114,15 @@ export function AIAssistantPanel({
     setImages([]);
   };
 
+  const toggleThoughts = (msgIndex: number) => {
+    setExpandedThoughts((prev) => {
+      const next = new Set(prev);
+      if (next.has(msgIndex)) next.delete(msgIndex);
+      else next.add(msgIndex);
+      return next;
+    });
+  };
+
   const toolChip = (event: AgentEvent, index: number) => {
     if (event.type === "ocr") {
       return (
@@ -126,6 +141,15 @@ export function AIAssistantPanel({
       </div>
     );
   };
+
+  const opsSummary = (() => {
+    if (!lastOps) return null;
+    const parts: string[] = [];
+    if (lastOps.upsertLearn?.length) parts.push(`${lastOps.upsertLearn.length} updated`);
+    if (lastOps.upsertEval?.length) parts.push(`${lastOps.upsertEval.length} updated`);
+    if (lastOps.deleteIDs?.length) parts.push(`${lastOps.deleteIDs.length} removed`);
+    return parts.length ? parts.join(", ") : null;
+  })();
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -164,8 +188,9 @@ export function AIAssistantPanel({
                 Ask me to create any content — text, formulas, images, videos, callouts,
                 examples, interactive visualizations, MCQs, fill-in-the-blank, true/false,
                 numeric, and drag-and-drop. Generated blocks appear in your editor instantly.
-                Upload photos of notes or textbook pages and I&apos;ll read them with
-                high-effort OCR first.
+                You can also ask me to edit or remove blocks already in the editor, and I
+                respond in context across messages. Upload photos of notes or textbook pages
+                and I&apos;ll read them with high-effort OCR first.
               </p>
             </div>
             <div className="space-y-2">
@@ -187,26 +212,67 @@ export function AIAssistantPanel({
           <div key={i} className="space-y-2">
             <div className={`flex gap-2 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
               <div
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
-                  m.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                }`}
+                className={cn(
+                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-full",
+                  m.role === "user"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground",
+                )}
               >
-                {m.role === "user" ? <User className="h-3.5 w-3.5" /> : <Bot className="h-3.5 w-3.5" />}
+                {m.role === "user" ? (
+                  <User className="h-3.5 w-3.5" />
+                ) : (
+                  <Bot className="h-3.5 w-3.5" />
+                )}
               </div>
               <div
-                className={`max-w-[85%] rounded-xl px-3 py-2 text-sm ${
+                className={cn(
+                  "max-w-[85%] rounded-xl px-3 py-2 text-sm",
                   m.role === "user"
                     ? "rounded-br-sm bg-primary text-primary-foreground"
-                    : "rounded-bl-sm border bg-card text-card-foreground"
-                }`}
+                    : "rounded-bl-sm border bg-card text-card-foreground",
+                )}
               >
-                {m.text || (m.done ? "" : <span className="text-muted-foreground">Thinking...</span>)}
+                {m.role === "assistant" ? (
+                  m.text ? (
+                    <ChatMarkdown content={m.text} />
+                  ) : m.done ? (
+                    <span className="text-muted-foreground">Done.</span>
+                  ) : (
+                    <span className="flex items-center gap-1.5 text-muted-foreground">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" /> Thinking...
+                    </span>
+                  )
+                ) : (
+                  <span className="whitespace-pre-wrap">{m.text}</span>
+                )}
               </div>
             </div>
 
             {m.role === "assistant" && (
               <>
-                {m.events.filter((e) => e.type === "ocr" || e.type === "tool_start").map((e, idx) => toolChip(e, idx))}
+                {/* Model thoughts (reasoning) — collapsible, shown partially */}
+                {m.thinking && (
+                  <div className="ml-9">
+                    <button
+                      onClick={() => toggleThoughts(i)}
+                      className="flex items-center gap-1.5 rounded-md px-1 py-0.5 text-[11px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                    >
+                      <Brain className="h-3 w-3" />
+                      {expandedThoughts.has(i) ? "Hide thoughts" : "View thoughts"}
+                    </button>
+                    {expandedThoughts.has(i) && (
+                      <div className="mt-1 rounded-lg border-l-2 border-primary/40 bg-muted/30 p-2 text-xs leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                        {m.thinking}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {m.events
+                  .filter((e) => e.type === "ocr" || e.type === "tool_start")
+                  .map((e, idx) => toolChip(e, idx))}
+
                 {m.error && (
                   <p className="rounded border border-destructive/20 bg-destructive/10 px-2 py-1.5 text-xs font-medium text-destructive">
                     {m.error}
@@ -225,16 +291,35 @@ export function AIAssistantPanel({
         )}
       </div>
 
-      {/* Auto-insert confirmation (blocks already landed in the editor). */}
-      {lastInserted && !running && (
+      {/* Auto-insert / ops confirmation (already applied to the editor). */}
+      {!running && (lastInserted || lastOps) && (
         <div className="shrink-0 border-t bg-muted/30 px-4 py-3">
           <div className="flex items-center justify-between gap-2">
             <p className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-              <ArrowDownToLine className="h-3.5 w-3.5 text-success" />
-              Added {lastInserted.learnBlocks.length} Learn, {lastInserted.evaluateBlocks.length}{" "}
-              Evaluate block(s) to the editor
+              {lastInserted && (
+                <>
+                  <ArrowDownToLine className="h-3.5 w-3.5 text-success" />
+                  Added {lastInserted.learnBlocks.length} Learn, {lastInserted.evaluateBlocks.length}{" "}
+                  Evaluate block(s)
+                </>
+              )}
+              {lastInserted && lastOps && <span className="text-muted-foreground">·</span>}
+              {lastOps && opsSummary && (
+                <>
+                  <Check className="h-3.5 w-3.5 text-success" />
+                  {opsSummary} block(s)
+                </>
+              )}
             </p>
-            <Button size="sm" variant="ghost" onClick={clearInserted} className="h-7 px-2 text-xs">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                clearInserted();
+                clearOps();
+              }}
+              className="h-7 px-2 text-xs"
+            >
               Dismiss
             </Button>
           </div>
@@ -314,12 +399,13 @@ export function AIAssistantPanel({
           >
             <ImagePlus className="h-4 w-4" />
           </Button>
-          <Button type="submit" size="sm" disabled={running || (!input.trim() && images.length === 0)} className="h-9 shrink-0">
-            {running ? (
-              <Square className="h-3.5 w-3.5 fill-current" />
-            ) : (
-              <Sparkles className="h-4 w-4" />
-            )}
+          <Button
+            type="submit"
+            size="sm"
+            disabled={running || (!input.trim() && images.length === 0)}
+            className="h-9 shrink-0"
+          >
+            {running ? <Square className="h-3.5 w-3.5 fill-current" /> : <Sparkles className="h-4 w-4" />}
           </Button>
         </form>
         {running && (

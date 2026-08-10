@@ -5,16 +5,20 @@ import { useMutation, useQuery } from "urql";
 
 import { AIAssistantPanel } from "@/components/educator/AIAssistantPanel";
 import { WavePreview } from "@/components/educator/WavePreview";
-import { pushPuckData } from "@/components/puck-blocks/PuckCanvas";
+import { pushPuckData, setPuckSidebarVisible } from "@/components/puck-blocks/PuckCanvas";
 import {
   agentBlocksToPuckItems,
+  applyBlockOpsToData,
   type PuckData,
   puckToWaveData,
   waveDataToPuck,
+  type LearnBlockRaw,
+  type EvaluateBlockRaw,
 } from "@/components/puck-blocks/puck-config";
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import { PUBLISH_WAVE_MUTATION, UPDATE_WAVE_MUTATION, WAVE_QUERY } from "@/graphql/courses";
-import { useAIAssistant } from "@/stores/ai-assistant";
+import { useAIAssistant, type AIBlockOps } from "@/stores/ai-assistant";
 
 // @puckeditor/core (~large, plus its CSS) is code-split into its own chunk
 // and only fetched when an educator actually opens the wave editor.
@@ -27,9 +31,10 @@ export const Route = createFileRoute(
 });
 
 // Custom docked layout: the Puck editor owns the full remaining width and
-// the AI assistant docks on the right at a resizable width. (layout-manager
-// was replaced: its tab chrome clashed with the design system and the editor
-// deserves the whole screen.)
+// the AI assistant docks on the right at a resizable width. The route root
+// cancels the shell's vertical padding (-my-6) and sizes to the viewport
+// minus the sticky navbar (h-16), so the editor always fits the screen and
+// Puck scrolls internally — bottom blocks stay reachable.
 const DEFAULT_DOCK_WIDTH = 400;
 const MIN_DOCK_WIDTH = 320;
 const MAX_DOCK_WIDTH = 560;
@@ -58,7 +63,7 @@ function WaveEditorPage() {
   // Dock resize drag
   const dockDragRef = useRef<{ startX: number; startWidth: number } | null>(null);
 
-  const setInsertHandler = useAIAssistant((s) => s.setInsertHandler);
+  const setHandlers = useAIAssistant((s) => s.setHandlers);
 
   const wave = data?.wave;
 
@@ -73,12 +78,23 @@ function WaveEditorPage() {
     }
   }, [wave]);
 
-  // Auto-insert AI-generated blocks at the end of the current content. Called
-  // by the assistant store the moment a done event with blocks arrives, so
-  // blocks land in the editor without any manual insert step. Data is pushed
-  // into Puck's internal store (not a remount) so zoom/selection/undo stay.
+  // Apply an edit/delete op set to the live editor content.
+  const applyBlockOps = useCallback(
+    (ops: AIBlockOps) => {
+      if (!puckData) return;
+      const next = applyBlockOpsToData(puckData, ops);
+      if (next.content.length === puckData.content?.length && JSON.stringify(next) === JSON.stringify(puckData)) {
+        return; // no-op (nothing to change)
+      }
+      setPuckData(next);
+      pushPuckData(next);
+    },
+    [puckData],
+  );
+
+  // Auto-insert AI-generated blocks at the end of the current content.
   const handleAutoInsert = useCallback(
-    (learnBlocks: Parameters<typeof agentBlocksToPuckItems>[0], evaluateBlocks: Parameters<typeof agentBlocksToPuckItems>[1]) => {
+    (learnBlocks: LearnBlockRaw[], evaluateBlocks: EvaluateBlockRaw[]) => {
       if (!puckData) return;
       const newItems = agentBlocksToPuckItems(learnBlocks, evaluateBlocks);
       if (newItems.length === 0) return;
@@ -93,8 +109,11 @@ function WaveEditorPage() {
   );
 
   useEffect(() => {
-    setInsertHandler((blocks) => handleAutoInsert(blocks.learnBlocks, blocks.evaluateBlocks));
-  }, [setInsertHandler, handleAutoInsert]);
+    setHandlers({
+      onInsert: (blocks) => handleAutoInsert(blocks.learnBlocks, blocks.evaluateBlocks),
+      onOps: applyBlockOps,
+    });
+  }, [setHandlers, handleAutoInsert, applyBlockOps]);
 
   const handleSave = async (dataToSave: PuckData) => {
     setSaveStatus("saving");
@@ -139,6 +158,14 @@ function WaveEditorPage() {
     reexecuteQuery({ requestPolicy: "network-only" });
   };
 
+  // Opening the AI assistant auto-collapses Puck's left (blocks) panel so
+  // the docked chat gets room without squeezing the canvas; closing the
+  // assistant restores it.
+  const toggleAssistant = (open: boolean) => {
+    setAssistantOpen(open);
+    setPuckSidebarVisible(!open);
+  };
+
   // Dock drag handlers (pointer-based, so it works with mouse + touch).
   const startDockDrag = (e: React.PointerEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -155,29 +182,9 @@ function WaveEditorPage() {
     dockDragRef.current = null;
   };
 
-  const factory = useCallback(
-    (node: { component?: string }) => {
-      if (node.component === "ai-assistant") {
-        return (
-          <AIAssistantPanel
-            waveTitle={wave?.title ?? "Wave"}
-            waveContext={waveContext}
-            grade={wave?.gradeLevel ?? undefined}
-            language="en"
-            puckData={puckData ?? { content: [], root: {}, zones: {} }}
-            onClose={() => setAssistantOpen(false)}
-          />
-        );
-      }
-      return null;
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [puckData, wave],
-  );
-
   // A short markdown-ish summary of the wave for the agent's context, so it
   // can reference existing content ("keep the same tone as...", "add to the
-  // existing learn section").
+  // existing learn section", "update block X").
   const waveContext = useMemo(() => {
     if (!wave) return "";
     return [
@@ -185,8 +192,8 @@ function WaveEditorPage() {
       `Difficulty: ${wave.difficulty} | XP: ${wave.xpReward}`,
       `Learn blocks: ${(wave.learnBlocks ?? []).length}`,
       `Evaluate blocks: ${(wave.evaluateBlocks ?? []).length}`,
-      ...(wave.learnBlocks ?? []).map((b: { type: string; content: string }) => `- [learn/${b.type}] ${b.content.slice(0, 120)}`),
-      ...(wave.evaluateBlocks ?? []).map((b: { type: string; question: string }) => `- [evaluate/${b.type}] ${b.question.slice(0, 120)}`),
+      ...(wave.learnBlocks ?? []).map((b: { id?: string; type: string; content: string }) => `- [learn/${b.type}] id=${b.id ?? "?"} ${b.content.slice(0, 120)}`),
+      ...(wave.evaluateBlocks ?? []).map((b: { id?: string; type: string; question: string }) => `- [evaluate/${b.type}] id=${b.id ?? "?"} ${b.question.slice(0, 120)}`),
     ].join("\n");
   }, [wave]);
 
@@ -215,7 +222,10 @@ function WaveEditorPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] flex-col">
+    // -my-6 cancels the shell's py-6 so the editor spans the full viewport
+    // below the sticky navbar (h-16); main is overflow-hidden and Puck
+    // scrolls its own canvas internally.
+    <div className="-my-6 flex h-[calc(100dvh-4rem)] flex-col">
       {/* Header bar */}
       <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b bg-background/95 px-4 py-2.5 backdrop-blur">
         <div className="flex min-w-0 items-center gap-3">
@@ -235,18 +245,20 @@ function WaveEditorPage() {
         <div className="flex flex-wrap items-center gap-2">
           <span
             className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-              wave.isPublished ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400" : "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
+              wave.isPublished
+                ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
+                : "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
             }`}
           >
             {wave.isPublished ? "Published" : "Draft"}
           </span>
 
-          {/* Edit / Preview toggle */}
-          <div className="flex overflow-hidden rounded-lg border">
+          {/* Edit / Preview toggle — segmented shadcn button group */}
+          <ButtonGroup size="sm">
             <Button
               size="sm"
               variant={!previewMode ? "default" : "ghost"}
-              className="rounded-none px-3"
+              className="h-9 rounded-none border-0 px-3"
               onClick={() => setPreviewMode(false)}
             >
               <EyeOff className="mr-1.5 h-3.5 w-3.5" /> Edit
@@ -254,17 +266,17 @@ function WaveEditorPage() {
             <Button
               size="sm"
               variant={previewMode ? "default" : "ghost"}
-              className="rounded-none px-3"
+              className="h-9 rounded-none border-0 px-3"
               onClick={() => setPreviewMode(true)}
             >
               <Eye className="mr-1.5 h-3.5 w-3.5" /> Preview
             </Button>
-          </div>
+          </ButtonGroup>
 
           <Button
             size="sm"
             variant={assistantOpen ? "default" : "outline"}
-            onClick={() => setAssistantOpen((open) => !open)}
+            onClick={() => toggleAssistant(!assistantOpen)}
             className="gap-1.5"
           >
             <Bot className="h-4 w-4" />
@@ -277,6 +289,7 @@ function WaveEditorPage() {
               variant="outline"
               onClick={handlePublish}
               disabled={publishResult.fetching}
+              title="Publish this wave so students can take it"
             >
               {publishResult.fetching ? (
                 <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
@@ -291,6 +304,7 @@ function WaveEditorPage() {
             size="sm"
             onClick={() => puckData && handleSave(puckData)}
             disabled={!puckData || saveStatus === "saving" || updateResult.fetching}
+            title="Save the current editor content"
           >
             {saveStatus === "saving" ? (
               <>
@@ -368,7 +382,14 @@ function WaveEditorPage() {
               className="shrink-0 overflow-hidden border-l bg-background"
               style={{ width: dockWidth }}
             >
-              {factory({ component: "ai-assistant" })}
+              <AIAssistantPanel
+                waveTitle={wave.title ?? "Wave"}
+                waveContext={waveContext}
+                grade={wave.gradeLevel ?? undefined}
+                language="en"
+                puckData={puckData ?? { content: [], root: {}, zones: {} }}
+                onClose={() => toggleAssistant(false)}
+              />
             </aside>
           </>
         )}

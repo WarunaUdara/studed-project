@@ -47,7 +47,7 @@ func TestExtractJSON_NoJSON(t *testing.T) {
 }
 
 func TestDoneEvent_CodeFencedLearnBlocks(t *testing.T) {
-	ev := (&Agent{}).doneEvent("```json\n[{\"id\":\"b1\",\"type\":\"text\",\"content\":\"hello\"}]\n```", nil, nil)
+	ev := (&Agent{}).doneEvent("```json\n[{\"id\":\"b1\",\"type\":\"text\",\"content\":\"hello\"}]\n```", nil, nil, nil)
 	if len(ev.LearnBlocks) != 1 {
 		t.Fatalf("learn blocks = %d, want 1", len(ev.LearnBlocks))
 	}
@@ -58,7 +58,7 @@ func TestDoneEvent_LoneVizObject(t *testing.T) {
 	// (generateVisualization output) instead of a learnBlocks array; it
 	// must be captured as a one-item learn-block payload.
 	final := "Here is the visualization:\n```json\n{\"type\":\"mathviz_manim\",\"id\":\"balance-1\",\"title\":\"Balance Scale\",\"content\":\"Solving x + 5 = 9\",\"metadata\":{\"scene_spec\":{\"scene_title\":\"BalanceScaleEquation\",\"beats\":[{\"time\":0,\"action\":\"Display balanced scale\"}]}}}\n```\nEnjoy!"
-	ev := (&Agent{}).doneEvent(final, nil, nil)
+	ev := (&Agent{}).doneEvent(final, nil, nil, nil)
 	if len(ev.LearnBlocks) != 1 {
 		t.Fatalf("learn blocks = %d, want 1 (lone viz object)", len(ev.LearnBlocks))
 	}
@@ -73,7 +73,7 @@ func TestDoneEvent_LoneVizObject(t *testing.T) {
 func TestDoneEvent_LoneTextObjectFallsBackToProse(t *testing.T) {
 	// A lone object that is NOT a valid block (e.g. arbitrary JSON) must not
 	// be forced into blocks — the prose is delivered as the message.
-	ev := (&Agent{}).doneEvent("The answer is 42.\n```json\n{\"explanation\":\"just a note\"}\n```", nil, nil)
+	ev := (&Agent{}).doneEvent("The answer is 42.\n```json\n{\"explanation\":\"just a note\"}\n```", nil, nil, nil)
 	if len(ev.LearnBlocks) != 0 || len(ev.EvaluateBlocks) != 0 {
 		t.Fatalf("expected no blocks, got learn=%d evaluate=%d", len(ev.LearnBlocks), len(ev.EvaluateBlocks))
 	}
@@ -86,7 +86,7 @@ func TestDoneEvent_MergesToolAccumulatedBlocks(t *testing.T) {
 		{ID: "viz-1", Type: "mechsim_matterjs", Content: "Pendulum", Metadata: `{"title":"Pendulum","scenario_type":"pendulum","world_config":{"bodies":[{"id":"b","type":"circle"}]}}`},
 		{ID: "chem-1", Type: "chemviz_3dmol", Content: "Water", Metadata: `{"title":"Water","molecule":{"source_type":"smiles","source_value":"O"}}`},
 	}
-	ev := (&Agent{}).doneEvent("Added both visualizations to the wave.", accLearn, nil)
+	ev := (&Agent{}).doneEvent("Added both visualizations to the wave.", accLearn, nil, nil)
 	if len(ev.LearnBlocks) != 2 {
 		t.Fatalf("learn blocks = %d, want 2 (from tool results)", len(ev.LearnBlocks))
 	}
@@ -102,7 +102,7 @@ func TestDoneEvent_DedupesMergedBlocks(t *testing.T) {
 		{ID: "viz-1", Type: "mechsim_matterjs", Content: "Pendulum", Metadata: `{"title":"Pendulum","scenario_type":"pendulum","world_config":{"bodies":[{"id":"b","type":"circle"}]}}`},
 	}
 	final := "```json\n[{\"id\":\"viz-1\",\"type\":\"mechsim_matterjs\",\"content\":\"Pendulum\",\"metadata\":{\"title\":\"Pendulum\",\"scenario_type\":\"pendulum\",\"world_config\":{\"bodies\":[{\"id\":\"b\",\"type\":\"circle\"}]}}}]\n```"
-	ev := (&Agent{}).doneEvent(final, accLearn, nil)
+	ev := (&Agent{}).doneEvent(final, accLearn, nil, nil)
 	if len(ev.LearnBlocks) != 1 {
 		t.Fatalf("learn blocks = %d, want 1 (deduped)", len(ev.LearnBlocks))
 	}

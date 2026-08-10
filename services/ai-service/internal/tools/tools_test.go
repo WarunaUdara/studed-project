@@ -329,10 +329,10 @@ func TestToolProviderErrorReturnsRepairContent(t *testing.T) {
 func TestDefaultSetDeclaresAllTools(t *testing.T) {
 	s := &scriptedProvider{}
 	set := DefaultSet(s)
-	if len(set) != 4 {
-		t.Fatalf("tool count = %d, want 4", len(set))
+	if len(set) != 5 {
+		t.Fatalf("tool count = %d, want 5", len(set))
 	}
-	want := []string{"generateLearnBlocks", "generateEvaluateBlocks", "generateVisualization", "translateContent"}
+	want := []string{"generateLearnBlocks", "generateEvaluateBlocks", "generateVisualization", "translateContent", "manageBlocks"}
 	for i, name := range want {
 		if set[i].Name != name {
 			t.Errorf("tool %d name = %q, want %q", i, set[i].Name, name)
@@ -340,6 +340,70 @@ func TestDefaultSetDeclaresAllTools(t *testing.T) {
 		if set[i].Description == "" || set[i].Parameters == nil {
 			t.Errorf("tool %s missing description or parameters", name)
 		}
+	}
+}
+
+func TestManageBlocks_UpsertAndDelete(t *testing.T) {
+	tool := ManageBlocks()
+	res, err := tool.Execute(context.Background(), map[string]any{
+		"upsertLearn": []any{
+			map[string]any{"id": "l1", "type": "text", "content": "Updated intro"},
+			map[string]any{"id": "l2", "type": "callout", "content": "New tip"},
+		},
+		"upsertEval": []any{
+			map[string]any{"id": "q1", "type": "mcq", "question": "Which?", "options": []any{"A", "B"}, "correctAnswer": "A"},
+		},
+		"deleteIDs": []any{"old-block-1", "old-block-2"},
+	})
+	if err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	if res.BlockOps == nil {
+		t.Fatal("expected BlockOps result")
+	}
+	if len(res.BlockOps.UpsertLearn) != 2 {
+		t.Errorf("upsertLearn = %d, want 2", len(res.BlockOps.UpsertLearn))
+	}
+	if res.BlockOps.UpsertLearn[0].ID != "l1" || res.BlockOps.UpsertLearn[0].Content != "Updated intro" {
+		t.Errorf("upsertLearn[0] = %+v", res.BlockOps.UpsertLearn[0])
+	}
+	if len(res.BlockOps.UpsertEval) != 1 {
+		t.Errorf("upsertEval = %d, want 1", len(res.BlockOps.UpsertEval))
+	}
+	if len(res.BlockOps.DeleteIDs) != 2 || res.BlockOps.DeleteIDs[1] != "old-block-2" {
+		t.Errorf("deleteIDs = %v", res.BlockOps.DeleteIDs)
+	}
+}
+
+func TestManageBlocks_RejectsInvalidLearnUpsert(t *testing.T) {
+	tool := ManageBlocks()
+	res, err := tool.Execute(context.Background(), map[string]any{
+		"upsertLearn": []any{
+			map[string]any{"id": "bad", "type": "text", "content": " "},
+		},
+	})
+	if err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	if res.BlockOps != nil {
+		t.Fatal("expected no ops for invalid upsert")
+	}
+	if !strings.Contains(res.Content, "invalid upsertLearn") {
+		t.Errorf("content = %q, want validation error", res.Content)
+	}
+}
+
+func TestManageBlocks_EmptyOpsReportsNoChanges(t *testing.T) {
+	tool := ManageBlocks()
+	res, err := tool.Execute(context.Background(), map[string]any{})
+	if err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	if res.BlockOps != nil {
+		t.Fatal("expected nil ops for empty request")
+	}
+	if !strings.Contains(res.Content, "no changes requested") {
+		t.Errorf("content = %q, want no-changes message", res.Content)
 	}
 }
 

@@ -8,7 +8,7 @@
 // so the chat panel can render progress in real time.
 
 export interface AgentEvent {
-  type: "plan" | "ocr" | "tool_start" | "tool_end" | "delta" | "done" | "error";
+  type: "plan" | "ocr" | "tool_start" | "tool_end" | "delta" | "thinking" | "done" | "error";
   tool?: string;
   message?: string;
   learnBlocks?: Array<{ id: string; type: string; content: string; metadata?: string | null }>;
@@ -20,7 +20,24 @@ export interface AgentEvent {
     correctAnswer?: string;
     explanation?: string;
   }>;
+  blockOps?: {
+    upsertLearn?: Array<{ id: string; type: string; content: string; metadata?: string | null }>;
+    upsertEval?: Array<{
+      id: string;
+      type: string;
+      question: string;
+      options?: string[] | null;
+      correctAnswer?: string;
+      explanation?: string;
+    }>;
+    deleteIDs?: string[];
+  };
   error?: string;
+}
+
+export interface AIChatTurn {
+  role: "user" | "assistant";
+  content: string;
 }
 
 export interface AIChatRequest {
@@ -30,6 +47,8 @@ export interface AIChatRequest {
   waveContext?: string;
   /** Base64 data URLs of uploaded images; OCR'd (high effort) server-side. */
   images?: string[];
+  /** Prior conversation turns so the assistant can respond in context. */
+  history?: AIChatTurn[];
 }
 
 export interface AIChatHandlers {

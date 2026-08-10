@@ -24,6 +24,21 @@ type Result struct {
 	Blocks     []blocks.LearnBlock
 	EvalBlocks []blocks.EvaluateBlock
 	VizBlock   *blocks.LearnBlock
+	// BlockOps carries explicit edit/delete operations for the frontend to
+	// apply to the live editor (upsert by id, delete by id).
+	BlockOps *BlockOps
+}
+
+// BlockOps describes modifications to existing blocks in the wave.
+type BlockOps struct {
+	UpsertLearn []blocks.LearnBlock    `json:"upsertLearn,omitempty"`
+	UpsertEval  []blocks.EvaluateBlock `json:"upsertEval,omitempty"`
+	DeleteIDs   []string               `json:"deleteIDs,omitempty"`
+}
+
+// IsEmpty reports whether the ops carry no changes.
+func (o *BlockOps) IsEmpty() bool {
+	return o == nil || (len(o.UpsertLearn) == 0 && len(o.UpsertEval) == 0 && len(o.DeleteIDs) == 0)
 }
 
 // Tool is a runnable function the agent may call. Execute is safe for
@@ -36,13 +51,15 @@ type Tool struct {
 }
 
 // DefaultSet returns the full tool set (learn, evaluate, visualization,
-// translation) wired to the given provider, in declaration order.
+// translation, block management) wired to the given provider, in declaration
+// order.
 func DefaultSet(p provider.Provider) []Tool {
 	return []Tool{
 		LearnBlocks(p),
 		EvaluateBlocks(p),
 		Visualization(p),
 		Translate(p),
+		ManageBlocks(),
 	}
 }
 
@@ -364,6 +381,80 @@ func Translate(p provider.Provider) Tool {
 				return Result{Name: "translateContent", Content: "tool error: " + err.Error()}, nil
 			}
 			return Result{Name: "translateContent", Content: extractTranslation(raw)}, nil
+		},
+	}
+}
+
+// ManageBlocks builds the manageBlocks tool: it returns explicit upsert
+// (update-or-add by id) and delete operations for existing wave blocks. The
+// frontend applies these ops to the live editor, so the agent can edit,
+// replace, or remove blocks the educator already placed without re-emitting
+// the whole payload. The tool does not call the provider — it just validates
+// the requested ops and returns them structurally.
+func ManageBlocks() Tool {
+	return Tool{
+		Name:        "manageBlocks",
+		Description: "Update, replace, or delete blocks already in the wave. Use upsertLearn/upsertEval with the EXACT ids of existing blocks to modify them (or new ids to add), and deleteIDs to remove blocks by id. This is how you edit or remove existing content the educator placed.",
+		Parameters: map[string]any{
+			"type": "object",
+			"properties": map[string]any{
+				"upsertLearn": map[string]any{
+					"type":        "array",
+					"items":       map[string]any{"type": "object"},
+					"description": "Learn blocks to add or replace (same schema as generateLearnBlocks output: id, type, content, metadata). Keep existing ids to edit in place.",
+				},
+				"upsertEval": map[string]any{
+					"type":        "array",
+					"items":       map[string]any{"type": "object"},
+					"description": "Evaluate blocks to add or replace (same schema as generateEvaluateBlocks output: id, type, question, options, correctAnswer, explanation). Keep existing ids to edit in place.",
+				},
+				"deleteIDs": map[string]any{
+					"type":        "array",
+					"items":       map[string]any{"type": "string"},
+					"description": "Ids of blocks to remove from the wave.",
+				},
+			},
+		},
+		Execute: func(ctx context.Context, args map[string]any) (Result, error) {
+			ops := &BlockOps{}
+			var learnRaw, evalRaw []byte
+			var err error
+
+			if learnVal, ok := args["upsertLearn"]; ok {
+				if learnRaw, err = json.Marshal(learnVal); err == nil {
+					if parsed, perr := blocks.ParseLearnBlocks(learnRaw); perr == nil {
+						ops.UpsertLearn = parsed
+					} else {
+						return Result{Name: "manageBlocks", Content: "invalid upsertLearn: " + perr.Error()}, nil
+					}
+				}
+			}
+			if evalVal, ok := args["upsertEval"]; ok {
+				if evalRaw, err = json.Marshal(evalVal); err == nil {
+					if parsed, perr := blocks.ParseEvaluateBlocks(evalRaw); perr == nil {
+						ops.UpsertEval = parsed
+					} else {
+						return Result{Name: "manageBlocks", Content: "invalid upsertEval: " + perr.Error()}, nil
+					}
+				}
+			}
+			if idsVal, ok := args["deleteIDs"]; ok {
+				if raw, merr := json.Marshal(idsVal); merr == nil {
+					var ids []string
+					if json.Unmarshal(raw, &ids) == nil {
+						for _, id := range ids {
+							if strings.TrimSpace(id) != "" {
+								ops.DeleteIDs = append(ops.DeleteIDs, id)
+							}
+						}
+					}
+				}
+			}
+
+			if ops.IsEmpty() {
+				return Result{Name: "manageBlocks", Content: "no changes requested: provide upsertLearn, upsertEval, or deleteIDs"}, nil
+			}
+			return Result{Name: "manageBlocks", BlockOps: ops}, nil
 		},
 	}
 }

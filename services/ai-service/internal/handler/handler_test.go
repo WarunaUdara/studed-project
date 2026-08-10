@@ -23,11 +23,11 @@ import (
 // scriptedProvider returns canned JSON per GenerateJSON call and canned
 // streams per Stream call. It is safe for concurrent use.
 type scriptedProvider struct {
-	mu         sync.Mutex
-	jsonCalls  int
-	jsonOuts   [][]byte
+	mu          sync.Mutex
+	jsonCalls   int
+	jsonOuts    [][]byte
 	streamCalls int
-	streamOuts [][]provider.StreamEvent
+	streamOuts  [][]provider.StreamEvent
 }
 
 func (s *scriptedProvider) GenerateJSON(ctx context.Context, system, user string, opts provider.Options) ([]byte, error) {
@@ -171,7 +171,7 @@ func TestGenerateEvaluateBlocks_ValidResponse(t *testing.T) {
 func TestTranslate(t *testing.T) {
 	p := &scriptedProvider{jsonOuts: [][]byte{[]byte(`"සිංහල පරිවර්තනය"`)}}
 	rec := post(t, newTestHandler(p, nil), "/v1/translate", map[string]any{
-		"content":        "hello world",
+		"content":         "hello world",
 		"target_language": "si",
 	})
 	if rec.Code != http.StatusOK {

@@ -1,6 +1,6 @@
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { Puck, usePuck, type Overrides } from "@puckeditor/core";
+import { Puck, usePuck, type Overrides, type UiState } from "@puckeditor/core";
 import "@puckeditor/core/puck.css";
 import "@/styles/puck-theme.css";
 import { type PuckData, puckConfig } from "@/components/puck-blocks/puck-config";
@@ -35,8 +35,19 @@ export function pushPuckData(data: PuckData) {
   });
 }
 
+/** Programmatically collapse/expand Puck's left (blocks) panel. */
+export function setPuckSidebarVisible(visible: boolean) {
+  puckDispatch?.({
+    type: "setUi",
+    ui: { leftSideBarVisible: visible },
+  });
+}
+
 // Rendered inside Puck's header via overrides.headerActions. Captures the
 // dispatch handle and renders the Notion-style sidebar collapse toggle.
+// Puck's own Publish button is NOT rendered: saving is a single explicit
+// action in the wave editor header (Save), avoiding duplicate/confusing
+// publish affordances.
 function PuckBridge() {
   const { dispatch, appState } = usePuck();
   const mounted = useRef(false);
@@ -69,15 +80,27 @@ function PuckBridge() {
   );
 }
 
-const headerActionsOverride: NonNullable<Partial<Overrides>["headerActions"]> = ({ children }) => (
-  <>
-    <PuckBridge />
-    {children}
-  </>
+// Render only the sidebar toggle in the header actions; drop Puck's Publish
+// button (the app header has the single Save action).
+const headerActionsOverride: NonNullable<Partial<Overrides>["headerActions"]> = () => (
+  <PuckBridge />
 );
 
 const puckOverrides: Partial<Overrides> = {
   headerActions: headerActionsOverride,
+};
+
+// The editor always opens in full-width viewport mode, and only the
+// full-width control is offered (no small/medium/large icons cluttering the
+// canvas toolbar — the editor is a desktop-first authoring surface).
+const fullWidthViewport: NonNullable<UiState["viewports"]> = {
+  current: { width: "100%", height: "auto" },
+  options: [{ width: "100%", height: "auto", icon: "FullWidth", label: "Full-width" }],
+  controlsVisible: false,
+};
+
+const initialUi: Partial<UiState> = {
+  viewports: fullWidthViewport,
 };
 
 // ---------------------------------------------------------------------------
@@ -99,6 +122,7 @@ export default function PuckCanvas({ data, onChange, onPublish }: PuckCanvasProp
       onChange={onChange}
       onPublish={onPublish}
       overrides={puckOverrides}
+      ui={initialUi}
     />
   );
 }

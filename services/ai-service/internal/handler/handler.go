@@ -78,11 +78,12 @@ type analyzeImageRequest struct {
 }
 
 type agentRequest struct {
-	Prompt      string   `json:"prompt"`
-	Language    string   `json:"language,omitempty"`
-	Grade       string   `json:"grade,omitempty"`
-	WaveContext string   `json:"waveContext,omitempty"`
-	Images      []string `json:"images,omitempty"` // base64 data URLs
+	Prompt      string           `json:"prompt"`
+	Language    string           `json:"language,omitempty"`
+	Grade       string           `json:"grade,omitempty"`
+	WaveContext string           `json:"waveContext,omitempty"`
+	Images      []string         `json:"images,omitempty"`  // base64 data URLs
+	History     []agent.ChatTurn `json:"history,omitempty"` // prior chat turns
 }
 
 // ---- Legacy endpoints ----------------------------------------------------------
@@ -255,6 +256,7 @@ func (h *Handler) agentTask(w http.ResponseWriter, r *http.Request) {
 			// The high-effort OCR (qwen3.7-plus) already extracted the text,
 			// which arrives as OCRContext above.
 			OCRContext: ocrCtx,
+			History:    req.History,
 		}, events)
 	}()
 
@@ -326,6 +328,7 @@ func (h *Handler) agentStream(w http.ResponseWriter, r *http.Request) {
 			Grade:       req.Grade,
 			WaveContext: req.WaveContext,
 			OCRContext:  ocrCtx,
+			History:     req.History,
 		}, events)
 	}()
 

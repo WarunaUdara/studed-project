@@ -44,28 +44,28 @@ type MoleculeSource struct {
 
 // ChemVizMetadata is the payload for chemviz_3dmol blocks.
 type ChemVizMetadata struct {
-	Title         string            `json:"title"`
-	Description   string            `json:"description,omitempty"`
-	Molecule      MoleculeSource    `json:"molecule"`
-	Style         map[string]any    `json:"style,omitempty"`
-	Surface       map[string]any    `json:"surface,omitempty"`
-	Camera        map[string]any    `json:"camera,omitempty"`
-	Interactivity map[string]any    `json:"interactivity,omitempty"`
-	Annotations   []map[string]any  `json:"annotations,omitempty"`
-	Dimensions    *Dimensions       `json:"dimensions,omitempty"`
+	Title         string           `json:"title"`
+	Description   string           `json:"description,omitempty"`
+	Molecule      MoleculeSource   `json:"molecule"`
+	Style         map[string]any   `json:"style,omitempty"`
+	Surface       map[string]any   `json:"surface,omitempty"`
+	Camera        map[string]any   `json:"camera,omitempty"`
+	Interactivity map[string]any   `json:"interactivity,omitempty"`
+	Annotations   []map[string]any `json:"annotations,omitempty"`
+	Dimensions    *Dimensions      `json:"dimensions,omitempty"`
 }
 
 // EditableParam describes a user-adjustable parameter of a simulation.
 type EditableParam struct {
-	Component string    `json:"component,omitempty"`
-	Property  string    `json:"property"`
-	Label     string    `json:"label"`
-	Type      string    `json:"type"` // select | slider
-	Options   []string  `json:"options,omitempty"`
-	Min       *float64  `json:"min,omitempty"`
-	Max       *float64  `json:"max,omitempty"`
-	Step      *float64  `json:"step,omitempty"`
-	Default   any       `json:"default,omitempty"`
+	Component string   `json:"component,omitempty"`
+	Property  string   `json:"property"`
+	Label     string   `json:"label"`
+	Type      string   `json:"type"` // select | slider
+	Options   []string `json:"options,omitempty"`
+	Min       *float64 `json:"min,omitempty"`
+	Max       *float64 `json:"max,omitempty"`
+	Step      *float64 `json:"step,omitempty"`
+	Default   any      `json:"default,omitempty"`
 }
 
 // ElecSimMetadata is the payload for elecsim_tscircuit blocks.

@@ -3,6 +3,7 @@ package agent
 import (
 	"context"
 	"errors"
+	"strings"
 	"sync"
 	"testing"
 
@@ -20,6 +21,7 @@ type scriptedProvider struct {
 	streams        [][]provider.StreamEvent
 	alwaysToolCall *provider.ToolCall
 	jsonOut        []byte
+	lastMsgs       []provider.Message
 }
 
 func (s *scriptedProvider) GenerateJSON(ctx context.Context, system, user string, opts provider.Options) ([]byte, error) {
@@ -35,6 +37,7 @@ func (s *scriptedProvider) Stream(ctx context.Context, msgs []provider.Message, 
 	s.mu.Lock()
 	i := s.streamCalls
 	s.streamCalls++
+	s.lastMsgs = msgs
 	var evs []provider.StreamEvent
 	if s.alwaysToolCall != nil {
 		evs = []provider.StreamEvent{{Type: "tool_call", ToolCall: s.alwaysToolCall}}
@@ -424,4 +427,65 @@ func (f *failingStreamProvider) GenerateJSON(ctx context.Context, system, user s
 
 func (f *failingStreamProvider) Stream(ctx context.Context, msgs []provider.Message, tools []provider.Tool, opts provider.Options) (<-chan provider.StreamEvent, error) {
 	return nil, f.err
+}
+
+func TestBuildMessages_IncludesHistory(t *testing.T) {
+	msgs := buildMessages(Request{
+		Prompt: "make it easier",
+		History: []ChatTurn{
+			{Role: "user", Content: "add a text block about gravity"},
+			{Role: "assistant", Content: "Added 1 Learn block."},
+		},
+	})
+	// system + 2 history turns + current user
+	if len(msgs) != 4 {
+		t.Fatalf("messages = %d, want 4 (system + 2 history + user)", len(msgs))
+	}
+	if msgs[1].Role != "user" || msgs[1].Content != "add a text block about gravity" {
+		t.Errorf("history[0] = %+v", msgs[1])
+	}
+	if msgs[2].Role != "assistant" || msgs[2].Content != "Added 1 Learn block." {
+		t.Errorf("history[1] = %+v", msgs[2])
+	}
+	if msgs[3].Role != "user" || !strings.Contains(msgs[3].Content, "make it easier") {
+		t.Errorf("current user message = %+v", msgs[3])
+	}
+}
+
+func TestBuildMessages_CapsHistory(t *testing.T) {
+	hist := make([]ChatTurn, 0, 20)
+	for i := 0; i < 20; i++ {
+		hist = append(hist, ChatTurn{Role: "user", Content: "turn"})
+	}
+	msgs := buildMessages(Request{Prompt: "next", History: hist})
+	// system + capped 8 history turns + current user
+	if len(msgs) != 10 {
+		t.Fatalf("messages = %d, want 10 (capped history)", len(msgs))
+	}
+}
+
+func TestRunStreamsThinkingEvent(t *testing.T) {
+	// Reasoning content on the done event must be forwarded as a thinking
+	// event so the chat can show collapsible thoughts.
+	sp := &scriptedProvider{
+		streams: [][]provider.StreamEvent{
+			{
+				{Type: "text_delta", Delta: "Here is the block."},
+				{Type: "done", Content: "Here is the block.", Reasoning: "First think about gravity, then about motion."},
+			},
+		},
+	}
+	a := New(sp, tools.DefaultSet(sp), 2)
+	events := make(chan Event)
+	go a.Run(context.Background(), Request{Prompt: "explain gravity"}, events)
+
+	var gotThinking string
+	for ev := range events {
+		if ev.Type == "thinking" {
+			gotThinking = ev.Message
+		}
+	}
+	if !strings.Contains(gotThinking, "gravity") {
+		t.Errorf("thinking event = %q, want reasoning content", gotThinking)
+	}
 }

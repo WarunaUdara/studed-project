@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import {
   type AgentEvent,
+  type AIChatTurn,
   streamAgentChat,
 } from "@/lib/ai-chat";
 
@@ -8,6 +9,8 @@ export interface AIChatMessage {
   role: "user" | "assistant";
   text: string;
   events: AgentEvent[];
+  /** Model reasoning shown in a collapsible "thoughts" section. */
+  thinking: string;
   done: boolean;
   error?: string;
 }
@@ -25,28 +28,43 @@ export interface AIGeneratedBlocks {
   evaluateBlocks: NonNullable<AgentEvent["evaluateBlocks"]>;
 }
 
+/** Edit/delete operations the wave editor applies to existing blocks. */
+export interface AIBlockOps {
+  upsertLearn?: NonNullable<AgentEvent["blockOps"]>["upsertLearn"];
+  upsertEval?: NonNullable<AgentEvent["blockOps"]>["upsertEval"];
+  deleteIDs?: string[];
+}
+
 interface AIAssistantState {
   messages: AIChatMessage[];
   running: boolean;
   /** Most recent insert for the confirmation chip ("Added 2 Learn, 1 Evaluate"). */
   lastInserted: AIGeneratedBlocks | null;
+  /** Most recent block ops for the confirmation chip ("Updated 1, removed 1"). */
+  lastOps: AIBlockOps | null;
   /** In-flight abort controller so "Stop" can cancel the stream. */
   abortRef: AbortController | null;
 
   sendPrompt: (prompt: string, ctx: AIChatContext) => void;
   stop: () => void;
   clearInserted: () => void;
-  /** Registers the wave editor's auto-insert callback (set on mount). */
-  setInsertHandler: (fn: (blocks: AIGeneratedBlocks) => void) => void;
+  clearOps: () => void;
+  /** Registers the wave editor's callbacks (set on mount). */
+  setHandlers: (h: {
+    onInsert: (blocks: AIGeneratedBlocks) => void;
+    onOps: (ops: AIBlockOps) => void;
+  }) => void;
   reset: () => void;
 }
 
 let insertHandler: ((blocks: AIGeneratedBlocks) => void) | null = null;
+let opsHandler: ((ops: AIBlockOps) => void) | null = null;
 
 export const useAIAssistant = create<AIAssistantState>((set, get) => ({
   messages: [],
   running: false,
   lastInserted: null,
+  lastOps: null,
   abortRef: null,
 
   sendPrompt: (prompt, ctx) => {
@@ -54,19 +72,29 @@ export const useAIAssistant = create<AIAssistantState>((set, get) => ({
     if (!trimmed || get().running) return;
 
     const abort = new AbortController();
+    // Prior conversation (excluding the message being sent) so the assistant
+    // can reference earlier exchanges.
+    const history: AIChatTurn[] = get()
+      .messages.filter((m) => m.text)
+      .map((m) => ({ role: m.role, content: m.text }))
+      .slice(-8);
+
     set((s) => ({
       running: true,
       abortRef: abort,
       lastInserted: null,
+      lastOps: null,
       messages: [
         ...s.messages,
-        { role: "user", text: trimmed, events: [], done: true },
-        { role: "assistant", text: "", events: [], done: false },
+        { role: "user", text: trimmed, events: [], thinking: "", done: true },
+        { role: "assistant", text: "", events: [], thinking: "", done: false },
       ],
     }));
 
     const latest: AIGeneratedBlocks = { learnBlocks: [], evaluateBlocks: [] };
+    const latestOps: AIBlockOps = {};
     let finalText = "";
+    let thinkingText = "";
 
     const patchLast = (updater: (m: AIChatMessage) => AIChatMessage) => {
       set((s) => {
@@ -83,6 +111,7 @@ export const useAIAssistant = create<AIAssistantState>((set, get) => ({
         language: ctx.language,
         waveContext: ctx.waveContext,
         images: ctx.images,
+        history,
       },
       {
         signal: abort.signal,
@@ -92,6 +121,10 @@ export const useAIAssistant = create<AIAssistantState>((set, get) => ({
               finalText += event.message ?? "";
               patchLast((m) => ({ ...m, text: finalText, events: [...m.events, event] }));
               break;
+            case "thinking":
+              thinkingText += event.message ?? "";
+              patchLast((m) => ({ ...m, thinking: thinkingText, events: [...m.events, event] }));
+              break;
             case "tool_start":
             case "tool_end":
               patchLast((m) => ({ ...m, events: [...m.events, event] }));
@@ -99,6 +132,15 @@ export const useAIAssistant = create<AIAssistantState>((set, get) => ({
             case "done": {
               if (event.learnBlocks?.length) latest.learnBlocks.push(...event.learnBlocks);
               if (event.evaluateBlocks?.length) latest.evaluateBlocks.push(...event.evaluateBlocks);
+              if (event.blockOps?.deleteIDs?.length) {
+                latestOps.deleteIDs = [...(latestOps.deleteIDs ?? []), ...event.blockOps.deleteIDs];
+              }
+              if (event.blockOps?.upsertLearn?.length) {
+                latestOps.upsertLearn = [...(latestOps.upsertLearn ?? []), ...event.blockOps.upsertLearn];
+              }
+              if (event.blockOps?.upsertEval?.length) {
+                latestOps.upsertEval = [...(latestOps.upsertEval ?? []), ...event.blockOps.upsertEval];
+              }
               const count =
                 (event.learnBlocks?.length ?? 0) + (event.evaluateBlocks?.length ?? 0);
               const summary = count
@@ -121,6 +163,14 @@ export const useAIAssistant = create<AIAssistantState>((set, get) => ({
                   evaluateBlocks: latest.evaluateBlocks,
                 });
                 set({ lastInserted: { learnBlocks: latest.learnBlocks, evaluateBlocks: latest.evaluateBlocks } });
+              }
+              const hasOps =
+                (latestOps.deleteIDs?.length ?? 0) > 0 ||
+                (latestOps.upsertLearn?.length ?? 0) > 0 ||
+                (latestOps.upsertEval?.length ?? 0) > 0;
+              if (hasOps) {
+                opsHandler?.(latestOps);
+                set({ lastOps: latestOps });
               }
               set({ running: false, abortRef: null });
               break;
@@ -167,9 +217,13 @@ export const useAIAssistant = create<AIAssistantState>((set, get) => ({
 
   clearInserted: () => set({ lastInserted: null }),
 
-  setInsertHandler: (fn) => {
-    insertHandler = fn;
+  clearOps: () => set({ lastOps: null }),
+
+  setHandlers: ({ onInsert, onOps }) => {
+    insertHandler = onInsert;
+    opsHandler = onOps;
   },
 
-  reset: () => set({ messages: [], running: false, lastInserted: null, abortRef: null }),
+  reset: () =>
+    set({ messages: [], running: false, lastInserted: null, lastOps: null, abortRef: null }),
 }));

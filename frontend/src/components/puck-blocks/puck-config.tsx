@@ -635,6 +635,41 @@ export function agentBlocksToPuckItems(
 }
 
 // ---------------------------------------------------------------------------
+// Block operations (edit / delete from the AI assistant)
+// ---------------------------------------------------------------------------
+
+export interface BlockOpsInput {
+  upsertLearn?: LearnBlockRaw[];
+  upsertEval?: EvaluateBlockRaw[];
+  deleteIDs?: string[];
+}
+
+const itemId = (v: unknown): string => (typeof v === "string" ? v : "");
+
+/**
+ * Applies upsert (update-or-add by id) and delete operations to a Puck
+ * document. Used when the agent edits or removes existing blocks: existing
+ * ids are replaced in place, new ids are appended, and deleteIDs are removed.
+ * Pure and unit-tested.
+ */
+export function applyBlockOpsToData(data: PuckData, ops: BlockOpsInput): PuckData {
+  const deleteSet = new Set(ops.deleteIDs ?? []);
+  const upsertItems = agentBlocksToPuckItems(ops.upsertLearn ?? [], ops.upsertEval ?? []);
+  const upsertById = new Map(upsertItems.map((it) => [itemId(it.props.id), it]));
+
+  let content = (data.content ?? []).slice();
+  content = content.filter((item) => !deleteSet.has(itemId(item.props.id)));
+
+  const seen = new Set(content.map((item) => itemId(item.props.id)));
+  content = content.map((item) => upsertById.get(itemId(item.props.id)) ?? item);
+  for (const [id, item] of upsertById) {
+    if (!seen.has(id)) content.push(item);
+  }
+
+  return { ...data, content };
+}
+
+// ---------------------------------------------------------------------------
 // Puck document -> GraphQL wave inputs
 // ---------------------------------------------------------------------------
 

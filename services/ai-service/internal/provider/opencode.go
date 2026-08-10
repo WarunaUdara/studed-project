@@ -323,9 +323,9 @@ type chatRequest struct {
 // chatContentPart is one element of a multimodal user message: either text
 // or an image_url reference.
 type chatContentPart struct {
-	Type     string          `json:"type"`
-	Text     string          `json:"text,omitempty"`
-	ImageURL *chatImageURL   `json:"image_url,omitempty"`
+	Type     string        `json:"type"`
+	Text     string        `json:"text,omitempty"`
+	ImageURL *chatImageURL `json:"image_url,omitempty"`
 }
 
 type chatImageURL struct {
