@@ -18,6 +18,7 @@ interface MatterBodyConfig {
   id: string;
   type: "circle" | "rectangle";
   position?: { x?: number; y?: number };
+  velocity?: { x?: number; y?: number };
   radius?: number;
   width?: number;
   height?: number;
@@ -127,8 +128,11 @@ function buildBodies(world: MatterWorldConfig | undefined, height: number): SimB
       type: b.type,
       x: b.position?.x ?? 300,
       y: b.position?.y ?? Math.max(radius + 10, height / 2),
-      vx: 0,
-      vy: 0,
+      // Honor the config's initial velocity (e.g. projectile launch
+      // velocity vx/vy) — a projectile that spawns with vx=0,vy=0 just
+      // drops straight down instead of tracing its parabolic arc.
+      vx: b.velocity?.x ?? 0,
+      vy: b.velocity?.y ?? 0,
       radius,
       width,
       height: bodyHeight,
