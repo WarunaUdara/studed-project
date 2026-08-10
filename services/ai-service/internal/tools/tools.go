@@ -267,32 +267,40 @@ Requirements: molecule.source_type must be "smiles" (preferred — give a valid 
 	case "tscircuit":
 		return `You are an expert tscircuit circuit code generator for physics education at StudEd (Grades 1-11, O/L, A/L). Output JSON only: a single object with fields id, type, content, metadata where type is elecsim_tscircuit, content is the circuit title, and metadata is {"title": ..., "circuit_code": "<tsx component code>"}. Do not use emojis.`, nil
 	case "matterjs":
-		return `You are an expert Matter.js physics simulation generator for physics education at StudEd (Grades 1-11, O/L, A/L). Output JSON only: a single object with fields id, type, content, metadata where type is mechsim_matterjs, content is the simulation title, and metadata follows this full schema:
+		return `You are an expert Matter.js physics simulation generator for physics education at StudEd (Grades 1-11, O/L, A/L). The educator may ask for ANY physics system — pendulums, projectiles, springs, collisions, inclined planes, circular motion, planetary orbits, Newton's cradle, Newton's laws, rocket thrust, fluid drag, or anything else. You design the simulation dynamically for the requested concept.
+
+Output JSON only: a single object with fields id, type, content, metadata where type is mechsim_matterjs, content is the simulation title, and metadata has this shape:
 {
   "title": "<simulation title>",
   "description": "<one-line description>",
-  "scenario_type": "<pendulum|collision|projectile|spring|newtons_cradle|newtons_laws|inclined_plane|circular_motion|planetary_orbit|custom>",
+  "scenario_type": "<pendulum|collision|projectile|spring|newtons_cradle|newtons_laws|inclined_plane|circular_motion|planetary_orbit|rocket|drag|custom>",
   "world_config": {
     "gravity": {"x": 0, "y": 1, "scale": 0.001},
-    "bounds": {"width": 800, "height": 600},
+    "bounds": {"width": 800, "height": 500},
     "bodies": [
-      {"id": "bob", "type": "circle", "position": {"x": 400, "y": 350}, "radius": 30, "density": 0.04, "restitution": 0.8, "friction": 0.005, "isStatic": false, "render": {"fillStyle": "#3B82F6"}},
-      {"id": "ground", "type": "rectangle", "position": {"x": 400, "y": 580}, "width": 800, "height": 20, "isStatic": true, "render": {"fillStyle": "#333"}}
+      {"id": "body1", "type": "circle", "position": {"x": 400, "y": 250}, "radius": 30, "density": 0.04, "restitution": 0.8, "friction": 0.01, "isStatic": false, "render": {"fillStyle": "#3B82F6"}}
     ],
     "constraints": [
-      {"id": "string", "bodyA": "pivot", "bodyB": "bob", "length": 300, "stiffness": 1, "render": {"strokeStyle": "#666", "lineWidth": 2}}
+      {"id": "c1", "bodyA": "anchor", "bodyB": "body1", "length": 200, "stiffness": 0.02}
     ]
   },
   "editable_params": [
-    {"label": "Gravity", "property": "gravity.scale", "type": "slider", "min": 0, "max": 0.002, "step": 0.0001, "default": 0.001}
+    {"label": "Param", "property": "gravity.scale", "type": "slider", "min": 0, "max": 0.002, "step": 0.0001, "default": 0.001}
   ],
   "measurements": [
-    {"label": "Velocity", "type": "live", "source": "bob.velocity"}
+    {"label": "Velocity", "type": "live", "source": "body1.velocity"}
   ],
   "educational_overlays": {"show_forces": true, "show_velocity": true, "show_trajectory": true, "show_energy_bar": true},
-  "dimensions": {"width": 100, "height": 600}
+  "dimensions": {"width": 100, "height": 400}
 }
-Requirements: bodies need id, type (circle|rectangle), position, and physical props (radius for circle; width/height for rectangle; density, restitution, friction, isStatic as appropriate). Use constraints for pendulums, springs, and Newton's cradle. For newtons_laws, set gravity to {x:0,y:0} and include a thrust force {x:0,y:0} in world_config plus editable_params with property "thrust.x" (applied force slider) and a computed measurement with formula "thrust/density" (acceleration, a=F/m); the renderer demonstrates the 1st law (no force = no motion), 2nd law (acceleration slider), and 3rd law (compressed spring between two carts). Provide 1-3 editable_params and 1-3 measurements relevant to the physics concept. Keep everything grade-appropriate. Do not use emojis.`, nil
+Design rules:
+- bodies: id, type (circle|rectangle), position, radius (circle) or width/height (rectangle), density, restitution, friction, isStatic. Add a static floor/ground unless the concept is gravity-free. Use 2-4 bodies for multi-body systems (collisions, cradle, orbits).
+- constraints: use for pendulums (bodyA static pivot, bodyB bob, length, stiffness 0.5-1), springs (stiffness < 0.1), Newton's cradle chains.
+- world_config.thrust {x,y}: optional applied force for rockets/Newton's 2nd law; wire it to an editable_param with property "thrust.x".
+- editable_params: 1-3 sliders bound to properties like gravity.scale, bodies.<id>.density, bodies.<id>.restitution, constraints.<id>.stiffness, or thrust.x. Include the concept's key variable (e.g. launch angle, mass, spring constant).
+- measurements: 1-3 entries; live ones reference "bodies.<id>" (e.g. source "bob.velocity"), computed ones use simple arithmetic formulas like "thrust/density" or "2*3.14159*sqrt(length/gravity)".
+- The renderer runs a real 2D physics loop; keep bounds within 800x600 and positions inside.
+Never emit placeholder text or markdown — only the JSON object. Do not use emojis.`, nil
 	default:
 		return "", fmt.Errorf("unknown visualization type %q (must be manim, 3dmol, tscircuit, or matterjs)", vizType)
 	}

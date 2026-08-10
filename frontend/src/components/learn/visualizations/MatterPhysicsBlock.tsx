@@ -12,6 +12,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { NEWTONS_LAWS } from "./newtonsLaws";
 
 interface MatterBodyConfig {
   id: string;
@@ -280,17 +281,19 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
     // fall back to defaults
   }
 
+  const scenario = meta.scenario_type ?? "custom";
+
+  // Newton's Three Laws: when the metadata only declares the scenario (the
+  // agent emits a light payload and the renderer supplies the full preset),
+  // or carries an explicit `laws` map, resolve the preset configs so the
+  // 1st/2nd/3rd law switcher works in every surface (editor + student).
+  const laws = meta.laws ?? (scenario === "newtons_laws" ? NEWTONS_LAWS : undefined);
+  const isNewtonsLaws = scenario === "newtons_laws" && !!laws;
+
   const world = meta.world_config ?? {};
   const boundsH = world.bounds?.height ?? 300;
   const boundsW = world.bounds?.width ?? 600;
   const overlays = meta.educational_overlays ?? {};
-  const scenario = meta.scenario_type ?? "custom";
-
-  // Newton's Three Laws: when the metadata carries a `laws` map (from the
-  // newtonsLaws.ts presets), render a law switcher and use the selected
-  // law's config instead of a single world.
-  const laws = meta.laws;
-  const isNewtonsLaws = scenario === "newtons_laws" && !!laws;
   const [activeLaw, setActiveLaw] = useState<"1" | "2" | "3">("1");
   const lawMeta = isNewtonsLaws && laws ? laws[activeLaw] : null;
   const effectiveMeta = lawMeta ?? meta;
