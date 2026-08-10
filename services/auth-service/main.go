@@ -74,7 +74,10 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer(
-		grpc.ChainUnaryInterceptor(grpcauth.UnaryServerTraceInterceptor()),
+		grpc.ChainUnaryInterceptor(
+			grpcauth.UnaryServerTraceInterceptor(),
+			grpcauth.UnaryServerInterceptor(cfg.ServiceToken),
+		),
 	)
 	authpb.RegisterAuthServiceServer(grpcServer, grpcHandler)
 

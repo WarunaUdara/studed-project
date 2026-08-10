@@ -11,6 +11,7 @@ type Config struct {
 	DatabaseURL     string
 	AccessSecret    string
 	RefreshSecret   string
+	ServiceToken    string
 	AccessTokenTTL  time.Duration
 	RefreshTokenTTL time.Duration
 }
@@ -41,6 +42,7 @@ func Load() (*Config, error) {
 		DatabaseURL:     getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable"),
 		AccessSecret:    accessSecret,
 		RefreshSecret:   refreshSecret,
+		ServiceToken:    getEnv("SERVICE_TOKEN", ""),
 		AccessTokenTTL:  accessTTL,
 		RefreshTokenTTL: refreshTTL,
 	}, nil

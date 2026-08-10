@@ -106,7 +106,10 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer(
-		grpc.ChainUnaryInterceptor(grpcauth.UnaryServerTraceInterceptor()),
+		grpc.ChainUnaryInterceptor(
+			grpcauth.UnaryServerTraceInterceptor(),
+			grpcauth.UnaryServerInterceptor(cfg.ServiceToken),
+		),
 	)
 	coursepb.RegisterCourseServiceServer(grpcServer, grpcHandler)
 

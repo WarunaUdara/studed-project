@@ -9,6 +9,7 @@ type Config struct {
 	DatabaseURL      string
 	AuthServiceAddr  string
 	ElasticsearchURL string
+	ServiceToken     string
 }
 
 func Load() (*Config, error) {
@@ -17,6 +18,7 @@ func Load() (*Config, error) {
 		DatabaseURL:      getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable"),
 		AuthServiceAddr:  getEnv("AUTH_SERVICE_ADDR", "localhost:8081"),
 		ElasticsearchURL: getEnv("ELASTICSEARCH_URL", "http://localhost:9200"),
+		ServiceToken:     getEnv("SERVICE_TOKEN", ""),
 	}, nil
 }
 
