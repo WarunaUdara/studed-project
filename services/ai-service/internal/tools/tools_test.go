@@ -228,9 +228,12 @@ func TestVisualizationAllFamilies(t *testing.T) {
 }
 
 func TestVisualizationRepairOnInvalidMetadata(t *testing.T) {
-	// mechsim without bodies must fail schema validation
-	s := &scriptedProvider{jsonOuts: [][]byte{[]byte(
-		`{"id":"v1","type":"mechsim_matterjs","content":"Pendulum","metadata":{"title":"Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1}}}}`)}}
+	// mechsim without bodies must fail schema validation (both attempts
+	// invalid -> final error reports the bodies requirement).
+	s := &scriptedProvider{jsonOuts: [][]byte{
+		[]byte(`{"id":"v1","type":"mechsim_matterjs","content":"Pendulum","metadata":{"title":"Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1}}}}`),
+		[]byte(`{"id":"v1","type":"mechsim_matterjs","content":"Pendulum","metadata":{"title":"Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1}}}}`),
+	}}
 	tool := Visualization(s)
 
 	res, err := tool.Execute(context.Background(), map[string]any{"concept": "pendulum", "vizType": "matterjs"})
@@ -248,13 +251,39 @@ func TestVisualizationRepairOnInvalidMetadata(t *testing.T) {
 func TestVisualizationUnknownVizType(t *testing.T) {
 	s := &scriptedProvider{}
 	tool := Visualization(s)
+	res, _ := tool.Execute(context.Background(), map[string]any{"concept": "x", "vizType": "hologram"})
+	if !strings.Contains(res.Content, "unknown visualization type") {
+		t.Errorf("content = %q, want unknown type error", res.Content)
+	}
+}
 
-	res, err := tool.Execute(context.Background(), map[string]any{"concept": "c", "vizType": "hologram"})
+func TestVisualizationRetriesOnBrokenJSON(t *testing.T) {
+	// First response is truncated/invalid; the tool must retry once with a
+	// repair instruction and succeed on the second attempt.
+	const valid = `{"id":"v2","type":"mechsim_matterjs","content":"Pendulum","metadata":{"title":"Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1,"scale":0.001},"bounds":{"width":800,"height":400},"bodies":[{"id":"bob","type":"circle","position":{"x":400,"y":350},"radius":30,"density":0.04,"restitution":0.8,"isStatic":false,"render":{"fillStyle":"#3B82F6"}},{"id":"pivot","type":"circle","position":{"x":400,"y":50},"radius":10,"isStatic":true}],"constraints":[{"id":"string","bodyA":"pivot","bodyB":"bob","length":300,"stiffness":1}]},"editable_params":[{"label":"Gravity","property":"gravity.scale","type":"slider","min":0,"max":0.002,"step":0.0001,"default":0.001}],"measurements":[{"label":"Velocity","type":"live","source":"bob.velocity"}],"educational_overlays":{"show_forces":true,"show_velocity":true,"show_trajectory":true,"show_energy_bar":true}}}`
+	s := &scriptedProvider{jsonOuts: [][]byte{
+		// Truncated JSON (broken) -> triggers the repair retry.
+		[]byte(`{"id":"v1","type":"mechsim_matterjs","content":"Pendulum","metadata":{"title":"Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1,"scale":0.001},"bounds":{"width":800,"height":400},"bodies":[`),
+		[]byte(valid),
+	}}
+	tool := Visualization(s)
+
+	res, err := tool.Execute(context.Background(), map[string]any{"concept": "pendulum", "vizType": "matterjs", "grade": "A/L"})
 	if err != nil {
 		t.Fatalf("Execute: %v", err)
 	}
-	if !strings.Contains(res.Content, "unknown visualization type") {
-		t.Errorf("content = %q", res.Content)
+	if res.VizBlock == nil {
+		t.Fatalf("expected VizBlock after repair retry, got content %q", res.Content)
+	}
+	if s.jsonCalls != 2 {
+		t.Errorf("provider calls = %d, want 2 (initial + repair)", s.jsonCalls)
+	}
+	if res.VizBlock.Type != "mechsim_matterjs" || res.VizBlock.Content != "Pendulum" {
+		t.Errorf("viz block = %+v", res.VizBlock)
+	}
+	meta := res.VizBlock.Metadata
+	if !strings.Contains(meta, "editable_params") || !strings.Contains(meta, "educational_overlays") {
+		t.Errorf("metadata missing full schema: %s", meta)
 	}
 }
 

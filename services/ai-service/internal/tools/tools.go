@@ -210,7 +210,17 @@ func Visualization(p provider.Provider) Tool {
 			}
 			block, err := parseVizBlock(raw, vizType)
 			if err != nil {
-				return Result{Name: "generateVisualization", Content: err.Error()}, nil
+				// One retry with an explicit repair instruction: models
+				// occasionally truncate the large viz config JSON.
+				repairUser := user.String() + "\n\nYour previous output was invalid: " + err.Error() + "\nReturn ONLY valid JSON for the complete visualization block. Do not truncate. Include all required fields."
+				raw2, err2 := p.GenerateJSON(ctx, system, repairUser, provider.JSONOptions())
+				if err2 != nil {
+					return Result{Name: "generateVisualization", Content: "tool error: " + err2.Error()}, nil
+				}
+				block, err = parseVizBlock(raw2, vizType)
+				if err != nil {
+					return Result{Name: "generateVisualization", Content: err.Error()}, nil
+				}
 			}
 			return Result{Name: "generateVisualization", VizBlock: block}, nil
 		},
