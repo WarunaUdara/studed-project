@@ -9,7 +9,6 @@ import {
   Users,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { LogoutButton } from "@/components/auth/LogoutButton";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
 
@@ -127,12 +126,6 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
                 );
               })}
             </nav>
-
-            <div className="mt-3 border-t border-sidebar-border pt-3">
-              <div className="flex items-center justify-end">
-                <LogoutButton size="sm" variant="ghost" />
-              </div>
-            </div>
           </div>
 
           <p className="px-2 text-[11px] text-muted-foreground">

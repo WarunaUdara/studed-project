@@ -100,8 +100,8 @@ function EducatorDashboardPage() {
       label: "Drafts",
       value: stats.drafts.length,
       icon: Sparkles,
-      color: "text-amber-500",
-      bg: "bg-amber-500/10",
+      color: "text-warning",
+      bg: "bg-warning/10",
       sub: "In progress",
     },
     {
@@ -111,8 +111,8 @@ function EducatorDashboardPage() {
           ? `${Math.round((stats.published.length / courses.length) * 100)}%`
           : "—",
       icon: TrendingUp,
-      color: "text-blue-500",
-      bg: "bg-blue-500/10",
+      color: "text-info",
+      bg: "bg-info/10",
       sub: "Published / total",
     },
   ];
@@ -253,7 +253,7 @@ function EducatorDashboardPage() {
                           className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
                             course.isPublished
                               ? "bg-success/15 text-success"
-                              : "bg-amber-500/15 text-amber-600"
+                              : "bg-warning/15 text-warning"
                           }`}
                         >
                           {course.isPublished ? "Live" : "Draft"}
@@ -293,7 +293,7 @@ function EducatorDashboardPage() {
                 label="Draft Courses"
                 value={stats.drafts.length}
                 total={courses.length}
-                color="bg-amber-500"
+                color="bg-warning"
               />
             </CardContent>
           </Card>
@@ -304,9 +304,7 @@ function EducatorDashboardPage() {
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <span className="text-muted-foreground">Total XP available</span>
               </div>
-              <p className="text-2xl font-bold text-amber-500">
-                {stats.totalXp.toLocaleString()} XP
-              </p>
+              <p className="text-2xl font-bold text-gold">{stats.totalXp.toLocaleString()} XP</p>
               <p className="text-xs text-muted-foreground">
                 Across {stats.publishedWaves} published waves
               </p>
