@@ -49,8 +49,8 @@ export function ScrollExpand({
   mediaZoom = 1.35,
   scrollDistance = 1.2,
   holdDistance = 0.35,
-  smoothing = 0.1,
-  overlayScrim = 0.45,
+  smoothing = 0.02,
+  overlayScrim = 0.85,
   useWindowScroll = false,
   enabled = true,
   children,
@@ -136,7 +136,7 @@ export function ScrollExpand({
     if (scrimRef.current) scrimRef.current.style.opacity = `${c.overlayScrim * e}`;
 
     if (titleRef.current) {
-      const out = smoothstep(0.4, 0.88, p);
+      const out = smoothstep(0.3, 0.75, p);
       titleRef.current.style.opacity = `${1 - out}`;
       titleRef.current.style.transform = `translate3d(0, ${-28 * out}px, 0) scale(${1 + 0.06 * out})`;
     }
@@ -148,9 +148,10 @@ export function ScrollExpand({
     }
 
     if (overlayRef.current) {
-      const inn = smoothstep(0.68, 1, p);
+      const inn = smoothstep(0.35, 0.8, p);
       overlayRef.current.style.opacity = `${inn}`;
       overlayRef.current.style.transform = `translate3d(0, ${18 * (1 - inn)}px, 0)`;
+      overlayRef.current.style.pointerEvents = inn > 0.4 ? "auto" : "none";
     }
   }, []);
 

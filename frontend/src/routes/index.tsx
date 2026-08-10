@@ -963,62 +963,63 @@ function FinalCta({ authed }: { authed: boolean }) {
   const reduce = useReducedMotion();
 
   return (
-    <section className="relative px-4 pb-20 pt-8 sm:px-6">
-      <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] border border-primary/20 bg-card/60 backdrop-blur-md shadow-2xl">
-        {/* PixelBlast interactive shader background customized to theme */}
+    <section className="relative px-4 pb-16 pt-8 sm:px-6">
+      <div className="relative mx-auto max-w-6xl rounded-[2.5rem] border border-primary/30 bg-slate-950 shadow-2xl overflow-hidden">
+        {/* PixelBlast interactive WebGL shader background */}
         {!reduce && (
-          <div className="absolute inset-0 z-0 opacity-35 pointer-events-auto">
+          <div className="absolute inset-0 z-0 opacity-80 pointer-events-auto">
             <PixelBlast
               variant="circle"
-              color="#10b981"
-              pixelSize={4}
-              patternScale={2.2}
-              patternDensity={1.2}
+              color="#34d399"
+              pixelSize={5}
+              patternScale={2.5}
+              patternDensity={1.5}
               liquid
-              liquidStrength={0.12}
+              liquidStrength={0.15}
               liquidWobbleSpeed={4.5}
               enableRipples
-              rippleSpeed={0.3}
-              speed={0.45}
-              edgeFade={0.35}
+              rippleSpeed={0.35}
+              speed={0.5}
+              edgeFade={0.25}
             />
           </div>
         )}
 
-        <div className="relative z-10 py-8 px-4 sm:py-12">
-          {/* ScrollExpand framed media card stopping comfortably before screen edge max */}
+        <div className="relative z-10 p-4 sm:p-8">
           <ScrollExpand
             useWindowScroll
             startWidth={48}
-            startHeight={56}
-            maxWidth={90}
-            maxHeight={85}
+            startHeight={54}
+            maxWidth={88}
+            maxHeight={82}
             startRadius={24}
             endRadius={18}
             mediaZoom={1.3}
-            scrollDistance={1.1}
+            scrollDistance={1.0}
             holdDistance={0.3}
+            smoothing={0.02}
+            overlayScrim={0.88}
             title={t("finalCtaHeading")}
             scrollHint="Scroll to Expand"
-            className="w-full h-[520px] sm:h-[600px]"
+            className="w-full h-[500px] sm:h-[580px]"
             src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop"
-            alt="StudEd Learning Platform"
+            alt="StudEd Platform"
           >
             <div className="relative space-y-6 max-w-xl mx-auto text-center px-4">
-              <p className="inline-flex items-center gap-2 rounded-full bg-primary/20 backdrop-blur-md px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-white ring-1 ring-primary/40 shadow-sm">
+              <p className="inline-flex items-center gap-2 rounded-full bg-emerald-500/25 backdrop-blur-md px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-emerald-200 ring-1 ring-emerald-400/40 shadow-sm">
                 <Zap className="h-3.5 w-3.5 fill-gold text-gold" />
                 +250 XP
               </p>
-              <h2 className="font-serif text-3xl font-bold text-white sm:text-5xl drop-shadow-md">
+              <h2 className="font-serif text-3xl font-bold text-white sm:text-5xl drop-shadow-lg">
                 {t("finalCtaHeading")}
               </h2>
-              <p className="mx-auto max-w-lg text-pretty text-sm text-white/90 sm:text-base drop-shadow-sm">
+              <p className="mx-auto max-w-lg text-pretty text-sm text-emerald-100/90 sm:text-base drop-shadow-md">
                 {t("finalCtaSubhead")}
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-2">
                 {authed ? (
                   <Link to="/dashboard">
-                    <Button size="lg" className="rounded-full bg-white text-primary hover:bg-white/90 shadow-lg font-semibold">
+                    <Button size="lg" className="rounded-full bg-emerald-400 text-slate-950 hover:bg-emerald-300 shadow-xl font-bold">
                       {t("ctaPortal")}
                     </Button>
                   </Link>
@@ -1027,7 +1028,7 @@ function FinalCta({ authed }: { authed: boolean }) {
                     <Link to="/register">
                       <Button
                         size="lg"
-                        className="rounded-full bg-white text-primary hover:bg-white/90 shadow-lg font-semibold"
+                        className="rounded-full bg-emerald-400 text-slate-950 hover:bg-emerald-300 shadow-xl font-bold"
                         onClick={() => playSuccessSound()}
                       >
                         {t("finalCtaCreate")}
