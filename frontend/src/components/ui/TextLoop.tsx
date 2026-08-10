@@ -3,10 +3,10 @@ import { gsap } from "gsap";
 import "./TextLoop.css";
 
 const VIEW_W = 1200;
-const VIEW_H = 520;
+const VIEW_H = 120;
 const CX = VIEW_W / 2;
 const CY = VIEW_H / 2;
-const EDGE_PAD = 6;
+const EDGE_PAD = 4;
 
 export type TextLoopShape = "circle" | "infinity" | "arch" | "line" | "wave";
 
@@ -33,7 +33,7 @@ export interface TextLoopProps {
 
 const buildPath = (shape: TextLoopShape, curviness: number, ribbonWidth: number): string => {
   const c = Math.max(0, curviness);
-  const room = Math.max(20, CY - Math.max(0, ribbonWidth) / 2 - EDGE_PAD);
+  const room = Math.max(10, CY - Math.max(0, ribbonWidth) / 2 - EDGE_PAD);
 
   switch (shape) {
     case "circle": {
@@ -73,15 +73,15 @@ export function TextLoop({
   speed = 90,
   direction = "forward",
   separator = "✦",
-  curviness = 35,
-  fontSize = 20,
+  curviness = 16,
+  fontSize = 18,
   fontWeight = 700,
   letterSpacing = 2,
   uppercase = true,
   color = "#ffffff",
   ribbon = true,
   ribbonColor = "rgba(16, 185, 129, 0.15)",
-  ribbonWidth = 36,
+  ribbonWidth = 28,
   pauseOnHover = false,
   className = "",
   style = {},
