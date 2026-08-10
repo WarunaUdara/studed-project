@@ -18,6 +18,8 @@ graphify-out/
 # IDE
 .idea/
 .vscode/
+!.vscode/mcp.json
+!frontend/.vscode/mcp.json
 *.swp
 *.swo
 *~
