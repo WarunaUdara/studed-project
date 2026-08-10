@@ -86,6 +86,11 @@ const LANGUAGE_LABELS: Record<string, string> = {
   English: "English",
 };
 
+const KNOWN_COVERS: Record<string, string> = {
+  "coordinate-geometry": "/covers/coordinate-geometry.jpg",
+  "g10-mathematics": "/covers/g10-mathematics.jpg",
+};
+
 export const Route = createFileRoute("/courses/")({
   component: CoursesCatalogPage,
 });
@@ -310,11 +315,20 @@ function CoursesCatalogPage() {
             <div className="flex flex-col md:flex-row min-h-[220px]">
               <div
                 className={cn(
-                  "md:w-1/3 flex items-center justify-center p-6 bg-gradient-to-br",
+                  "relative md:w-1/3 min-h-[160px] md:min-h-full flex items-center justify-center p-6 overflow-hidden bg-gradient-to-br",
                   getSubjectGradient(featuredCourse.title),
                 )}
               >
-                <GraduationCap className="h-16 w-16 opacity-30" />
+                {KNOWN_COVERS[featuredCourse.slug] ? (
+                  <img
+                    src={KNOWN_COVERS[featuredCourse.slug]}
+                    alt={featuredCourse.title}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                ) : (
+                  <GraduationCap className="h-16 w-16 opacity-30" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               </div>
               <div className="p-8 flex-1 flex flex-col justify-between gap-4">
                 <div className="space-y-1.5">
@@ -422,13 +436,22 @@ function CoursesCatalogPage() {
               >
                 <Card className="flex h-full flex-col overflow-hidden transition-all border bg-card hover:border-primary/45 rounded-[24px]">
                   {/* Card Cover */}
-                  <div className={cn("relative h-28 overflow-hidden bg-gradient-to-br", gradient)}>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <GraduationCap className="h-12 w-12 opacity-20 transition-transform duration-300 group-hover:scale-110" />
-                    </div>
+                  <div className={cn("relative h-32 overflow-hidden bg-gradient-to-br", gradient)}>
+                    {KNOWN_COVERS[course.slug] ? (
+                      <img
+                        src={KNOWN_COVERS[course.slug]}
+                        alt={course.title}
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <GraduationCap className="h-12 w-12 opacity-20 transition-transform duration-300 group-hover:scale-110" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     {/* Serif Course Title on the Cover */}
-                    <div className="absolute bottom-3 left-4 right-4">
-                      <h4 className="text-lg font-serif font-normal tracking-tight text-foreground truncate">
+                    <div className="absolute bottom-3 left-4 right-4 z-10">
+                      <h4 className="text-lg font-serif font-semibold tracking-tight text-white drop-shadow-sm truncate">
                         {course.title}
                       </h4>
                     </div>
