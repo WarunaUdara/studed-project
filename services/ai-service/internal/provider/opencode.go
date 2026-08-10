@@ -51,8 +51,33 @@ func (c *OpenCodeClient) WithBaseURL(url string) *OpenCodeClient {
 // returns the raw JSON text produced by the model. It streams internally
 // (rather than a single non-streaming call): reasoning models such as
 // deepseek-v4-flash frequently return an empty `content` on non-streaming
-// responses while the streamed deltas carry the full output reliably.
+// responses while the streamed deltas carry the full output reliably. On
+// the rare stream that yields no content at all, it retries once with an
+// explicit "output now" nudge (the model often thinks without emitting).
 func (c *OpenCodeClient) GenerateJSON(ctx context.Context, system, user string, opts Options) ([]byte, error) {
+	content, err := c.generateJSONOnce(ctx, system, user, opts)
+	if err != nil {
+		return nil, err
+	}
+	if strings.TrimSpace(string(content)) != "" {
+		return content, nil
+	}
+
+	// Retry once: append an explicit nudge so the model emits the JSON.
+	retryUser := user + "\n\nIMPORTANT: Respond now with the requested JSON only. Do not include any preamble, explanation, or thinking — output the JSON object/array directly."
+	content, err = c.generateJSONOnce(ctx, system, retryUser, opts)
+	if err != nil {
+		return nil, err
+	}
+	if strings.TrimSpace(string(content)) == "" {
+		return nil, fmt.Errorf("opencode returned empty content")
+	}
+	return content, nil
+}
+
+// generateJSONOnce performs a single streaming JSON-mode call and returns
+// whatever text the model emitted (possibly empty).
+func (c *OpenCodeClient) generateJSONOnce(ctx context.Context, system, user string, opts Options) ([]byte, error) {
 	msgs := make([]Message, 0, 2)
 	if system != "" {
 		msgs = append(msgs, Message{Role: "system", Content: system})
@@ -84,9 +109,6 @@ func (c *OpenCodeClient) GenerateJSON(ctx context.Context, system, user string, 
 	}
 	if streamErr != nil {
 		return nil, streamErr
-	}
-	if strings.TrimSpace(content.String()) == "" {
-		return nil, fmt.Errorf("opencode returned empty content")
 	}
 	return []byte(content.String()), nil
 }

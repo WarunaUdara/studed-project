@@ -359,6 +359,55 @@ func TestOpenCodeConcurrentUse(t *testing.T) {
 	}
 }
 
+func TestOpenCodeGenerateJSONRetriesOnEmptyStream(t *testing.T) {
+	// First stream: reasoning only, no content (the deepseek empty-content
+	// failure mode). Second stream (nudged): valid JSON. GenerateJSON must
+	// retry internally and return the second result.
+	var calls int
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls++
+		w.Header().Set("Content-Type", "text/event-stream")
+		if calls == 1 {
+			fmt.Fprint(w, "data: {\"choices\":[{\"delta\":{\"reasoning_content\":\"thinking...\"}}]}\n\ndata: [DONE]\n\n")
+		} else {
+			fmt.Fprint(w, "data: {\"choices\":[{\"delta\":{\"content\":\"{\\\"ok\\\":true}\"}}]}\n\ndata: [DONE]\n\n")
+		}
+	}))
+	defer srv.Close()
+
+	t.Setenv("OPENCODE_API_KEY", "k")
+	c := NewOpenCodeClient().WithBaseURL(srv.URL)
+
+	out, err := c.GenerateJSON(context.Background(), "s", "u", JSONOptions())
+	if err != nil {
+		t.Fatalf("GenerateJSON: %v", err)
+	}
+	if string(out) != `{"ok":true}` {
+		t.Errorf("output = %q, want {\"ok\":true}", string(out))
+	}
+	if calls != 2 {
+		t.Errorf("provider calls = %d, want 2 (initial + retry)", calls)
+	}
+}
+
+func TestOpenCodeGenerateJSONEmptyStillFails(t *testing.T) {
+	// Both attempts empty -> error surfaces.
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		fmt.Fprint(w, "data: {\"choices\":[{\"delta\":{\"reasoning_content\":\"thinking...\"}}]}\n\ndata: [DONE]\n\n")
+	}))
+	defer srv.Close()
+
+	t.Setenv("OPENCODE_API_KEY", "k")
+	c := NewOpenCodeClient().WithBaseURL(srv.URL)
+
+	if _, err := c.GenerateJSON(context.Background(), "s", "u", JSONOptions()); err == nil {
+		t.Fatal("expected error when both attempts return empty content")
+	} else if !strings.Contains(err.Error(), "empty content") {
+		t.Errorf("error = %v, want empty-content message", err)
+	}
+}
+
 func TestBuildChatRequestMultimodalAndReasoningEffort(t *testing.T) {
 	msgs := []Message{
 		{Role: "user", Content: "Look at these", Images: []string{
