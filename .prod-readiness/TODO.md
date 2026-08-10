@@ -18,10 +18,11 @@ This TODO list is maintained dynamically by long-running agents during autonomou
 - [x] Add a shared `go-test` target to `Makefile` that runs every Go microservice test suite in one command (already present; iterates `services/*` with `go.mod`, verified working).
 - [x] Add OpenTelemetry SDK initialization/export to service mains so propagated spans are exported (new `shared/go/otel` package with stdout exporter, wired into api-gateway, auth, course, gamification, progress).
 - [x] Document the gRPC trace propagation + token auth contract in `docs/ARCHITECTURE.md` (traceparent header, interceptor order, SERVICE_TOKEN requirement).
+- [x] Run `govulncheck` + `bun audit` and refresh dependency pins (Go toolchain 1.24→1.26.2 in Docker/CI, Bun overrides pin postcss ^8.5.26).
 
 ---
 
 ## 🟡 Open Backlog Tasks
-- [ ] Run `govulncheck` + `bun audit` on the next iteration and refresh dependency pins.
 - [ ] Add an OTLP collector or switch the stdout exporter to `OTEL_EXPORTER_OTLP_ENDPOINT` when the tracing backend is provisioned (Grafana Tempo / Jaeger).
 - [ ] Ensure all OTel resource attributes (service.version, host, k8s namespace) are populated in production resource detection.
+- [ ] Upgrade the local dev Go toolchain to 1.26.2+ (govulncheck flags the 1.26.1 stdlib; Docker/CI already pinned to 1.26.2).

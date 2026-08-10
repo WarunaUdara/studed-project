@@ -45,6 +45,18 @@ This report is automatically updated by autonomous development agents during eve
   - Production resource detection should enrich attributes (service.version, k8s namespace) when deployed.
 - **Verification Status**: `make ci-local` passed 100%; `shared/go/otel` suite added (2 tests).
 
+### Iteration 5 — 2026-08-10
+- **Scanned Dimension**: Build & CI/CD (dependency security posture)
+- **Findings**:
+  1. `govulncheck` reported 9 callable vulnerabilities — all in the Go 1.26.1 **standard library** (crypto/tls, crypto/x509, net/http, html/template, os, mime, net/mail), fixed in Go 1.26.2+. Not app-code defects. Additionally, every service Dockerfile pinned `golang:1.24.0` which **cannot build modules declaring `go 1.25.0`** and would ship the vulnerable stdlib.
+  2. `bun audit` reported 3 high + 1 moderate advisories (PostCSS source-map path traversal, nanoid loop) resolved from Vite's nested `postcss@8.5.16` / `nanoid@3.3.15`.
+- **Remediation**:
+  1. Bumped all 8 service Dockerfiles to `golang:1.26.2-alpine3.22` and GitHub Actions `setup-go` to `1.26.2` in `ci.yml` and `security.yml`.
+  2. Added a Bun `overrides` pin forcing `postcss ^8.5.26`; `bun audit` now reports zero vulnerabilities.
+- **Residual Findings**:
+  - Local dev machine still runs Go 1.26.1 (Docker/CI are at 1.26.2); upgrade recommended.
+- **Verification Status**: `make ci-local` passed 100%; `bun run typecheck` + Vitest (47 tests) pass.
+
 ---
 
 ## 🛡️ Attack Surface & Flaw Matrix
