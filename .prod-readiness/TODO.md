@@ -39,13 +39,13 @@ Ordered by value. Each item is atomic and independently verifiable.
   Required repairing `docker-compose.yml` (undeclared `tempo_data` volume) and a
   dirty gamification migration — see "Environment repairs" in the audit doc.
   Demo password is `password123`, not `password1234` (VIS-21).
-- [ ] **VIS-16 — Deduplicate progression state.** XP / level / streak render 3-4x
-  per authenticated screen (navbar + sidebar + page header + hub card), and
-  "Log out" twice on `/dashboard`. Keep the navbar as the canonical home, keep
-  the Gamification Hub breakdown, delete the rest. **Highest-value open item.**
-- [ ] **VIS-17 — Rebalance the dashboard grid.** ~750px of dead whitespace in the
-  bottom-left; the right rail runs ~750px longer than the main column. Move one
-  card across or use an independent-flow grid.
+- [x] **VIS-16 — Deduplicate progression state.** One canonical home per signal:
+  XP + level bar in the Navbar, streak in the dashboard greeting band (renders
+  at every viewport, unlike the `lg`-only sidebar), logout in the Navbar.
+  `StudentShell`'s sidebar is now navigation and identity only.
+- [x] **VIS-17 — Rebalance the dashboard grid.** Moved the Gamification Hub into
+  the main column: columns now end within ~60px of each other (was ~750px
+  apart) and page height dropped 4210px to 3416px with no content removed.
 - [ ] **VIS-19 — Resolve duplicated navigation.** Three destinations appear in
   both navbar and sidebar with inconsistent labels ("Courses" vs "My Courses").
   Make the sidebar primary on authenticated routes.

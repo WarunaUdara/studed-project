@@ -4,7 +4,7 @@
 screenshot capture at 2x DPR across `1440x900` / `390x844`, light and dark, plus
 computed-style extraction from the live DOM.
 
-**21 findings · 0 Critical · 4 High · 11 Medium · 6 Low** — 5 fixed in this pass.
+**21 findings · 0 Critical · 4 High · 11 Medium · 6 Low** — 7 fixed.
 
 > **Update, same day — authenticated surface now covered.** The original pass
 > could only reach public routes. The backend stack was subsequently brought up
@@ -355,7 +355,7 @@ is correct, intrinsically sized above `sm`.
 
 ---
 
-## 🟠 VIS-16 — XP, level, and streak are duplicated three to four times per screen
+## ✅ VIS-16 — XP, level, and streak duplicated three to four times per screen *(fixed)*
 
 **Severity: High · `Navbar.tsx`, `StudentShell.tsx`, `routes/dashboard.tsx`, `routes/waves.$waveId.tsx`**
 
@@ -375,14 +375,22 @@ appears twice on `/dashboard`.
 Repetition this dense reads as a rendering bug and spends the most valuable
 screen real estate on information the user already has.
 
-**Fix.** Pick one canonical home for persistent progression state — the navbar —
-and delete the duplicates. Keep the Gamification Hub card, since it is a
-detailed breakdown rather than a repeat of the same chip. Remove the sidebar's
-second "Log out".
+**Fixed.** One canonical home per signal:
+
+| Signal | Canonical home | Removed from |
+| :--- | :--- | :--- |
+| XP total + level bar | Navbar (all routes) | Sidebar, dashboard greeting band, wave player header |
+| Streak | Dashboard greeting band (renders at every viewport; the sidebar is `lg`-only) | Sidebar |
+| Log out | Navbar + mobile menu | Sidebar |
+
+`StudentShell`'s sidebar is now navigation and identity only. The Gamification
+Hub card is kept — it is a detailed breakdown, not a repeat of the same chip.
+The greeting band's existing line ("You're 55 XP from Level 6") already carries
+level progress in words below `lg`, where the navbar's bar is hidden.
 
 ---
 
-## 🟡 VIS-17 — Dashboard two-column grid is badly unbalanced
+## ✅ VIS-17 — Dashboard two-column grid badly unbalanced *(fixed)*
 
 **Severity: Medium · `frontend/src/routes/dashboard.tsx`**
 
@@ -395,10 +403,22 @@ The imbalance is structural: the right rail stacks four tall cards (Curriculum &
 Exam Tracker, Focus Session Hub, Gamification Hub) while the main column holds
 three short ones.
 
-**Fix.** Rebalance by moving one right-rail card into the main column, or adopt
-a masonry/`items-start` grid so columns flow independently rather than leaving
-one short. The Focus Session Hub in particular is tall enough to warrant its own
-full-width row.
+**Fixed** by moving the **Gamification Hub** into the main column. Card heights
+made the choice arithmetic rather than aesthetic:
+
+| | Before | After |
+| :--- | ---: | ---: |
+| Main column | ~460px | ~850px |
+| Right rail | ~1180px | ~790px |
+
+Moving the Pomodoro timer instead (~560px) would have overcorrected to a 400px
+imbalance the other way; the Gamification Hub (~390px) lands both columns within
+~60px of each other. Measured page height dropped from 4210px to 3416px, a 19%
+reduction, with no content removed.
+
+Its inner `stats` list and `badges` grid were re-flowed for the wider column
+(`sm:grid-cols-2` and `grid-cols-3 sm:grid-cols-4 lg:grid-cols-6`), since the
+one-per-row layout was tuned for a 1/3-width rail.
 
 ---
 
