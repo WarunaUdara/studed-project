@@ -335,4 +335,5 @@ volumes:
   elasticsearch_data:
   prometheus_data:
   grafana_data:
+  tempo_data:
   floci_gcp_data:
