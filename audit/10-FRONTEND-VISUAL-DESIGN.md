@@ -4,7 +4,12 @@
 screenshot capture at 2x DPR across `1440x900` / `390x844`, light and dark, plus
 computed-style extraction from the live DOM.
 
-**13 findings · 0 Critical · 3 High · 7 Medium · 3 Low** — 3 fixed in this pass.
+**21 findings · 0 Critical · 4 High · 11 Medium · 6 Low** — 5 fixed in this pass.
+
+> **Update, same day — authenticated surface now covered.** The original pass
+> could only reach public routes. The backend stack was subsequently brought up
+> and the protected surface audited for the first time; findings VIS-14 to
+> VIS-21 come from that pass. VIS-09 (the coverage gap) is closed.
 
 ---
 
@@ -267,9 +272,22 @@ hierarchy, not vary per section.
 
 ---
 
-## 🟡 VIS-09 — Protected surfaces have never been visually audited
+## ✅ VIS-09 — Protected surfaces have never been visually audited *(closed)*
 
-**Severity: Medium · coverage gap, not a defect**
+**Severity: Medium · coverage gap, not a defect · RESOLVED same day**
+
+Closed by bringing up the real backend rather than mocking. `frontend/e2e/tools/authShoot.ts`
+logs in through the actual login form and captures the full protected surface;
+findings VIS-14 to VIS-21 below are its output. Getting there required repairing
+two unrelated breakages, recorded under "Environment repairs" at the end of this
+document.
+
+Demo credentials are **`password123`**, not the `password1234` in
+`scripts/mock-data-loader.sh` — the seeded accounts predate the 12-character
+policy from SEC-12 (see VIS-21).
+
+<details>
+<summary>Original finding</summary>
 
 Everything above covers `/`, `/login`, `/register`, and the 404. The
 authenticated surface — `/dashboard`, `/courses`, `/courses/$courseId`,
@@ -286,6 +304,168 @@ next task.
 `studed_has_session` and the `me` query. That unlocks screenshot coverage of
 every protected route with no backend, and is reusable for Playwright specs.
 Alternatively run `make dev-up` and drive the real seeded demo accounts.
+
+</details>
+
+---
+
+## 🟠 VIS-14 — Proficiency badges are unreadable in dark mode *(fixed)*
+
+**Severity: High · `frontend/src/lib/gamification.ts:79-117`, `ProficiencyBadge.tsx:40`**
+
+`ProficiencyBadge` painted its label with `meta.textColor` — a `-foreground`
+token — on top of `meta.bgColor`, a 15%-opacity wash of the same hue. The
+`-foreground` tokens are calibrated for a **solid** fill of their colour, so
+over a translucent wash they invert against the page surface and disappear:
+
+| Tier | Label token | Light | Dark |
+| :--- | :--- | :---: | :---: |
+| In Progress | `--warning-foreground` | ok | **invisible** |
+| Completed | `--success-foreground` | **invisible** | **invisible** |
+| Proficient | `--gold-foreground` | ok | **invisible** |
+| Expert | `--purple-foreground` | **invisible** | **invisible** |
+
+In light mode `--success-foreground` and `--purple-foreground` are near-white
+(`oklch(0.985…)` / `oklch(0.988…)`); in dark mode all four resolve to near-black
+(`oklch(0.14…)`-`oklch(0.22…)`) against a dark wash. **All four tiers were
+illegible in dark mode.** The icon was unaffected because it already used the
+base hue via `meta.color` — which is why the crown rendered but the word
+"Expert" did not.
+
+This is the highest-severity defect found in the whole visual audit: proficiency
+is the product's core progression signal, and it silently failed on every screen
+that renders a badge.
+
+**Fixed** — the label now uses `meta.color`, the same base hue as the icon.
+`meta.textColor` had exactly one consumer, so the change is contained.
+
+---
+
+## 🟠 VIS-15 — Full-width primary CTA on the wave player *(fixed)*
+
+**Severity: Medium · `frontend/src/routes/waves.$waveId.tsx:288`**
+
+"Start Evaluation" — the single most important action in the learning loop —
+carried `className="w-full"` inside a `max-w-4xl` column, stretching it to 896px.
+A lone CTA at that width reads as a banner, not a button, and gives the eye no
+target.
+
+**Fixed** — `w-full sm:w-auto sm:min-w-56`: still full-width on mobile where that
+is correct, intrinsically sized above `sm`.
+
+---
+
+## 🟠 VIS-16 — XP, level, and streak are duplicated three to four times per screen
+
+**Severity: High · `Navbar.tsx`, `StudentShell.tsx`, `routes/dashboard.tsx`, `routes/waves.$waveId.tsx`**
+
+On `/dashboard` the same progression state renders **four** times:
+
+| Surface | Shows |
+| :--- | :--- |
+| Top navbar | `1,445 XP` · level 5 · `445/500` bar |
+| Sidebar | level 5 · `445/500` bar · `1-day streak` · Log out |
+| Page header | `1-day streak` · level 5 · `445/500` bar |
+| Gamification Hub card | Total XP `1,445` · Level `5 — Expert` |
+
+The level pill and `445/500` bar appear three times within 200px of vertical
+space. `/waves/$waveId` repeats the pair twice inside the top 160px. "Log out"
+appears twice on `/dashboard`.
+
+Repetition this dense reads as a rendering bug and spends the most valuable
+screen real estate on information the user already has.
+
+**Fix.** Pick one canonical home for persistent progression state — the navbar —
+and delete the duplicates. Keep the Gamification Hub card, since it is a
+detailed breakdown rather than a repeat of the same chip. Remove the sidebar's
+second "Log out".
+
+---
+
+## 🟡 VIS-17 — Dashboard two-column grid is badly unbalanced
+
+**Severity: Medium · `frontend/src/routes/dashboard.tsx`**
+
+At 1440x900 the main column's content ends around y≈1240 while the right rail
+runs to y≈1990. That leaves roughly **750px of dead whitespace** in the
+bottom-left of the primary content area — the single largest visual defect on
+the authenticated surface.
+
+The imbalance is structural: the right rail stacks four tall cards (Curriculum &
+Exam Tracker, Focus Session Hub, Gamification Hub) while the main column holds
+three short ones.
+
+**Fix.** Rebalance by moving one right-rail card into the main column, or adopt
+a masonry/`items-start` grid so columns flow independently rather than leaving
+one short. The Focus Session Hub in particular is tall enough to warrant its own
+full-width row.
+
+---
+
+## 🟡 VIS-18 — Wave player has no empty/short-content treatment
+
+**Severity: Medium · `frontend/src/routes/waves.$waveId.tsx`**
+
+With a short learn block the page ends at ~45% of viewport height, leaving the
+lower half blank. There is no minimum content height, vertical centring, or
+next-step affordance. The tab strip also spans the full 896px with both tabs
+left-aligned, leaving a wide empty trough of tinted background.
+
+**Fix.** Give the tab panel a `min-h` floor, and either size the `TabsList` to
+its content or distribute the two tabs across the strip. Consider surfacing the
+wave's position in the course (previous/next) in the space below.
+
+---
+
+## 🟡 VIS-19 — Navigation is duplicated between navbar and sidebar
+
+**Severity: Medium · `Navbar.tsx`, `StudentShell.tsx`**
+
+The top navbar offers Courses / Dashboard / Leaderboard; the sidebar offers
+Dashboard / My Courses / Leaderboard / Achievements / Subscription / Settings.
+Three destinations appear twice with different labels for the same target
+("Courses" vs "My Courses"), and the active state is indicated only in the
+sidebar.
+
+**Fix.** Make the sidebar the single primary navigation on authenticated routes
+and reduce the navbar to brand, progression chip, theme toggle, and account
+menu. Align the labels.
+
+---
+
+## 🔵 VIS-20 — Test fixtures are visible in the demo UI
+
+**Severity: Low · seed data, not code**
+
+The seeded database surfaces `E2E TEST COURSE 1784055373417`, `Introductory`,
+and `Gating Repro 178403…` as enrolled courses on the student dashboard, with
+timestamp suffixes truncated mid-number in the card titles. Four of the six
+"My Courses" entries are test artefacts.
+
+Anyone opening the demo sees a dashboard dominated by test scaffolding.
+
+**Fix.** Have `scripts/mock-data-loader.sh` create e2e fixtures under a
+dedicated account, or namespace and purge them after runs, so the demo student's
+dashboard shows only curriculum courses.
+
+---
+
+## 🔵 VIS-21 — The e2e warm-up logs in with a stale password and swallows the failure
+
+**Severity: Low · `frontend/e2e/global-setup.ts:26-40`**
+
+`global-setup.ts` signs in with `password123` while `scripts/mock-data-loader.sh`
+now provisions `password1234` (the 12-character minimum from SEC-12). Every step
+is wrapped in `.catch(() => {})` and the final `waitForURL` is also swallowed, so
+when the login fails the setup reports success and simply warms nothing —
+reintroducing the cold-start timeouts it exists to prevent.
+
+The currently-seeded accounts still authenticate with `password123` because they
+predate the policy change, so the mismatch is latent: it will bite on the next
+clean `docker compose down -v` reseed.
+
+**Fix.** Read credentials from one shared constant, and let the final
+`waitForURL` throw so a broken warm-up fails loudly.
 
 ---
 
@@ -334,9 +514,32 @@ concurrent edits from multiple agents. Splitting sections into
 | VIS-13a | `StreakFlame` rendered a `Flame` icon *and* appended a 🔥 emoji for streaks ≥ 7 days. At mobile the duplicated glyph pushed the pill to two lines, breaking the rounded-pill shape and forcing "Lesson 4 · Circle Theorems" to wrap. | Removed the emoji from the label; added `whitespace-nowrap`. Both the chip and the lesson title now render on one line. |
 | VIS-13b | `StreakFlame`'s infinite pulse was **not** gated on reduced motion. The component comment asserted "the CSS keyframe gate handles it globally" — untrue: the global `@media (prefers-reduced-motion)` block only neutralises CSS animations, and this pulse is a JS-driven framer-motion `animate`. | Gated on `useReducedMotion()`; corrected the misleading comment. |
 | VIS-13c | Hero avatar cluster used `from-primary/50 to-purple/50` — a 50%-opacity gradient over a near-white background — with `text-white` at 10px bold. Well under WCAG AA 4.5:1 for small text. | Changed to full-opacity `from-primary to-purple`. |
+| VIS-14 | Proficiency badge labels used a `-foreground` token over a 15% wash of the same hue, rendering all four tiers invisible in dark mode and two of four in light mode. | Label now uses `meta.color`, the base hue already used by the icon. |
+| VIS-15 | "Start Evaluation", the primary action of the learning loop, stretched to the full 896px column width. | `w-full sm:w-auto sm:min-w-56`. |
 
-All three verified by re-capture at `390x844`; `bun run typecheck` clean,
-37/37 unit tests pass, `biome check` clean on touched files.
+All five verified by re-capture (`390x844` for VIS-13, `1440x900` authenticated
+for VIS-14/15); `bun run typecheck` clean, 37/37 unit tests pass, `biome check`
+clean on touched files.
+
+---
+
+## Environment repairs required to run this audit
+
+Neither was a frontend defect, but both blocked the work and both were on `main`.
+
+| Issue | Cause | Repair |
+| :--- | :--- | :--- |
+| `make ci-local` failed at `go-test` | `services/payment-service` pinned `github.com/google/uuid` at v1.3.0 while `go.sum` carried v1.6.0 from the transitive dependency sync in `c88de69` | `go mod tidy` — resolved to the version `go.sum` already recorded |
+| `make dev-up` failed to parse | `cfa402c` added the `tempo` service referencing volume `tempo_data` without declaring it in the top-level `volumes:` block, making the whole compose project invalid — no service could start | Declared `tempo_data:` |
+| `gamification-service` crash-looped | Migration 3 adds `uq_xp_history_wave_completion`, which collided with 9 pre-existing duplicate `wave_completed` rows in the local volume (rows predating the FLOW-04/05 idempotency fix). The failure left the schema table at `version 3, dirty` | Removed the 9 duplicates keeping the earliest of each group, reset to `version 2, dirty=false`, re-ran the migration; index now present |
+
+The first two mean the scorecard's "`make ci-local` passing 100%" and
+"Tempo provisioned" claims were both untrue as written.
+
+**Verification gap:** `make ci-local` still cannot complete on this machine —
+`helm` and `tofu` are not installed, so `helm-lint` and `iac-plan` cannot run.
+Six of eight targets pass (`security-scan`, `frontend-typecheck`,
+`frontend-test`, `frontend-build`, `go-test`, `shared-test`).
 
 ---
 

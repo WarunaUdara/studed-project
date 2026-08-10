@@ -33,14 +33,32 @@ passes reviewed the frontend statically). Full findings, evidence, and rationale
 
 Ordered by value. Each item is atomic and independently verifiable.
 
-- [ ] **VIS-09 — Unblock visual audit of protected routes.** Add
-  `frontend/e2e/tools/mockAuth.ts` intercepting `**/graphql` via `page.route()`,
-  replying per `operationName` from fixtures and seeding the `me` query +
-  `studed_has_session`. Unblocks screenshot coverage of `/dashboard`,
-  `/courses`, `/waves/$waveId`, `/leaderboard`, `/achievements`, `/settings`,
-  `/subscription`, and `/educator/*` — roughly 70% of product screens, none of
-  which have ever been visually inspected. **Do this first**; the remaining
-  frontend items cannot be assessed on those routes without it.
+- [x] **VIS-09 — Unblock visual audit of protected routes.** Done against the
+  real backend rather than a mock: `frontend/e2e/tools/authShoot.ts` logs in
+  through the actual form and captures the student and educator surfaces.
+  Required repairing `docker-compose.yml` (undeclared `tempo_data` volume) and a
+  dirty gamification migration — see "Environment repairs" in the audit doc.
+  Demo password is `password123`, not `password1234` (VIS-21).
+- [ ] **VIS-16 — Deduplicate progression state.** XP / level / streak render 3-4x
+  per authenticated screen (navbar + sidebar + page header + hub card), and
+  "Log out" twice on `/dashboard`. Keep the navbar as the canonical home, keep
+  the Gamification Hub breakdown, delete the rest. **Highest-value open item.**
+- [ ] **VIS-17 — Rebalance the dashboard grid.** ~750px of dead whitespace in the
+  bottom-left; the right rail runs ~750px longer than the main column. Move one
+  card across or use an independent-flow grid.
+- [ ] **VIS-19 — Resolve duplicated navigation.** Three destinations appear in
+  both navbar and sidebar with inconsistent labels ("Courses" vs "My Courses").
+  Make the sidebar primary on authenticated routes.
+- [ ] **VIS-18 — Add a short-content treatment to the wave player.** Page ends at
+  ~45% viewport height with a short learn block; tab strip spans 896px with both
+  tabs left-aligned.
+- [ ] **VIS-20 — Keep e2e fixtures out of the demo dashboard.** Four of six
+  "My Courses" entries are test artefacts (`E2E TEST COURSE 1784055373417`,
+  `Gating Repro 178403…`). Namespace them to a dedicated account or purge them.
+- [ ] **VIS-21 — Fix the e2e warm-up login.** `e2e/global-setup.ts` uses
+  `password123` while the seed script provisions `password1234`, and swallows
+  the failure via `.catch(() => {})`, so it silently warms nothing. Share one
+  credentials constant and let the final `waitForURL` throw.
 - [ ] **VIS-01 — Add a pre-paint theme script** to `frontend/index.html` so
   dark-theme users do not get a white flash on every load. Must run before the
   stylesheet and read the same `studed-ui-prefs` key.

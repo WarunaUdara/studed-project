@@ -28,7 +28,7 @@ the source in this repository.
 | [07-EXPERIENCE-UX-DX.md](07-EXPERIENCE-UX-DX.md) | Accessibility, error UX, developer onboarding | 7 |
 | [08-TESTING-QUALITY.md](08-TESTING-QUALITY.md) | Test pyramid, contracts, load, coverage | 6 |
 | [09-ARCHITECTURE-TARGET.md](09-ARCHITECTURE-TARGET.md) | Target production architecture + diagrams | — |
-| [10-FRONTEND-VISUAL-DESIGN.md](10-FRONTEND-VISUAL-DESIGN.md) | Rendered UI: theme, colour, typography, layout (browser-driven) | 13 |
+| [10-FRONTEND-VISUAL-DESIGN.md](10-FRONTEND-VISUAL-DESIGN.md) | Rendered UI: theme, colour, typography, layout (browser-driven) | 21 |
 | [TODO.md](TODO.md) | **Consolidated, prioritised action checklist** | 77 |
 
 ---
