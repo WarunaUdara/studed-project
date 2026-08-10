@@ -90,6 +90,8 @@ func (a *Agent) Run(ctx context.Context, req Request, events chan<- Event) {
 	events <- Event{Type: "plan", Message: "Planning generation for: " + req.Prompt}
 
 	msgs := buildMessages(req)
+	var accLearn []blocks.LearnBlock
+	var accEval []blocks.EvaluateBlock
 	for iter := 0; iter < a.maxIterations; iter++ {
 		if ctx.Err() != nil {
 			return
@@ -108,7 +110,7 @@ func (a *Agent) Run(ctx context.Context, req Request, events chan<- Event) {
 		})
 
 		if len(calls) == 0 {
-			events <- a.doneEvent(assistantText)
+			events <- a.doneEvent(assistantText, accLearn, accEval)
 			return
 		}
 
@@ -135,6 +137,15 @@ func (a *Agent) Run(ctx context.Context, req Request, events chan<- Event) {
 				continue
 			}
 			msgs = append(msgs, provider.Message{Role: "tool", ToolCallID: tc.ID, Content: resultContent(res)})
+
+			// Accumulate blocks returned by generation tools so the done
+			// event carries them even when the model does not echo the JSON
+			// payload in its final text (common for visualization blocks).
+			accLearn = append(accLearn, res.Blocks...)
+			accEval = append(accEval, res.EvalBlocks...)
+			if res.VizBlock != nil {
+				accLearn = append(accLearn, *res.VizBlock)
+			}
 		}
 	}
 	events <- Event{Type: "error", Error: "agent exceeded max iterations"}
@@ -190,7 +201,9 @@ func (a *Agent) streamOnce(ctx context.Context, msgs []provider.Message, events 
 // doneEvent builds the final done event. If the assistant text looks like a
 // JSON blocks payload it is parsed into Learn/Evaluate blocks; otherwise the
 // text is delivered as-is. Markdown code fences around the JSON are stripped.
-func (a *Agent) doneEvent(final string) Event {
+// Blocks returned by generation tools during the loop are merged in when the
+// model did not echo them in its final text (common for viz blocks).
+func (a *Agent) doneEvent(final string, accLearn []blocks.LearnBlock, accEval []blocks.EvaluateBlock) Event {
 	ev := Event{Type: "done", Message: final}
 	trimmed := extractJSON(strings.TrimSpace(final))
 	switch {
@@ -229,6 +242,33 @@ func (a *Agent) doneEvent(final string) Event {
 		if len(ev.LearnBlocks) == 0 && len(ev.EvaluateBlocks) == 0 {
 			if lbs, err := blocks.ParseLearnBlocks([]byte("[" + trimmed + "]")); err == nil {
 				ev.LearnBlocks = lbs
+			}
+		}
+	}
+
+	// Merge blocks produced by generation tools when the final text did not
+	// carry a parsed payload (the model often omits the echo for tool-heavy
+	// turns). Tool results are authoritative — never drop them.
+	if len(ev.LearnBlocks) == 0 && len(ev.EvaluateBlocks) == 0 {
+		ev.LearnBlocks = accLearn
+		ev.EvaluateBlocks = accEval
+	} else if len(accLearn) > 0 || len(accEval) > 0 {
+		// Text carried some blocks but tools produced more (e.g. the model
+		// echoed one viz block and tool results added another). Dedupe by id.
+		seen := make(map[string]bool, len(ev.LearnBlocks)+len(ev.EvaluateBlocks))
+		for _, b := range ev.LearnBlocks {
+			seen[b.ID] = true
+		}
+		for _, b := range accLearn {
+			if !seen[b.ID] {
+				ev.LearnBlocks = append(ev.LearnBlocks, b)
+				seen[b.ID] = true
+			}
+		}
+		for _, b := range accEval {
+			if !seen[b.ID] {
+				ev.EvaluateBlocks = append(ev.EvaluateBlocks, b)
+				seen[b.ID] = true
 			}
 		}
 	}
