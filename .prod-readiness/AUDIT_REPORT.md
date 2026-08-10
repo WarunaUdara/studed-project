@@ -15,6 +15,17 @@ This report is automatically updated by autonomous development agents during eve
   4. Declarative course manifests (`content/courses/coordinate-geometry/course.json`) synced to PostgreSQL.
 - **Verification Status**: `make ci-local` passed 100%.
 
+### Iteration 2 — 2026-08-10
+- **Scanned Dimension**: Data & Storage Resilience, Observability & Telemetry, Build & CI/CD
+- **Findings**:
+  1. `ratelimit.go` previously failed **open** when Redis was unreachable, letting rate limits lapse silently. Replaced with a background health monitor that probes Redis with exponential backoff (`StartReconnectLoop`) and a fail-closed `allow()` that rejects when the backing store is down. Redis client configured with command-level retries (`MaxRetries`, `MinRetryBackoff`, `MaxRetryBackoff`).
+  2. `auth.go` claims parsing lacked edge-case coverage. Added tests for partial claims, non-string claim coercion, role helpers (`IsAdmin`/`IsEducator`), `stringValue` coercion, and wrong-type context values.
+  3. gRPC calls carried no OpenTelemetry trace context across service boundaries. Added `UnaryClientTraceInterceptor` + `UnaryServerTraceInterceptor` to `shared/go/grpcauth` (W3C `traceparent`/`baggage` via metadata), wired into api-gateway + progress-service clients and auth/course/gamification/progress servers.
+- **Residual Findings**:
+  - `auth-service` and `course-service` gRPC servers register only the trace extractor, **not** the `grpcauth` token interceptor (same behavior as before; logged in TODO).
+  - Trace context is propagated but no OTel SDK exporter is initialized in service mains yet.
+- **Verification Status**: `make ci-local` passed 100%; middleware suite now 22 tests, grpcauth suite 3 tests.
+
 ---
 
 ## 🛡️ Attack Surface & Flaw Matrix
