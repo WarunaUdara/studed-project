@@ -66,8 +66,12 @@ func main() {
 		Handler:           mux,
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       90 * time.Second,
-		WriteTimeout:      90 * time.Second,
-		IdleTimeout:       120 * time.Second,
+		// No WriteTimeout: the agent stream and tool generations (JSON mode
+		// with a generous token budget + retry) routinely take 1-3 minutes.
+		// A write deadline would kill mid-generation; client disconnects are
+		// already handled by request-context cancellation.
+		WriteTimeout: 0,
+		IdleTimeout:  120 * time.Second,
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)

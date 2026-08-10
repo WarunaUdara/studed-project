@@ -21,7 +21,11 @@ type AIClient struct {
 func NewAIClient(baseURL string) *AIClient {
 	return &AIClient{
 		baseURL: baseURL,
-		http:    &http.Client{Timeout: 90 * time.Second},
+		// Generous timeout: visualization generation streams for 1-3
+		// minutes (large JSON configs with a big token budget + retries).
+		// The ai-service itself has no write deadline; context cancellation
+		// covers client disconnects.
+		http: &http.Client{Timeout: 5 * time.Minute},
 	}
 }
 
