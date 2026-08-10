@@ -3,20 +3,72 @@ package middleware
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net"
 	"net/http"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/redis/go-redis/v9"
 )
 
 type RateLimiter struct {
-	rdb *redis.Client
+	rdb     *redis.Client
+	healthy atomic.Bool
+	log     *slog.Logger
+
+	initialBackoff time.Duration
+	maxBackoff     time.Duration
+	backoffFactor  float64
 }
 
 func NewRateLimiter(rdb *redis.Client) *RateLimiter {
-	return &RateLimiter{rdb: rdb}
+	rl := &RateLimiter{
+		rdb:            rdb,
+		log:            slog.Default(),
+		initialBackoff: 250 * time.Millisecond,
+		maxBackoff:     30 * time.Second,
+		backoffFactor:  2.0,
+	}
+	if rdb != nil {
+		rl.healthy.Store(true)
+	}
+	return rl
+}
+
+// StartReconnectLoop monitors Redis connectivity and applies exponential
+// backoff between probes so a downed Redis is not hammered. It flips the
+// healthy flag used by allow() to decide between fail-open and fail-closed.
+func (rl *RateLimiter) StartReconnectLoop(ctx context.Context) {
+	if rl.rdb == nil {
+		return
+	}
+	backoff := rl.initialBackoff
+	for {
+		err := rl.rdb.Ping(ctx).Err()
+		if err == nil {
+			if !rl.healthy.Load() {
+				rl.healthy.Store(true)
+				rl.log.Info("redis reconnected", slog.String("component", "ratelimit"))
+			}
+			backoff = rl.initialBackoff
+		} else {
+			if rl.healthy.Load() {
+				rl.healthy.Store(false)
+				rl.log.Warn("redis unreachable, rate limiting disabled", slog.Any("error", err))
+			}
+			backoff = time.Duration(float64(backoff) * rl.backoffFactor)
+			if backoff > rl.maxBackoff {
+				backoff = rl.maxBackoff
+			}
+		}
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(backoff):
+		}
+	}
 }
 
 // RateLimit returns a middleware enforcing rate limits based on path and user context.
@@ -59,10 +111,17 @@ func (rl *RateLimiter) RateLimit() func(http.Handler) http.Handler {
 }
 
 func (rl *RateLimiter) allow(ctx context.Context, key string, limit int64, window time.Duration) bool {
+	// Fail closed while Redis is known-unreachable: without a backing store the
+	// rate limit cannot be enforced, so reject rather than let the limit lapse.
+	if rl.rdb == nil || !rl.healthy.Load() {
+		return false
+	}
+
 	count, err := rl.rdb.Incr(ctx, key).Result()
 	if err != nil {
-		// If Redis is unreachable, fail open to avoid service outage
-		return true
+		rl.healthy.Store(false)
+		rl.log.Warn("redis rate limit command failed", slog.Any("error", err))
+		return false
 	}
 
 	if count == 1 {

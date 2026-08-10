@@ -14,7 +14,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/vektah/gqlparser/v2/gqlerror"
 	coderws "github.com/coder/websocket"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -27,6 +26,7 @@ import (
 	authmiddleware "github.com/studed/api-gateway/internal/middleware"
 	"github.com/studed/shared/go/logger"
 	"github.com/studed/shared/go/metrics"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 func main() {
@@ -119,6 +119,14 @@ func main() {
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr: cfg.RedisAddr,
+		// Command-level retries with exponential backoff so transient Redis
+		// blips do not surface as 429s or dropped requests.
+		MaxRetries:      5,
+		MinRetryBackoff: 100 * time.Millisecond,
+		MaxRetryBackoff: 2 * time.Second,
+		DialTimeout:     2 * time.Second,
+		ReadTimeout:     2 * time.Second,
+		WriteTimeout:    2 * time.Second,
 	})
 	rateLimiter := authmiddleware.NewRateLimiter(rdb)
 
@@ -164,6 +172,8 @@ func main() {
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+
+	go rateLimiter.StartReconnectLoop(ctx)
 
 	go func() {
 		log.Info("api-gateway listening", slog.String("addr", cfg.ServiceAddr))

@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -147,5 +148,88 @@ func TestAuth_RejectsNoneAlgorithm(t *testing.T) {
 	_, ok := runThroughAuth(t, req)
 	if ok {
 		t.Fatal("expected a token using the 'none' algorithm to be rejected")
+	}
+}
+
+func TestAuth_PartialClaimsFillEmptyFields(t *testing.T) {
+	claims := jwt.MapClaims{
+		"user_id": "user-1",
+		"exp":     time.Now().Add(time.Hour).Unix(),
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/graphql", nil)
+	req.Header.Set("Authorization", "Bearer "+signToken(t, testAccessSecret, claims))
+
+	user, ok := runThroughAuth(t, req)
+	if !ok {
+		t.Fatal("expected user context to be set for a token with partial claims")
+	}
+	if user.UserID != "user-1" {
+		t.Fatalf("expected UserID user-1, got %q", user.UserID)
+	}
+	if user.Email != "" || user.Role != "" || user.FullName != "" || user.PreferredLanguage != "" {
+		t.Fatalf("expected missing claims to parse as empty strings, got %+v", user)
+	}
+}
+
+func TestAuth_NonStringClaimsCoerceToEmpty(t *testing.T) {
+	claims := jwt.MapClaims{
+		"user_id": 12345, // numeric claim must not crash or leak into context
+		"role":    true,
+		"exp":     time.Now().Add(time.Hour).Unix(),
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/graphql", nil)
+	req.Header.Set("Authorization", "Bearer "+signToken(t, testAccessSecret, claims))
+
+	user, ok := runThroughAuth(t, req)
+	if !ok {
+		t.Fatal("expected user context to be set even with non-string claims")
+	}
+	if user.UserID != "" || user.Role != "" {
+		t.Fatalf("expected non-string claims to parse as empty, got %+v", user)
+	}
+}
+
+func TestUserContext_RoleHelpers(t *testing.T) {
+	admin := UserContext{Role: "ADMIN"}
+	educator := UserContext{Role: "EDUCATOR"}
+	headEducator := UserContext{Role: "HEAD_EDUCATOR"}
+	student := UserContext{Role: "STUDENT"}
+
+	if !admin.IsAdmin() {
+		t.Fatal("expected ADMIN to be IsAdmin")
+	}
+	if student.IsAdmin() {
+		t.Fatal("expected STUDENT to not be IsAdmin")
+	}
+	for _, uc := range []UserContext{admin, educator, headEducator} {
+		if !uc.IsEducator() {
+			t.Fatalf("expected role %s to be IsEducator", uc.Role)
+		}
+	}
+	if student.IsEducator() {
+		t.Fatal("expected STUDENT to not be IsEducator")
+	}
+}
+
+func TestStringValue_CoercesOrEmpty(t *testing.T) {
+	if got := stringValue("hello"); got != "hello" {
+		t.Fatalf("expected hello, got %q", got)
+	}
+	if got := stringValue(42); got != "" {
+		t.Fatalf("expected empty for int, got %q", got)
+	}
+	if got := stringValue(nil); got != "" {
+		t.Fatalf("expected empty for nil, got %q", got)
+	}
+}
+
+func TestUserFromContext_WrongTypeReturnsNotOK(t *testing.T) {
+	ctx := context.WithValue(context.Background(), UserContextKey, "not-a-user-context")
+
+	_, ok := UserFromContext(ctx)
+	if ok {
+		t.Fatal("expected UserFromContext to return ok=false for a non-UserContext value")
 	}
 }
