@@ -156,3 +156,20 @@
 [class*="PuckLayout"] {
   transition: grid-template-columns 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/*
+ * Height fix: Puck's layout hardcodes `height: 100dvh`, which ignores the
+ * editor container (navbar + editor header consume the top of the viewport,
+ * so 100dvh overflows and the bottom of the canvas + palette get clipped by
+ * the route's overflow-hidden). The editor wrapper (main) already carries a
+ * proper flex height, so Puck should fill 100% of it. The canvas document
+ * inside the frame then scrolls naturally as blocks grow the content.
+ *
+ * Both the `.Puck` wrapper div (auto-height by default) and the layout grid
+ * must resolve against the main pane, otherwise the percentage chain breaks
+ * and the layout grows with its content (clipped bottom).
+ */
+.Puck,
+[class*="PuckLayout"] {
+  height: 100%;
+}
