@@ -3,7 +3,9 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log/slog"
 	"math"
 	"regexp"
 	"sort"
@@ -100,13 +102,32 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 				}
 			}
 
+			// Idempotent retry: an attempt that passed but never recorded XP
+			// (the original award call failed) is reconciled here by re-running
+			// the award. Gamification's award-once semantics make this safe —
+			// it can never double-award. Attempts that already recorded XP
+			// (>0) skip the award path entirely.
+			var warnings []string
+			xpEarned := existing.XPAwarded
+			totalXp := int32(0)
+			if existing.Passed && existing.XPAwarded == 0 {
+				var earned int32
+				earned, totalXp, warnings = s.awardXpForWave(ctx, existing.UserID, existing.WaveID, existing.Score, wave.XpReward, wave.PassingThreshold, existing.ID)
+				if earned > 0 {
+					existing.XPAwarded = earned
+					xpEarned = earned
+				}
+			}
+
 			return &progresspb.RecordAttemptResponse{
 				AttemptId:         existing.ID,
 				Score:             existing.Score,
 				Passed:            existing.Passed,
-				XpEarned:          existing.XPAwarded,
+				XpEarned:          xpEarned,
+				TotalXp:           totalXp,
 				RemainingAttempts: remaining,
 				Feedback:          feedback,
+				Warnings:          warnings,
 			}, nil
 		}
 	}
@@ -174,23 +195,16 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 
 	xpEarned := int32(0)
 	totalXp := int32(0)
+	var warnings []string
 	if passed {
-		xpResp, err := s.gamification.CalculateAndAwardXp(ctx, &gampb.XpCalculationRequest{
-			UserId:           userID,
-			WaveId:           waveID,
-			Score:            score,
-			XpReward:         wave.XpReward,
-			PassingThreshold: wave.PassingThreshold,
-		})
-		if err == nil && xpResp.Error == "" {
-			xpEarned = xpResp.XpEarned
-			totalXp = xpResp.TotalXp
-			_ = s.repo.UpdateAttemptXPAwarded(ctx, attempt.ID, xpEarned)
-		}
+		xpEarned, totalXp, warnings = s.awardXpForWave(ctx, userID, waveID, score, wave.XpReward, wave.PassingThreshold, attempt.ID)
 	} else {
-		xpResp, err := s.gamification.GetUserXp(ctx, &gampb.GetUserXpRequest{UserId: userID})
-		if err == nil && xpResp.Error == "" {
-			totalXp = xpResp.TotalXp
+		total, err := s.fetchTotalXp(ctx, userID)
+		if err != nil {
+			slog.Warn("get_user_xp call failed", slog.String("user_id", userID), slog.Any("error", err))
+			warnings = append(warnings, fmt.Sprintf("failed to fetch total xp: %v", err))
+		} else {
+			totalXp = total
 		}
 	}
 
@@ -202,10 +216,12 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 			lessonCompletedVal, err := s.repo.CountPassedWavesInLesson(ctx, userID, wave.LessonId)
 			if err == nil && int32(lessonCompletedVal) == lessonTotal {
 				// Unlock lesson_complete!
-				_, _ = s.gamification.UnlockAchievement(ctx, &gampb.UnlockAchievementRequest{
+				if _, err := s.gamification.UnlockAchievement(ctx, &gampb.UnlockAchievementRequest{
 					UserId:        userID,
 					AchievementId: "lesson_complete",
-				})
+				}); err != nil {
+					slog.Error("failed to unlock lesson_complete achievement", slog.String("user_id", userID), slog.String("wave_id", waveID), slog.Any("error", err))
+				}
 
 				// 2. Check if lesson is proficient (average score of all waves in lesson >= 80)
 				var sumScores int32
@@ -226,10 +242,12 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 				if countWaves == lessonTotal && lessonTotal > 0 {
 					avg := float64(sumScores) / float64(lessonTotal)
 					if avg >= 80 {
-						_, _ = s.gamification.UnlockAchievement(ctx, &gampb.UnlockAchievementRequest{
+						if _, err := s.gamification.UnlockAchievement(ctx, &gampb.UnlockAchievementRequest{
 							UserId:        userID,
 							AchievementId: "lesson_proficient",
-						})
+						}); err != nil {
+							slog.Error("failed to unlock lesson_proficient achievement", slog.String("user_id", userID), slog.String("wave_id", waveID), slog.Any("error", err))
+						}
 					}
 				}
 			}
@@ -248,17 +266,22 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 			courseCompletedVal, err := s.repo.CountPassedWavesInCourse(ctx, userID, lesson.CourseId)
 			if err == nil && int32(courseCompletedVal) == courseTotalWaves && courseTotalWaves > 0 {
 				// Unlock first_course!
-				_, _ = s.gamification.UnlockAchievement(ctx, &gampb.UnlockAchievementRequest{
+				if _, err := s.gamification.UnlockAchievement(ctx, &gampb.UnlockAchievementRequest{
 					UserId:        userID,
 					AchievementId: "first_course",
-				})
+				}); err != nil {
+					slog.Error("failed to unlock first_course achievement", slog.String("user_id", userID), slog.String("wave_id", waveID), slog.Any("error", err))
+				}
 			}
 		}
 
 		// Update totalXp to include any achievement milestone bonuses
-		xpResp, err := s.gamification.GetUserXp(ctx, &gampb.GetUserXpRequest{UserId: userID})
-		if err == nil && xpResp.Error == "" {
-			totalXp = xpResp.TotalXp
+		total, err := s.fetchTotalXp(ctx, userID)
+		if err != nil {
+			slog.Warn("failed to refresh total xp after achievement evaluation", slog.String("user_id", userID), slog.Any("error", err))
+			warnings = append(warnings, fmt.Sprintf("failed to refresh total xp: %v", err))
+		} else {
+			totalXp = total
 		}
 	}
 
@@ -275,7 +298,65 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 		TotalXp:           totalXp,
 		RemainingAttempts: remainingAttempts,
 		Feedback:          feedback,
+		Warnings:          warnings,
 	}, nil
+}
+
+// awardXpForWave calls gamification to calculate and award XP for a passed
+// wave, records the awarded amount on the attempt row, and returns the XP
+// earned, the user's resulting total, and any non-fatal warnings.
+//
+// Errors from gamification never fail the submission (the attempt is already
+// persisted): they are logged and surfaced as warnings so an ambiguous XP
+// state is never silently reported as "0 XP earned". A failed attempt-row
+// update is surfaced the same way — the user keeps their awarded XP, and the
+// row is reconciled on a retry of the same submission.
+func (s *progressService) awardXpForWave(ctx context.Context, userID, waveID string, score, xpReward, passingThreshold int32, attemptID string) (int32, int32, []string) {
+	xpResp, err := s.gamification.CalculateAndAwardXp(ctx, &gampb.XpCalculationRequest{
+		UserId:           userID,
+		WaveId:           waveID,
+		Score:            score,
+		XpReward:         xpReward,
+		PassingThreshold: passingThreshold,
+	})
+	if err != nil {
+		slog.Error("calculate_and_award_xp call failed; xp state unknown",
+			slog.String("user_id", userID), slog.String("wave_id", waveID),
+			slog.String("attempt_id", attemptID), slog.Any("error", err))
+		return 0, 0, []string{fmt.Sprintf("xp award failed: %v", err)}
+	}
+	if xpResp.Error != "" {
+		slog.Error("calculate_and_award_xp returned an error; xp state unknown",
+			slog.String("user_id", userID), slog.String("wave_id", waveID),
+			slog.String("attempt_id", attemptID), slog.String("error", xpResp.Error))
+		return 0, 0, []string{fmt.Sprintf("xp award failed: %s", xpResp.Error)}
+	}
+
+	if attemptID != "" && xpResp.XpEarned > 0 {
+		if err := s.repo.UpdateAttemptXPAwarded(ctx, attemptID, xpResp.XpEarned); err != nil {
+			slog.Error("xp awarded but failed to record it on the attempt row",
+				slog.String("attempt_id", attemptID), slog.Int("xp_earned", int(xpResp.XpEarned)),
+				slog.Any("error", err))
+			return xpResp.XpEarned, xpResp.TotalXp, []string{
+				fmt.Sprintf("xp of %d was awarded but recording it on the attempt failed: %v", xpResp.XpEarned, err),
+			}
+		}
+	}
+	return xpResp.XpEarned, xpResp.TotalXp, nil
+}
+
+// fetchTotalXp returns the user's current total XP, or an error if the
+// gamification service could not be reached. Callers decide whether to surface
+// the failure as a warning instead of silently reporting 0.
+func (s *progressService) fetchTotalXp(ctx context.Context, userID string) (int32, error) {
+	xpResp, err := s.gamification.GetUserXp(ctx, &gampb.GetUserXpRequest{UserId: userID})
+	if err != nil {
+		return 0, err
+	}
+	if xpResp.Error != "" {
+		return 0, errors.New(xpResp.Error)
+	}
+	return xpResp.TotalXp, nil
 }
 
 func (s *progressService) GetWaveProgress(ctx context.Context, userID, waveID string) (*progresspb.WaveProgressResponse, error) {

@@ -48,6 +48,10 @@ message RecordAttemptResponse {
   int32 remaining_attempts = 6;
   repeated QuestionFeedback feedback = 7;
   string error = 8;
+  // Non-fatal issues encountered while collecting XP (e.g. the XP award call
+  // failed or the awarded XP could not be recorded on the attempt row). The
+  // submission itself still succeeded; clients should surface these.
+  repeated string warnings = 9;
 }
 
 message GetWaveProgressRequest {
