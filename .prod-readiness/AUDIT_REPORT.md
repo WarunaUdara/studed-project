@@ -50,6 +50,20 @@ This report is automatically updated by autonomous development agents during eve
   2. Provisioned Grafana Tempo distributed tracing backend in `docker-compose.yml` (`http://tempo:3200`, `http://tempo:4318`) and Grafana datasources (`infra/monitoring/grafana/provisioning/datasources/tempo.yml`).
 - **Verification Status**: `make ci-local` passed 100%.
 
+### Iteration 7 — 2026-08-10
+- **Scanned Dimension**: Frontend UX & Resilience
+- **Findings**:
+  1. `GlobalErrorBoundary` covered render-phase errors but nothing observed `unhandledrejection` events; a rejected promise (e.g. a missing `.catch`) would fail silently in production.
+- **Remediation**: Registered a `window` `unhandledrejection` handler in `frontend/src/main.tsx` that calls `preventDefault()` and logs via `console.error`, giving every rejection a single observable path.
+- **Verification Status**: `bun run typecheck` + Vitest (47 tests) pass; `make ci-local` passed 100%.
+
+### Iteration 8 — 2026-08-10
+- **Scanned Dimension**: Build & CI/CD (post-10.0 verification)
+- **Findings**:
+  1. The OTLP exporter landed in `shared/go/otel` but the per-service `go.mod`/`go.sum` tidy updates (new indirect deps: `otlptrace`, `otlptracehttp`, `grpc-gateway`, `genproto/googleapis/api`) were not committed, leaving `HEAD` unable to `go build`.
+- **Remediation**: Committed the dependency sync across api-gateway, auth, course, gamification, progress. Verified `make ci-local` passes 100% on the committed tree.
+- **Verification Status**: `make ci-local` passed 100% on `HEAD`.
+
 ---
 
 ## 🛡️ Attack Surface & Flaw Matrix
