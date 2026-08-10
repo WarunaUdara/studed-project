@@ -190,9 +190,9 @@ func TestVisualizationAllFamilies(t *testing.T) {
 			metaWant: "Pythagorean proof",
 		},
 		{
-			vizType: "3dmol", blockType: "chemviz_3dmol",
-			raw:      `{"id":"v1","type":"chemviz_3dmol","content":"Water","metadata":{"title":"Water","molecule":{"source_type":"smiles","source_value":"O"},"style":{"stick":{}}}}`,
-			metaWant: "Water",
+			vizType: "3dmol", blockType: "html_simulation",
+			raw:      `{"id":"v1","type":"html_simulation","content":"Water Reaction","metadata":{"title":"Water Reaction","description":"Interactive chemistry","height":560,"html":"<!doctype html><html><body><canvas id=\"reaction\"></canvas><script>requestAnimationFrame(()=>{});</script></body></html>"}}`,
+			metaWant: "Water Reaction",
 		},
 		{
 			vizType: "tscircuit", blockType: "elecsim_tscircuit",
@@ -391,15 +391,15 @@ func TestManageBlocks_EmptyOpsReportsNoChanges(t *testing.T) {
 
 func TestParseLearnBlocksHandlesStringMetadata(t *testing.T) {
 	// some backends already return metadata as a string; must pass through
-	raw := []byte(`[{"id":"l1","type":"chemviz_3dmol","content":"Water","metadata":"{\"title\":\"Water\",\"molecule\":{\"source_type\":\"smiles\",\"source_value\":\"O\"}}"}]`)
+	raw := []byte(`[{"id":"l1","type":"html_simulation","content":"Water Reaction","metadata":"{\"title\":\"Water Reaction\",\"html\":\"<!doctype html><html><body><canvas></canvas></body></html>\"}"}]`)
 	parsed, err := parseLearnBlocks(raw)
 	if err != nil {
 		t.Fatalf("parseLearnBlocks: %v", err)
 	}
-	if len(parsed) != 1 || parsed[0].Type != "chemviz_3dmol" {
+	if len(parsed) != 1 || parsed[0].Type != "html_simulation" {
 		t.Fatalf("parsed = %+v", parsed)
 	}
-	if !strings.Contains(parsed[0].Metadata, "source_value") {
+	if !strings.Contains(parsed[0].Metadata, "<canvas>") {
 		t.Errorf("metadata = %q", parsed[0].Metadata)
 	}
 }

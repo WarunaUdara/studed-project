@@ -3,7 +3,6 @@ import { CodeBlock } from "@/components/learn/visualizations/CodeBlock";
 import { CoordinatePlaneBlock } from "@/components/learn/visualizations/CoordinatePlaneBlock";
 import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
 import { HtmlSimulationBlock } from "@/components/learn/visualizations/HtmlSimulationBlock";
-import { Mol3DBlock } from "@/components/learn/visualizations/Mol3DBlock";
 import { TsCircuitBlock } from "@/components/learn/visualizations/TsCircuitBlock";
 import { MathFormula } from "@/components/ui/MathFormula";
 import { MarkdownContent } from "@/components/ui/MarkdownContent";
@@ -96,11 +95,11 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
     case "math_animation":
       return <ManimBlock content={block.content} metadata={block.metadata} />;
 
-    case "molecule_3dmol":
     case "chemviz_3dmol":
+    case "molecule_3dmol":
     case "3dmol":
     case "molecule":
-      return <Mol3DBlock content={block.content} metadata={block.metadata} />;
+      return <HtmlSimulationBlock content={block.content} metadata={block.metadata} />;
 
     case "circuit_tscircuit":
     case "elecsim_tscircuit":

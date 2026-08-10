@@ -2,7 +2,6 @@ import type { Config, Data } from "@puckeditor/core";
 import { MathFormula } from "@/components/ui/MathFormula";
 import { MarkdownContent } from "@/components/ui/MarkdownContent";
 import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
-import { Mol3DBlock } from "@/components/learn/visualizations/Mol3DBlock";
 import { TsCircuitBlock } from "@/components/learn/visualizations/TsCircuitBlock";
 import { HtmlSimulationBlock } from "@/components/learn/visualizations/HtmlSimulationBlock";
 
@@ -38,7 +37,7 @@ export interface MathVizProps {
 }
 
 export interface VizBlockProps {
-  vizType: string; // mathviz_manim | chemviz_3dmol | elecsim_tscircuit | html_simulation
+  vizType: string; // mathviz_manim | elecsim_tscircuit | html_simulation
   content: string;
   metadata: string;
   // Convenience editor fields (merged into metadata at render time).
@@ -99,7 +98,6 @@ function EvaluateBadge({ label }: { label: string }) {
 
 const VIZ_LABELS: Record<string, string> = {
   mathviz_manim: "Math Animation (Manim)",
-  chemviz_3dmol: "3D Molecule (3Dmol.js)",
   elecsim_tscircuit: "Circuit Simulation (tscircuit)",
   html_simulation: "Interactive HTML Simulation",
 };
@@ -110,7 +108,7 @@ function VizBlockPreview({ vizType, content, metadata }: VizBlockProps) {
   switch (vizType) {
     case "chemviz_3dmol":
     case "molecule_3dmol":
-      return <Mol3DBlock content={content} metadata={metadata} />;
+      return <HtmlSimulationBlock content={content} metadata={metadata} />;
     case "elecsim_tscircuit":
     case "circuit_tscircuit":
       return <TsCircuitBlock content={content} metadata={metadata} />;
@@ -303,35 +301,6 @@ export const puckConfig: Config = {
       },
     },
 
-
-    // 3D molecule (3Dmol.js) — first-class palette block.
-    MoleculeBlock: {
-      fields: {
-        moleculeSmiles: { type: "text", label: "Molecule SMILES" },
-        content: { type: "textarea", label: "Description / Instructions" },
-        metadata: { type: "textarea", label: "Config JSON (advanced)" },
-      },
-      defaultProps: {
-        vizType: "chemviz_3dmol",
-        moleculeSmiles: "O",
-        content: "Interactive 3D molecule",
-        metadata: "{}",
-      },
-      render: ({ moleculeSmiles, content, metadata }) => {
-        let merged: Record<string, unknown> = {};
-        try {
-          merged = metadata ? JSON.parse(metadata) : {};
-        } catch {
-          merged = {};
-        }
-        if (moleculeSmiles) {
-          merged.title = merged.title ?? content ?? "Molecule";
-          merged.molecule = merged.molecule ?? { source_type: "smiles", source_value: moleculeSmiles };
-          merged.style = merged.style ?? { stick: { radius: 0.15, colorscheme: "Jmol" } };
-        }
-        return <VizBlockPreview vizType="chemviz_3dmol" content={content} metadata={JSON.stringify(merged)} />;
-      },
-    },
 
     // Circuit (tscircuit) — first-class palette block.
     CircuitBlock: {
@@ -636,23 +605,13 @@ function learnBlockToItem(lb: LearnBlockRaw): PuckData["content"][number] {
     case "mathviz_manim":
       return { type: "VizBlock", props: { ...common, vizType: type, content: lb.content, metadata: lb.metadata || "{}" } };
     case "chemviz_3dmol":
-      return { type: "MoleculeBlock", props: { ...common, vizType: type, moleculeSmiles: moleculeSmilesFrom(lb), content: lb.content, metadata: lb.metadata || "{}" } };
+      return { type: "HtmlSimulationBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
     case "elecsim_tscircuit":
     return { type: "CircuitBlock", props: { ...common, vizType: type, circuitCode: circuitCodeFrom(lb), content: lb.content, metadata: lb.metadata || "{}" } };
     case "html_simulation":
     return { type: "HtmlSimulationBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
     default:
       return { type: "TextBlock", props: { ...common, content: lb.content } };
-  }
-}
-
-// Pull the SMILES out of a chemviz block's metadata.
-function moleculeSmilesFrom(lb: LearnBlockRaw): string {
-  try {
-    const meta = JSON.parse(lb.metadata || "{}");
-    return typeof meta.molecule?.source_value === "string" ? meta.molecule.source_value : "O";
-  } catch {
-    return "O";
   }
 }
 
@@ -817,27 +776,6 @@ export function puckToWaveData(puckData: PuckData) {
           type: "html_simulation",
           content: str(block.props.content),
           metadata: str(block.props.metadata) || null,
-        });
-        break;
-      }
-      case "MoleculeBlock": {
-        let meta: Record<string, unknown> = {};
-        try {
-          meta = JSON.parse(str(block.props.metadata) || "{}");
-        } catch {
-          meta = {};
-        }
-        const smiles = str(block.props.moleculeSmiles);
-        if (smiles && !meta.molecule) {
-          meta.molecule = { source_type: "smiles", source_value: smiles };
-        }
-        if (!meta.title) meta.title = str(block.props.content) || "Molecule";
-        if (!meta.style) meta.style = { stick: { radius: 0.15, colorscheme: "Jmol" } };
-        learnBlocks.push({
-          id,
-          type: "chemviz_3dmol",
-          content: str(block.props.content),
-          metadata: JSON.stringify(meta),
         });
         break;
       }

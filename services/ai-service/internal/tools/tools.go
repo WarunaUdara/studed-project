@@ -202,7 +202,7 @@ func Visualization(p provider.Provider) Tool {
 			"type": "object",
 			"properties": map[string]any{
 				"concept": map[string]any{"type": "string", "description": "The concept to visualize"},
-				"vizType": map[string]any{"type": "string", "enum": []string{"manim", "3dmol", "tscircuit", "matterjs"}, "description": "Use matterjs for physics; it generates a runnable HTML document"},
+				"vizType": map[string]any{"type": "string", "enum": []string{"manim", "3dmol", "tscircuit", "matterjs"}, "description": "Use matterjs for physics or chemistry; it generates a runnable HTML document"},
 				"grade":   map[string]any{"type": "string", "description": "Target grade or exam level"},
 			},
 			"required": []string{"concept", "vizType"},
@@ -262,19 +262,7 @@ func vizSystemPrompt(vizType string) (string, error) {
 	case "manim":
 		return `You are an expert Manim animation generator for mathematics education at StudEd (Grades 1-11, O/L, A/L). Output JSON only: a single object with fields id, type, content, metadata where type is mathviz_manim, content is the animation title, and metadata is {"title": ..., "scene_spec": {"scene_title": ..., "duration_seconds": ..., "style": ..., "beats": [{"time": ..., "action": ...}], "color_palette": [...]}}. Do not use emojis.`, nil
 	case "3dmol":
-		return `You are an expert 3D molecule generator for chemistry education at StudEd (Grades 1-11, O/L, A/L). Output JSON only: a single object with fields id, type, content, metadata where type is chemviz_3dmol, content is the molecule title, and metadata follows this full schema:
-{
-  "title": "<molecule name, e.g. Water Molecule (H2O)>",
-  "description": "<one-line description>",
-  "molecule": {"source_type": "smiles", "source_value": "<SMILES string>"},
-  "style": {"stick": {"radius": 0.15, "colorscheme": "Jmol"}, "sphere": {"scale": 0.25}},
-  "surface": {"type": "VDW", "opacity": 0.7, "color": "white"},
-  "camera": {"position": {"x": 0, "y": 0, "z": 50}, "zoom": 1.0},
-  "interactivity": {"rotate": true, "zoom": true, "pan": true, "click_to_identify": true, "hover_labels": true},
-  "annotations": [{"type": "label", "text": "Hydrogen Bond", "position": {"x": 1.0, "y": 0.5, "z": 0.0}, "color": "red"}],
-  "dimensions": {"width": 100, "height": 400}
-}
-Requirements: molecule.source_type must be "smiles" (preferred — give a valid SMILES string) or "pdb" (source_value like "pdb:1UBQ"). Choose a style appropriate to the molecule: stick for small molecules, cartoon for proteins. Add 0-2 annotations highlighting pedagogically important features (bonds, functional groups). Keep everything grade-appropriate. Do not use emojis.`, nil
+		return `You are an expert interactive chemistry simulation author for StudEd. Build a complete runnable HTML/CSS/JavaScript document for the requested chemistry concept. Output JSON only: {"id":"...","type":"html_simulation","content":"<title>","metadata":{"title":"<title>","description":"<description>","height":560,"html":"<complete escaped HTML document>"}}. Include molecules, reaction animation, controls, labels, and educational readouts inside the HTML. For sodium and water, show sodium moving on water, hydrogen bubbles, heat/flame, and the balanced reaction explanation. Do not rely on React or StudEd globals. No placeholders or emojis. Keep it below 500KB.`, nil
 	case "tscircuit":
 		return `You are an expert tscircuit circuit code generator for physics education at StudEd (Grades 1-11, O/L, A/L). Output JSON only: a single object with fields id, type, content, metadata where type is elecsim_tscircuit, content is the circuit title, and metadata is {"title": ..., "circuit_code": "<tsx component code>"}. Do not use emojis.`, nil
 	case "matterjs":
@@ -359,7 +347,7 @@ func vizLearnType(vizType string) string {
 	case "manim":
 		return "mathviz_manim"
 	case "3dmol":
-		return "chemviz_3dmol"
+		return "html_simulation"
 	case "tscircuit":
 		return "elecsim_tscircuit"
 	case "matterjs":

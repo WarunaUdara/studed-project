@@ -15,9 +15,8 @@ var validLearnTypes = map[string]bool{
 	"callout":           true,
 	"example":           true,
 	"mathviz_manim":     true,
-	"chemviz_3dmol":     true,
-	"elecsim_tscircuit": true,
 	"html_simulation":   true,
+	"elecsim_tscircuit": true,
 }
 
 var validEvaluateTypes = map[string]bool{

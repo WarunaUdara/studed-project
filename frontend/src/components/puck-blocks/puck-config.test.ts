@@ -20,7 +20,7 @@ const AGENT_LEARN: LearnBlockRaw[] = [
   { id: "learn-5", type: "callout", content: "Remember: mass attracts mass." },
   { id: "learn-6", type: "example", content: "A 70kg person weighs 686N on Earth." },
   { id: "learn-7", type: "mathviz_manim", content: "Pendulum animation", metadata: JSON.stringify({ title: "Pendulum", scene_spec: { beats: [{ time: 0, action: "create" }] } }) },
-  { id: "learn-8", type: "chemviz_3dmol", content: "Water molecule", metadata: JSON.stringify({ title: "H2O", source_type: "smiles", source: "O" }) },
+  { id: "learn-8", type: "html_simulation", content: "Water molecule", metadata: JSON.stringify({ title: "Sodium and water", html: "<!doctype html><html><body><canvas></canvas></body></html>" }) },
   { id: "learn-9", type: "elecsim_tscircuit", content: "LED circuit", metadata: JSON.stringify({ title: "LED", circuit_code: "..." }) },
   { id: "learn-10", type: "html_simulation", content: "Bouncing ball", metadata: JSON.stringify({ title: "Ball", html: "<!doctype html><html><body><canvas></canvas><script>requestAnimationFrame(()=>{});</script></body></html>" }) },
 ];
@@ -135,7 +135,7 @@ describe("insert-then-save round trip (the chat agent auto-insert flow)", () => 
     expect(learnBlocks[6]).toEqual({ id: "learn-6", type: "example", content: "A 70kg person weighs 686N on Earth.", metadata: null });
     expect(learnBlocks[7].type).toBe("mathviz_manim");
     expect(learnBlocks[7].metadata).toContain("Pendulum");
-    expect(learnBlocks[8].type).toBe("chemviz_3dmol");
+    expect(learnBlocks[8].type).toBe("html_simulation");
     expect(learnBlocks[9].type).toBe("elecsim_tscircuit");
     expect(learnBlocks[10].type).toBe("html_simulation");
 
@@ -207,11 +207,9 @@ describe("insert-then-save round trip (the chat agent auto-insert flow)", () => 
     const manimViz = rebuilt.content.find((i) => i.type === "VizBlock" && i.props.vizType === "mathviz_manim");
     expect(manimViz?.props.vizType).toBe("mathviz_manim");
     expect(manimViz?.props.id).toBe("learn-7");
-    // Dedicated first-class blocks: chemistry → MoleculeBlock, circuits →
-    // CircuitBlock, physics → HtmlSimulationBlock.
-    const chemViz = rebuilt.content.find((i) => i.type === "MoleculeBlock" && i.props.vizType === "chemviz_3dmol");
-    expect(chemViz?.props.vizType).toBe("chemviz_3dmol");
-    expect(chemViz?.props.moleculeSmiles).toBe("O");
+    // All interactive simulations use the unified HtmlSimulationBlock.
+    const chemViz = rebuilt.content.find((i) => i.type === "HtmlSimulationBlock" && i.props.id === "learn-8");
+    expect(chemViz?.type).toBe("HtmlSimulationBlock");
     const circuitViz = rebuilt.content.find((i) => i.type === "CircuitBlock" && i.props.vizType === "elecsim_tscircuit");
     expect(circuitViz?.props.vizType).toBe("elecsim_tscircuit");
     expect(circuitViz?.props.circuitCode).toBe("...");
