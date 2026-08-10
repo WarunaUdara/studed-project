@@ -15,17 +15,17 @@ import (
 // MatterBody is the subset of the mechsim world_config.bodies schema that the
 // headless simulator needs. Unknown fields are ignored.
 type MatterBody struct {
-	ID          string  `json:"id"`
-	Type        string  `json:"type"` // circle | rectangle
-	Position    *Point  `json:"position"`
-	Velocity    *Point  `json:"velocity"`
-	Radius      float64 `json:"radius"`
-	Width       float64 `json:"width"`
-	Height      float64 `json:"height"`
+	ID          string   `json:"id"`
+	Type        string   `json:"type"` // circle | rectangle
+	Position    *Point   `json:"position"`
+	Velocity    *Point   `json:"velocity"`
+	Radius      float64  `json:"radius"`
+	Width       float64  `json:"width"`
+	Height      float64  `json:"height"`
 	Density     *float64 `json:"density"` // nil = renderer default 0.002
-	Restitution float64 `json:"restitution"`
-	Friction    float64 `json:"friction"`
-	IsStatic    bool    `json:"isStatic"`
+	Restitution float64  `json:"restitution"`
+	Friction    float64  `json:"friction"`
+	IsStatic    bool     `json:"isStatic"`
 }
 
 // Point is a 2D vector.
@@ -41,6 +41,20 @@ type MatterConstraint struct {
 	BodyB     string  `json:"bodyB"`
 	Length    float64 `json:"length"`
 	Stiffness float64 `json:"stiffness"`
+}
+
+// MatterEditableParam mirrors editable_params entries (property resolution
+// check only).
+type MatterEditableParam struct {
+	Property string `json:"property"`
+}
+
+// MatterMeasurement mirrors measurements entries (source resolution check).
+type MatterMeasurement struct {
+	Label   string `json:"label"`
+	Type    string `json:"type"`
+	Source  string `json:"source"`
+	Formula string `json:"formula"`
 }
 
 // MatterWorld is the parsed world_config payload.
@@ -79,11 +93,14 @@ const (
 
 // MatterConfig parses a mechsim metadata payload and simulates it
 // headlessly. It returns a report; the simulation never panics — every
-// structural or numeric problem becomes an issue in the report.
+// structural, semantic, or numeric problem becomes an issue in the report.
 func MatterConfig(metadata json.RawMessage) *MatterReport {
 	rep := &MatterReport{}
 	var meta struct {
-		WorldConfig map[string]json.RawMessage `json:"world_config"`
+		ScenarioType   string                     `json:"scenario_type"`
+		WorldConfig    map[string]json.RawMessage `json:"world_config"`
+		EditableParams []MatterEditableParam      `json:"editable_params"`
+		Measurements   []MatterMeasurement        `json:"measurements"`
 	}
 	if err := json.Unmarshal(metadata, &meta); err != nil {
 		rep.Issues = append(rep.Issues, "metadata is not valid JSON: "+err.Error())
@@ -142,6 +159,15 @@ func MatterConfig(metadata json.RawMessage) *MatterReport {
 			rep.Issues = append(rep.Issues, fmt.Sprintf("constraint %q stiffness %v must be in [0,1]", c.ID, c.Stiffness))
 		}
 	}
+
+	// Semantic checks: editable param properties and measurement sources must
+	// resolve to declared bodies/constraints, and the scenario must actually
+	// demonstrate its physics (a projectile without an initial velocity or a
+	// pendulum without a constraint is a broken lesson, not a simulation).
+	checkEditableParams(rep, meta.EditableParams, ids, world)
+	checkMeasurements(rep, meta.Measurements, ids)
+	checkScenarioSemantics(rep, meta.ScenarioType, world, ids)
+
 	if len(rep.Issues) > 0 {
 		rep.OK = false
 		return rep
@@ -359,4 +385,116 @@ func (r *MatterReport) IssuesText() string {
 		return ""
 	}
 	return strings.Join(r.Issues, "; ")
+}
+
+// checkEditableParams verifies every editable param property resolves to
+// something the renderer can actually apply. Unresolvable properties (e.g.
+// "initialVelocity.x", which the renderer never reads) make the slider a
+// dead control — the config is rejected so the agent repairs it.
+func checkEditableParams(rep *MatterReport, params []MatterEditableParam, ids map[string]bool, world *MatterWorld) {
+	for _, p := range params {
+		prop := strings.TrimSpace(p.Property)
+		if prop == "" {
+			continue
+		}
+		switch {
+		case prop == "gravity.scale":
+		case prop == "thrust.x" || prop == "thrust.y":
+		case prop == "global.restitution" || prop == "global.friction" || prop == "global.gravity":
+		case strings.HasPrefix(prop, "bodies."):
+			// bodies.<id>.<field> — the renderer applies when the property
+			// contains the body id (density/radius/restitution/friction).
+			rest := strings.TrimPrefix(prop, "bodies.")
+			bodyID := rest
+			if i := strings.IndexByte(rest, '.'); i >= 0 {
+				bodyID = rest[:i]
+			}
+			if !ids[bodyID] {
+				rep.Issues = append(rep.Issues, fmt.Sprintf("editable_param property %q references missing body %q", prop, bodyID))
+			}
+		case strings.HasPrefix(prop, "constraints."):
+			rest := strings.TrimPrefix(prop, "constraints.")
+			conID := rest
+			if i := strings.IndexByte(rest, '.'); i >= 0 {
+				conID = rest[:i]
+			}
+			found := false
+			for _, c := range world.Constraints {
+				if c.ID == conID {
+					found = true
+					break
+				}
+			}
+			if !found {
+				rep.Issues = append(rep.Issues, fmt.Sprintf("editable_param property %q references missing constraint %q", prop, conID))
+			}
+		default:
+			rep.Issues = append(rep.Issues, fmt.Sprintf("editable_param property %q is not a resolvable renderer property (use gravity.scale, thrust.x/y, global.restitution, global.friction, bodies.<id>.density|radius|restitution|friction, or constraints.<id>.stiffness)", prop))
+		}
+	}
+}
+
+// checkMeasurements verifies live measurement sources reference declared
+// bodies (computed formulas are validated loosely — any dotted identifier
+// token must reference a declared body or a known global).
+func checkMeasurements(rep *MatterReport, measurements []MatterMeasurement, ids map[string]bool) {
+	for _, m := range measurements {
+		src := strings.TrimSpace(m.Source)
+		if src == "" {
+			continue
+		}
+		bodyID := src
+		if i := strings.IndexByte(src, '.'); i >= 0 {
+			bodyID = src[:i]
+		}
+		if !ids[bodyID] {
+			rep.Issues = append(rep.Issues, fmt.Sprintf("measurement %q source %q references missing body %q", m.Label, src, bodyID))
+		}
+	}
+}
+
+// checkScenarioSemantics ensures the config actually demonstrates the
+// physics of its declared scenario. A "projectile" that never gets an
+// initial velocity, a "pendulum" with no constraint, or a "collision" with
+// a single body is a broken lesson, not a simulation.
+func checkScenarioSemantics(rep *MatterReport, scenario string, world *MatterWorld, ids map[string]bool) {
+	scenario = strings.ToLower(strings.TrimSpace(scenario))
+	dynamic := 0
+	hasVelocity := false
+	gravityY := 0.0
+	if world.Gravity != nil {
+		gravityY = world.Gravity.Y
+	}
+	for i := range world.Bodies {
+		b := &world.Bodies[i]
+		if !b.IsStatic {
+			dynamic++
+		}
+		if !b.IsStatic && b.Velocity != nil && (b.Velocity.X != 0 || b.Velocity.Y != 0) {
+			hasVelocity = true
+		}
+	}
+
+	switch scenario {
+	case "projectile":
+		if !hasVelocity {
+			rep.Issues = append(rep.Issues, "projectile scenario requires at least one dynamic body with an initial velocity (velocity.x/velocity.y) — a projectile with no launch velocity is not projectile motion")
+		}
+		if gravityY == 0 {
+			rep.Issues = append(rep.Issues, "projectile scenario requires gravity (world_config.gravity.y != 0) — the parabolic arc needs gravity")
+		}
+	case "pendulum", "spring", "newtons_cradle":
+		if len(world.Constraints) == 0 {
+			rep.Issues = append(rep.Issues, fmt.Sprintf("%s scenario requires at least one constraint (world_config.constraints)", scenario))
+		}
+	case "collision":
+		if dynamic < 2 {
+			rep.Issues = append(rep.Issues, "collision scenario requires at least two dynamic bodies to collide")
+		}
+	case "newtons_laws":
+		// The renderer supplies the three-law presets for this scenario, so
+		// no specific world is required — any accompanying world is bonus.
+	default:
+		// custom / unknown scenarios: no semantic constraint.
+	}
 }

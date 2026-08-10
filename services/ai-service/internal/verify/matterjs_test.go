@@ -9,6 +9,12 @@ import (
 func mustMeta(t *testing.T, world map[string]any) json.RawMessage {
 	t.Helper()
 	payload := map[string]any{"world_config": world}
+	// scenario_type lives at the metadata top level (not inside world_config);
+	// hoist it if a test put it there.
+	if st, ok := world["scenario_type"]; ok {
+		payload["scenario_type"] = st
+		delete(world, "scenario_type")
+	}
 	b, err := json.Marshal(payload)
 	if err != nil {
 		t.Fatalf("marshal: %v", err)
@@ -155,5 +161,72 @@ func TestVerifyMatterConfig_StiffnessOutOfRange(t *testing.T) {
 	rep := MatterConfig(meta)
 	if rep.OK {
 		t.Fatal("expected failure for stiffness out of range")
+	}
+}
+
+func TestVerifyMatterConfig_ProjectileWithoutVelocity(t *testing.T) {
+	// Structurally sound but semantically broken: projectile with no launch
+	// velocity. The renderer would just drop the ball straight down.
+	meta := mustMeta(t, map[string]any{
+		"scenario_type": "projectile",
+		"gravity":       map[string]any{"x": 0, "y": 1, "scale": 0.001},
+		"bounds":        map[string]any{"width": 800, "height": 500},
+		"bodies": []any{
+			map[string]any{"id": "ball", "type": "circle", "position": map[string]any{"x": 170, "y": 300}, "radius": 12, "density": 0.04, "isStatic": false},
+			map[string]any{"id": "ground", "type": "rectangle", "position": map[string]any{"x": 400, "y": 490}, "width": 800, "height": 20, "isStatic": true},
+		},
+	})
+	rep := MatterConfig(meta)
+	if rep.OK {
+		t.Fatal("expected failure: projectile without initial velocity")
+	}
+	if !strings.Contains(rep.IssuesText(), "initial velocity") {
+		t.Errorf("issues = %v, want mention of missing launch velocity", rep.Issues)
+	}
+}
+
+func TestVerifyMatterConfig_PendulumWithoutConstraint(t *testing.T) {
+	meta := mustMeta(t, map[string]any{
+		"scenario_type": "pendulum",
+		"gravity":       map[string]any{"x": 0, "y": 1, "scale": 0.001},
+		"bounds":        map[string]any{"width": 800, "height": 500},
+		"bodies": []any{
+			map[string]any{"id": "bob", "type": "circle", "position": map[string]any{"x": 400, "y": 300}, "radius": 20, "density": 0.04, "isStatic": false},
+		},
+	})
+	rep := MatterConfig(meta)
+	if rep.OK {
+		t.Fatal("expected failure: pendulum without constraint")
+	}
+	if !strings.Contains(rep.IssuesText(), "constraint") {
+		t.Errorf("issues = %v, want mention of constraint", rep.Issues)
+	}
+}
+
+func TestVerifyMatterConfig_UnresolvableEditableParam(t *testing.T) {
+	// The renderer can only apply gravity.scale, thrust.x/y, global.*,
+	// bodies.<id>.*, constraints.<id>.stiffness. "initialVelocity.x" is a
+	// dead slider — must be rejected.
+	payload := map[string]any{
+		"scenario_type": "projectile",
+		"world_config": map[string]any{
+			"gravity": map[string]any{"x": 0, "y": 1, "scale": 0.001},
+			"bounds":  map[string]any{"width": 800, "height": 500},
+			"bodies": []any{
+				map[string]any{"id": "ball", "type": "circle", "position": map[string]any{"x": 170, "y": 300}, "radius": 12, "density": 0.04, "isStatic": false, "velocity": map[string]any{"x": 14, "y": -11}},
+				map[string]any{"id": "ground", "type": "rectangle", "position": map[string]any{"x": 400, "y": 490}, "width": 800, "height": 20, "isStatic": true},
+			},
+		},
+		"editable_params": []any{
+			map[string]any{"label": "Launch speed", "property": "initialVelocity.x", "type": "slider"},
+		},
+	}
+	b, _ := json.Marshal(payload)
+	rep := MatterConfig(b)
+	if rep.OK {
+		t.Fatal("expected failure: unresolvable editable param property")
+	}
+	if !strings.Contains(rep.IssuesText(), "initialVelocity.x") {
+		t.Errorf("issues = %v, want mention of initialVelocity.x", rep.Issues)
 	}
 }

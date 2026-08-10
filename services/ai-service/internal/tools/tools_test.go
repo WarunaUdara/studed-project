@@ -201,7 +201,7 @@ func TestVisualizationAllFamilies(t *testing.T) {
 		},
 		{
 			vizType: "matterjs", blockType: "mechsim_matterjs",
-			raw:      `{"id":"v1","type":"mechsim_matterjs","content":"Pendulum","metadata":{"title":"Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1},"bounds":{"width":800,"height":600},"bodies":[{"id":"bob","type":"circle","position":{"x":0,"y":0}}]}}}`,
+			raw:      `{"id":"v1","type":"mechsim_matterjs","content":"Pendulum","metadata":{"title":"Pendulum","scenario_type":"pendulum","world_config":{"gravity":{"x":0,"y":1},"bounds":{"width":800,"height":600},"bodies":[{"id":"bob","type":"circle","position":{"x":400,"y":300},"radius":20,"density":0.04,"isStatic":false},{"id":"pivot","type":"circle","position":{"x":400,"y":50},"radius":10,"isStatic":true}],"constraints":[{"id":"string","bodyA":"pivot","bodyB":"bob","length":250,"stiffness":0.8}]}}}`,
 			metaWant: "Pendulum",
 		},
 	}
