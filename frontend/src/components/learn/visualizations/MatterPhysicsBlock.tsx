@@ -407,7 +407,13 @@ export function MatterPhysicsBlock({ content, metadata }: MatterPhysicsBlockProp
           for (const p of effectiveParams) {
             const v = paramValues[p.property];
             if (typeof v === "number" && p.property.includes(b.id)) {
-              nb = applyParamToBody(nb, p.property, v);
+              if (p.property.endsWith(".velocity.x")) {
+                vx = v;
+              } else if (p.property.endsWith(".velocity.y")) {
+                vy = v;
+              } else {
+                nb = applyParamToBody(nb, p.property, v);
+              }
             }
           }
 
