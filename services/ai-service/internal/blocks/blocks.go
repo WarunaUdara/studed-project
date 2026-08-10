@@ -8,16 +8,16 @@ import (
 
 // Block types the wave editor understands.
 var validLearnTypes = map[string]bool{
-	"text":             true,
-	"math":             true,
-	"image":            true,
-	"video":            true,
-	"callout":          true,
-	"example":          true,
-	"heading":          true,
-	"formula":          true,
-	"code":             true,
-	"coordinate_plane": true,
+	"text":              true,
+	"math":              true,
+	"image":             true,
+	"video":             true,
+	"callout":           true,
+	"example":           true,
+	"mathviz_manim":     true,
+	"chemviz_3dmol":     true,
+	"elecsim_tscircuit": true,
+	"mechsim_matterjs":  true,
 }
 
 var validEvaluateTypes = map[string]bool{
@@ -25,6 +25,7 @@ var validEvaluateTypes = map[string]bool{
 	"fill_in_blank": true,
 	"true_false":    true,
 	"numeric":       true,
+	"drag_drop":     true,
 }
 
 type LearnBlock struct {
@@ -65,6 +66,14 @@ func ParseLearnBlocks(raw []byte) ([]LearnBlock, error) {
 		}
 		if strings.TrimSpace(b.Content) == "" {
 			return nil, fmt.Errorf("learn block %d has empty content", i+1)
+		}
+		if IsVizType(b.Type) {
+			if b.Metadata == "" {
+				return nil, fmt.Errorf("learn block %d (%s) requires JSON metadata", i+1, b.Type)
+			}
+			if _, err := ValidateVizMetadata(b.Type, json.RawMessage(b.Metadata)); err != nil {
+				return nil, fmt.Errorf("learn block %d: %w", i+1, err)
+			}
 		}
 	}
 	return parsed, nil
