@@ -3,7 +3,7 @@
 # Development
  dev-up:
 	@docker info >/dev/null 2>&1 || (echo "Docker Desktop is not running. Please start it and try again." && exit 1)
-	docker compose -f docker-compose.yml up --build -d
+	docker compose -f docker-compose.yml up --build -d --remove-orphans
 
  launch:
 	bun run scripts/launch.ts
@@ -76,11 +76,15 @@
 	@docker --version
 	@echo "Environment doctor check passed!"
 
+# The observability stack sits behind the `monitoring` compose profile so a bad
+# host bind-mount cannot abort `dev-up` before the api-gateway starts. On macOS
+# these mounts need Docker Desktop to have access to this directory:
+# System Settings > Privacy & Security > Files and Folders (or Full Disk Access).
  monitoring-up:
-	docker compose up -d prometheus grafana postgres-exporter redis-exporter
+	docker compose --profile monitoring up -d prometheus grafana tempo postgres-exporter redis-exporter
 
  monitoring-down:
-	docker compose stop prometheus grafana postgres-exporter redis-exporter
+	docker compose --profile monitoring stop prometheus grafana tempo postgres-exporter redis-exporter
 
  promtool-check:
 	@if docker info >/dev/null 2>&1; then \

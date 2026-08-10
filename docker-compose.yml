@@ -240,7 +240,12 @@ services:
       timeout: 3s
       retries: 10
 
+  # Observability stack. Behind the `monitoring` profile so it is opt-in via
+  # `make monitoring-up`: these are the only services that bind-mount host
+  # config, and a mount failure here used to abort the whole `compose up`
+  # before the api-gateway started, taking the app down with it.
   prometheus:
+    profiles: ["monitoring"]
     image: prom/prometheus:v3.2.1
     container_name: studed-prometheus
     volumes:
@@ -261,6 +266,7 @@ services:
       retries: 5
 
   grafana:
+    profiles: ["monitoring"]
     image: grafana/grafana:11.5.1
     container_name: studed-grafana
     environment:
@@ -278,6 +284,7 @@ services:
         condition: service_healthy
 
   postgres-exporter:
+    profiles: ["monitoring"]
     image: prometheuscommunity/postgres-exporter:v0.16.0
     container_name: studed-postgres-exporter
     environment:
@@ -289,6 +296,7 @@ services:
         condition: service_healthy
 
   redis-exporter:
+    profiles: ["monitoring"]
     image: oliver006/redis_exporter:v1.67.0
     container_name: studed-redis-exporter
     environment:
@@ -300,6 +308,7 @@ services:
         condition: service_started
 
   tempo:
+    profiles: ["monitoring"]
     image: grafana/tempo:2.7.1
     container_name: studed-tempo
     command: ["-config.file=/etc/tempo.yaml"]
@@ -324,11 +333,10 @@ services:
       FLOCI_GCP_BASE_URL: http://floci-gcp:4588
       FLOCI_GCP_STORAGE_MODE: hybrid
       FLOCI_GCP_DEFAULT_PROJECT_ID: floci-local
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:4588/health"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
+    # No healthcheck: the image is a distroless Quarkus native build with no
+    # shell, wget, or curl, so every exec-based probe fails and the container is
+    # permanently reported unhealthy even though it serves fine on :4588.
+    # Nothing depends_on it, so plain "Up" is the honest status.
 
 volumes:
   postgres_data:
