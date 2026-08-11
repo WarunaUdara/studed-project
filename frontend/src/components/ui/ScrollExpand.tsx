@@ -11,6 +11,7 @@ const smoothstep = (edge0: number, edge1: number, x: number) => {
 export interface ScrollExpandProps extends React.HTMLAttributes<HTMLDivElement> {
   src?: string;
   mediaType?: "image" | "video";
+  backgroundComponent?: React.ReactNode;
   poster?: string;
   alt?: string;
   title?: string;
@@ -36,6 +37,7 @@ export interface ScrollExpandProps extends React.HTMLAttributes<HTMLDivElement> 
 export function ScrollExpand({
   src = "",
   mediaType = "image",
+  backgroundComponent,
   poster = "",
   alt = "",
   title = "",
@@ -255,27 +257,33 @@ export function ScrollExpand({
     };
   }, [applyProgress, useWindowScroll]);
 
-  const media =
-    mediaType === "video" ? (
-      <video
-        ref={mediaRef as React.RefObject<HTMLVideoElement>}
-        className="scroll-expand__media"
-        src={src}
-        poster={poster}
-        autoPlay
-        muted
-        loop
-        playsInline
-      />
-    ) : (
-      <img
-        ref={mediaRef as React.RefObject<HTMLImageElement>}
-        className="scroll-expand__media"
-        src={src}
-        alt={alt}
-        draggable={false}
-      />
-    );
+  const media = backgroundComponent ? (
+    <div
+      ref={mediaRef as React.RefObject<HTMLDivElement>}
+      className="scroll-expand__media"
+    >
+      {backgroundComponent}
+    </div>
+  ) : mediaType === "video" ? (
+    <video
+      ref={mediaRef as React.RefObject<HTMLVideoElement>}
+      className="scroll-expand__media"
+      src={src}
+      poster={poster}
+      autoPlay
+      muted
+      loop
+      playsInline
+    />
+  ) : (
+    <img
+      ref={mediaRef as React.RefObject<HTMLImageElement>}
+      className="scroll-expand__media"
+      src={src}
+      alt={alt}
+      draggable={false}
+    />
+  );
 
   return (
     <div

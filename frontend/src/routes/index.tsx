@@ -33,6 +33,7 @@ import { LiveLeaderboard } from "@/components/public/LiveLeaderboard";
 import { PlayableWave } from "@/components/public/PlayableWave";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { ScrollXpMeter } from "@/components/public/ScrollXpMeter";
+import { CTAAuroraMesh } from "@/components/public/CTAAuroraMesh";
 import { WaveMapHero } from "@/components/public/WaveMapHero";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/Card";
@@ -979,8 +980,7 @@ function FinalCta({ authed }: { authed: boolean }) {
           title={t("finalCtaHeading")}
           scrollHint="Scroll to Expand"
           className="w-full min-h-[460px] sm:min-h-[520px]"
-          src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop"
-          alt="StudEd Platform"
+          backgroundComponent={<CTAAuroraMesh />}
         >
             <div className="relative space-y-5 max-w-xl mx-auto text-center px-4">
               <p className="inline-flex items-center gap-2 rounded-full bg-primary/20 backdrop-blur-md px-4 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-white ring-1 ring-primary/40 shadow-xs">
