@@ -167,6 +167,17 @@ func (r *fakeProgressRepo) GetAttemptsByWave(ctx context.Context, userID, waveID
 	return out, nil
 }
 
+func (r *fakeProgressRepo) DeleteAttemptsByWave(ctx context.Context, userID, waveID string) error {
+	var remaining []model.WaveAttempt
+	for _, a := range r.attempts {
+		if !(a.UserID == userID && a.WaveID == waveID) {
+			remaining = append(remaining, a)
+		}
+	}
+	r.attempts = remaining
+	return nil
+}
+
 func (r *fakeProgressRepo) GetAttemptBySubmissionID(ctx context.Context, submissionID string) (*model.WaveAttempt, error) {
 	if submissionID == "" {
 		return nil, errNotFound
@@ -677,6 +688,62 @@ func TestGetWaveProgress_LockedWithoutPriorWaveCompletion(t *testing.T) {
 	}
 	if resp.Status != string(model.ProgressStatusLocked) {
 		t.Fatalf("expected LOCKED for wave-2 before wave-1 is passed, got %s", resp.Status)
+	}
+}
+
+func TestGetWaveProgress_UnlockedWhenPriorWaveAttemptsExhausted(t *testing.T) {
+	svc, repo, course, _ := newTestProgressService()
+
+	// Wave 1 has MaxReattempts = 3
+	course.waves["wave-1"].MaxReattempts = 3
+
+	// Add 3 failed attempts to wave 1
+	for i := 1; i <= 3; i++ {
+		repo.attempts = append(repo.attempts, model.WaveAttempt{
+			ID:            fmt.Sprintf("att-%d", i),
+			UserID:        "u1",
+			WaveID:        "wave-1",
+			LessonID:      "l1",
+			CourseID:      "c1",
+			AttemptNumber: int32(i),
+			Passed:        false,
+			Score:         30,
+		})
+	}
+
+	resp, err := svc.GetWaveProgress(context.Background(), "u1", "wave-2")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if resp.Status != string(model.ProgressStatusAvailable) {
+		t.Fatalf("expected AVAILABLE for wave-2 when wave-1 attempts are exhausted, got %s", resp.Status)
+	}
+}
+
+func TestResetWaveAttempts(t *testing.T) {
+	svc, repo, _, _ := newTestProgressService()
+
+	repo.attempts = append(repo.attempts, model.WaveAttempt{
+		ID:     "att-1",
+		UserID: "u1",
+		WaveID: "wave-1",
+		Passed: false,
+	})
+
+	resp, err := svc.ResetWaveAttempts(context.Background(), &progresspb.ResetWaveAttemptsRequest{
+		UserId: "u1",
+		WaveId: "wave-1",
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !resp.Success {
+		t.Fatalf("expected success, got error %s", resp.Error)
+	}
+
+	attempts, _ := repo.GetAttemptsByWave(context.Background(), "u1", "wave-1")
+	if len(attempts) != 0 {
+		t.Fatalf("expected 0 attempts after reset, got %d", len(attempts))
 	}
 }
 

@@ -258,3 +258,17 @@ func (c *ProgressClient) GetEnrolledCourses(ctx context.Context, userID string) 
 
 	return courses, nil
 }
+
+func (c *ProgressClient) ResetWaveAttempts(ctx context.Context, userID, waveID string) (bool, error) {
+	resp, err := c.client.ResetWaveAttempts(ctx, &progresspb.ResetWaveAttemptsRequest{
+		UserId: userID,
+		WaveId: waveID,
+	})
+	if err != nil {
+		return false, fmt.Errorf("reset wave attempts failed: %w", err)
+	}
+	if resp.Error != "" {
+		return false, fmt.Errorf("reset wave attempts failed: %s", resp.Error)
+	}
+	return resp.Success, nil
+}

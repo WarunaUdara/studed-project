@@ -27,6 +27,7 @@ type ProgressService interface {
 	GetCourseProgress(ctx context.Context, userID, courseID string) (*progresspb.CourseProgressResponse, error)
 	IsEnrolled(ctx context.Context, userID, courseID string) (*progresspb.IsEnrolledResponse, error)
 	ListEnrollments(ctx context.Context, userID string) (*progresspb.ListEnrollmentsResponse, error)
+	ResetWaveAttempts(ctx context.Context, req *progresspb.ResetWaveAttemptsRequest) (*progresspb.ResetWaveAttemptsResponse, error)
 }
 
 type progressService struct {
@@ -285,13 +286,8 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 		}
 	}
 
+	// Unlimited attempts: always indicate -1 (no limit)
 	remainingAttempts := int32(-1)
-	if wave.MaxReattempts > 0 {
-		remainingAttempts = wave.MaxReattempts - int32(len(attempts)) - 1
-		if remainingAttempts < 0 {
-			remainingAttempts = 0
-		}
-	}
 
 	return &progresspb.RecordAttemptResponse{
 		AttemptId:         attempt.ID,
@@ -419,19 +415,22 @@ func (s *progressService) GetWaveProgress(ctx context.Context, userID, waveID st
 
 	// 6. Check if locked by previous wave completion
 	if currentIndex > 0 {
-		prevWaveID := courseWaves[currentIndex-1].Id
-		prevAttempts, err := s.repo.GetAttemptsByWave(ctx, userID, prevWaveID)
+		prevWave := courseWaves[currentIndex-1]
+		prevAttempts, err := s.repo.GetAttemptsByWave(ctx, userID, prevWave.Id)
 		if err != nil {
 			return nil, fmt.Errorf("failed to fetch previous wave attempts: %w", err)
 		}
-		prevCompleted := false
+		prevUnlockedNext := false
 		for _, a := range prevAttempts {
 			if a.Passed {
-				prevCompleted = true
+				prevUnlockedNext = true
 				break
 			}
 		}
-		if !prevCompleted {
+		if !prevUnlockedNext && prevWave.MaxReattempts > 0 && int32(len(prevAttempts)) >= prevWave.MaxReattempts {
+			prevUnlockedNext = true
+		}
+		if !prevUnlockedNext {
 			return &progresspb.WaveProgressResponse{
 				Status:        string(model.ProgressStatusLocked),
 				AttemptsCount: 0,
@@ -576,6 +575,26 @@ func (s *progressService) ListEnrollments(ctx context.Context, userID string) (*
 
 	return &progresspb.ListEnrollmentsResponse{
 		Enrollments: protoEnrollments,
+	}, nil
+}
+
+func (s *progressService) ResetWaveAttempts(ctx context.Context, req *progresspb.ResetWaveAttemptsRequest) (*progresspb.ResetWaveAttemptsResponse, error) {
+	if req.UserId == "" || req.WaveId == "" {
+		return &progresspb.ResetWaveAttemptsResponse{
+			Success: false,
+			Error:   "user_id and wave_id are required",
+		}, nil
+	}
+
+	if err := s.repo.DeleteAttemptsByWave(ctx, req.UserId, req.WaveId); err != nil {
+		return &progresspb.ResetWaveAttemptsResponse{
+			Success: false,
+			Error:   fmt.Sprintf("failed to reset wave attempts: %v", err),
+		}, nil
+	}
+
+	return &progresspb.ResetWaveAttemptsResponse{
+		Success: true,
 	}, nil
 }
 

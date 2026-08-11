@@ -321,6 +321,15 @@ func (r *mutationResolver) SubmitWaveAnswers(ctx context.Context, waveID string,
 	return result, nil
 }
 
+// ResetWaveAttempts is the resolver for the resetWaveAttempts field.
+func (r *mutationResolver) ResetWaveAttempts(ctx context.Context, waveID string) (bool, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return false, err
+	}
+	return r.ProgressClient.ResetWaveAttempts(ctx, userCtx.UserID, waveID)
+}
+
 // EnrollInCourse is the resolver for the enrollInCourse field.
 func (r *mutationResolver) EnrollInCourse(ctx context.Context, courseID string) (*model.Course, error) {
 	userCtx, err := requireUser(ctx)
@@ -712,7 +721,7 @@ func (r *queryResolver) Wave(ctx context.Context, id string) (*model.Wave, error
 		return nil, errors.New("lesson has no associated course")
 	}
 
-	course, err := r.CourseClient.GetCourse(ctx, lesson.Course.ID)
+	course, err := r.CourseClient.GetCourseWithLessons(ctx, lesson.Course.ID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve course for wave: %w", err)
 	}
@@ -747,6 +756,7 @@ func (r *queryResolver) Wave(ctx context.Context, id string) (*model.Wave, error
 
 	progress, _ := r.ProgressClient.GetWaveProgress(ctx, userCtx.UserID, id)
 	wave.MyProgress = progress
+	lesson.Course = course
 	wave.Lesson = lesson
 
 	return wave, nil

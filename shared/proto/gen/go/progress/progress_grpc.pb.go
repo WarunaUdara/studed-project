@@ -25,6 +25,7 @@ const (
 	ProgressService_GetCourseProgress_FullMethodName = "/progress.ProgressService/GetCourseProgress"
 	ProgressService_IsEnrolled_FullMethodName        = "/progress.ProgressService/IsEnrolled"
 	ProgressService_ListEnrollments_FullMethodName   = "/progress.ProgressService/ListEnrollments"
+	ProgressService_ResetWaveAttempts_FullMethodName = "/progress.ProgressService/ResetWaveAttempts"
 )
 
 // ProgressServiceClient is the client API for ProgressService service.
@@ -37,6 +38,7 @@ type ProgressServiceClient interface {
 	GetCourseProgress(ctx context.Context, in *GetCourseProgressRequest, opts ...grpc.CallOption) (*CourseProgressResponse, error)
 	IsEnrolled(ctx context.Context, in *IsEnrolledRequest, opts ...grpc.CallOption) (*IsEnrolledResponse, error)
 	ListEnrollments(ctx context.Context, in *ListEnrollmentsRequest, opts ...grpc.CallOption) (*ListEnrollmentsResponse, error)
+	ResetWaveAttempts(ctx context.Context, in *ResetWaveAttemptsRequest, opts ...grpc.CallOption) (*ResetWaveAttemptsResponse, error)
 }
 
 type progressServiceClient struct {
@@ -107,6 +109,16 @@ func (c *progressServiceClient) ListEnrollments(ctx context.Context, in *ListEnr
 	return out, nil
 }
 
+func (c *progressServiceClient) ResetWaveAttempts(ctx context.Context, in *ResetWaveAttemptsRequest, opts ...grpc.CallOption) (*ResetWaveAttemptsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResetWaveAttemptsResponse)
+	err := c.cc.Invoke(ctx, ProgressService_ResetWaveAttempts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProgressServiceServer is the server API for ProgressService service.
 // All implementations must embed UnimplementedProgressServiceServer
 // for forward compatibility.
@@ -117,6 +129,7 @@ type ProgressServiceServer interface {
 	GetCourseProgress(context.Context, *GetCourseProgressRequest) (*CourseProgressResponse, error)
 	IsEnrolled(context.Context, *IsEnrolledRequest) (*IsEnrolledResponse, error)
 	ListEnrollments(context.Context, *ListEnrollmentsRequest) (*ListEnrollmentsResponse, error)
+	ResetWaveAttempts(context.Context, *ResetWaveAttemptsRequest) (*ResetWaveAttemptsResponse, error)
 	mustEmbedUnimplementedProgressServiceServer()
 }
 
@@ -144,6 +157,9 @@ func (UnimplementedProgressServiceServer) IsEnrolled(context.Context, *IsEnrolle
 }
 func (UnimplementedProgressServiceServer) ListEnrollments(context.Context, *ListEnrollmentsRequest) (*ListEnrollmentsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListEnrollments not implemented")
+}
+func (UnimplementedProgressServiceServer) ResetWaveAttempts(context.Context, *ResetWaveAttemptsRequest) (*ResetWaveAttemptsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResetWaveAttempts not implemented")
 }
 func (UnimplementedProgressServiceServer) mustEmbedUnimplementedProgressServiceServer() {}
 func (UnimplementedProgressServiceServer) testEmbeddedByValue()                         {}
@@ -274,6 +290,24 @@ func _ProgressService_ListEnrollments_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProgressService_ResetWaveAttempts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetWaveAttemptsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProgressServiceServer).ResetWaveAttempts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProgressService_ResetWaveAttempts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProgressServiceServer).ResetWaveAttempts(ctx, req.(*ResetWaveAttemptsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProgressService_ServiceDesc is the grpc.ServiceDesc for ProgressService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,6 +338,10 @@ var ProgressService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListEnrollments",
 			Handler:    _ProgressService_ListEnrollments_Handler,
+		},
+		{
+			MethodName: "ResetWaveAttempts",
+			Handler:    _ProgressService_ResetWaveAttempts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

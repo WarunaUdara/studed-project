@@ -59,3 +59,11 @@ func (h *ProgressGRPCHandler) ListEnrollments(ctx context.Context, req *progress
 	}
 	return resp, nil
 }
+
+func (h *ProgressGRPCHandler) ResetWaveAttempts(ctx context.Context, req *progresspb.ResetWaveAttemptsRequest) (*progresspb.ResetWaveAttemptsResponse, error) {
+	resp, err := h.svc.ResetWaveAttempts(ctx, req)
+	if err != nil {
+		return &progresspb.ResetWaveAttemptsResponse{Success: false, Error: err.Error()}, nil
+	}
+	return resp, nil
+}

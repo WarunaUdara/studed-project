@@ -1024,6 +1024,108 @@ func (x *ListEnrollmentsResponse) GetError() string {
 	return ""
 }
 
+type ResetWaveAttemptsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WaveId        string                 `protobuf:"bytes,2,opt,name=wave_id,json=waveId,proto3" json:"wave_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResetWaveAttemptsRequest) Reset() {
+	*x = ResetWaveAttemptsRequest{}
+	mi := &file_progress_progress_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResetWaveAttemptsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResetWaveAttemptsRequest) ProtoMessage() {}
+
+func (x *ResetWaveAttemptsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_progress_progress_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (*ResetWaveAttemptsRequest) Descriptor() ([]byte, []int) {
+	return file_progress_progress_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ResetWaveAttemptsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ResetWaveAttemptsRequest) GetWaveId() string {
+	if x != nil {
+		return x.WaveId
+	}
+	return ""
+}
+
+type ResetWaveAttemptsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Error         string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResetWaveAttemptsResponse) Reset() {
+	*x = ResetWaveAttemptsResponse{}
+	mi := &file_progress_progress_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResetWaveAttemptsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResetWaveAttemptsResponse) ProtoMessage() {}
+
+func (x *ResetWaveAttemptsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_progress_progress_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (*ResetWaveAttemptsResponse) Descriptor() ([]byte, []int) {
+	return file_progress_progress_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *ResetWaveAttemptsResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *ResetWaveAttemptsResponse) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
 var File_progress_progress_proto protoreflect.FileDescriptor
 
 const file_progress_progress_proto_rawDesc = "" +

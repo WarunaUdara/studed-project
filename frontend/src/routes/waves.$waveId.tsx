@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, CheckCircle, Clock, Lock, RotateCcw, Trophy, Zap } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle, Clock, Lock, RotateCcw, Trophy, Zap } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { PointsBadge } from "@/components/ui/points-badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
-import { SUBMIT_WAVE_ANSWERS_MUTATION, WAVE_PLAYER_QUERY } from "@/graphql/student";
+import { RESET_WAVE_ATTEMPTS_MUTATION, SUBMIT_WAVE_ANSWERS_MUTATION, WAVE_PLAYER_QUERY } from "@/graphql/student";
 import { sanitizeGraphQLError } from "@/lib/errors";
 import { computeProficiency } from "@/lib/gamification";
 import { playErrorSound, playSuccessSound } from "@/lib/sounds";
@@ -62,6 +62,7 @@ function WavePlayerPage() {
     variables: { id: waveId },
   });
   const [submitResult, submitAnswers] = useMutation(SUBMIT_WAVE_ANSWERS_MUTATION);
+  const [resetResult, resetAttempts] = useMutation(RESET_WAVE_ATTEMPTS_MUTATION);
   const { user, updateTotalXp } = useAuthStore();
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -76,6 +77,18 @@ function WavePlayerPage() {
 
   const learnBlocks: LearnBlock[] = useMemo(() => wave?.learnBlocks ?? [], [wave]);
   const evaluateBlocks: EvaluateBlock[] = useMemo(() => wave?.evaluateBlocks ?? [], [wave]);
+
+  const nextWave = useMemo(() => {
+    const courseLessons = (wave?.lesson?.course as { lessons?: Array<{ sequenceOrder?: number; waves?: Array<{ id: string; title: string; sequenceOrder?: number }> }> })?.lessons ?? [];
+    const sortedLessons = [...courseLessons].sort(
+      (a, b) => (a.sequenceOrder ?? 0) - (b.sequenceOrder ?? 0),
+    );
+    const allWaves = sortedLessons.flatMap((l) =>
+      [...(l.waves ?? [])].sort((a, b) => (a.sequenceOrder ?? 0) - (b.sequenceOrder ?? 0)),
+    );
+    const currentIdx = allWaves.findIndex((w) => w.id === waveId);
+    return currentIdx !== -1 && currentIdx < allWaves.length - 1 ? allWaves[currentIdx + 1] : null;
+  }, [wave, waveId]);
 
   const hasLearn = learnBlocks.length > 0;
   const evaluateLocked = hasLearn && !learnViewed;
@@ -120,6 +133,18 @@ function WavePlayerPage() {
   const handleTryAgain = () => {
     setAnswers({});
     setResult(null);
+  };
+
+  const handleResetAttempts = async () => {
+    setSubmitError(null);
+    const res = await resetAttempts({ waveId });
+    if (res.error) {
+      setSubmitError(res.error.message);
+      return;
+    }
+    setAnswers({});
+    setResult(null);
+    reexecuteQuery({ requestPolicy: "network-only" });
   };
 
   if (fetching) {
@@ -186,21 +211,21 @@ function WavePlayerPage() {
   const maxAttempts = wave.maxReattempts > 0 ? wave.maxReattempts : null;
   const canReattempt = result
     ? !result.passed && (maxAttempts === null || result.remainingAttempts > 0 || result.remainingAttempts < 0)
-    : true;
+    : (maxAttempts === null || attemptsCount < maxAttempts);
   const justEarnedXp = result?.passed && result.xpEarned > 0;
+  const attemptsExhausted = maxAttempts !== null && attemptsCount >= maxAttempts && !isCompleted;
 
-  // On a fresh page load of an already-completed wave there's no fresh
-  // submission `result` yet — synthesize a read-only one from myProgress so
-  // returning students see their prior score instead of a dead, disabled
-  // Submit button with no explanation.
+  // On a fresh page load of an already-completed or attempt-exhausted wave,
+  // synthesize a read-only result from myProgress so returning students see
+  // their prior score and navigation options instead of a dead disabled Submit button.
   const displayResult: WaveResult | null =
     result ??
-    (isCompleted
+    (isCompleted || attemptsExhausted
       ? {
           score: wave.myProgress?.highestScore ?? 0,
           xpEarned: 0,
           totalXp: user?.totalXp ?? 0,
-          passed: true,
+          passed: isCompleted,
           remainingAttempts: maxAttempts !== null ? Math.max(maxAttempts - attemptsCount, 0) : -1,
           feedback: [],
         }
@@ -320,7 +345,7 @@ function WavePlayerPage() {
                 ))}
 
                 {displayResult && (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     <ResultCard
                       passed={displayResult.passed}
                       score={displayResult.score}
@@ -331,37 +356,82 @@ function WavePlayerPage() {
                       justEarnedXp={!!justEarnedXp}
                       canReattempt={canReattempt}
                       onTryAgain={handleTryAgain}
+
+                      resetting={resetResult.fetching}
                     />
-                    {displayResult.passed && (
-                      <Link
-                        to="/courses/$courseId"
-                        params={{ courseId: wave.lesson?.course?.id ?? "" }}
-                        className="block w-full"
-                      >
-                        <Button className="w-full" size="lg">
-                          Back to Course
-                        </Button>
-                      </Link>
-                    )}
+                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                      {nextWave ? (
+                        <Link
+                          to="/waves/$waveId"
+                          params={{ waveId: nextWave.id }}
+                          className="flex-1"
+                        >
+                          <Button className="w-full" size="lg">
+                            {displayResult.passed ? "Next Wave: " : "Skip & Go to Next Wave: "} {nextWave.title}{" "}
+                            <ArrowRight className="ml-1.5 h-4 w-4" />
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Link
+                          to="/courses/$courseId"
+                          params={{ courseId: wave.lesson?.course?.id ?? "" }}
+                          className="flex-1"
+                        >
+                          <Button className="w-full" size="lg">
+                            Back to Course
+                          </Button>
+                        </Link>
+                      )}
+                      {nextWave && (
+                        <Link
+                          to="/courses/$courseId"
+                          params={{ courseId: wave.lesson?.course?.id ?? "" }}
+                          className="flex-1"
+                        >
+                          <Button variant="outline" className="w-full" size="lg">
+                            Back to Course
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 )}
 
                 {!displayResult && (
-                  <>
+                  <div className="space-y-3">
                     {submitError && <p className="text-sm text-destructive">{submitError}</p>}
-                    <Button
-                      onClick={handleSubmit}
-                      disabled={
-                        submitResult.fetching ||
-                        evaluateBlocks.length === 0 ||
-                        (maxAttempts !== null && attemptsCount >= maxAttempts)
-                      }
-                      className="w-full"
-                      size="lg"
-                    >
-                      {submitResult.fetching ? "Submitting..." : "Submit Answers"}
-                    </Button>
-                  </>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button
+                        onClick={handleSubmit}
+                        disabled={
+                          submitResult.fetching ||
+                          evaluateBlocks.length === 0 ||
+                          (maxAttempts !== null && attemptsCount >= maxAttempts)
+                        }
+                        className="flex-1"
+                        size="lg"
+                      >
+                        {submitResult.fetching ? "Submitting..." : "Submit Answers"}
+                      </Button>
+                      {nextWave ? (
+                        <Link to="/waves/$waveId" params={{ waveId: nextWave.id }} className="flex-1">
+                          <Button variant="outline" className="w-full" size="lg">
+                            Skip & Next Wave <ArrowRight className="ml-1.5 h-4 w-4" />
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Link
+                          to="/courses/$courseId"
+                          params={{ courseId: wave.lesson?.course?.id ?? "" }}
+                          className="flex-1"
+                        >
+                          <Button variant="outline" className="w-full" size="lg">
+                            Skip & Back to Course
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
+                  </div>
                 )}
               </>
             )}
@@ -382,6 +452,8 @@ interface ResultCardProps {
   justEarnedXp: boolean;
   canReattempt: boolean;
   onTryAgain: () => void;
+  onResetAttempts?: () => void;
+  resetting?: boolean;
 }
 
 function ResultCard({
@@ -394,6 +466,8 @@ function ResultCard({
   justEarnedXp,
   canReattempt,
   onTryAgain,
+  onResetAttempts,
+  resetting,
 }: ResultCardProps) {
   return (
     <Card
@@ -440,13 +514,14 @@ function ResultCard({
 
         {canReattempt && (
           <Button onClick={onTryAgain} variant="outline" className="w-full">
-            <RotateCcw className="mr-1 h-4 w-4" /> Try Again
+            <RotateCcw className="mr-1.5 h-4 w-4" /> Try Again
           </Button>
         )}
+
         {!passed && remainingAttempts >= 0 && remainingAttempts === 0 && (
-          <p className="rounded-lg bg-muted px-3 py-2 text-center text-sm text-muted-foreground">
-            No reattempts remaining. This wave is now review-only.
-          </p>
+          <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-center text-sm text-amber-500 font-medium">
+            Maximum attempts reached. You can skip to the next wave or reset attempts to try again.
+          </div>
         )}
       </CardContent>
     </Card>
