@@ -84,12 +84,12 @@ export function HelmetCompanion({
       className={cn(
         "jelly-mint relative inline-flex flex-col items-center justify-center transition-transform hover:scale-105 select-none pointer-events-auto cursor-pointer",
         sizeClass,
-        peeking && "absolute -top-14 right-4 z-20 drop-shadow-md",
+        peeking && "absolute -top-14 right-4 z-50 drop-shadow-md",
         className,
       )}
     >
       {(showSpeech || activeSpeech) && (
-        <div className="absolute -top-11 left-1/2 -translate-x-1/2 whitespace-nowrap z-30 pointer-events-none">
+        <div className="absolute -top-11 left-1/2 -translate-x-1/2 whitespace-nowrap z-50 pointer-events-none">
           <BlobSpeech
             mood={activeMood}
             messages={{ [activeMood]: activeSpeech ?? "Going somewhere?" }}

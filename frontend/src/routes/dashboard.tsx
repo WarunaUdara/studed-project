@@ -210,7 +210,7 @@ function DashboardPage() {
 
           {/* 2. Continue Learning — Hero Card spanning full width */}
           <Card className="relative rounded-[24px] overflow-visible">
-            <HelmetCompanion peeking size="md" mood="neutral" className="right-8 -top-11 hidden md:flex" />
+            <HelmetCompanion peeking size="md" mood="neutral" className="right-8 -top-11 hidden md:flex z-50" />
             <CardContent className="p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               {enrollmentsFetching ? (
                 <Skeleton className="h-24 w-full" />
