@@ -24,7 +24,7 @@ Everything is driven from the repo root Makefile. Each command is idempotent.
 
 | Command | What it does | Resulting cost |
 | :--- | :--- | :--- |
-| `make prod-deploy` | Full deploy: OpenTofu apply -> secrets -> ArgoCD -> wait healthy -> ingress/cert -> Pages -> demo seed | running (~$0.13/h) |
+| `make prod-deploy` | Full deploy: OpenTofu apply -> pin ingress host -> secrets -> ArgoCD -> wait healthy -> ingress/cert -> Pages -> demo seed | running (~$0.13/h) |
 | `make prod-status` | Snapshot: nodes, pods, ArgoCD, frontend, idle-scout, static IP | - |
 | `make prod-stop` | Standby: node pool -> 0 (Terraform keeps state consistent) | ~$23/mo (LB + WAF only) |
 | `make prod-start` | Wake: node pool -> 2 | running |
@@ -32,10 +32,11 @@ Everything is driven from the repo root Makefile. Each command is idempotent.
 | `make prod-destroy` | `tofu destroy` + delete Cloudflare Pages project | $0 |
 | `make prod-destroy DESTROY_FLAGS=--delete-project` | Above + `gcloud projects delete studed-prod` (nuclear) | $0 |
 | `make prod-teardown-audit` | Lists any remaining billable GCP resources | - |
+| `./scripts/gcp/cost-scout.sh` | Hierarchical per-project billing/resource inventory with alerts (`-w` watch, `-s` strict, `-p proj1,proj2`) | - |
 
 ### Auto scale-down (cost cutter)
 
-Cloud Scheduler runs the `studed-idle-scout` Cloud Run job **hourly**. If the
+Cloud Scheduler runs the `studed2-idle-scout` Cloud Run job **hourly**. If the
 load balancer saw no traffic for **2 hours**, it scales the node pool to **0**
 (stops the ~$75/mo node charge). Wake it up with `make prod-start`. See
 [COSTS.md](docs/COSTS.md) for the residual LB/WAF charges during standby.
@@ -53,9 +54,11 @@ gcloud billing projects link studed-prod --billing-account=<BILLING_ID>
 gcloud config set project studed-prod
 
 # Local files
-cp infra/gcp/terraform/terraform.tfvars.example infra/gcp/terraform/terraform.tfvars
-#   - set authorized_cidrs to your current public IP (curl ifconfig.me)
-#   - node_count=2, node_machine_type="e2-standard-2" (already the example)
+#   - the isolated stack lives in infra/gcp/terraform-prod/ (own state, studed2-* names,
+#     region asia-south1, zone asia-south1-a, cluster studed-prod). Its
+#     terraform.tfvars is TRACKED (no secrets); edit it to set authorized_cidrs
+#     to your current public IP (curl ifconfig.me).
+#   - the old infra/gcp/terraform/ root is the abandoned us-central1 stack.
 
 # Secrets source (gitignored) - must contain DATABASE_CONNECTION_STRING
 #   1. create the .env file and add DATABASE_CONNECTION_STRING from Neon
@@ -73,7 +76,30 @@ The script prints the backend URL, frontend URL and demo credentials when done.
 
 If `CLOUDFLARE_API_TOKEN` (Pages-scoped token) is not exported, the frontend
 step is skipped with the exact `wrangler pages deploy` command to run manually.
-Deploying the frontend again by hand:
+The recommended path is CI/CD (below) instead of local wrangler uploads.
+
+### Connect the frontend via the Cloudflare console (CI/CD)
+
+1. In the Cloudflare dashboard: **Workers & Pages -> Create -> Pages -> Connect
+   to Git** -> choose the `WarunaUdara/studed-project` repo -> framework preset
+   "None" (build happens in CI). The Pages project must be named
+   **`studed-project-frontend`**.
+2. In the Pages project **Settings -> Environment variables** (Production) set:
+   - `API_ORIGIN = https://api.<static-ip>.sslip.io` (read by
+     `frontend/functions/_middleware.ts`, which proxies `/graphql`, `/health`,
+     `/v1/uploads`, `/ai/chat` to the backend).
+3. In GitHub repo **Settings -> Secrets and variables -> Actions** add:
+   - `CLOUDFLARE_API_TOKEN` (token created in My Profile -> API Tokens with
+     `Cloudflare Pages: Edit` permission).
+   - `CLOUDFLARE_ACCOUNT_ID` (shown on the right side of the Cloudflare
+     dashboard / Workers overview).
+4. Push to `main` (or run `workflow_dispatch`): the GitHub Action
+   (`.github/workflows/frontend-deploy.yml`) runs `bun run build` then
+   `cloudflare/pages-action` -> project `studed-project-frontend`.
+5. Verify: `https://studed-project-frontend.pages.dev/graphql` returns the
+   backend GraphQL playground/response.
+
+Deploying the frontend again by hand (token present, local only):
 
 ```bash
 bun run build
@@ -84,8 +110,8 @@ bunx wrangler pages deploy frontend/dist --project-name studed-project-frontend
 
 ```bash
 # Kubernetes
-gcloud container clusters get-credentials studed-backend \
-  --zone us-central1-a --project studed-prod
+gcloud container clusters get-credentials studed-prod \
+  --zone asia-south1-a --project studed-prod
 
 # ArgoCD UI + admin password
 kubectl -n argocd port-forward svc/argocd-server 8080:443
@@ -132,8 +158,14 @@ GitOps, GHCR CI, and the hourly idle-scout.
   See [DECISIONS.md](docs/DECISIONS.md).
 - Backend cookies are `Secure: false` but work over HTTPS; the proxy keeps the
   browser same-origin, so SameSite=Lax auth works.
-- `terraform.tfvars` + `terraform.tfstate` are gitignored; re-create from the
-  example file. State is local.
+- `terraform-prod/terraform.tfvars` is tracked (region/zone/cluster + master
+  CIDRs only, no secrets); `terraform-prod/terraform.tfstate` is gitignored
+  (local state). The abandoned `infra/gcp/terraform/` root keeps its own
+  gitignored tfvars/state.
+- The ingress host is `api.PLACEHOLDER.sslip.io` in git; `make prod-deploy`
+  calls `scripts/gcp/set-ingress-host.sh` to replace it with the real static IP
+  and push BEFORE ArgoCD's first sync (ArgoCD selfHeal would otherwise keep
+  rebuilding for the bogus host).
 - ArgoCD syncs from `main`; a merge triggers a roll-out automatically.
 - After the idle-scout scales down, `make prod-start` reconciles Terraform
   state (see COSTS.md bill-raiser #2).

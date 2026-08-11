@@ -1,8 +1,7 @@
-# GKE Standard (zonal) cluster with:
-#   - private nodes, public control-plane endpoint restricted to admin CIDRs
-#   - Workload Identity enabled (no SA keys in the cluster)
-#   - shielded VMs (secure boot / vTPM / integrity monitoring)
-#   - VPC-native networking (alias IPs)
+# GKE Standard (zonal) cluster, isolated stack (studed-prod).
+# Same hardened profile as the original root but with its own VPC, node SA and
+# master CIDR (172.16.1.0/28 avoids any overlap with the old master peering
+# subnet which still occupies 172.16.0.0/28 in us-central1).
 
 resource "google_container_cluster" "studed" {
   name     = var.cluster_name
@@ -11,13 +10,13 @@ resource "google_container_cluster" "studed" {
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  network    = google_compute_network.studed_vpc.id
-  subnetwork = google_compute_subnetwork.studed_subnet.id
+  network    = google_compute_network.studed2_vpc.id
+  subnetwork = google_compute_subnetwork.studed2_subnet.id
 
   networking_mode = "VPC_NATIVE"
   ip_allocation_policy {
-    cluster_secondary_range_name  = "studed-pods"
-    services_secondary_range_name = "studed-services"
+    cluster_secondary_range_name  = "studed2-pods"
+    services_secondary_range_name = "studed2-services"
   }
 
   private_cluster_config {
@@ -41,8 +40,6 @@ resource "google_container_cluster" "studed" {
   }
 
   addons_config {
-    # Calico network policy enforcement - required for the default-deny
-    # NetworkPolicies in infra/k8s/production/network-policies.yaml.
     network_policy_config {
       disabled = false
     }
@@ -58,10 +55,9 @@ resource "google_container_cluster" "studed" {
 }
 
 resource "google_container_node_pool" "primary" {
-  name           = "primary"
-  location       = var.zone
-  node_locations = ["us-central1-f", "us-central1-b"]
-  cluster        = google_container_cluster.studed.name
+  name     = "primary"
+  location = var.zone
+  cluster  = google_container_cluster.studed.name
 
   initial_node_count = var.node_count
   max_pods_per_node  = 32
@@ -84,7 +80,7 @@ resource "google_container_node_pool" "primary" {
     labels = {
       app = "studed"
     }
-    tags = ["studed-gke"]
+    tags = ["studed2-gke"]
     shielded_instance_config {
       enable_secure_boot          = true
       enable_integrity_monitoring = true

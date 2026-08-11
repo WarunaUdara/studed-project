@@ -1,7 +1,15 @@
 .PHONY: dev-up dev-down dev dev-stop launch test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint frontend-e2e go-build go-test shared-test proto-gen seed content-validate content-sync demo-public
 
 # Development
-dev-up:
+go-build-linux:
+	@for svc in services/*; do \
+		if [ -f "$$svc/main.go" ]; then \
+			echo "pre-building $$svc for Linux ARM64..."; \
+			(cd "$$svc" && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o bin/linux_service .); \
+		fi \
+	done
+
+dev-up: go-build-linux
 	@docker info >/dev/null 2>&1 || podman info >/dev/null 2>&1 || (echo "Container engine (Docker or Podman) is not running. Please start it and try again." && exit 1)
 	docker compose -f docker-compose.yml up --build -d --remove-orphans
 
@@ -43,13 +51,13 @@ dev-up:
 	./scripts/k8s-dev.sh status
 
  iac-init:
-	cd infra/gcp/terraform && tofu init -backend=false
+	cd infra/gcp/terraform-prod && tofu init
 
- iac-plan:
-	cd infra/gcp/terraform && tofu validate && tofu plan -out=tfplan
+ iac-plan: iac-init
+	cd infra/gcp/terraform-prod && tofu validate && tofu plan -out=tfplan
 
  iac-apply:
-	cd infra/gcp/terraform && tofu apply tfplan
+	cd infra/gcp/terraform-prod && tofu apply tfplan
 
  helm-lint:
 	/opt/homebrew/bin/helm lint infra/helm/studed || helm lint infra/helm/studed
@@ -174,11 +182,11 @@ dev-up:
 
  prod-start:
 	@echo "Waking backend: scaling node pool back up..."
-	cd infra/gcp/terraform && tofu apply -auto-approve -var "node_count=2" | tail -5
+	cd ${PROD_TF_DIR:-infra/gcp/terraform-prod} && tofu apply -auto-approve -var "node_count=2" | tail -5
 
  prod-stop:
 	@echo "Standby: scaling node pool to 0 (stops ~all node charges)..."
-	cd infra/gcp/terraform && tofu apply -auto-approve -var "node_count=0" | tail -5
+	cd ${PROD_TF_DIR:-infra/gcp/terraform-prod} && tofu apply -auto-approve -var "node_count=0" | tail -5
 
  prod-status:
 	./scripts/gcp/status.sh
@@ -190,6 +198,6 @@ dev-up:
 	./scripts/gcp/verify-teardown.sh
 
  prod-seed:
-	@IP=$$(cd infra/gcp/terraform && tofu output -raw ingress_static_ip 2>/dev/null || echo ""); \
+	@IP=$$(cd ${PROD_TF_DIR:-infra/gcp/terraform-prod} && tofu output -raw ingress_static_ip 2>/dev/null || echo ""); \
 	URL=$$(if [ -n "$$IP" ]; then echo "https://api.$${IP}.sslip.io"; else echo "http://localhost:8080"; fi); \
 	STUDED_API_URL="$${STUDED_API_URL:-$$URL}" STUDED_DATABASE_URL="$${STUDED_DATABASE_URL:-$${DATABASE_URL:-}}" ./scripts/mock-data-loader.sh

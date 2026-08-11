@@ -5,21 +5,21 @@ variable "project_id" {
 }
 
 variable "region" {
-  description = "GCP region for zonal resources"
+  description = "GCP region for zonal resources (isolated from the old us-central1 stack)"
   type        = string
-  default     = "us-central1"
+  default     = "asia-south1"
 }
 
 variable "zone" {
   description = "GCP zone for the GKE cluster"
   type        = string
-  default     = "us-central1-f"
+  default     = "asia-south1-a"
 }
 
 variable "cluster_name" {
   description = "Name of the GKE cluster hosting the StudEd backend"
   type        = string
-  default     = "studed-backend-v2"
+  default     = "studed-prod"
 }
 
 variable "node_machine_type" {
@@ -31,7 +31,7 @@ variable "node_machine_type" {
 variable "node_count" {
   description = "Initial node count for the primary node pool"
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "node_min_count" {

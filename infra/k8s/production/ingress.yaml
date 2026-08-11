@@ -1,7 +1,7 @@
 # Public entrypoint for the StudEd API.
 # GCE Ingress (managed L7 LB) pinned to the static IP, TLS via GKE managed cert.
 # The api-gateway Service carries the BackendConfig annotation to attach
-# Cloud Armor (studed-waf) and tune the LB health check.
+# Cloud Armor (studed2-waf) and tune the LB health check.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

@@ -3,11 +3,11 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-TF_DIR="${REPO_ROOT}/infra/gcp/terraform"
+TF_DIR="${PROD_TF_DIR:-${REPO_ROOT}/infra/gcp/terraform-prod}"
 PROJECT_ID="${PROJECT_ID:-studed-prod}"
-ZONE="${ZONE:-us-central1-a}"
-CLUSTER="${CLUSTER_NAME:-studed-backend}"
-IP="$(cd "${TF_DIR}" && tofu output -raw ingress_static_ip 2>/dev/null || echo "34.149.224.124")"
+ZONE="${ZONE:-asia-south1-a}"
+CLUSTER="${CLUSTER_NAME:-studed-prod}"
+IP="$(cd "${TF_DIR}" && tofu output -raw ingress_static_ip 2>/dev/null || true)"
 
 echo "=== StudEd production status ==="
 
@@ -47,9 +47,9 @@ curl -s -o /dev/null -w "  https://studed-project-frontend.pages.dev -> HTTP %{h
   https://studed-project-frontend.pages.dev/ 2>/dev/null || echo "  unreachable"
 
 echo "[idle-scout]"
-gcloud scheduler jobs describe studed-idle-check --location us-central1 --project "${PROJECT_ID}" \
+gcloud scheduler jobs describe studed2-idle-check --location asia-south1 --project "${PROJECT_ID}" \
   --format 'value(name)' >/dev/null 2>&1 \
-  && echo "  scheduler studed-idle-check: hourly auto scale-down (active)" \
+  && echo "  scheduler studed2-idle-check: hourly auto scale-down (active)" \
   || echo "  not provisioned"
 
 echo "[static-ip]"

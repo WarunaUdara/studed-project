@@ -35,7 +35,7 @@ check "Cloud Run jobs (idle-scout)" "$(gcloud run jobs list --project="${PROJECT
 check "Cloud Scheduler jobs" "$(gcloud scheduler jobs list --project="${PROJECT_ID}" --location=- --format='value(name)' 2>/dev/null)"
 check "Cloud SQL/AlloyDB (none expected)" "$(gcloud sql instances list --project="${PROJECT_ID}" --format='value(name)' 2>/dev/null)"
 check "Pub/Sub topics" "$(gcloud pubsub topics list --project="${PROJECT_ID}" --format='value(name)' 2>/dev/null)"
-check "Redis/Memorystore" "$(gcloud redis instances list --region=us-central1 --project="${PROJECT_ID}" --format='value(name)' 2>/dev/null)"
+check "Redis/Memorystore" "$(while read -r r; do gcloud redis instances list --region="$r" --project="${PROJECT_ID}" --format='value(name)' 2>/dev/null; done < <(gcloud compute regions list --project="${PROJECT_ID}" --format='value(name)' 2>/dev/null))"
 
 # Neon Postgres lives outside GCP (costless tier) - just a reminder.
 echo

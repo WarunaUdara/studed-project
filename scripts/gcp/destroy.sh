@@ -10,8 +10,10 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-TF_DIR="${REPO_ROOT}/infra/gcp/terraform"
+TF_DIR="${PROD_TF_DIR:-${REPO_ROOT}/infra/gcp/terraform-prod}"
 PROJECT_ID="${PROJECT_ID:-studed-prod}"
+RUN_JOB="${RUN_JOB:-studed2-idle-scout}"
+RUN_REGION="${RUN_REGION:-asia-south1}"
 DELETE_PROJECT=0
 [[ "${1:-}" == "--delete-project" ]] && DELETE_PROJECT=1
 
@@ -19,7 +21,28 @@ log() { echo; echo "===> $*"; }
 
 log "1/3 OpenTofu destroy - removing all GCP resources"
 # Force-remove Cloud Run job in GCP so OpenTofu provider deletion_protection doesn't block teardown
-gcloud run jobs delete studed-idle-scout --region us-central1 --project "${PROJECT_ID}" --quiet 2>/dev/null || true
+gcloud run jobs delete "${RUN_JOB}" --region "${RUN_REGION}" --project "${PROJECT_ID}" --quiet 2>/dev/null || true
+
+# Force-delete lingering GKE clusters to release VPC subnet attachments
+echo "Checking for lingering GKE clusters in ${PROJECT_ID}..."
+clusters="$(gcloud container clusters list --project="${PROJECT_ID}" --format="value(name,location)" 2>/dev/null || true)"
+if [[ -n "${clusters}" ]]; then
+  echo "${clusters}" | while read -r name loc; do
+    if [[ -n "${name}" && -n "${loc}" ]]; then
+      echo "  deleting GKE cluster ${name} in ${loc}..."
+      gcloud container clusters delete "${name}" --location="${loc}" --project="${PROJECT_ID}" --quiet 2>/dev/null || true
+    fi
+  done
+fi
+
+echo "Waiting for GCP instance groups to be completely released..."
+for _ in {1..30}; do
+  if ! gcloud compute instance-groups list --project="${PROJECT_ID}" --format="value(name)" 2>/dev/null | grep -q "gke-"; then
+    break
+  fi
+  sleep 5
+done
+
 (cd "${TF_DIR}" && tofu init >/dev/null && tofu destroy -auto-approve | tail -20)
 
 log "2/3 Cloudflare Pages - deleting frontend project"

@@ -9,11 +9,11 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-TF_DIR="${REPO_ROOT}/infra/gcp/terraform"
+TF_DIR="${PROD_TF_DIR:-${REPO_ROOT}/infra/gcp/terraform-prod}"
 PROJECT_ID="${PROJECT_ID:-studed-prod}"
-REGION="${REGION:-us-central1}"
-ZONE="${ZONE:-us-central1-a}"
-CLUSTER="${CLUSTER_NAME:-studed-backend}"
+REGION="${REGION:-asia-south1}"
+ZONE="${ZONE:-asia-south1-a}"
+CLUSTER="${CLUSTER_NAME:-studed-prod}"
 NODE_COUNT="${NODE_COUNT:-2}"
 # Derived from the OpenTofu ingress_static_ip output after apply; override only
 # to point the seeder at an existing deployment.
@@ -54,6 +54,12 @@ populate_secrets() {
     exit 1
   fi
   bash "${REPO_ROOT}/scripts/gcp/populate-secrets.sh"
+}
+
+set_ingress_host() {
+  # ArgoCD syncs infra/k8s/production straight from git, so the managed
+  # ingress/cert must carry the real static IP before the first sync happens.
+  bash "${REPO_ROOT}/scripts/gcp/set-ingress-host.sh" "$1"
 }
 
 cluster_credentials() {
@@ -117,7 +123,10 @@ seed_demo() {
   log "Seed - inserting/refreshing demo data"
   local db_url=""
   if [[ -f "${REPO_ROOT}/.env" ]]; then
-    db_url="$(grep -E '^DATABASE_URL=' "${REPO_ROOT}/.env" | head -1 | cut -d= -f2- || true)"
+    # Prefer the managed (Neon) connection string over the localhost dev tunnel
+    # so educator role promotion in the seeder hits the production database.
+    db_url="$(grep -E '^DATABASE_CONNECTION_STRING=' "${REPO_ROOT}/.env" | head -1 | cut -d= -f2- || true)"
+    [[ -z "${db_url}" ]] && db_url="$(grep -E '^DATABASE_URL=' "${REPO_ROOT}/.env" | head -1 | cut -d= -f2- || true)"
   fi
   STUDED_API_URL="${STUDED_API_URL}" STUDED_DATABASE_URL="${db_url}" bash "${REPO_ROOT}/scripts/mock-data-loader.sh" >/dev/null
 }
@@ -140,6 +149,7 @@ main() {
   fi
   STUDED_API_URL="${STUDED_API_URL:-https://api.${ip}.sslip.io}"
   echo "  ingress IP: ${ip}"
+  set_ingress_host "${ip}"
   populate_secrets
   cluster_credentials
   deploy_gitops

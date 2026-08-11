@@ -69,6 +69,14 @@ infra/gcp/terraform/*.tfstate.backup
 infra/gcp/terraform/terraform.tfvars
 infra/gcp/terraform/*.plan
 infra/gcp/terraform/tfplan
+# Isolated production stack (asia-south1 studed-prod deployment). tfvars is
+# intentionally tracked: it holds region/zone/cluster defaults + master
+# authorized CIDRs, no secrets.
+infra/gcp/terraform-prod/.terraform/
+infra/gcp/terraform-prod/*.tfstate
+infra/gcp/terraform-prod/*.tfstate.backup
+infra/gcp/terraform-prod/*.plan
+infra/gcp/terraform-prod/tfplan
 
 # Kubernetes Secrets
 infra/k8s/secret.yaml

@@ -1,5 +1,10 @@
 # StudEd GCP Backend Infrastructure (OpenTofu)
 
+> **DEPRECATED / ABANDONED (us-central1 stack).** The active production stack
+> lives in [`../terraform-prod/`](../terraform-prod/) (region `asia-south1`,
+> zone `asia-south1-a`, cluster `studed-prod`, independent `studed2-*` resource
+> names, its own state). Keep this root for reference only.
+
 Infrastructure-as-Code for the StudEd backend on Google Cloud, built to the
 [Well-Architected Framework](https://cloud.google.com/architecture/framework)
 security + operational excellence pillars.
@@ -44,7 +49,7 @@ gcloud secrets versions add studed-database-url --data-file=<(echo "$DATABASE_CO
 # ... see scripts/populate-secrets.sh for all secrets
 
 # 4. Connect + deploy
-gcloud container clusters get-credentials studed-backend --zone us-central1-a --project studed-prod
+gcloud container clusters get-credentials studed-backend-v2 --zone us-central1-a --project studed-prod
 ```
 
 ## Teardown (stop all billing)

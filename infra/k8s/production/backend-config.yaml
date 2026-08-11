@@ -17,4 +17,4 @@ spec:
     type: HTTP
     requestPath: /health
   securityPolicy:
-    name: studed-waf
+    name: studed2-waf
