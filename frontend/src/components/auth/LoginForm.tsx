@@ -1,64 +1,21 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useMutation } from "urql";
-import { z } from "zod";
+import { useLoginForm } from "@/components/auth/useLoginForm";
 import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
-import { LOGIN_MUTATION } from "@/graphql/auth";
-import { sanitizeError } from "@/lib/errors";
-import { useAuthStore } from "@/stores/auth";
-
-const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
 
 interface LoginFormProps {
   onSuccess?: () => void;
 }
 
+/**
+ * Compact login form used by the navbar's LoginModal. The full-page login card
+ * renders `LoginAuthCard` instead; both share `useLoginForm`.
+ */
 export function LoginForm({ onSuccess }: LoginFormProps = {}) {
-  const navigate = useNavigate();
-  const setUser = useAuthStore((s) => s.setUser);
-  const [error, setError] = useState<string | null>(null);
-  const [focusedField, setFocusedField] = useState<"email" | "password" | null>(null);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  const { registerField, submit, errors, isSubmitting, error, focusedField } = useLoginForm({
+    onSuccess,
   });
-
-  const [, login] = useMutation(LOGIN_MUTATION);
-
-  const onSubmit = async (data: LoginFormData) => {
-    setError(null);
-    const result = await login({ input: data });
-    if (result.error) {
-      setError(sanitizeError(result.error).message);
-      return;
-    }
-    if (result.data?.login?.user) {
-      const user = result.data.login.user;
-      setUser(user);
-      if (onSuccess) {
-        onSuccess();
-      }
-      if (user.role === "EDUCATOR" || user.role === "HEAD_EDUCATOR" || user.role === "ADMIN") {
-        navigate({ to: "/educator/courses" });
-      } else {
-        navigate({ to: "/dashboard" });
-      }
-    }
-  };
 
   const mascotMood = error
     ? "sad"
@@ -68,14 +25,10 @@ export function LoginForm({ onSuccess }: LoginFormProps = {}) {
         ? "happy"
         : "neutral";
 
-  const mascotGaze =
-    focusedField === "email" ? { x: 16, y: -4 } : undefined;
-
-  const emailReg = register("email");
-  const passReg = register("password");
+  const mascotGaze = focusedField === "email" ? { x: 16, y: -4 } : undefined;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+    <form onSubmit={submit} className="space-y-4" noValidate>
       {/* Helmet Form Companion */}
       <div className="flex justify-center -mb-2">
         <HelmetCompanion size="md" mood={mascotMood} gaze={mascotGaze} />
@@ -83,17 +36,7 @@ export function LoginForm({ onSuccess }: LoginFormProps = {}) {
 
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          placeholder="you@example.com"
-          {...emailReg}
-          onFocus={() => setFocusedField("email")}
-          onBlur={(e) => {
-            emailReg.onBlur(e);
-            setFocusedField(null);
-          }}
-        />
+        <Input id="email" type="email" placeholder="you@example.com" {...registerField("email")} />
         {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
       </div>
 
@@ -103,12 +46,7 @@ export function LoginForm({ onSuccess }: LoginFormProps = {}) {
           id="password"
           type="password"
           placeholder="••••••••"
-          {...passReg}
-          onFocus={() => setFocusedField("password")}
-          onBlur={(e) => {
-            passReg.onBlur(e);
-            setFocusedField(null);
-          }}
+          {...registerField("password")}
         />
         {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
       </div>
