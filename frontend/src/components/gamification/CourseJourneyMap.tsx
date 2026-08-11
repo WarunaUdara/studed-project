@@ -259,7 +259,7 @@ export function CourseJourneyMap({
       </div>
 
       {/* Main Interactive Map Container */}
-      <Card className="relative overflow-hidden rounded-3xl border bg-card/90 shadow-2xl backdrop-blur">
+      <Card className="relative overflow-visible rounded-3xl border bg-card/90 shadow-2xl backdrop-blur">
         {/* Map Header */}
         <div className="flex items-center justify-between border-b px-6 py-4 bg-muted/20">
           <div className="flex items-center gap-2">
@@ -344,6 +344,9 @@ export function CourseJourneyMap({
                 const isCurrent = wave.state === "current";
                 const isCompleted = wave.state === "completed";
                 const isLocked = wave.state === "locked";
+                const isTopNode = idx === 0 || p.y < 120;
+                const popoverPosClass = isTopNode ? "top-full mt-8" : "bottom-full mb-4";
+                const popoverAnimY = isTopNode ? -10 : 10;
 
                 // Check if this wave starts a new lesson header
                 const showLessonHeader =
@@ -352,7 +355,7 @@ export function CourseJourneyMap({
                 return (
                   <div
                     key={wave.id}
-                    className="absolute"
+                    className={cn("absolute transition-all", showCard ? "z-50" : "z-20")}
                     style={{ left, top, transform: "translate(-50%, -50%)" }}
                     onMouseEnter={() => setHoveredWaveId(wave.id)}
                     onMouseLeave={() => setHoveredWaveId(null)}
@@ -425,10 +428,13 @@ export function CourseJourneyMap({
                     <AnimatePresence>
                       {showCard && (
                         <motion.div
-                          initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                          initial={{ opacity: 0, scale: 0.9, y: popoverAnimY }}
                           animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                          className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 z-50 w-64 rounded-2xl border bg-card/95 p-4 shadow-2xl backdrop-blur text-left"
+                          exit={{ opacity: 0, scale: 0.9, y: popoverAnimY }}
+                          className={cn(
+                            "absolute left-1/2 -translate-x-1/2 z-[60] w-64 rounded-2xl border bg-card/95 p-4 shadow-2xl backdrop-blur text-left pointer-events-auto",
+                            popoverPosClass,
+                          )}
                         >
                           <div className="space-y-2.5">
                             <div className="flex items-center justify-between gap-2">
