@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS wave_attempts (
     wave_id VARCHAR(255) NOT NULL,
     lesson_id VARCHAR(255) NOT NULL,
     course_id VARCHAR(255) NOT NULL,
+    submission_id VARCHAR(255),
     answers_json TEXT NOT NULL,
     score INTEGER NOT NULL,
     passed BOOLEAN NOT NULL,
@@ -25,3 +26,4 @@ CREATE TABLE IF NOT EXISTS wave_attempts (
 );
 
 CREATE INDEX IF NOT EXISTS idx_attempt_user_wave ON wave_attempts(user_id, wave_id);
+CREATE INDEX IF NOT EXISTS idx_attempt_submission_id ON wave_attempts(submission_id);

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -120,8 +121,9 @@ func TestNormalizeAnswer_NumericEquivalence(t *testing.T) {
 /* ----- fakes for RecordAttempt / GetWaveProgress / EnrollInCourse ----- */
 
 type fakeProgressRepo struct {
-	enrollments []model.Enrollment
-	attempts    []model.WaveAttempt
+	enrollments        []model.Enrollment
+	attempts           []model.WaveAttempt
+	updateXPAwardedErr error
 }
 
 func (r *fakeProgressRepo) CreateEnrollment(ctx context.Context, e *model.Enrollment) error {
@@ -178,6 +180,9 @@ func (r *fakeProgressRepo) GetAttemptBySubmissionID(ctx context.Context, submiss
 }
 
 func (r *fakeProgressRepo) UpdateAttemptXPAwarded(ctx context.Context, attemptID string, xpEarned int32) error {
+	if r.updateXPAwardedErr != nil {
+		return r.updateXPAwardedErr
+	}
 	for i := range r.attempts {
 		if r.attempts[i].ID == attemptID {
 			r.attempts[i].XPAwarded = xpEarned
@@ -284,20 +289,37 @@ func (c *fakeCourseClient) ListLessons(ctx context.Context, in *coursepb.ListLes
 	return &coursepb.LessonListResponse{Lessons: out}, nil
 }
 
-// fakeGamificationClient implements gampb.GamificationServiceClient.
+// fakeGamificationClient implements gampb.GamificationServiceClient with
+// in-memory award-once semantics (a wave can be awarded at most once) plus
+// failure injection for exercising the robustness paths.
 type fakeGamificationClient struct {
 	gampb.GamificationServiceClient
-	totalXp map[string]int32
+	totalXp   map[string]int32
+	awarded   map[string]bool
+	calcErr   error
+	calcCalls int
 }
 
 func newFakeGamificationClient() *fakeGamificationClient {
-	return &fakeGamificationClient{totalXp: make(map[string]int32)}
+	return &fakeGamificationClient{
+		totalXp: make(map[string]int32),
+		awarded: make(map[string]bool),
+	}
 }
 
 func (c *fakeGamificationClient) CalculateAndAwardXp(ctx context.Context, in *gampb.XpCalculationRequest, opts ...grpc.CallOption) (*gampb.XpCalculationResponse, error) {
+	c.calcCalls++
+	if c.calcErr != nil {
+		return nil, c.calcErr
+	}
 	if in.Score < in.PassingThreshold {
 		return &gampb.XpCalculationResponse{}, nil
 	}
+	key := in.UserId + ":" + in.WaveId
+	if c.awarded[key] {
+		return &gampb.XpCalculationResponse{XpEarned: 0, TotalXp: c.totalXp[in.UserId]}, nil
+	}
+	c.awarded[key] = true
 	c.totalXp[in.UserId] += in.XpReward
 	return &gampb.XpCalculationResponse{XpEarned: in.XpReward, TotalXp: c.totalXp[in.UserId]}, nil
 }
@@ -473,6 +495,164 @@ func TestRecordAttempt_IdempotentOnSubmissionID(t *testing.T) {
 
 	if len(repo.attempts) != 1 {
 		t.Fatalf("expected exactly 1 attempt in repo, got %d", len(repo.attempts))
+	}
+}
+
+func TestRecordAttempt_PassedAttemptRowRecordsXPAwarded(t *testing.T) {
+	svc, repo, _, _ := newTestProgressService()
+	if _, err := svc.EnrollInCourse(context.Background(), "u1", "course-1"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	resp, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", []*progresspb.Answer{
+		{EvaluateBlockId: "q1", Answer: "yes"},
+	}, "")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if resp.XpEarned != 100 {
+		t.Fatalf("expected 100 xp earned, got %d", resp.XpEarned)
+	}
+	if len(resp.Warnings) != 0 {
+		t.Fatalf("expected no warnings on a clean award, got %v", resp.Warnings)
+	}
+	if len(repo.attempts) != 1 {
+		t.Fatalf("expected 1 attempt, got %d", len(repo.attempts))
+	}
+	if repo.attempts[0].XPAwarded != 100 {
+		t.Fatalf("attempt row must record the awarded xp, got %d", repo.attempts[0].XPAwarded)
+	}
+}
+
+func TestRecordAttempt_GamificationErrorSurfacesWarningWithoutFailing(t *testing.T) {
+	svc, repo, _, gamification := newTestProgressService()
+	if _, err := svc.EnrollInCourse(context.Background(), "u1", "course-1"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	gamification.calcErr = errors.New("xp service unavailable")
+
+	resp, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", []*progresspb.Answer{
+		{EvaluateBlockId: "q1", Answer: "yes"},
+	}, "")
+	if err != nil {
+		t.Fatalf("submission must still succeed when the xp call fails: %v", err)
+	}
+	if !resp.Passed {
+		t.Fatalf("expected a passing attempt, got %+v", resp)
+	}
+	if resp.XpEarned != 0 {
+		t.Fatalf("expected 0 xp earned when the award call failed, got %d", resp.XpEarned)
+	}
+	if len(resp.Warnings) == 0 {
+		t.Fatal("expected a warning surfacing the failed xp award")
+	}
+	if len(repo.attempts) != 1 {
+		t.Fatalf("expected the attempt to be persisted, got %d attempts", len(repo.attempts))
+	}
+	if repo.attempts[0].XPAwarded != 0 {
+		t.Fatalf("attempt row should stay at 0 when the award call failed, got %d", repo.attempts[0].XPAwarded)
+	}
+}
+
+func TestRecordAttempt_AttemptRowUpdateErrorSurfacedWithoutLosingAward(t *testing.T) {
+	svc, repo, _, gamification := newTestProgressService()
+	if _, err := svc.EnrollInCourse(context.Background(), "u1", "course-1"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	repo.updateXPAwardedErr = errors.New("db unavailable")
+
+	resp, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", []*progresspb.Answer{
+		{EvaluateBlockId: "q1", Answer: "yes"},
+	}, "")
+	if err != nil {
+		t.Fatalf("submission must still succeed when the attempt-row update fails: %v", err)
+	}
+	if resp.XpEarned != 100 {
+		t.Fatalf("the xp award must stay intact, got %d", resp.XpEarned)
+	}
+	if gamification.totalXp["u1"] != 100 {
+		t.Fatalf("expected gamification to record 100 total xp, got %d", gamification.totalXp["u1"])
+	}
+	if len(resp.Warnings) == 0 {
+		t.Fatal("expected a warning surfacing the failed attempt-row update")
+	}
+	if len(repo.attempts) != 1 {
+		t.Fatalf("expected the attempt to be persisted, got %d attempts", len(repo.attempts))
+	}
+}
+
+func TestRecordAttempt_RetrySameSubmissionDoesNotDoubleAward(t *testing.T) {
+	svc, repo, _, gamification := newTestProgressService()
+	if _, err := svc.EnrollInCourse(context.Background(), "u1", "course-1"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	answers := []*progresspb.Answer{{EvaluateBlockId: "q1", Answer: "yes"}}
+	subID := "sub-12345"
+
+	first, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", answers, subID)
+	if err != nil {
+		t.Fatalf("first attempt failed: %v", err)
+	}
+	second, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", answers, subID)
+	if err != nil {
+		t.Fatalf("second attempt failed: %v", err)
+	}
+
+	if first.AttemptId != second.AttemptId {
+		t.Fatalf("expected same attempt ID for duplicate submission, got %s vs %s", first.AttemptId, second.AttemptId)
+	}
+	if gamification.calcCalls != 1 {
+		t.Fatalf("expected exactly 1 xp award call across the duplicate submission, got %d", gamification.calcCalls)
+	}
+	if gamification.totalXp["u1"] != 100 {
+		t.Fatalf("expected no double award: total xp should be 100, got %d", gamification.totalXp["u1"])
+	}
+	if second.XpEarned != 100 {
+		t.Fatalf("retry should report the already-awarded xp, got %d", second.XpEarned)
+	}
+	if len(repo.attempts) != 1 {
+		t.Fatalf("expected exactly 1 attempt in repo, got %d", len(repo.attempts))
+	}
+	if repo.attempts[0].XPAwarded != 100 {
+		t.Fatalf("expected attempt row to keep xp_awarded=100, got %d", repo.attempts[0].XPAwarded)
+	}
+}
+
+func TestRecordAttempt_RetryReconcilesMissedAward(t *testing.T) {
+	svc, repo, _, gamification := newTestProgressService()
+	if _, err := svc.EnrollInCourse(context.Background(), "u1", "course-1"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	answers := []*progresspb.Answer{{EvaluateBlockId: "q1", Answer: "yes"}}
+	subID := "sub-12345"
+
+	gamification.calcErr = errors.New("xp service unavailable")
+	first, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", answers, subID)
+	if err != nil {
+		t.Fatalf("first attempt failed: %v", err)
+	}
+	if first.XpEarned != 0 || len(first.Warnings) == 0 {
+		t.Fatalf("expected a failed award with a warning on the first submission, got %+v", first)
+	}
+
+	gamification.calcErr = nil
+	second, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", answers, subID)
+	if err != nil {
+		t.Fatalf("retry failed: %v", err)
+	}
+	if second.AttemptId != first.AttemptId {
+		t.Fatalf("expected the retry to return the same attempt, got %s vs %s", second.AttemptId, first.AttemptId)
+	}
+	if second.XpEarned != 100 {
+		t.Fatalf("expected the retry to reconcile the missed xp award (100), got %d", second.XpEarned)
+	}
+	if gamification.totalXp["u1"] != 100 {
+		t.Fatalf("expected exactly one award (100 total), got %d", gamification.totalXp["u1"])
+	}
+	if repo.attempts[0].XPAwarded != 100 {
+		t.Fatalf("expected the attempt row to be reconciled to 100, got %d", repo.attempts[0].XPAwarded)
 	}
 }
 

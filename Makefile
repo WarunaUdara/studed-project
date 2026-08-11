@@ -1,9 +1,9 @@
-.PHONY: dev-up dev-down dev dev-stop launch test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint frontend-e2e go-build go-test shared-test proto-gen
+.PHONY: dev-up dev-down dev dev-stop launch test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint frontend-e2e go-build go-test shared-test proto-gen seed content-validate content-sync demo-public
 
 # Development
- dev-up:
-	@docker info >/dev/null 2>&1 || (echo "Docker Desktop is not running. Please start it and try again." && exit 1)
-	docker compose -f docker-compose.yml up --build -d
+dev-up:
+	@docker info >/dev/null 2>&1 || podman info >/dev/null 2>&1 || (echo "Container engine (Docker or Podman) is not running. Please start it and try again." && exit 1)
+	docker compose -f docker-compose.yml up --build -d --remove-orphans
 
  launch:
 	bun run scripts/launch.ts
@@ -15,7 +15,7 @@
 	docker compose logs -f
 
  floci-gcp-up:
-	@docker info >/dev/null 2>&1 || (echo "Docker Desktop is not running. Please start it and try again." && exit 1)
+	@docker info >/dev/null 2>&1 || podman info >/dev/null 2>&1 || (echo "Container engine (Docker or Podman) is not running. Please start it and try again." && exit 1)
 	docker compose -f docker-compose.yml up -d floci-gcp
 
  floci-gcp-down:
@@ -23,6 +23,12 @@
 
  seed:
 	./scripts/mock-data-loader.sh
+
+ content-validate:
+	cd scripts/content-sync && bun run validate
+
+ content-sync:
+	cd scripts/content-sync && bun run sync
 
  demo-public:
 	./scripts/demo-public.sh
@@ -57,6 +63,9 @@
  k8s-policy-test:
 	@which kyverno >/dev/null 2>&1 || [ -f /opt/homebrew/bin/kyverno ] && (/opt/homebrew/bin/kyverno apply infra/k8s/kyverno/cluster-policies.yaml --resource infra/k8s/services/ --resource infra/k8s/production/services/ || kyverno apply infra/k8s/kyverno/cluster-policies.yaml --resource infra/k8s/services/ --resource infra/k8s/production/services/) || echo "⚠️ Kyverno CLI not found locally; install via 'brew install kyverno'"
 
+ regression-test: go-test shared-test frontend-test k8s-policy-test
+	@echo "All extensible regression test matrices passed successfully!"
+
  ci-local: security-scan frontend-typecheck frontend-test frontend-build go-test shared-test helm-lint k8s-policy-test iac-plan promtool-check
 	@echo "All local CI pre-flight checks passed!"
 
@@ -64,21 +73,25 @@
 	@echo "Checking development environment toolchain..."
 	@go version
 	@bun --version
-	@docker --version
+	@(docker --version || podman --version) 2>/dev/null
 	@echo "Environment doctor check passed!"
 
+# The observability stack sits behind the `monitoring` compose profile so a bad
+# host bind-mount cannot abort `dev-up` before the api-gateway starts. On macOS
+# these mounts need Docker Desktop to have access to this directory:
+# System Settings > Privacy & Security > Files and Folders (or Full Disk Access).
  monitoring-up:
-	docker compose up -d prometheus grafana postgres-exporter redis-exporter
+	docker compose --profile monitoring up -d prometheus grafana tempo postgres-exporter redis-exporter
 
  monitoring-down:
-	docker compose stop prometheus grafana postgres-exporter redis-exporter
+	docker compose --profile monitoring stop prometheus grafana tempo postgres-exporter redis-exporter
 
  promtool-check:
-	@if docker info >/dev/null 2>&1; then \
-		docker run --rm -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 promtool check config /etc/prometheus/prometheus.yml && \
-		docker run --rm -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 promtool check rules /etc/prometheus/rules/studed.rules.yml; \
+	@if docker info >/dev/null 2>&1 || podman info >/dev/null 2>&1; then \
+		docker run --rm --entrypoint promtool -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 check config /etc/prometheus/prometheus.yml && \
+		docker run --rm --entrypoint promtool -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 check rules /etc/prometheus/rules/studed.rules.yml; \
 	else \
-		echo "Skipping containerized promtool-check (Docker daemon not running)"; \
+		echo "Skipping containerized promtool-check (Container engine daemon not running)"; \
 	fi
 
  graph-refresh:

@@ -76,7 +76,10 @@
     --secondary: oklch(0.95 0.015 145);
     --secondary-foreground: oklch(0.209 0.041 145);
     --muted: oklch(0.95 0.015 145);
-    --muted-foreground: oklch(0.417 0.145 145);
+    /* Secondary text keeps only a trace of the forest hue. Chroma here must stay
+       far below --primary (0.164), or every caption reads as a link and the
+       primary/secondary text hierarchy collapses. */
+    --muted-foreground: oklch(0.44 0.022 145);
     --accent: oklch(0.919 0.063 145);
     --accent-foreground: oklch(0.272 0.076 145);
     --destructive: oklch(0.577 0.245 27.3);
@@ -126,9 +129,27 @@
     --chart-xp-soft: oklch(0.484 0.164 145 / 0.5);
     --chart-streak: oklch(0.67 0.185 55);
     --chart-proficient: oklch(0.579 0.191 252);
+
+    /* PullCord interactive theme toggle variables */
+    --pullcord-top: 0px;
+    --pullcord-right: 4.5rem;
+    --pullcord-z: 1000;
+    --pullcord-ink: rgba(30, 41, 59, 0.45);
+  }
+
+  /* Mint Green Jelly Blob Mascot Theme (Feral Blob) */
+  .jelly-mint {
+    --jelly-body-top: #6ee7b7;
+    --jelly-body-bottom: #10b981;
+    --jelly-arm-top: #6ee7b7;
+    --jelly-arm-bottom: #059669;
+    --jelly-cheek: rgba(16, 185, 129, 0.45);
+    --jelly-eye: #064e3b;
+    --jelly-blush: rgba(16, 185, 129, 0.55);
   }
 
   .dark {
+    --pullcord-ink: rgba(255, 255, 255, 0.4);
     --background: oklch(0.14 0.02 145);         /* Deep Forest Slate */
     --foreground: oklch(0.935 0.05 145);
     --card: oklch(0.19 0.035 145);
@@ -142,7 +163,7 @@
     --secondary: oklch(0.25 0.05 145);
     --secondary-foreground: oklch(0.935 0.05 145);
     --muted: oklch(0.25 0.05 145);
-    --muted-foreground: oklch(0.843 0.107 145);
+    --muted-foreground: oklch(0.78 0.022 145);
     --accent: oklch(0.3 0.07 145);
     --accent-foreground: oklch(0.935 0.05 145);
     --destructive: oklch(0.704 0.19 22);
@@ -433,4 +454,20 @@
   .ibm-plex-serif-medium-italic { font-family: "IBM Plex Serif", serif; font-weight: 500; font-style: italic; }
   .ibm-plex-serif-semibold-italic { font-family: "IBM Plex Serif", serif; font-weight: 600; font-style: italic; }
   .ibm-plex-serif-bold-italic { font-family: "IBM Plex Serif", serif; font-weight: 700; font-style: italic; }
+
+  /* Ripple Button animation */
+  @keyframes rippling {
+    0% {
+      transform: scale(0);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(2.5);
+      opacity: 0;
+    }
+  }
+
+  .animate-rippling {
+    animation: rippling var(--duration, 600ms) ease-out forwards;
+  }
 }

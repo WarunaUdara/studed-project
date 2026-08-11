@@ -1,5 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
+import { LogOut } from "lucide-react";
+import { useState } from "react";
 import { useMutation } from "urql";
+import { LogoutConfirmModal } from "@/components/auth/LogoutConfirmModal";
 import { Button } from "@/components/ui/button";
 import { LOGOUT_MUTATION } from "@/graphql/auth";
 import { useAuthStore } from "@/stores/auth";
@@ -8,22 +11,55 @@ interface LogoutButtonProps {
   variant?: "default" | "outline" | "ghost";
   size?: "default" | "sm" | "lg";
   className?: string;
+  /** Icon-only rendering for collapsed sidebars. */
+  compact?: boolean;
 }
 
-export function LogoutButton({ variant = "ghost", size = "sm", className }: LogoutButtonProps) {
+export function LogoutButton({
+  variant = "ghost",
+  size = "sm",
+  className,
+  compact = false,
+}: LogoutButtonProps) {
   const navigate = useNavigate();
   const logoutStore = useAuthStore((s) => s.logout);
   const [, logout] = useMutation(LOGOUT_MUTATION);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogout = async () => {
-    await logout({});
-    logoutStore();
-    navigate({ to: "/login" });
+    setIsSubmitting(true);
+    try {
+      await logout({});
+    } catch (err) {
+      console.error("Logout mutation failed:", err);
+    } finally {
+      logoutStore();
+      setIsSubmitting(false);
+      setShowConfirm(false);
+      navigate({ to: "/login" });
+    }
   };
 
   return (
-    <Button variant={variant} size={size} className={className} onClick={handleLogout}>
-      Log out
-    </Button>
+    <>
+      <Button
+        variant={variant}
+        size={size}
+        className={className}
+        onClick={() => setShowConfirm(true)}
+        title={compact ? "Log out" : undefined}
+        aria-label={compact ? "Log out" : undefined}
+      >
+        {compact ? <LogOut className="h-4 w-4" /> : "Log out"}
+      </Button>
+
+      <LogoutConfirmModal
+        isOpen={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={handleLogout}
+        isSubmitting={isSubmitting}
+      />
+    </>
   );
 }

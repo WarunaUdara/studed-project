@@ -6,7 +6,6 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { QuizBlock } from "@/components/evaluate/QuizBlock";
 import { Confetti } from "@/components/gamification/Confetti";
 import { ProficiencyBadge } from "@/components/gamification/ProficiencyBadge";
-import { XPBar } from "@/components/gamification/XPBar";
 import { XPToast } from "@/components/gamification/XPToast";
 import { LearnBlockRenderer } from "@/components/learn/LearnBlockRenderer";
 import { Button } from "@/components/ui/button";
@@ -185,7 +184,9 @@ function WavePlayerPage() {
   const isCompleted = wave.myProgress?.status === "COMPLETED";
   const attemptsCount = wave.myProgress?.attemptsCount ?? 0;
   const maxAttempts = wave.maxReattempts > 0 ? wave.maxReattempts : null;
-  const canReattempt = result ? !result.passed && result.remainingAttempts > 0 : false;
+  const canReattempt = result
+    ? !result.passed && (maxAttempts === null || result.remainingAttempts > 0 || result.remainingAttempts < 0)
+    : true;
   const justEarnedXp = result?.passed && result.xpEarned > 0;
 
   // On a fresh page load of an already-completed wave there's no fresh
@@ -200,7 +201,7 @@ function WavePlayerPage() {
           xpEarned: 0,
           totalXp: user?.totalXp ?? 0,
           passed: true,
-          remainingAttempts: maxAttempts !== null ? Math.max(maxAttempts - attemptsCount, 0) : 0,
+          remainingAttempts: maxAttempts !== null ? Math.max(maxAttempts - attemptsCount, 0) : -1,
           feedback: [],
         }
       : null);
@@ -227,9 +228,6 @@ function WavePlayerPage() {
           >
             <ArrowLeft className="h-4 w-4" /> {wave.lesson?.course?.title ?? "Course"}
           </Link>
-          <div className="hidden w-48 sm:block">
-            <XPBar totalXp={user?.totalXp ?? 0} compact />
-          </div>
         </div>
 
         {/* Title block */}
@@ -285,7 +283,7 @@ function WavePlayerPage() {
                 setLearnViewed(true);
                 setActiveTab("evaluate");
               }}
-              className="w-full"
+              className="w-full sm:w-auto sm:min-w-56"
               size="lg"
             >
               Start Evaluation
@@ -432,7 +430,9 @@ function ResultCard({
 
         {!passed && (
           <p className="text-sm text-destructive">
-            You need {passingThreshold}% to pass. Remaining attempts: {remainingAttempts}
+            {remainingAttempts < 0
+              ? `You need ${passingThreshold}% to pass. Unlimited attempts available.`
+              : `You need ${passingThreshold}% to pass. Remaining attempts: ${remainingAttempts}`}
           </p>
         )}
 
@@ -443,7 +443,7 @@ function ResultCard({
             <RotateCcw className="mr-1 h-4 w-4" /> Try Again
           </Button>
         )}
-        {!passed && remainingAttempts === 0 && (
+        {!passed && remainingAttempts >= 0 && remainingAttempts === 0 && (
           <p className="rounded-lg bg-muted px-3 py-2 text-center text-sm text-muted-foreground">
             No reattempts remaining. This wave is now review-only.
           </p>

@@ -16,23 +16,36 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
+    "@gsap/react": "^2.1.2",
     "@hookform/resolvers": "^5.4.0",
     "@puckeditor/core": "^0.22.0",
     "@tanstack/react-query": "^5.49.0",
     "@tanstack/react-router": "^1.43.0",
+    "@types/three": "^0.185.4",
     "@urql/core": "^5.0.0",
     "@urql/exchange-auth": "^3.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "feral-blob": "^0.1.0",
     "framer-motion": "^12.42.2",
+    "gsap": "^3.15.0",
     "katex": "^0.18.0",
     "lucide-react": "^1.23.0",
+    "motion": "^12.42.2",
     "nanoid": "^6.0.1",
+    "ogl": "^1.0.11",
     "postcss": "^8.5.26",
+    "postprocessing": "^6.39.4",
+    "pullcord": "^0.1.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-hook-form": "^7.80.0",
+    "react-markdown": "^10.1.0",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
     "tailwind-merge": "^3.6.0",
+    "three": "^0.185.1",
     "urql": "^5.0.3",
     "zod": "^4.4.3",
     "zustand": "^5.0.14"
@@ -56,5 +69,8 @@
   },
   "trustedDependencies": [
     "@swc/core"
-  ]
+  ],
+  "overrides": {
+    "postcss": "^8.5.26"
+  }
 }

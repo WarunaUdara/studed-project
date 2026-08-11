@@ -106,8 +106,14 @@ const TIER_PLANS: TierPlan[] = [
   },
 ];
 
-const STATUS_STYLES: Record<SubStatus, { label: string; className: string }> = {
+const DEFAULT_STATUS_STYLE = {
+  label: "Inactive",
+  className: "bg-muted text-muted-foreground border-border",
+};
+
+const STATUS_STYLES: Record<string, { label: string; className: string }> = {
   ACTIVE: { label: "Active", className: "bg-success/10 text-success border-success/30" },
+  PENDING: { label: "Pending Payment", className: "bg-warning/10 text-warning border-warning/30" },
   CANCELED: {
     label: "Canceled",
     className: "bg-muted text-muted-foreground border-border",
@@ -117,6 +123,14 @@ const STATUS_STYLES: Record<SubStatus, { label: string; className: string }> = {
     className: "bg-destructive/10 text-destructive border-destructive/30",
   },
 };
+
+function getStatusMeta(status?: string | null) {
+  if (!status) return DEFAULT_STATUS_STYLE;
+  return STATUS_STYLES[status.toUpperCase()] ?? {
+    label: status,
+    className: "bg-muted text-muted-foreground border-border",
+  };
+}
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -138,6 +152,7 @@ function SubscriptionPage() {
   const subscription: UserSubscription | null = data?.me?.subscription ?? null;
   const isActive = subscription?.status === "ACTIVE";
   const currentTier = isActive ? subscription?.tier : null;
+  const statusMeta = getStatusMeta(subscription?.status);
 
   const handleChoose = async (tier: Tier) => {
     setPendingTier(tier);
@@ -225,10 +240,10 @@ function SubscriptionPage() {
                           <span
                             className={cn(
                               "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium",
-                              STATUS_STYLES[subscription.status].className,
+                              statusMeta.className,
                             )}
                           >
-                            {STATUS_STYLES[subscription.status].label}
+                            {statusMeta.label}
                           </span>
                           <span className="text-xs text-muted-foreground">
                             {isActive

@@ -34,6 +34,18 @@ variable "node_count" {
   default     = 1
 }
 
+variable "node_min_count" {
+  description = "Minimum node count for primary node pool autoscaling"
+  type        = number
+  default     = 1
+}
+
+variable "node_max_count" {
+  description = "Maximum node count for primary node pool autoscaling"
+  type        = number
+  default     = 3
+}
+
 variable "node_disk_size_gb" {
   description = "Boot disk size in GB per node"
   type        = number

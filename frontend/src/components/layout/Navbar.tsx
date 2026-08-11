@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, Moon, Sun, X, Zap } from "lucide-react";
 import { useState } from "react";
+import { LoginModal } from "@/components/auth/LoginModal";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { XPBar } from "@/components/gamification/XPBar";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ export function Navbar() {
   const theme = useUiPrefs((s) => s.theme);
   const toggleTheme = useUiPrefs((s) => s.toggleTheme);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   const pathname = useRouterState().location.pathname;
   const isHome = pathname === "/";
@@ -22,10 +24,10 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "z-40 transition-all",
+        "z-40 transition-all border-b border-border/20 dark:border-border/10",
         isHome
           ? "absolute top-0 left-0 right-0 bg-transparent border-none shadow-none"
-          : "sticky top-0 glass border-x-0 border-t-0 border-b border-border/40",
+          : "sticky top-0 glass",
       )}
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 sm:px-6">
@@ -39,24 +41,18 @@ export function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-2 lg:gap-4">
-          <Link to="/courses">
-            <Button variant="ghost" size="sm">
-              Courses
-            </Button>
-          </Link>
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/courses">Courses</Link>
+          </Button>
 
           {isAuthenticated && user?.role === "STUDENT" && (
             <>
-              <Link to="/dashboard">
-                <Button variant="ghost" size="sm">
-                  Dashboard
-                </Button>
-              </Link>
-              <Link to="/leaderboard">
-                <Button variant="ghost" size="sm">
-                  Leaderboard
-                </Button>
-              </Link>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/dashboard">Dashboard</Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/leaderboard">Leaderboard</Link>
+              </Button>
             </>
           )}
 
@@ -64,11 +60,9 @@ export function Navbar() {
             (user?.role === "EDUCATOR" ||
               user?.role === "HEAD_EDUCATOR" ||
               user?.role === "ADMIN") && (
-              <Link to="/educator">
-                <Button variant="ghost" size="sm">
-                  Educator Portal
-                </Button>
-              </Link>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/educator">Educator Portal</Link>
+              </Button>
             )}
 
           {isStudent && user && (
@@ -96,14 +90,13 @@ export function Navbar() {
 
           {!isAuthenticated ? (
             <>
-              <Link to="/login">
-                <Button variant="ghost" size="sm">
-                  Log in
-                </Button>
-              </Link>
-              <Link to="/register">
-                <Button size="sm">Sign up</Button>
-              </Link>
+              <Button variant="ghost" size="sm" onClick={() => setLoginModalOpen(true)}>
+                Log in
+              </Button>
+              <Button asChild size="sm">
+                <Link to="/register">Sign up</Link>
+              </Button>
+              <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
             </>
           ) : (
             <div className="flex items-center gap-2">
@@ -115,16 +108,14 @@ export function Navbar() {
           )}
         </nav>
 
-        {/* Mobile Header Quick Actions & Menu Toggle */}
-        <div className="flex md:hidden items-center gap-1.5 sm:gap-2">
-          {isStudent && user && <PointsBadge name="XP" total={user.totalXp} size="sm" icon={Zap} />}
-
+        {/* Mobile Navigation Controls */}
+        <div className="flex items-center gap-2 md:hidden">
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            className="rounded-full h-9 w-9"
+            className="rounded-full"
           >
             {theme === "dark" ? (
               <Sun className="h-4 w-4 text-warning" />
@@ -132,28 +123,26 @@ export function Navbar() {
               <Moon className="h-4 w-4 text-primary" />
             )}
           </Button>
-
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setMobileMenuOpen((prev) => !prev)}
-            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-            aria-expanded={mobileMenuOpen}
-            className="rounded-lg h-9 w-9"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle mobile menu"
+            className="rounded-full"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown Overlay */}
+      {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b bg-background/98 backdrop-blur-md px-4 pt-2 pb-4 shadow-lg animate-in slide-in-from-top-2 duration-200">
+        <div className="md:hidden border-b border-border/80 bg-background/95 backdrop-blur-md px-4 py-4 shadow-lg animate-in slide-in-from-top-2 duration-200">
           <div className="flex flex-col gap-2">
             <Link
               to="/courses"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-accent transition-colors"
+              className="px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted transition-colors"
             >
               Courses
             </Link>
@@ -163,30 +152,16 @@ export function Navbar() {
                 <Link
                   to="/dashboard"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-accent transition-colors"
+                  className="px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted transition-colors"
                 >
                   Dashboard
                 </Link>
                 <Link
                   to="/leaderboard"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-accent transition-colors"
+                  className="px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted transition-colors"
                 >
                   Leaderboard
-                </Link>
-                <Link
-                  to="/achievements"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-accent transition-colors"
-                >
-                  Achievements
-                </Link>
-                <Link
-                  to="/subscription"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-accent transition-colors"
-                >
-                  Subscription
                 </Link>
               </>
             )}
@@ -198,7 +173,7 @@ export function Navbar() {
                 <Link
                   to="/educator"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-accent transition-colors text-primary"
+                  className="px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted transition-colors"
                 >
                   Educator Portal
                 </Link>
@@ -208,14 +183,12 @@ export function Navbar() {
 
             {!isAuthenticated ? (
               <div className="grid grid-cols-2 gap-2 pt-1">
-                <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="outline" className="w-full justify-center">
-                    Log in
-                  </Button>
-                </Link>
-                <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full justify-center">Sign up</Button>
-                </Link>
+                <Button asChild variant="outline" className="w-full justify-center">
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>Log in</Link>
+                </Button>
+                <Button asChild className="w-full justify-center">
+                  <Link to="/register" onClick={() => setMobileMenuOpen(false)}>Sign up</Link>
+                </Button>
               </div>
             ) : (
               <div className="flex items-center justify-between px-2 pt-1">

@@ -23,6 +23,13 @@ enum Grade {
   AL
 }
 
+enum VizType {
+  MANIM
+  THREEDMOL
+  TSCIRCUIT
+  MATTERJS
+}
+
 enum Difficulty {
   EASY
   MEDIUM
@@ -304,6 +311,8 @@ enum LeaderboardScope {
   GLOBAL
   COURSE
   GRADE
+  WEEKLY
+  FRIENDS
 }
 
 type XpEvent {
@@ -347,12 +356,15 @@ type Mutation {
   createCourse(input: CreateCourseInput!): Course!
   updateCourse(id: ID!, input: UpdateCourseInput!): Course!
   publishCourse(id: ID!): Course!
+  deleteCourse(id: ID!): Boolean!
   createLesson(courseId: ID!, input: CreateLessonInput!): Lesson!
   updateLesson(id: ID!, input: UpdateLessonInput!): Lesson!
   publishLesson(id: ID!): Lesson!
+  deleteLesson(id: ID!): Boolean!
   createWave(lessonId: ID!, input: CreateWaveInput!): Wave!
   updateWave(id: ID!, input: UpdateWaveInput!): Wave!
   publishWave(id: ID!): Wave!
+  deleteWave(id: ID!): Boolean!
 
   submitWaveAnswers(waveId: ID!, answers: [AnswerInput!]!, submissionId: String): WaveResult!
   enrollInCourse(courseId: ID!): Course!
@@ -360,6 +372,8 @@ type Mutation {
   generateLearnBlocks(prompt: String!, language: String, grade: Grade): [LearnBlock!]!
   generateEvaluateBlocks(content: String!, count: Int = 3): [EvaluateBlock!]!
   translateContent(content: String!, targetLanguage: String!): String!
+  generateVisualization(concept: String!, vizType: VizType!, grade: String): String!
+  analyzeImage(imageBase64: String!, prompt: String): String!
 
   createSubscription(input: CreateSubscriptionInput!): UserSubscription!
   cancelSubscription: UserSubscription!

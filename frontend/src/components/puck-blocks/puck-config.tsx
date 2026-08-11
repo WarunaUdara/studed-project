@@ -1,7 +1,14 @@
 import type { Config, Data } from "@puckeditor/core";
 import { MathFormula } from "@/components/ui/MathFormula";
+import { MarkdownContent } from "@/components/ui/MarkdownContent";
+import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
+import { TsCircuitBlock } from "@/components/learn/visualizations/TsCircuitBlock";
+import { HtmlSimulationBlock } from "@/components/learn/visualizations/HtmlSimulationBlock";
 
-// Define the component props types
+// ---------------------------------------------------------------------------
+// Block props
+// ---------------------------------------------------------------------------
+
 export interface TextBlockProps {
   content: string;
 }
@@ -12,8 +19,30 @@ export interface ImageBlockProps {
   caption: string;
 }
 
+export interface VideoBlockProps {
+  src: string;
+  caption: string;
+}
+
+export interface CalloutBlockProps {
+  content: string;
+}
+
+export interface ExampleBlockProps {
+  content: string;
+}
+
 export interface MathVizProps {
   formula: string;
+}
+
+export interface VizBlockProps {
+  vizType: string; // mathviz_manim | elecsim_tscircuit | html_simulation
+  content: string;
+  metadata: string;
+  // Convenience editor fields (merged into metadata at render time).
+  scenarioType?: string;
+  moleculeSmiles?: string;
 }
 
 export interface MCQBlockProps {
@@ -29,15 +58,109 @@ export interface FillBlankBlockProps {
   explanation: string;
 }
 
+export interface TrueFalseBlockProps {
+  question: string;
+  correctAnswer: string; // "True" | "False"
+  explanation: string;
+}
+
+export interface NumericBlockProps {
+  question: string;
+  correctAnswer: string;
+  explanation: string;
+}
+
 export interface DragDropBlockProps {
   question: string;
   correctAnswer: string;
   explanation: string;
 }
 
-// Define the configuration mapping
+// ---------------------------------------------------------------------------
+// Shared render helpers
+// ---------------------------------------------------------------------------
+
+function LearnBadge({ label }: { label: string }) {
+  return (
+    <span className="inline-block rounded bg-muted px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+      Learn · {label}
+    </span>
+  );
+}
+
+function EvaluateBadge({ label }: { label: string }) {
+  return (
+    <span className="inline-block rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary mb-2">
+      Evaluate · {label}
+    </span>
+  );
+}
+
+const VIZ_LABELS: Record<string, string> = {
+  mathviz_manim: "Math Animation (Manim)",
+  elecsim_tscircuit: "Circuit Simulation (tscircuit)",
+  html_simulation: "Interactive HTML Simulation",
+};
+
+// Renders the same interactive visualization components students see, right
+// inside the editor canvas, so educators can inspect them while editing.
+function VizBlockPreview({ vizType, content, metadata }: VizBlockProps) {
+  switch (vizType) {
+    case "chemviz_3dmol":
+    case "molecule_3dmol":
+      return <HtmlSimulationBlock content={content} metadata={metadata} />;
+    case "elecsim_tscircuit":
+    case "circuit_tscircuit":
+      return <TsCircuitBlock content={content} metadata={metadata} />;
+    case "html_simulation":
+      return <HtmlSimulationBlock content={content} metadata={metadata} />;
+    case "mathviz_manim":
+    case "manim":
+    default:
+      return <ManimBlock content={content} metadata={metadata} />;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Puck config
+// ---------------------------------------------------------------------------
+
 export const puckConfig: Config = {
   components: {
+    HeadingBlock: {
+      fields: {
+        content: { type: "text", label: "Heading Text" },
+      },
+      defaultProps: {
+        content: "Section Heading",
+      },
+      render: ({ content }) => (
+        <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+          <LearnBadge label="Heading" />
+          <h3 className="font-serif text-xl font-semibold text-foreground">{content || "Heading"}</h3>
+        </div>
+      ),
+    },
+
+    CodeBlock: {
+      fields: {
+        content: { type: "textarea", label: "Code Content" },
+        language: { type: "text", label: "Language" },
+      },
+      defaultProps: {
+        content: "console.log('Hello StudEd!');",
+        language: "javascript",
+      },
+      render: ({ content, language }) => (
+        <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+          <LearnBadge label={`Code (${language || "auto"})`} />
+          <pre className="overflow-x-auto rounded bg-muted p-3 text-xs font-mono text-foreground">
+            <code>{content || "// Code here"}</code>
+          </pre>
+        </div>
+      ),
+    },
+
     TextBlock: {
       fields: {
         content: { type: "textarea", label: "Text Content" },
@@ -46,11 +169,12 @@ export const puckConfig: Config = {
         content: "Enter explanation text here...",
       },
       render: ({ content }) => (
-        <div className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm">
-          <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2 px-1.5 py-0.5 rounded bg-muted">
-            Learn · Text
-          </span>
-          <p className="whitespace-pre-wrap leading-relaxed">{content || "No content"}</p>
+        <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+          <LearnBadge label="Text" />
+          <MarkdownContent
+            content={content || "No content"}
+            className="text-[0.95rem] leading-relaxed"
+          />
         </div>
       ),
     },
@@ -67,24 +191,90 @@ export const puckConfig: Config = {
         caption: "",
       },
       render: ({ src, alt, caption }) => (
-        <div className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm space-y-3">
-          <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-muted-foreground px-1.5 py-0.5 rounded bg-muted">
-            Learn · Image
-          </span>
+        <div className="space-y-3 rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+          <LearnBadge label="Image" />
           {src ? (
             <div className="space-y-2">
               <img
                 src={src}
                 alt={alt}
-                className="max-h-72 w-full rounded-md object-contain border"
+                className="max-h-72 w-full rounded-md border object-contain"
               />
-              {caption && <p className="text-xs text-center text-muted-foreground">{caption}</p>}
+              {caption && <p className="text-center text-xs text-muted-foreground">{caption}</p>}
             </div>
           ) : (
             <div className="flex h-36 items-center justify-center rounded-md border border-dashed bg-muted/50 text-sm text-muted-foreground">
               Provide an Image URL in fields
             </div>
           )}
+        </div>
+      ),
+    },
+
+    VideoBlock: {
+      fields: {
+        src: { type: "text", label: "Video URL / Embed URL" },
+        caption: { type: "text", label: "Caption" },
+      },
+      defaultProps: {
+        src: "",
+        caption: "",
+      },
+      render: ({ src, caption }) => (
+        <div className="space-y-3 rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+          <LearnBadge label="Video" />
+          {src ? (
+            <div className="space-y-2">
+              <div className="aspect-video overflow-hidden rounded-md border bg-black">
+                {src.includes("youtube.com") || src.includes("youtu.be") ? (
+                  <iframe
+                    src={src.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")}
+                    title="Lesson video"
+                    className="h-full w-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video src={src} controls className="h-full w-full" />
+                )}
+              </div>
+              {caption && <p className="text-center text-xs text-muted-foreground">{caption}</p>}
+            </div>
+          ) : (
+            <div className="flex h-36 items-center justify-center rounded-md border border-dashed bg-muted/50 text-sm text-muted-foreground">
+              Provide a video URL in fields
+            </div>
+          )}
+        </div>
+      ),
+    },
+
+    CalloutBlock: {
+      fields: {
+        content: { type: "textarea", label: "Callout Content" },
+      },
+      defaultProps: {
+        content: "Remember this key point...",
+      },
+      render: ({ content }) => (
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 text-card-foreground shadow-sm">
+          <LearnBadge label="Callout" />
+          <MarkdownContent content={content || "No content"} className="leading-relaxed" />
+        </div>
+      ),
+    },
+
+    ExampleBlock: {
+      fields: {
+        content: { type: "textarea", label: "Example Content" },
+      },
+      defaultProps: {
+        content: "Worked example...",
+      },
+      render: ({ content }) => (
+        <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+          <LearnBadge label="Example" />
+          <MarkdownContent content={content || "No content"} className="leading-relaxed" />
         </div>
       ),
     },
@@ -97,17 +287,97 @@ export const puckConfig: Config = {
         formula: "E = mc^2",
       },
       render: ({ formula }) => (
-        <div className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm space-y-2 text-center">
+        <div className="space-y-2 rounded-lg border bg-card p-4 text-center text-card-foreground shadow-sm">
           <div className="text-left">
-            <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-muted-foreground px-1.5 py-0.5 rounded bg-muted">
-              Learn · Formula
-            </span>
+            <LearnBadge label="Formula" />
           </div>
-          <div className="overflow-x-auto py-4 bg-muted/30 rounded-md text-lg">
+          <div className="overflow-x-auto rounded-md bg-muted/30 py-4 text-lg">
             <MathFormula formula={formula || "\\text{Provide formula}"} />
           </div>
         </div>
       ),
+    },
+
+    VizBlock: {
+      fields: {
+        vizType: {
+          type: "select",
+          label: "Visualization Type",
+          options: Object.entries(VIZ_LABELS).map(([value, label]) => ({ value, label })),
+        },
+        content: { type: "textarea", label: "Description / Content" },
+        // Chemistry (chemviz_3dmol): molecule source
+        moleculeSmiles: { type: "text", label: "Molecule SMILES (chemistry)" },
+        // Advanced: raw config JSON
+        metadata: { type: "textarea", label: "Config JSON (advanced)" },
+      },
+      defaultProps: {
+        vizType: "mathviz_manim",
+        content: "Interactive visualization",
+        moleculeSmiles: "O",
+        metadata: "{}",
+      },
+      render: ({ vizType, content, moleculeSmiles, metadata }) => {
+        // Merge convenience fields into the raw config so the renderers get
+        // a complete metadata object even when only the quick fields were set.
+        let merged: Record<string, unknown> = {};
+        try {
+          merged = metadata ? JSON.parse(metadata) : {};
+        } catch {
+          merged = {};
+        }
+        if (vizType === "chemviz_3dmol" && moleculeSmiles) {
+          merged.title = merged.title ?? content ?? "Molecule";
+          merged.molecule = merged.molecule ?? { source_type: "smiles", source_value: moleculeSmiles };
+          merged.style = merged.style ?? { stick: { radius: 0.15, colorscheme: "Jmol" } };
+        }
+        return <VizBlockPreview vizType={vizType} content={content} metadata={JSON.stringify(merged)} />;
+      },
+    },
+
+
+    // Circuit (tscircuit) — first-class palette block.
+    CircuitBlock: {
+      fields: {
+        circuitCode: { type: "textarea", label: "Circuit Code (tscircuit)" },
+        content: { type: "textarea", label: "Description / Instructions" },
+        metadata: { type: "textarea", label: "Config JSON (advanced)" },
+      },
+      defaultProps: {
+        vizType: "elecsim_tscircuit",
+        circuitCode: "",
+        content: "Interactive circuit simulation",
+        metadata: "{}",
+      },
+      render: ({ circuitCode, content, metadata }) => {
+        let merged: Record<string, unknown> = {};
+        try {
+          merged = metadata ? JSON.parse(metadata) : {};
+        } catch {
+          merged = {};
+        }
+        if (circuitCode) {
+          merged.title = merged.title ?? content ?? "Circuit";
+          merged.circuit_code = merged.circuit_code ?? circuitCode;
+        }
+        return <VizBlockPreview vizType="elecsim_tscircuit" content={content} metadata={JSON.stringify(merged)} />;
+      },
+    },
+
+    HtmlSimulationBlock: {
+      fields: {
+        content: { type: "text", label: "Simulation Title" },
+        metadata: { type: "textarea", label: "HTML/CSS/JS Document JSON" },
+      },
+      defaultProps: {
+        content: "Interactive simulation",
+        metadata: JSON.stringify({
+          title: "Interactive simulation",
+          html: "<!doctype html><html><body><p>Simulation</p></body></html>",
+          height: 560,
+        }),
+      },
+      render: ({ content, metadata }) => <HtmlSimulationBlock content={content} metadata={metadata} />,
     },
 
     MCQBlock: {
@@ -126,17 +396,15 @@ export const puckConfig: Config = {
       render: ({ question, options, correctAnswer, explanation }) => {
         const optionList = options ? options.split("\n").filter((o: string) => o.trim()) : [];
         return (
-          <div className="p-4 rounded-lg border border-primary/20 bg-primary/5 text-card-foreground shadow-sm space-y-3">
-            <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-primary px-1.5 py-0.5 rounded bg-primary/10">
-              Evaluate · Multiple Choice Quiz
-            </span>
+          <div className="space-y-3 rounded-lg border border-primary/20 bg-primary/5 p-4 text-card-foreground shadow-sm">
+            <EvaluateBadge label="Multiple Choice" />
             <p className="font-semibold text-foreground">{question}</p>
             {optionList.length > 0 ? (
               <div className="space-y-1.5 pl-2">
                 {optionList.map((opt: string) => (
                   <div
                     key={opt}
-                    className="flex items-center gap-2 text-sm border rounded p-2 bg-background/50"
+                    className="flex items-center gap-2 rounded border bg-background/50 p-2 text-sm"
                   >
                     <input
                       type="radio"
@@ -151,15 +419,15 @@ export const puckConfig: Config = {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground italic pl-2">No options defined</p>
+              <p className="pl-2 text-sm italic text-muted-foreground">No options defined</p>
             )}
             {correctAnswer && (
-              <p className="text-xs text-success font-medium">
+              <p className="text-xs font-medium text-success">
                 Correct Answer: <span className="underline">{correctAnswer}</span>
               </p>
             )}
             {explanation && (
-              <p className="text-xs text-muted-foreground bg-background/30 p-2 rounded">
+              <p className="rounded bg-background/30 p-2 text-xs text-muted-foreground">
                 <span className="font-semibold">Explanation:</span> {explanation}
               </p>
             )}
@@ -180,26 +448,109 @@ export const puckConfig: Config = {
         explanation: "H2O indicates two parts hydrogen and one part oxygen.",
       },
       render: ({ question, correctAnswer, explanation }) => (
-        <div className="p-4 rounded-lg border border-primary/20 bg-primary/5 text-card-foreground shadow-sm space-y-3">
-          <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-primary px-1.5 py-0.5 rounded bg-primary/10">
-            Evaluate · Fill In the Blank
-          </span>
+        <div className="space-y-3 rounded-lg border border-primary/20 bg-primary/5 p-4 text-card-foreground shadow-sm">
+          <EvaluateBadge label="Fill In the Blank" />
           <p className="font-semibold text-foreground">{question}</p>
-          <div className="flex gap-2 items-center pl-2">
+          <div className="flex w-full max-w-xs gap-2 pl-2">
             <input
               type="text"
               disabled
               placeholder="User types here..."
-              className="border rounded px-3 py-1.5 bg-background text-sm max-w-xs w-full"
+              className="w-full rounded border bg-background px-3 py-1.5 text-sm"
             />
           </div>
           {correctAnswer && (
-            <p className="text-xs text-success font-medium">
+            <p className="text-xs font-medium text-success">
               Correct Answer: <span className="underline">{correctAnswer}</span>
             </p>
           )}
           {explanation && (
-            <p className="text-xs text-muted-foreground bg-background/30 p-2 rounded">
+            <p className="rounded bg-background/30 p-2 text-xs text-muted-foreground">
+              <span className="font-semibold">Explanation:</span> {explanation}
+            </p>
+          )}
+        </div>
+      ),
+    },
+
+    TrueFalseBlock: {
+      fields: {
+        question: { type: "textarea", label: "Statement" },
+        correctAnswer: {
+          type: "select",
+          label: "Correct Answer",
+          options: [
+            { value: "True", label: "True" },
+            { value: "False", label: "False" },
+          ],
+        },
+        explanation: { type: "textarea", label: "Explanation" },
+      },
+      defaultProps: {
+        question: "The Earth revolves around the Sun.",
+        correctAnswer: "True",
+        explanation: "The Earth orbits the Sun once per year.",
+      },
+      render: ({ question, correctAnswer, explanation }) => (
+        <div className="space-y-3 rounded-lg border border-primary/20 bg-primary/5 p-4 text-card-foreground shadow-sm">
+          <EvaluateBadge label="True / False" />
+          <p className="font-semibold text-foreground">{question}</p>
+          <div className="flex gap-2 pl-2">
+            {["True", "False"].map((opt) => (
+              <span
+                key={opt}
+                className={`rounded border px-4 py-1.5 text-sm ${
+                  opt === correctAnswer
+                    ? "border-success/40 bg-success/10 font-medium text-success"
+                    : "bg-background/50"
+                }`}
+              >
+                {opt}
+              </span>
+            ))}
+          </div>
+          {correctAnswer && (
+            <p className="text-xs font-medium text-success">
+              Correct Answer: <span className="underline">{correctAnswer}</span>
+            </p>
+          )}
+          {explanation && (
+            <p className="rounded bg-background/30 p-2 text-xs text-muted-foreground">
+              <span className="font-semibold">Explanation:</span> {explanation}
+            </p>
+          )}
+        </div>
+      ),
+    },
+
+    NumericBlock: {
+      fields: {
+        question: { type: "textarea", label: "Question Text" },
+        correctAnswer: { type: "text", label: "Numeric Answer" },
+        explanation: { type: "textarea", label: "Explanation" },
+      },
+      defaultProps: {
+        question: "What is the value of pi to two decimal places?",
+        correctAnswer: "3.14",
+        explanation: "Pi rounded to two decimals is 3.14.",
+      },
+      render: ({ question, correctAnswer, explanation }) => (
+        <div className="space-y-3 rounded-lg border border-primary/20 bg-primary/5 p-4 text-card-foreground shadow-sm">
+          <EvaluateBadge label="Numeric" />
+          <p className="font-semibold text-foreground">{question}</p>
+          <input
+            type="number"
+            disabled
+            placeholder="User enters a number..."
+            className="w-full max-w-xs rounded border bg-background px-3 py-1.5 pl-2 text-sm"
+          />
+          {correctAnswer && (
+            <p className="text-xs font-medium text-success">
+              Correct Answer: <span className="underline">{correctAnswer}</span>
+            </p>
+          )}
+          {explanation && (
+            <p className="rounded bg-background/30 p-2 text-xs text-muted-foreground">
               <span className="font-semibold">Explanation:</span> {explanation}
             </p>
           )}
@@ -219,26 +570,24 @@ export const puckConfig: Config = {
         explanation: "Force equals mass times acceleration.",
       },
       render: ({ question, correctAnswer, explanation }) => (
-        <div className="p-4 rounded-lg border border-primary/20 bg-primary/5 text-card-foreground shadow-sm space-y-3">
-          <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-primary px-1.5 py-0.5 rounded bg-primary/10">
-            Evaluate · Drag and Drop Match
-          </span>
+        <div className="space-y-3 rounded-lg border border-primary/20 bg-primary/5 p-4 text-card-foreground shadow-sm">
+          <EvaluateBadge label="Drag and Drop" />
           <p className="font-semibold text-foreground">{question}</p>
           <div className="flex flex-wrap gap-2 pl-2">
-            <span className="border rounded-md px-3 py-1.5 bg-background text-sm cursor-grab">
-              Formula
+            <span className="cursor-grab rounded-md border bg-background px-3 py-1.5 text-sm">
+              Item
             </span>
-            <span className="border border-dashed rounded-md px-3 py-1.5 text-muted-foreground text-sm">
+            <span className="rounded-md border border-dashed px-3 py-1.5 text-sm text-muted-foreground">
               Drop zone
             </span>
           </div>
           {correctAnswer && (
-            <p className="text-xs text-success font-medium">
+            <p className="text-xs font-medium text-success">
               Correct Pattern: <span className="underline">{correctAnswer}</span>
             </p>
           )}
           {explanation && (
-            <p className="text-xs text-muted-foreground bg-background/30 p-2 rounded">
+            <p className="rounded bg-background/30 p-2 text-xs text-muted-foreground">
               <span className="font-semibold">Explanation:</span> {explanation}
             </p>
           )}
@@ -248,7 +597,10 @@ export const puckConfig: Config = {
   },
 };
 
-// Serialization mapping functions
+// ---------------------------------------------------------------------------
+// Serialization
+// ---------------------------------------------------------------------------
+
 export interface LearnBlockRaw {
   id: string;
   type: string;
@@ -266,91 +618,147 @@ export interface EvaluateBlockRaw {
   metadata?: string | null;
 }
 
-// Re-export Puck's Data type as PuckData for use in the rest of the app
 export type PuckData = Data;
 
-// Convert from GraphQL structure to Puck flat structure
+// Map a raw learn block to a Puck content item.
+function learnBlockToItem(lb: LearnBlockRaw): PuckData["content"][number] {
+  const type = lb.type.toLowerCase();
+  const common = { id: lb.id };
+  switch (type) {
+    case "heading":
+      return { type: "HeadingBlock", props: { ...common, content: lb.content } };
+    case "code":
+      return { type: "CodeBlock", props: { ...common, content: lb.content, language: lb.metadata || "javascript" } };
+    case "image":
+      return { type: "ImageBlock", props: { ...common, src: lb.content, alt: "Visual aid", caption: lb.metadata || "" } };
+    case "video":
+      return { type: "VideoBlock", props: { ...common, src: lb.content, caption: lb.metadata || "" } };
+    case "formula":
+    case "math":
+      return { type: "MathViz", props: { ...common, formula: lb.content } };
+    case "callout":
+    case "note":
+      return { type: "CalloutBlock", props: { ...common, content: lb.content } };
+    case "example":
+      return { type: "ExampleBlock", props: { ...common, content: lb.content } };
+    case "coordinate_plane":
+    case "coordinate_grid":
+    case "coordinates":
+      return { type: "VizBlock", props: { ...common, vizType: "coordinate_plane", content: lb.content, metadata: lb.metadata || "{}" } };
+    case "mathviz_manim":
+    case "manim":
+    case "math_animation":
+      return { type: "VizBlock", props: { ...common, vizType: "mathviz_manim", content: lb.content, metadata: lb.metadata || "{}" } };
+    case "chemviz_3dmol":
+    case "molecule_3dmol":
+    case "molecule":
+    case "3dmol":
+      return { type: "HtmlSimulationBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
+    case "elecsim_tscircuit":
+    case "circuit_tscircuit":
+    case "tscircuit":
+    case "circuit":
+      return { type: "CircuitBlock", props: { ...common, vizType: "elecsim_tscircuit", circuitCode: circuitCodeFrom(lb), content: lb.content, metadata: lb.metadata || "{}" } };
+    case "html_simulation":
+    case "simulation_html":
+    case "simulation":
+      return { type: "HtmlSimulationBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
+    default:
+      return { type: "TextBlock", props: { ...common, content: lb.content } };
+  }
+}
+
+// Pull the circuit code out of an elecsim block's metadata.
+function circuitCodeFrom(lb: LearnBlockRaw): string {
+  try {
+    const meta = JSON.parse(lb.metadata || "{}");
+    return typeof meta.circuit_code === "string" ? meta.circuit_code : "";
+  } catch {
+    return "";
+  }
+}
+
+// Map a raw evaluate block to a Puck content item.
+function evaluateBlockToItem(eb: EvaluateBlockRaw): PuckData["content"][number] {
+  const type = eb.type.toLowerCase();
+  const common = { id: eb.id, question: eb.question, correctAnswer: eb.correctAnswer || "", explanation: eb.explanation || "" };
+  switch (type) {
+    case "multiple_choice":
+    case "mcq":
+      return { type: "MCQBlock", props: { ...common, options: (eb.options || []).join("\n") } };
+    case "fill_in_the_blank":
+    case "fill_in_blank":
+      return { type: "FillBlankBlock", props: { ...common } };
+    case "true_false":
+      return { type: "TrueFalseBlock", props: { ...common } };
+    case "numeric":
+      return { type: "NumericBlock", props: { ...common } };
+    default:
+      return { type: "DragDropBlock", props: { ...common } };
+  }
+}
+
+// Convert wave blocks (GraphQL shape) to a full Puck document.
 export function waveDataToPuck(
   learnBlocks: LearnBlockRaw[],
   evaluateBlocks: EvaluateBlockRaw[],
 ): PuckData {
   const content: PuckData["content"] = [];
-
-  // Map Learn blocks
-  for (const lb of learnBlocks) {
-    if (lb.type === "image") {
-      content.push({
-        type: "ImageBlock",
-        props: {
-          id: lb.id,
-          src: lb.content,
-          alt: "Visual aid",
-          caption: lb.metadata || "",
-        },
-      });
-    } else if (lb.type === "formula") {
-      content.push({
-        type: "MathViz",
-        props: {
-          id: lb.id,
-          formula: lb.content,
-        },
-      });
-    } else {
-      content.push({
-        type: "TextBlock",
-        props: {
-          id: lb.id,
-          content: lb.content,
-        },
-      });
-    }
-  }
-
-  // Map Evaluate blocks
-  for (const eb of evaluateBlocks) {
-    if (eb.type === "multiple_choice") {
-      content.push({
-        type: "MCQBlock",
-        props: {
-          id: eb.id,
-          question: eb.question,
-          options: (eb.options || []).join("\n"),
-          correctAnswer: eb.correctAnswer || "",
-          explanation: eb.explanation || "",
-        },
-      });
-    } else if (eb.type === "fill_in_the_blank") {
-      content.push({
-        type: "FillBlankBlock",
-        props: {
-          id: eb.id,
-          question: eb.question,
-          correctAnswer: eb.correctAnswer || "",
-          explanation: eb.explanation || "",
-        },
-      });
-    } else {
-      content.push({
-        type: "DragDropBlock",
-        props: {
-          id: eb.id,
-          question: eb.question,
-          correctAnswer: eb.correctAnswer || "",
-          explanation: eb.explanation || "",
-        },
-      });
-    }
-  }
-
-  return {
-    content,
-    root: {},
-    zones: {},
-  };
+  for (const lb of learnBlocks ?? []) content.push(learnBlockToItem(lb));
+  for (const eb of evaluateBlocks ?? []) content.push(evaluateBlockToItem(eb));
+  return { content, root: {}, zones: {} };
 }
 
-// Convert Puck flat structure back to GraphQL inputs
+// Convert AI-agent generated blocks into Puck content items for auto-insert.
+export function agentBlocksToPuckItems(
+  learnBlocks: LearnBlockRaw[],
+  evaluateBlocks: EvaluateBlockRaw[],
+): PuckData["content"] {
+  const items: PuckData["content"] = [];
+  for (const lb of learnBlocks ?? []) items.push(learnBlockToItem(lb));
+  for (const eb of evaluateBlocks ?? []) items.push(evaluateBlockToItem(eb));
+  return items;
+}
+
+// ---------------------------------------------------------------------------
+// Block operations (edit / delete from the AI assistant)
+// ---------------------------------------------------------------------------
+
+export interface BlockOpsInput {
+  upsertLearn?: LearnBlockRaw[];
+  upsertEval?: EvaluateBlockRaw[];
+  deleteIDs?: string[];
+}
+
+const itemId = (v: unknown): string => (typeof v === "string" ? v : "");
+
+/**
+ * Applies upsert (update-or-add by id) and delete operations to a Puck
+ * document. Used when the agent edits or removes existing blocks: existing
+ * ids are replaced in place, new ids are appended, and deleteIDs are removed.
+ * Pure and unit-tested.
+ */
+export function applyBlockOpsToData(data: PuckData, ops: BlockOpsInput): PuckData {
+  const deleteSet = new Set(ops.deleteIDs ?? []);
+  const upsertItems = agentBlocksToPuckItems(ops.upsertLearn ?? [], ops.upsertEval ?? []);
+  const upsertById = new Map(upsertItems.map((it) => [itemId(it.props.id), it]));
+
+  let content = (data.content ?? []).slice();
+  content = content.filter((item) => !deleteSet.has(itemId(item.props.id)));
+
+  const seen = new Set(content.map((item) => itemId(item.props.id)));
+  content = content.map((item) => upsertById.get(itemId(item.props.id)) ?? item);
+  for (const [id, item] of upsertById) {
+    if (!seen.has(id)) content.push(item);
+  }
+
+  return { ...data, content };
+}
+
+// ---------------------------------------------------------------------------
+// Puck document -> GraphQL wave inputs
+// ---------------------------------------------------------------------------
+
 interface LearnBlockInput {
   id: string;
   type: string;
@@ -368,7 +776,6 @@ interface EvaluateBlockInput {
   metadata: string | null;
 }
 
-// Safe coercion for unknown props
 const str = (v: unknown, fallback = ""): string => (typeof v === "string" ? v : fallback);
 
 export function puckToWaveData(puckData: PuckData) {
@@ -379,66 +786,143 @@ export function puckToWaveData(puckData: PuckData) {
     const id = str(block.props.id) || `block-${index}-${Date.now()}`;
     const type = block.type;
 
-    if (type === "TextBlock") {
-      learnBlocks.push({
-        id,
-        type: "text",
-        content: str(block.props.content),
-        metadata: null,
-      });
-    } else if (type === "ImageBlock") {
-      learnBlocks.push({
-        id,
-        type: "image",
-        content: str(block.props.src),
-        metadata: str(block.props.caption) || null,
-      });
-    } else if (type === "MathViz") {
-      learnBlocks.push({
-        id,
-        type: "formula",
-        content: str(block.props.formula),
-        metadata: null,
-      });
-    } else if (type === "MCQBlock") {
-      const rawOptions = str(block.props.options);
-      const parsedOptions = rawOptions
-        ? rawOptions.split("\n").filter((o: string) => o.trim())
-        : [];
-      evaluateBlocks.push({
-        id,
-        type: "multiple_choice",
-        question: str(block.props.question),
-        options: parsedOptions,
-        correctAnswer: str(block.props.correctAnswer),
-        explanation: str(block.props.explanation),
-        metadata: null,
-      });
-    } else if (type === "FillBlankBlock") {
-      evaluateBlocks.push({
-        id,
-        type: "fill_in_the_blank",
-        question: str(block.props.question),
-        options: null,
-        correctAnswer: str(block.props.correctAnswer),
-        explanation: str(block.props.explanation),
-        metadata: null,
-      });
-    } else if (type === "DragDropBlock") {
-      evaluateBlocks.push({
-        id,
-        type: "drag_and_drop",
-        question: str(block.props.question),
-        options: null,
-        correctAnswer: str(block.props.correctAnswer),
-        explanation: str(block.props.explanation),
-        metadata: null,
-      });
+    switch (type) {
+      case "HeadingBlock":
+        learnBlocks.push({ id, type: "heading", content: str(block.props.content), metadata: null });
+        break;
+      case "CodeBlock":
+        learnBlocks.push({
+          id,
+          type: "code",
+          content: str(block.props.content),
+          metadata: str(block.props.language) || "javascript",
+        });
+        break;
+      case "TextBlock":
+        learnBlocks.push({ id, type: "text", content: str(block.props.content), metadata: null });
+        break;
+      case "ImageBlock":
+        learnBlocks.push({
+          id,
+          type: "image",
+          content: str(block.props.src),
+          metadata: str(block.props.caption) || null,
+        });
+        break;
+      case "VideoBlock":
+        learnBlocks.push({
+          id,
+          type: "video",
+          content: str(block.props.src),
+          metadata: str(block.props.caption) || null,
+        });
+        break;
+      case "CalloutBlock":
+        learnBlocks.push({ id, type: "callout", content: str(block.props.content), metadata: null });
+        break;
+      case "ExampleBlock":
+        learnBlocks.push({ id, type: "example", content: str(block.props.content), metadata: null });
+        break;
+      case "MathViz":
+        learnBlocks.push({ id, type: "formula", content: str(block.props.formula), metadata: null });
+        break;
+      case "VizBlock":
+        learnBlocks.push({
+          id,
+          type: str(block.props.vizType) || "mathviz_manim",
+          content: str(block.props.content),
+          metadata: str(block.props.metadata) || null,
+        });
+        break;
+      case "HtmlSimulationBlock": {
+        learnBlocks.push({
+          id,
+          type: "html_simulation",
+          content: str(block.props.content),
+          metadata: str(block.props.metadata) || null,
+        });
+        break;
+      }
+      case "CircuitBlock": {
+        let meta: Record<string, unknown> = {};
+        try {
+          meta = JSON.parse(str(block.props.metadata) || "{}");
+        } catch {
+          meta = {};
+        }
+        const code = str(block.props.circuitCode);
+        if (code && !meta.circuit_code) meta.circuit_code = code;
+        if (!meta.title) meta.title = str(block.props.content) || "Circuit";
+        learnBlocks.push({
+          id,
+          type: "elecsim_tscircuit",
+          content: str(block.props.content),
+          metadata: JSON.stringify(meta),
+        });
+        break;
+      }
+      case "MCQBlock": {
+        const rawOptions = str(block.props.options);
+        const parsedOptions = rawOptions
+          ? rawOptions.split("\n").filter((o: string) => o.trim())
+          : [];
+        evaluateBlocks.push({
+          id,
+          type: "multiple_choice",
+          question: str(block.props.question),
+          options: parsedOptions,
+          correctAnswer: str(block.props.correctAnswer),
+          explanation: str(block.props.explanation),
+          metadata: null,
+        });
+        break;
+      }
+      case "FillBlankBlock":
+        evaluateBlocks.push({
+          id,
+          type: "fill_in_the_blank",
+          question: str(block.props.question),
+          options: null,
+          correctAnswer: str(block.props.correctAnswer),
+          explanation: str(block.props.explanation),
+          metadata: null,
+        });
+        break;
+      case "TrueFalseBlock":
+        evaluateBlocks.push({
+          id,
+          type: "true_false",
+          question: str(block.props.question),
+          options: null,
+          correctAnswer: str(block.props.correctAnswer),
+          explanation: str(block.props.explanation),
+          metadata: null,
+        });
+        break;
+      case "NumericBlock":
+        evaluateBlocks.push({
+          id,
+          type: "numeric",
+          question: str(block.props.question),
+          options: null,
+          correctAnswer: str(block.props.correctAnswer),
+          explanation: str(block.props.explanation),
+          metadata: null,
+        });
+        break;
+      case "DragDropBlock":
+        evaluateBlocks.push({
+          id,
+          type: "drag_and_drop",
+          question: str(block.props.question),
+          options: null,
+          correctAnswer: str(block.props.correctAnswer),
+          explanation: str(block.props.explanation),
+          metadata: null,
+        });
+        break;
     }
   });
 
-  return {
-    learnBlocks,
-    evaluateBlocks,
-  };
+  return { learnBlocks, evaluateBlocks };
 }

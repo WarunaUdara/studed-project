@@ -128,6 +128,40 @@ flowchart TB
 | **Idle-Scout (Cloud Run)** | Operational cost control automation | Scales node pool to 0 after 2h idle; preserves cluster state |
 | **GitHub Actions & ArgoCD** | Declarative CI/CD & GitOps engine | Vitest, Go unit tests, GCP OpenTofu IaC validation, Helm lint |
 
+## Inter-Service Communication Contract
+
+All gRPC traffic between microservices follows a strict, machine-verifiable contract enforced by `shared/go/grpcauth`:
+
+### Request Headers
+
+| gRPC Metadata Key | Source | Consumer | Purpose |
+| :--- | :--- | :--- | :--- |
+| `service-token` | `SERVICE_TOKEN` env (or `grpcauth.TokenFromContext`) | `grpcauth.UnaryServerInterceptor` | Authenticates the caller; server **fails closed** when missing or mismatched, or when the server has no token configured. |
+| `traceparent` | `grpcauth.UnaryClientTraceInterceptor` (from `context.Context` span) | `grpcauth.UnaryServerTraceInterceptor` | W3C Trace Context propagation — the server extracts the trace ID and continues the span hierarchy. |
+| `baggage` | `grpcauth.UnaryClientTraceInterceptor` | `grpcauth.UnaryServerTraceInterceptor` | W3C baggage propagation for cross-service metadata (e.g. `user_id`). |
+
+### Interceptor Order (server side)
+
+Both interceptors are registered via `grpc.ChainUnaryInterceptor` and **must be chained trace-first**:
+
+```go
+grpc.ChainUnaryInterceptor(
+    grpcauth.UnaryServerTraceInterceptor(),       // 1. extract trace context
+    grpcauth.UnaryServerInterceptor(cfg.ServiceToken), // 2. verify service token
+)
+```
+
+This ordering guarantees trace context is extracted even for calls that are later rejected for a bad token, so failed authentication attempts are still observable in tracing.
+
+### Fail-Closed Semantics
+
+- An interceptor registered with an empty `SERVICE_TOKEN` rejects every call (server-side misconfiguration never silently accepts traffic).
+- A client with no `service-token` present gets `codes.Unauthenticated` and the call is aborted before reaching business logic.
+
+### Propagation Scope
+
+Every gRPC server (`auth-service`, `course-service`, `gamification-service`, `progress-service`) enforces the token interceptor. `api-gateway` attaches the token and trace context on every outbound gRPC call. Plain HTTP services (`ai-service`, `notification-service`, `payment-service`, `upload-service`, `user-service`, `content-service`) authenticate via `httpauth` middleware on the same `service-token` value.
+
 ## Core Architectural Guarantees
 
 1. **Defense-in-Depth Network Isolation**: Default-deny NetworkPolicies restrict pod communication so that microservices are reachable strictly via `api-gateway` or explicitly permitted inter-service gRPC paths.

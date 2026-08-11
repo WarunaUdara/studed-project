@@ -52,6 +52,7 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-local-dev-refresh-secret-min-32-bytes}
       JWT_ACCESS_TTL: 15m
       JWT_REFRESH_TTL: 168h
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
     ports:
       - "127.0.0.1:8081:8081"
       - "127.0.0.1:8085:8085"
@@ -74,6 +75,7 @@ services:
       DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
       AUTH_SERVICE_ADDR: auth-service:8081
       ELASTICSEARCH_URL: http://elasticsearch:9200
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
     ports:
       - "127.0.0.1:8083:8083"
       - "127.0.0.1:8084:8084"
@@ -100,6 +102,7 @@ services:
       DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
       COURSE_SERVICE_ADDR: course-service:8083
       GAMIFICATION_SERVICE_ADDR: gamification-service:8088
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
     ports:
       - "127.0.0.1:8086:8086"
       - "127.0.0.1:8087:8087"
@@ -125,6 +128,7 @@ services:
       GAMIFICATION_SERVICE_ADDR: :8088
       DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
       REDIS_ADDR: redis:6379
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
     ports:
       - "127.0.0.1:8088:8088"
       - "127.0.0.1:8089:8089"
@@ -146,8 +150,14 @@ services:
     container_name: studed-ai-service
     environment:
       AI_SERVICE_ADDR: :8090
+      AI_PROVIDER: ${AI_PROVIDER:-opencode}
+      OPENCODE_API_KEY: ${OPENCODE_API_KEY:-}
+      OPENCODE_BASE_URL: ${OPENCODE_BASE_URL:-https://opencode.ai/zen/go/v1}
+      OPENCODE_MODEL: ${OPENCODE_MODEL:-deepseek-v4-flash}
+      OPENCODE_VISION_MODEL: ${OPENCODE_VISION_MODEL:-qwen3.7-plus}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
     ports:
       - "127.0.0.1:8090:8090"
     healthcheck:
@@ -167,6 +177,7 @@ services:
       PAYHERE_MERCHANT_ID: ${PAYHERE_MERCHANT_ID:-}
       PAYHERE_MERCHANT_SECRET: ${PAYHERE_MERCHANT_SECRET:-}
       PAYHERE_NOTIFY_URL: ${PAYHERE_NOTIFY_URL:-}
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
     ports:
       - "127.0.0.1:8091:8091"
     depends_on:
@@ -186,6 +197,7 @@ services:
     environment:
       NOTIFICATION_SERVICE_ADDR: :8092
       DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
     ports:
       - "127.0.0.1:8092:8092"
     depends_on:
@@ -212,7 +224,14 @@ services:
       PAYMENT_SERVICE_URL: http://payment-service:8091
       REDIS_ADDR: redis:6379
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-local-dev-access-secret-min-32-bytes}
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
       GRAPHQL_PLAYGROUND: "true"
+      # Local dev: raise rate limits well above the production defaults so
+      # the frontend retry/polling patterns never trip 429s on localhost.
+      RATE_LIMIT_GLOBAL: ${RATE_LIMIT_GLOBAL:-2000}
+      RATE_LIMIT_GLOBAL_WINDOW_SECONDS: ${RATE_LIMIT_GLOBAL_WINDOW_SECONDS:-60}
+      RATE_LIMIT_USER: ${RATE_LIMIT_USER:-1000}
+      RATE_LIMIT_USER_WINDOW_SECONDS: ${RATE_LIMIT_USER_WINDOW_SECONDS:-60}
     ports:
       - "127.0.0.1:8080:8080"
     depends_on:
@@ -232,7 +251,12 @@ services:
       timeout: 3s
       retries: 10
 
+  # Observability stack. Behind the `monitoring` profile so it is opt-in via
+  # `make monitoring-up`: these are the only services that bind-mount host
+  # config, and a mount failure here used to abort the whole `compose up`
+  # before the api-gateway started, taking the app down with it.
   prometheus:
+    profiles: ["monitoring"]
     image: prom/prometheus:v3.2.1
     container_name: studed-prometheus
     volumes:
@@ -253,6 +277,7 @@ services:
       retries: 5
 
   grafana:
+    profiles: ["monitoring"]
     image: grafana/grafana:11.5.1
     container_name: studed-grafana
     environment:
@@ -270,6 +295,7 @@ services:
         condition: service_healthy
 
   postgres-exporter:
+    profiles: ["monitoring"]
     image: prometheuscommunity/postgres-exporter:v0.16.0
     container_name: studed-postgres-exporter
     environment:
@@ -281,6 +307,7 @@ services:
         condition: service_healthy
 
   redis-exporter:
+    profiles: ["monitoring"]
     image: oliver006/redis_exporter:v1.67.0
     container_name: studed-redis-exporter
     environment:
@@ -290,6 +317,19 @@ services:
     depends_on:
       redis:
         condition: service_started
+
+  tempo:
+    profiles: ["monitoring"]
+    image: grafana/tempo:2.7.1
+    container_name: studed-tempo
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./infra/monitoring/tempo/tempo.yaml:/etc/tempo.yaml
+      - tempo_data:/var/tempo
+    ports:
+      - "127.0.0.1:3200:3200" # tempo HTTP
+      - "127.0.0.1:4317:4317" # OTLP gRPC
+      - "127.0.0.1:4318:4318" # OTLP HTTP
 
   floci-gcp:
     image: floci/floci-gcp:latest
@@ -304,15 +344,16 @@ services:
       FLOCI_GCP_BASE_URL: http://floci-gcp:4588
       FLOCI_GCP_STORAGE_MODE: hybrid
       FLOCI_GCP_DEFAULT_PROJECT_ID: floci-local
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:4588/health"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
+    # No healthcheck: the image is a distroless Quarkus native build with no
+    # shell, wget, or curl, so every exec-based probe fails and the container is
+    # permanently reported unhealthy even though it serves fine on :4588.
+    # Nothing depends_on it, so plain "Up" is the honest status.
 
 volumes:
   postgres_data:
+  redis_data:
   elasticsearch_data:
   prometheus_data:
   grafana_data:
+  tempo_data:
   floci_gcp_data:

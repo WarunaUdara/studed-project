@@ -1,0 +1,175 @@
+/*
+ * Puck editor theming — maps Puck's CSS variables onto the StudEd design
+ * tokens (OKLCH). Imported alongside puck.css in PuckCanvas so the whole
+ * editor chrome (blocks panel, properties, actionbar, fields) blends with
+ * the app instead of Puck's default palette.
+ */
+
+:root,
+.dark {
+  /* Surfaces */
+  --puck-color-surface: var(--background);
+  --puck-color-surface-muted: var(--muted);
+  --puck-color-surface-subtle: var(--muted);
+  --puck-color-surface-inverse: var(--primary);
+
+  /* Text */
+  --puck-color-text: var(--foreground);
+  --puck-color-text-secondary: var(--muted-foreground);
+  --puck-color-text-subtle: var(--muted-foreground);
+  --puck-color-text-inverse: var(--primary-foreground);
+
+  /* Borders & focus */
+  --puck-color-border: var(--border);
+  --puck-color-border-muted: var(--border);
+  --puck-color-border-hover: var(--ring);
+  --puck-color-border-inverse: var(--border);
+  --puck-color-focus-ring: var(--ring);
+
+  /* Interactive (buttons, links, active states) */
+  --puck-color-interactive: var(--primary);
+  --puck-color-interactive-soft: color-mix(in oklch, var(--primary) 12%, transparent);
+  --puck-color-interactive-neutral-hover: var(--muted);
+  --puck-color-interactive-inverse-hover: color-mix(in oklch, var(--primary) 88%, white);
+  --puck-color-interactive-inverse-active: color-mix(in oklch, var(--primary) 80%, white);
+
+  /* Radius / shape */
+  --puck-radius-m: 0.5rem;
+  --puck-radius-l: 0.75rem;
+  --puck-radius-round: 9999px;
+
+  /* Typography */
+  --puck-font-family: inherit;
+  --puck-font-weight-medium: 500;
+  --puck-icon-size-s: 14px;
+  --puck-icon-size-m: 16px;
+  --puck-iconbutton-radius: 0.5rem;
+
+  /* Field inputs */
+  --puck-field-color-bg: var(--background);
+  --puck-field-color-bg-disabled: var(--muted);
+  --puck-field-color-border: var(--input);
+  --puck-field-color-border-hover: var(--ring);
+  --puck-field-color-border-focus: var(--ring);
+  --puck-field-color-border-disabled: var(--border);
+  --puck-field-color-text: var(--foreground);
+  --puck-field-color-text-disabled: var(--muted-foreground);
+  --puck-field-radius: 0.5rem;
+  --puck-field-richtext-menu-color-bg: var(--popover);
+  --puck-field-richtext-menu-color-separator: var(--border);
+
+  /* Actionbar */
+  --puck-actionbar-color-bg: var(--muted);
+  --puck-actionbar-color-text: var(--foreground);
+  --puck-actionbar-color-action-active: var(--primary);
+  --puck-actionbar-color-action-hover: var(--muted-foreground);
+  --puck-actionbar-color-action-disabled: var(--muted-foreground);
+  --puck-actionbar-color-separator: var(--border);
+  --puck-actionbar-radius: 0.75rem;
+}
+
+/* ---------------------------------------------------------------------------
+ * Component-level overrides. The collapsed left sidebar becomes a Notion-like
+ * icon rail (dark, narrow, rounded pill toggler) and panels get hairline
+ * separators that match the app's border token.
+ * ------------------------------------------------------------------------- */
+
+/* Left sidebar rail (collapsed state) */
+[class*="PuckLayout-nav"] {
+  background: var(--muted);
+  border-right: 1px solid var(--border);
+}
+
+/* Sidebar toggler button */
+[class*="PuckHeader-leftSideBarToggle"] button,
+[class*="PuckHeader-rightSideBarToggle"] button {
+  border-radius: 0.5rem;
+  color: var(--muted-foreground);
+}
+[class*="PuckHeader-leftSideBarToggle"] button:hover,
+[class*="PuckHeader-rightSideBarToggle"] button:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+/* Blocks palette entries */
+[class*="blocksPanel"][class*="component"],
+[class*="BlockItem"],
+[class*="componentItem"] {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--background);
+}
+[class*="blocksPanel"][class*="component"]:hover,
+[class*="BlockItem"]:hover,
+[class*="componentItem"]:hover {
+  border-color: var(--primary);
+  background: var(--muted);
+}
+
+/* Outline / fields panel headers */
+[class*="PanelHeader"] {
+  color: var(--muted-foreground);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Canvas drop-zone dashed outline */
+[class*="PuckPreview-dropZone"] {
+  border-color: var(--border);
+}
+[class*="PuckPreview-dropZone"]:hover {
+  border-color: var(--primary);
+}
+
+/* Buttons inside Puck (Publish, undo, redo, viewport switcher) */
+[class*="PuckButton"] {
+  border-radius: 0.5rem;
+}
+
+/* ---------------------------------------------------------------------------
+ * Notion-style collapse toggle. Rendered via overrides.headerActions into
+ * Puck's header (PuckBridge); styled as a quiet icon button that matches the
+ * app's icon-button look.
+ * ------------------------------------------------------------------------- */
+
+.puck-sidebar-toggle {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  width: 28px;
+  border-radius: 0.5rem;
+  color: var(--muted-foreground);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 150ms, color 150ms;
+}
+
+.puck-sidebar-toggle:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+/* Smooth expand/collapse of the sidebar rail. */
+[class*="PuckLayout"] {
+  transition: grid-template-columns 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*
+ * Height fix: Puck's layout hardcodes `height: 100dvh`, which ignores the
+ * editor container (navbar + editor header consume the top of the viewport,
+ * so 100dvh overflows and the bottom of the canvas + palette get clipped by
+ * the route's overflow-hidden). The editor wrapper (main) already carries a
+ * proper flex height, so Puck should fill 100% of it. The canvas document
+ * inside the frame then scrolls naturally as blocks grow the content.
+ *
+ * Both the `.Puck` wrapper div (auto-height by default) and the layout grid
+ * must resolve against the main pane, otherwise the percentage chain breaks
+ * and the layout grows with its content (clipped bottom).
+ */
+.Puck,
+[class*="PuckLayout"] {
+  height: 100%;
+}

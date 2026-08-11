@@ -707,3 +707,62 @@ func (e Tier) MarshalJSON() ([]byte, error) {
 	e.MarshalGQL(&buf)
 	return buf.Bytes(), nil
 }
+
+type VizType string
+
+const (
+	VizTypeManim     VizType = "MANIM"
+	VizTypeThreedmol VizType = "THREEDMOL"
+	VizTypeTscircuit VizType = "TSCIRCUIT"
+	VizTypeMatterjs  VizType = "MATTERJS"
+)
+
+var AllVizType = []VizType{
+	VizTypeManim,
+	VizTypeThreedmol,
+	VizTypeTscircuit,
+	VizTypeMatterjs,
+}
+
+func (e VizType) IsValid() bool {
+	switch e {
+	case VizTypeManim, VizTypeThreedmol, VizTypeTscircuit, VizTypeMatterjs:
+		return true
+	}
+	return false
+}
+
+func (e VizType) String() string {
+	return string(e)
+}
+
+func (e *VizType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = VizType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid VizType", str)
+	}
+	return nil
+}
+
+func (e VizType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *VizType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e VizType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}

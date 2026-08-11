@@ -13,6 +13,14 @@ import "./styles/index.css";
 const queryClient = new QueryClient();
 const router = createRouter({ routeTree });
 
+window.addEventListener("unhandledrejection", (event) => {
+  const reason = event.reason instanceof Error ? event.reason.message : String(event.reason ?? "");
+  // Prevents the browser's default console noise and routes the rejection to a
+  // single observable place so nothing fails silently in production.
+  event.preventDefault();
+  console.error("[unhandledrejection]", reason);
+});
+
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;

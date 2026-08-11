@@ -336,6 +336,24 @@ export const PUBLISH_WAVE_MUTATION = `
   }
 ` as const;
 
+export const DELETE_COURSE_MUTATION = `
+  mutation DeleteCourse($id: ID!) {
+    deleteCourse(id: $id)
+  }
+` as const;
+
+export const DELETE_LESSON_MUTATION = `
+  mutation DeleteLesson($id: ID!) {
+    deleteLesson(id: $id)
+  }
+` as const;
+
+export const DELETE_WAVE_MUTATION = `
+  mutation DeleteWave($id: ID!) {
+    deleteWave(id: $id)
+  }
+` as const;
+
 export const ACHIEVEMENTS_QUERY = `
   query GetAchievements {
     achievements {

@@ -18,6 +18,8 @@ graphify-out/
 # IDE
 .idea/
 .vscode/
+!.vscode/mcp.json
+!frontend/.vscode/mcp.json
 *.swp
 *.swo
 *~
@@ -36,6 +38,7 @@ logs/
 
 # Test artifacts
 frontend/test-results/
+frontend/.audit-shots/
 
 # Test coverage
 coverage/
@@ -69,7 +72,12 @@ infra/gcp/terraform/tfplan
 
 # Kubernetes Secrets
 infra/k8s/secret.yaml
+# Temporary & Audit Directories
 .audit/
+.opencode/
 
 # Go build artifacts
 scripts/tools/**/rotate-*
+
+# Local scratch (Pi agent work, temp files)
+.tmp/

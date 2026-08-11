@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { BookOpen, Home, Search } from "lucide-react";
+import { BookOpen, Home } from "lucide-react";
+import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_notFound" as never)({
@@ -16,15 +17,15 @@ export function NotFoundPage() {
         transition={{ duration: 0.4 }}
         className="space-y-6"
       >
-        {/* Big 404 */}
-        <div className="relative">
-          <p className="text-[10rem] font-black leading-none text-muted/30 select-none">404</p>
+        {/* Helmet 404 Mascot */}
+        <div className="relative flex flex-col items-center justify-center">
+          <p className="text-[9rem] font-black leading-none text-muted/30 select-none">404</p>
           <motion.div
             className="absolute inset-0 flex items-center justify-center"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+            animate={{ y: [0, -6, 0] }}
+            transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
           >
-            <Search className="h-20 w-20 text-primary/40" />
+            <HelmetCompanion size="lg" mood="hmm" gaze={{ x: 8, y: -6 }} />
           </motion.div>
         </div>
 

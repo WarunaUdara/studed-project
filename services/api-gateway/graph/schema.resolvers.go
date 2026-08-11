@@ -36,10 +36,16 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*
 	}
 	setAuthCookies(ctx, payload.AccessToken, payload.RefreshToken)
 
-	// Advance the daily-login streak; streak failures never block login.
+	// Advance the daily-login streak and attach current XP, matching what `me`
+	// returns. Without the XP lookup the client stores totalXp=0 at sign-in and
+	// renders 0 until the first `me` query lands. Gamification failures never
+	// block login.
 	if payload.User != nil {
 		if streak, err := r.GamificationClient.GetUserStreak(ctx, payload.User.ID); err == nil {
 			payload.User.Streak = streak
+		}
+		if totalXp, err := r.GamificationClient.GetUserXp(ctx, payload.User.ID); err == nil {
+			payload.User.TotalXp = totalXp
 		}
 	}
 
@@ -139,6 +145,22 @@ func (r *mutationResolver) PublishCourse(ctx context.Context, id string) (*model
 	return r.CourseClient.PublishCourse(ctx, userCtx.UserID, id)
 }
 
+// DeleteCourse is the resolver for the deleteCourse field.
+func (r *mutationResolver) DeleteCourse(ctx context.Context, id string) (bool, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return false, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return false, err
+	}
+
+	if err := r.CourseClient.DeleteCourse(ctx, userCtx.UserID, id); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // CreateLesson is the resolver for the createLesson field.
 func (r *mutationResolver) CreateLesson(ctx context.Context, courseID string, input model.CreateLessonInput) (*model.Lesson, error) {
 	userCtx, err := requireUser(ctx)
@@ -178,6 +200,22 @@ func (r *mutationResolver) PublishLesson(ctx context.Context, id string) (*model
 	return r.CourseClient.PublishLesson(ctx, userCtx.UserID, id)
 }
 
+// DeleteLesson is the resolver for the deleteLesson field.
+func (r *mutationResolver) DeleteLesson(ctx context.Context, id string) (bool, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return false, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return false, err
+	}
+
+	if err := r.CourseClient.DeleteLesson(ctx, userCtx.UserID, id); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // CreateWave is the resolver for the createWave field.
 func (r *mutationResolver) CreateWave(ctx context.Context, lessonID string, input model.CreateWaveInput) (*model.Wave, error) {
 	userCtx, err := requireUser(ctx)
@@ -215,6 +253,22 @@ func (r *mutationResolver) PublishWave(ctx context.Context, id string) (*model.W
 	}
 
 	return r.CourseClient.PublishWave(ctx, userCtx.UserID, id)
+}
+
+// DeleteWave is the resolver for the deleteWave field.
+func (r *mutationResolver) DeleteWave(ctx context.Context, id string) (bool, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return false, err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return false, err
+	}
+
+	if err := r.CourseClient.DeleteWave(ctx, userCtx.UserID, id); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // SubmitWaveAnswers is the resolver for the submitWaveAnswers field.
@@ -349,6 +403,46 @@ func (r *mutationResolver) TranslateContent(ctx context.Context, content string,
 	return r.AIClient.TranslateContent(ctx, content, targetLanguage)
 }
 
+// GenerateVisualization is the resolver for the generateVisualization field.
+func (r *mutationResolver) GenerateVisualization(ctx context.Context, concept string, vizType model.VizType, grade *string) (string, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return "", err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return "", err
+	}
+	if r.AIClient == nil {
+		return "", errors.New("AI service is not configured")
+	}
+
+	gradeValue := ""
+	if grade != nil {
+		gradeValue = *grade
+	}
+	return r.AIClient.GenerateVisualization(ctx, concept, vizTypeToService(vizType), gradeValue)
+}
+
+// AnalyzeImage is the resolver for the analyzeImage field.
+func (r *mutationResolver) AnalyzeImage(ctx context.Context, imageBase64 string, prompt *string) (string, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return "", err
+	}
+	if err := requireEducator(userCtx); err != nil {
+		return "", err
+	}
+	if r.AIClient == nil {
+		return "", errors.New("AI service is not configured")
+	}
+
+	promptValue := ""
+	if prompt != nil {
+		promptValue = *prompt
+	}
+	return r.AIClient.AnalyzeImage(ctx, imageBase64, promptValue)
+}
+
 // CreateSubscription is the resolver for the createSubscription field.
 func (r *mutationResolver) CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput) (*model.UserSubscription, error) {
 	userCtx, err := requireUser(ctx)
@@ -449,7 +543,16 @@ func (r *queryResolver) Courses(ctx context.Context, filter *model.CourseFilter,
 		filter.IsPublished = &published
 	}
 
-	return r.CourseClient.ListCourses(ctx, filter, educatorID)
+	conn, err := r.CourseClient.ListCourses(ctx, filter, educatorID)
+	if err != nil {
+		return nil, err
+	}
+	for _, edge := range conn.Edges {
+		if edge != nil {
+			r.populateLessons(ctx, edge.Node)
+		}
+	}
+	return conn, nil
 }
 
 // MyEnrollments is the resolver for the myEnrollments field.
@@ -465,6 +568,7 @@ func (r *queryResolver) MyEnrollments(ctx context.Context) ([]*model.Course, err
 	}
 
 	for _, course := range courses {
+		r.populateLessons(ctx, course)
 		progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, course.ID)
 		course.MyProgress = progress
 		r.populateWavesProgress(ctx, userCtx.UserID, course)
@@ -475,17 +579,14 @@ func (r *queryResolver) MyEnrollments(ctx context.Context) ([]*model.Course, err
 
 // Course is the resolver for the course field.
 func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, error) {
-	userCtx, err := requireUser(ctx)
-	if err != nil {
-		return nil, err
-	}
+	userCtx, ok := middleware.UserFromContext(ctx)
 
 	course, err := r.CourseClient.GetCourseWithLessons(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	isEducatorOrAdmin := userCtx.Role == "EDUCATOR" || userCtx.Role == "HEAD_EDUCATOR" || userCtx.Role == "ADMIN"
+	isEducatorOrAdmin := ok && (userCtx.Role == "EDUCATOR" || userCtx.Role == "HEAD_EDUCATOR" || userCtx.Role == "ADMIN")
 	if isEducatorOrAdmin {
 		if userCtx.Role != "ADMIN" {
 			if course.Educator == nil || course.Educator.ID != userCtx.UserID {
@@ -515,11 +616,15 @@ func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, e
 			}
 		}
 		course.Lessons = publishedLessons
-		r.populateWavesProgress(ctx, userCtx.UserID, course)
+		if ok {
+			r.populateWavesProgress(ctx, userCtx.UserID, course)
+		}
 	}
 
-	progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, id)
-	course.MyProgress = progress
+	if ok {
+		progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, id)
+		course.MyProgress = progress
+	}
 
 	return course, nil
 }

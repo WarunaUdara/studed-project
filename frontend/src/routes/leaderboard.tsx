@@ -281,7 +281,7 @@ function LeaderboardPage() {
                             {entry.rank}
                           </span>
                           <span className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs font-serif font-bold shrink-0">
-                            {entry.user.fullName[0]}
+                            {privateLeaderboardName(entry.user.fullName)[0] ?? "S"}
                           </span>
                           <div className="min-w-0">
                             <p

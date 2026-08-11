@@ -13,7 +13,7 @@ type Wave struct {
 	Title             string          `gorm:"not null"`
 	SequenceOrder     int32           `gorm:"not null"`
 	XPReward          int32           `gorm:"not null;default:0"`
-	MaxReattempts     int32           `gorm:"not null;default:3"`
+	MaxReattempts     int32           `gorm:"not null;default:0"`
 	PassingThreshold  int32           `gorm:"not null;default:50"`
 	EstimatedDuration int32           `gorm:"not null;default:0"`
 	Difficulty        string          `gorm:"not null;default:'MEDIUM'"`

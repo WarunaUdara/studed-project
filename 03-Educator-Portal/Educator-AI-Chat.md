@@ -247,3 +247,136 @@ After generation, educators can:
 - [[3Dmol.js Integration]] — Chemistry visualization block details.
 - [[tscircuit Integration]] — Electronics simulation block details.
 - [[Matter.js Integration]] — Physics simulation block details.
+
+---
+
+## Implemented: Wave Editor AI Assistant (v1)
+
+> [!note] Status
+> The conversational assistant described above is **partially implemented**. The
+> production path is an **agentic tool-calling loop** in `services/ai-service`
+> (`internal/agent/`) with an SSE proxy through the API gateway — see
+> `docs/AGENTIC-AI-SERVICE.md` for the architecture. Photo upload is planned
+> but not yet wired; the assistant today works from text prompts and wave
+> context.
+
+### What works end-to-end
+
+- **`AIAssistantPanel`** docks on the **right side of the Puck wave editor**
+  (`/educator/courses/{course}/lessons/{lesson}/waves/{wave}`) inside a
+  custom resizable dock (drag handle, 320–560px). The Puck editor owns the
+  full remaining width — no tab chrome — so the canvas is as large as the
+  screen allows. Opening the dock shrinks the editor (content is never
+  dropped); a header toggle closes it.
+- **Edit / Preview toggle** in the header: Preview renders the exact
+  student experience (`WavePreview` → `LearnBlockRenderer` + static quiz
+  layout) so the educator sees what learners get before publishing.
+- Prompts stream through `POST /ai/chat` (gateway SSE proxy → ai-service
+  `/v1/agent/stream`) with live **plan → tool_start → tool_end → delta →
+  done** events, streaming text, and tool chips ("Generating Learn blocks",
+  "Creating interactive visualization", ...).
+- The agent receives **`waveContext`** — a summary of the wave's existing
+  Learn/Evaluate blocks — so prompts like "add 2 MCQs to the existing
+  section" work against current content.
+- **Blocks auto-insert on generation**: the moment the agent's `done` event
+  carries blocks, they are appended to the live editor. The insert is
+  **non-disruptive**: data is pushed into Puck's internal store via a
+  `usePuck` bridge (`pushPuckData`) rather than remounting the editor, so
+  zoom level, selection, and undo history are preserved while the agent
+  works (verified live). The chat shows a human summary ("Added 2 Learn,
+  1 Evaluate block(s)") instead of block syntax.
+- **All block types supported**: Text, Image, Video, Callout, Example,
+  MathViz (formula), VizBlock (Manim / 3Dmol / tscircuit / Matter.js),
+  MCQ, Fill-in-the-blank, True/False, Numeric, Drag-and-drop — with full
+  bidirectional serialization between Puck items and the GraphQL wave input.
+  VizBlock renders the **same interactive components students see** right
+  inside the editor canvas:
+  - **Matter.js physics** (`MatterPhysicsBlock`): config-driven engine
+    honoring the full documented world_config — circle/rectangle bodies
+    with physical props, static floors, gravity x/y/scale, constraints
+    (pendulum/spring pulls), editable parameter sliders, live + computed
+    measurements, and educational overlays (force arrows, velocity
+    arrows, trajectory trails, energy bar).
+  - **3Dmol molecules** (`Mol3DBlock`): self-contained CSS-3D viewer —
+    SMILES → 3D atoms/bonds via a curated molecule library (H2O, CO2,
+    CH4, NH3, benzene, ethanol) plus a generic element parser fallback,
+    style switcher (Ball & Stick / Spacefill / Wireframe), surface
+    toggle, config annotations (e.g. "104.5° bond angle"), drag-to-
+    rotate, zoom, hover labels, click-to-identify.
+  - The AI prompts emit the **full documented schemas** for both families
+    (constraints, editable_params, measurements, overlays for physics;
+    style, surface, camera, interactivity, annotations for chemistry),
+    and the agent's done event now carries tool-produced blocks even when
+    the model omits the JSON echo (verified live: generated water
+    molecule + pendulum land in the editor with all controls).
+  - VizBlock editor fields include quick Physics Scenario select and
+    Molecule SMILES inputs merged into the config JSON at render time,
+    plus the advanced raw-config textarea.
+- **Puck themed to the app**: `src/styles/puck-theme.css` maps Puck's CSS
+  custom properties onto the StudEd OKLCH tokens, so the editor chrome
+  (blocks palette, header, property fields, actionbar) blends with the
+  design system in light and dark mode.
+- **Notion-style left sidebar collapse**: a toggle button in Puck's header
+  collapses the blocks/outline palette to a narrow icon rail (smooth
+  transition) and expands it back.
+- **Notion-style site sidebar collapse**: the educator portal's own left
+  nav (Dashboard / My Courses / Leaderboard / Achievements / Settings /
+  Log out) collapses to a narrow icon rail via a toggle in the profile
+  card, persisted in localStorage so the choice survives navigation and
+  reloads — collapsing it gives the wave editor the full remaining width.
+- **Request fidelity**: the agent system prompt, tool descriptions, and
+  per-tool prompts enforce generating exactly the block types and count
+  the educator requested (verified live: "one true/false question"
+  produces exactly one `true_false` block; "2 learn blocks" produces
+  exactly two).
+- **Conversation**: the agent receives up to 8 prior chat turns, so
+  follow-ups ("make it simpler", "now add a numeric question too") are
+  answered in context instead of in isolation.
+- **Model thoughts**: the agent's reasoning is streamed as a `thinking`
+  event and shown in a collapsible "View thoughts" section per assistant
+  message (partial visibility — the summary of what the model considered
+  before acting).
+- **Full markdown + LaTeX in chat**: assistant messages render with
+  react-markdown + GFM (tables, task lists, strikethrough) and KaTeX
+  math ($...$ inline, $$...$$ block).
+- **Edit/delete existing blocks**: the new `manageBlocks` tool upserts
+  (update-or-add by id) and deletes blocks; the agent accumulates ops
+  into the done event and the editor applies them in place via
+  `applyBlockOpsToData` (verified live: edited the `summary` block text
+  and removed duplicate question blocks, then Save persisted the result).
+- **Editor ergonomics**: the wave editor spans the full viewport (shell
+  padding cancelled, `100dvh - navbar`), so Puck's canvas scrolls
+  internally and bottom blocks are always reachable; Puck opens in
+  full-width viewport with only the full-width control; opening the AI
+  assistant auto-collapses Puck's blocks panel; Edit/Preview is a
+  segmented shadcn ButtonGroup; Puck's internal Publish button is
+  removed so the header has one Save (persist) and one Publish (go
+  live) action.
+
+### Frontend files
+
+| File | Role |
+|------|------|
+| `src/lib/ai-chat.ts` | SSE client (fetch + ReadableStream, no library) |
+| `src/stores/ai-assistant.ts` | Chat state + auto-insert dispatch |
+| `src/components/educator/AIAssistantPanel.tsx` | Chat panel UI (multi-image upload) |
+| `src/components/educator/WavePreview.tsx` | Student-facing preview mode |
+| `src/components/puck-blocks/puck-config.tsx` | All block types + serialization |
+| `src/routes/educator/_layout/...waves.$waveId.tsx` | Full-screen docked layout |
+| `vite.config.ts` | `/ai` proxy to the gateway |
+
+### Backend surface
+
+- Gateway: `POST /ai/chat` (educator-only, unbuffered SSE proxy), plus
+  GraphQL `generateVisualization(concept, vizType, grade)` and
+  `analyzeImage(imageBase64, prompt)` mutations (VizType enum:
+  MANIM / THREEDMOL / TSCIRCUIT / MATTERJS).
+- Request timeout is env-configurable (`REQUEST_TIMEOUT_SECONDS`, default
+  100s) so AI generation (20–90s) no longer dies mid-flight; the `/ai/chat`
+  stream is exempt by design.
+
+### Known gaps (next iterations)
+
+- Photo upload → vision analysis is not wired into the panel; `analyzeImage`
+  exists at the API level.
+- Chat history is session-only (not persisted per wave).

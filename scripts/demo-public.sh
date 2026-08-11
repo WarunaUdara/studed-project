@@ -9,9 +9,9 @@ echo "========================================================"
 echo "🚀 StudEd Smart Public Demo Ingress Automation"
 echo "========================================================"
 
-# 1. Verify Docker daemon
-if ! docker info >/dev/null 2>&1; then
-  echo "❌ Error: Docker daemon is not running. Start Docker Desktop and try again."
+# 1. Verify Container Engine daemon (Docker or Podman)
+if ! docker info >/dev/null 2>&1 && ! podman info >/dev/null 2>&1; then
+  echo "❌ Error: Container engine (Docker or Podman) is not running. Please start it and try again."
   exit 1
 fi
 

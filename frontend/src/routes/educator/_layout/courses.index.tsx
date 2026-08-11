@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CheckCircle, Eye, Plus, Send, Sparkles } from "lucide-react";
+import { CheckCircle, Eye, Loader2, Plus, Send, Sparkles, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
-import { COURSES_QUERY, PUBLISH_COURSE_MUTATION } from "@/graphql/courses";
+import { COURSES_QUERY, DELETE_COURSE_MUTATION, PUBLISH_COURSE_MUTATION } from "@/graphql/courses";
 import { sanitizeGraphQLError } from "@/lib/errors";
 
 interface CourseItem {
@@ -30,7 +30,9 @@ function EducatorCoursesPage() {
     variables: { filter: {} },
   });
   const [publishResult, publishCourse] = useMutation(PUBLISH_COURSE_MUTATION);
+  const [deleteResult, deleteCourse] = useMutation(DELETE_COURSE_MUTATION);
   const [publishingId, setPublishingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const courses = useMemo(
     () => data?.courses?.edges?.map((edge: { node: CourseItem }) => edge.node) ?? [],
@@ -46,6 +48,24 @@ function EducatorCoursesPage() {
       toast({ type: "error", title: e.title, message: e.message });
     } else {
       toast({ type: "success", title: "Published", message: "Course is now visible to students." });
+      reexecuteQuery({ requestPolicy: "network-only" });
+    }
+  };
+
+  const handleDelete = async (id: string, title: string) => {
+    const confirmed = window.confirm(
+      `Delete course "${title}"? This will also delete all its lessons and waves. This cannot be undone.`,
+    );
+    if (!confirmed) return;
+
+    setDeletingId(id);
+    const result = await deleteCourse({ id });
+    setDeletingId(null);
+    if (result.error) {
+      const e = sanitizeGraphQLError(result.error);
+      toast({ type: "error", title: e.title, message: e.message });
+    } else {
+      toast({ type: "success", title: "Deleted", message: "Course deleted." });
       reexecuteQuery({ requestPolicy: "network-only" });
     }
   };
@@ -165,6 +185,20 @@ function EducatorCoursesPage() {
                         <CheckCircle className="h-3.5 w-3.5" /> Live
                       </span>
                     )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      aria-label={`Delete course ${course.title}`}
+                      disabled={deletingId === course.id || deleteResult.fetching}
+                      onClick={() => handleDelete(course.id, course.title)}
+                      className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      {deletingId === course.id ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-3.5 w-3.5" />
+                      )}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

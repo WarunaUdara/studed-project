@@ -2,18 +2,22 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"testing"
 	"time"
 
+	"github.com/studed/gamification-service/internal/events"
 	"github.com/studed/gamification-service/internal/model"
 	"github.com/studed/gamification-service/internal/repository"
 	gampb "github.com/studed/shared/proto/gen/go/gamification"
 )
 
 type fakeXpRepo struct {
-	totalXp map[string]int32
-	awarded map[string]bool
+	totalXp       map[string]int32
+	awarded       map[string]bool
+	addXpErr      error
+	hasAwardedErr error
 }
 
 func newFakeXpRepo() *fakeXpRepo {
@@ -25,6 +29,9 @@ func (r *fakeXpRepo) GetOrCreateUserXp(ctx context.Context, userID string) (*mod
 }
 
 func (r *fakeXpRepo) AddXp(ctx context.Context, userID string, amount int32, reason, sourceID string) (int32, error) {
+	if r.addXpErr != nil {
+		return 0, r.addXpErr
+	}
 	if reason == "wave_completed" && r.awarded[userID+":"+sourceID] {
 		return r.totalXp[userID], nil
 	}
@@ -48,6 +55,9 @@ func (r *fakeXpRepo) GetAllUserXp(ctx context.Context) ([]model.UserXp, error) {
 }
 
 func (r *fakeXpRepo) HasAwardedXp(ctx context.Context, userID, reason, sourceID string) (bool, error) {
+	if r.hasAwardedErr != nil {
+		return false, r.hasAwardedErr
+	}
 	if reason != "wave_completed" {
 		return false, nil
 	}
@@ -69,8 +79,9 @@ func (r *fakeLeaderboardRepo) GetRank(ctx context.Context, userID string, scope,
 }
 
 type fakeAchievementRepo struct {
-	unlocked map[string]map[string]bool
-	streaks  map[string]*model.UserStreak
+	unlocked  map[string]map[string]bool
+	streaks   map[string]*model.UserStreak
+	unlockErr error
 }
 
 func newFakeAchievementRepo() *fakeAchievementRepo {
@@ -81,6 +92,9 @@ func newFakeAchievementRepo() *fakeAchievementRepo {
 }
 
 func (r *fakeAchievementRepo) UnlockAchievement(ctx context.Context, userID, achievementID string) (bool, error) {
+	if r.unlockErr != nil {
+		return false, r.unlockErr
+	}
 	if r.unlocked[userID] == nil {
 		r.unlocked[userID] = make(map[string]bool)
 	}
@@ -118,6 +132,18 @@ func newTestService() (*gamificationService, *fakeXpRepo, *fakeAchievementRepo) 
 	achievementRepo := newFakeAchievementRepo()
 	svc := NewGamificationService(xpRepo, &fakeLeaderboardRepo{}, achievementRepo).(*gamificationService)
 	return svc, xpRepo, achievementRepo
+}
+
+type fakePublisher struct {
+	xpErr error
+}
+
+func (p *fakePublisher) PublishXpAwarded(ctx context.Context, e events.XpAwardedEvent) error {
+	return p.xpErr
+}
+
+func (p *fakePublisher) PublishAchievementUnlocked(ctx context.Context, e events.AchievementUnlockedEvent) error {
+	return nil
 }
 
 func TestCalculateAndAwardXp_BelowPassingThreshold(t *testing.T) {
@@ -364,5 +390,59 @@ func TestGetUserStreak_GapResetsStreak(t *testing.T) {
 	}
 	if resp.LongestStreak != 3 {
 		t.Fatalf("longest streak should be preserved, got %d", resp.LongestStreak)
+	}
+}
+
+func TestCalculateAndAwardXp_SurfacesAddXpError(t *testing.T) {
+	svc, xpRepo, _ := newTestService()
+	xpRepo.addXpErr = errors.New("db unavailable")
+
+	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 100, 100, 70); err == nil {
+		t.Fatal("expected the add-xp error to be surfaced")
+	}
+	if xpRepo.totalXp["u1"] != 0 {
+		t.Fatalf("no xp should be recorded when the repository fails, got %d", xpRepo.totalXp["u1"])
+	}
+}
+
+func TestCalculateAndAwardXp_SurfacesAwardCheckError(t *testing.T) {
+	svc, xpRepo, _ := newTestService()
+	xpRepo.hasAwardedErr = errors.New("db unavailable")
+
+	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 100, 100, 70); err == nil {
+		t.Fatal("expected the award-once check error to be surfaced")
+	}
+}
+
+func TestCalculateAndAwardXp_AchievementErrorsDoNotFailAward(t *testing.T) {
+	svc, xpRepo, achievementRepo := newTestService()
+	achievementRepo.unlockErr = errors.New("achievement db unavailable")
+
+	resp, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 100, 100, 70)
+	if err != nil {
+		t.Fatalf("achievement failures must not fail the xp award: %v", err)
+	}
+	if resp.XpEarned != 100 || resp.TotalXp != 100 {
+		t.Fatalf("expected the full xp award despite achievement failures, got %+v", resp)
+	}
+	if xpRepo.totalXp["u1"] != 100 {
+		t.Fatalf("xp repo must keep the award, got %d", xpRepo.totalXp["u1"])
+	}
+}
+
+func TestCalculateAndAwardXp_PublisherErrorDoesNotFailAward(t *testing.T) {
+	xpRepo := newFakeXpRepo()
+	pub := &fakePublisher{xpErr: errors.New("redis unavailable")}
+	svc := NewGamificationService(xpRepo, &fakeLeaderboardRepo{}, newFakeAchievementRepo(), WithEventPublisher(pub)).(*gamificationService)
+
+	resp, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 100, 100, 70)
+	if err != nil {
+		t.Fatalf("publish failures must not fail the xp award: %v", err)
+	}
+	if resp.XpEarned != 100 || resp.TotalXp != 100 {
+		t.Fatalf("expected the full xp award despite publish failure, got %+v", resp)
+	}
+	if xpRepo.totalXp["u1"] != 100 {
+		t.Fatalf("xp repo must keep the award, got %d", xpRepo.totalXp["u1"])
 	}
 }

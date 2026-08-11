@@ -20,6 +20,7 @@ type GamificationClient struct {
 
 func NewGamificationClient(addr, serviceToken string) (*GamificationClient, error) {
 	interceptors := []grpc.UnaryClientInterceptor{
+		grpcauth.UnaryClientTraceInterceptor(),
 		grpcauth.UnaryClientTimeoutInterceptor(5 * time.Second),
 	}
 	if serviceToken != "" {
@@ -77,14 +78,26 @@ func (c *GamificationClient) GetLeaderboard(ctx context.Context, scope model.Lea
 
 	entries := make([]*model.LeaderboardEntry, len(resp.Entries))
 	for i, e := range resp.Entries {
+		name := strings.TrimSpace(e.FullName)
+		if name == "" || isUUIDString(name) {
+			name = "Student Scholar"
+		}
+		userID := e.UserId
+		if isUUIDString(userID) {
+			userID = fmt.Sprintf("anon-rank-%d", e.Rank)
+		}
 		entries[i] = &model.LeaderboardEntry{
 			Rank:    int(e.Rank),
-			User:    &model.User{ID: e.UserId, FullName: e.FullName},
+			User:    &model.User{ID: userID, FullName: name},
 			TotalXp: int(e.TotalXp),
 		}
 	}
 
 	return entries, nil
+}
+
+func isUUIDString(s string) bool {
+	return len(s) == 36 && strings.Count(s, "-") == 4
 }
 
 func (c *GamificationClient) UpdateLeaderboard(ctx context.Context, userID, fullName string, totalXp int, scope model.LeaderboardScope, courseID string, grade *model.Grade) (*gampb.UpdateLeaderboardResponse, error) {

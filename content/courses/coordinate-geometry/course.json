@@ -1,0 +1,719 @@
+{
+  "slug": "coordinate-geometry",
+  "title": "Coordinate Geometry",
+  "description": "Master the 2D Cartesian plane, coordinate pairs, quadrants, linear graphs, and gridline distances through interactive visual discovery.",
+  "gradeLevel": "G10",
+  "subject": "Mathematics",
+  "price": 0,
+  "version": 2,
+  "lessons": [
+    {
+      "title": "Level 1: Coordinates",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Coordinates & Origin",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 150,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 12,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-cg1-w1-txt",
+              "type": "text",
+              "content": "A coordinate plane lets us describe any position with two numbers: how far right (or left) we go, then how far up (or down) we go. The two lines that divide the plane are the x-axis (horizontal) and the y-axis (vertical). They meet at the origin, point (0, 0)."
+            },
+            {
+              "id": "lb-cg1-w1-plane",
+              "type": "coordinate_plane",
+              "content": "Explore the axes interactively.",
+              "metadata": {
+                "title": "Meet the Axes",
+                "steps": [
+                  {
+                    "id": "s1",
+                    "title": "1. Move Right (x-axis)",
+                    "instruction": "Move the point 3 grid steps to the right along the x-axis.",
+                    "mode": "move_axis",
+                    "axis": "x",
+                    "initial": { "x": 0, "y": 0 },
+                    "target": { "x": 3, "y": 0 },
+                    "explanation": "The horizontal line is the x-axis. Moving right increases the x-coordinate from 0 to 3."
+                  },
+                  {
+                    "id": "s2",
+                    "title": "2. Move Up (y-axis)",
+                    "instruction": "Now move the point 2 grid steps up along the y-axis.",
+                    "mode": "move_axis",
+                    "axis": "y",
+                    "initial": { "x": 0, "y": 0 },
+                    "target": { "x": 0, "y": 2 },
+                    "explanation": "The vertical line is the y-axis. Moving up increases the y-coordinate from 0 to 2."
+                  },
+                  {
+                    "id": "s3",
+                    "title": "3. Both Directions",
+                    "instruction": "Move the point 3 steps right and 2 steps up to reach (3, 2).",
+                    "mode": "move_plane",
+                    "initial": { "x": 0, "y": 0 },
+                    "target": { "x": 3, "y": 2 },
+                    "explanation": "Combine the axes: 3 steps right sets x = 3, then 2 steps up sets y = 2. The pair is (3, 2)."
+                  }
+                ]
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-cg1-w1-q1",
+              "type": "multiple_choice",
+              "question": "What are the coordinates of the origin on a 2D Cartesian plane?",
+              "options": ["(0, 0)", "(1, 1)", "(0, 1)", "(1, 0)"],
+              "correctAnswer": "(0, 0)",
+              "explanation": "The origin is point (0, 0) where the x-axis and y-axis intersect."
+            },
+            {
+              "id": "eb-cg1-w1-q2",
+              "type": "multiple_choice",
+              "question": "Which axis is horizontal?",
+              "options": ["The x-axis", "The y-axis", "The origin", "Neither axis"],
+              "correctAnswer": "The x-axis",
+              "explanation": "The x-axis runs horizontally (left to right); the y-axis runs vertically."
+            }
+          ]
+        },
+        {
+          "title": "2. Moving Only Right (x-axis)",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 10,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-cg1-w2-txt",
+              "type": "text",
+              "content": "On the x-axis you can only move right or left. Moving right increases your x-coordinate while the y-coordinate stays 0."
+            },
+            {
+              "id": "lb-cg1-w2-plane",
+              "type": "coordinate_plane",
+              "content": "Walk the x-axis.",
+              "metadata": {
+                "title": "Walk the x-Axis",
+                "steps": [
+                  {
+                    "id": "s1",
+                    "title": "1. Walk 4 Right",
+                    "instruction": "Move the point 4 grid steps to the right.",
+                    "mode": "move_axis",
+                    "axis": "x",
+                    "initial": { "x": 0, "y": 0 },
+                    "target": { "x": 4, "y": 0 },
+                    "explanation": "4 steps right takes x from 0 to 4. The y-coordinate stays 0."
+                  },
+                  {
+                    "id": "s2",
+                    "title": "2. Walk 5 Right",
+                    "instruction": "Move the point 5 more grid steps to the right.",
+                    "mode": "move_axis",
+                    "axis": "x",
+                    "initial": { "x": 0, "y": 0 },
+                    "target": { "x": 5, "y": 0 },
+                    "explanation": "5 steps right takes x from 0 to 5, so you land at (5, 0)."
+                  },
+                  {
+                    "id": "s3",
+                    "title": "3. Spot (4, 0)",
+                    "instruction": "Select the point that is 4 steps right of the origin.",
+                    "mode": "select_point",
+                    "target": { "x": 4, "y": 0 },
+                    "candidatePoints": [
+                      { "x": 2, "y": 0 },
+                      { "x": 4, "y": 0 },
+                      { "x": 4, "y": 3 },
+                      { "x": 1, "y": 2 }
+                    ],
+                    "explanation": "4 steps right with no up or down lands on (4, 0)."
+                  }
+                ]
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-cg1-w2-q1",
+              "type": "multiple_choice",
+              "question": "Starting at the origin, you move 4 steps right. Where are you?",
+              "options": ["(4, 0)", "(0, 4)", "(4, 4)", "(2, 2)"],
+              "correctAnswer": "(4, 0)",
+              "explanation": "Moving right only changes the x-coordinate, so you reach (4, 0)."
+            },
+            {
+              "id": "eb-cg1-w2-q2",
+              "type": "multiple_choice",
+              "question": "What is the y-coordinate of every point on the x-axis?",
+              "options": ["0", "1", "It changes", "There is no y-coordinate"],
+              "correctAnswer": "0",
+              "explanation": "Every point on the x-axis has a y-coordinate of 0."
+            }
+          ]
+        },
+        {
+          "title": "3. Moving Only Up (y-axis)",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 10,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-cg1-w3-txt",
+              "type": "text",
+              "content": "On the y-axis you can only move up or down. Moving up increases your y-coordinate while the x-coordinate stays 0."
+            },
+            {
+              "id": "lb-cg1-w3-plane",
+              "type": "coordinate_plane",
+              "content": "Climb the y-axis.",
+              "metadata": {
+                "title": "Climb the y-Axis",
+                "steps": [
+                  {
+                    "id": "s1",
+                    "title": "1. Climb 3",
+                    "instruction": "Move the point 3 grid steps up.",
+                    "mode": "move_axis",
+                    "axis": "y",
+                    "initial": { "x": 0, "y": 0 },
+                    "target": { "x": 0, "y": 3 },
+                    "explanation": "3 steps up takes y from 0 to 3. The x-coordinate stays 0."
+                  },
+                  {
+                    "id": "s2",
+                    "title": "2. Climb 5",
+                    "instruction": "Move the point 5 grid steps up.",
+                    "mode": "move_axis",
+                    "axis": "y",
+                    "initial": { "x": 0, "y": 0 },
+                    "target": { "x": 0, "y": 5 },
+                    "explanation": "5 steps up takes y from 0 to 5, so you land at (0, 5)."
+                  },
+                  {
+                    "id": "s3",
+                    "title": "3. Spot (0, 2)",
+                    "instruction": "Select the point that is 2 steps up from the origin.",
+                    "mode": "select_point",
+                    "target": { "x": 0, "y": 2 },
+                    "candidatePoints": [
+                      { "x": 2, "y": 0 },
+                      { "x": 0, "y": 2 },
+                      { "x": 3, "y": 3 },
+                      { "x": 0, "y": 5 }
+                    ],
+                    "explanation": "2 steps up with no right or left lands on (0, 2)."
+                  }
+                ]
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-cg1-w3-q1",
+              "type": "multiple_choice",
+              "question": "Starting at the origin, you move 3 steps up. Where are you?",
+              "options": ["(0, 3)", "(3, 0)", "(3, 3)", "(0, 0)"],
+              "correctAnswer": "(0, 3)",
+              "explanation": "Moving up only changes the y-coordinate, so you reach (0, 3)."
+            },
+            {
+              "id": "eb-cg1-w3-q2",
+              "type": "multiple_choice",
+              "question": "What is the x-coordinate of every point on the y-axis?",
+              "options": ["0", "1", "It changes", "There is no x-coordinate"],
+              "correctAnswer": "0",
+              "explanation": "Every point on the y-axis has an x-coordinate of 0."
+            }
+          ]
+        },
+        {
+          "title": "4. Coordinate Pairs (x, y)",
+          "sequenceOrder": 4,
+          "status": "published",
+          "xpReward": 140,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 12,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-cg1-w4-txt",
+              "type": "text",
+              "content": "Coordinates always come as a pair (x, y). The first number x tells you how far to move right, and the second number y tells you how far to move up. A point is the combination of both moves."
+            },
+            {
+              "id": "lb-cg1-w4-plane",
+              "type": "coordinate_plane",
+              "content": "Reach points in two dimensions.",
+              "metadata": {
+                "title": "Two-Dimensional Moves",
+                "steps": [
+                  {
+                    "id": "s1",
+                    "title": "1. Reach (3, 2)",
+                    "instruction": "Move the point 3 steps right and 2 steps up to reach (3, 2).",
+                    "mode": "move_plane",
+                    "initial": { "x": 0, "y": 0 },
+                    "target": { "x": 3, "y": 2 },
+                    "explanation": "3 steps right sets x = 3, then 2 steps up sets y = 2: the point (3, 2)."
+                  },
+                  {
+                    "id": "s2",
+                    "title": "2. Reach (4, 5)",
+                    "instruction": "Move the point 4 steps right and 5 steps up to reach (4, 5).",
+                    "mode": "move_plane",
+                    "initial": { "x": 0, "y": 0 },
+                    "target": { "x": 4, "y": 5 },
+                    "explanation": "4 steps right sets x = 4, then 5 steps up sets y = 5: the point (4, 5)."
+                  },
+                  {
+                    "id": "s3",
+                    "title": "3. Reach (5, 1)",
+                    "instruction": "Move the point 5 steps right and 1 step up to reach (5, 1).",
+                    "mode": "move_plane",
+                    "initial": { "x": 0, "y": 0 },
+                    "target": { "x": 5, "y": 1 },
+                    "explanation": "5 steps right sets x = 5, then 1 step up sets y = 1: the point (5, 1)."
+                  }
+                ]
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-cg1-w4-q1",
+              "type": "multiple_choice",
+              "question": "If you move 4 steps right and 2 steps up from the origin, what is your coordinate pair?",
+              "options": ["(4, 2)", "(2, 4)", "(4, 0)", "(0, 2)"],
+              "correctAnswer": "(4, 2)",
+              "explanation": "Coordinates are written as (x, y). 4 steps right = 4, 2 steps up = 2, so the pair is (4, 2)."
+            },
+            {
+              "id": "eb-cg1-w4-q2",
+              "type": "multiple_choice",
+              "question": "In the coordinate pair (5, 3), what does the number 5 represent?",
+              "options": [
+                "The x-coordinate (horizontal position)",
+                "The y-coordinate (vertical position)",
+                "The distance from the origin along the diagonal",
+                "The height of the point"
+              ],
+              "correctAnswer": "The x-coordinate (horizontal position)",
+              "explanation": "The first number 5 is the x-coordinate, which measures the horizontal position."
+            }
+          ]
+        },
+        {
+          "title": "5. Plotting Points",
+          "sequenceOrder": 5,
+          "status": "published",
+          "xpReward": 140,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 12,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-cg1-w5-txt",
+              "type": "text",
+              "content": "To plot a point, first go right along the x-axis, then go up along the y-axis. Every coordinate pair (x, y) points to exactly one location on the plane."
+            },
+            {
+              "id": "lb-cg1-w5-plane",
+              "type": "coordinate_plane",
+              "content": "Plot points by matching pairs.",
+              "metadata": {
+                "title": "Plot the Points",
+                "steps": [
+                  {
+                    "id": "s1",
+                    "title": "1. Plot (3, 1)",
+                    "instruction": "Select the point that is 3 steps right and 1 step up from the origin.",
+                    "mode": "select_point",
+                    "target": { "x": 3, "y": 1 },
+                    "candidatePoints": [
+                      { "x": 3, "y": 3 },
+                      { "x": 2, "y": 2 },
+                      { "x": 3, "y": 2 },
+                      { "x": 4, "y": 2 },
+                      { "x": 3, "y": 1 }
+                    ],
+                    "explanation": "3 right gives x = 3, 1 up gives y = 1, so the pair is (3, 1)."
+                  },
+                  {
+                    "id": "s2",
+                    "title": "2. Plot (4, 3)",
+                    "instruction": "Select the point at (4, 3).",
+                    "mode": "select_point",
+                    "target": { "x": 4, "y": 3 },
+                    "candidatePoints": [
+                      { "x": 2, "y": 4 },
+                      { "x": 4, "y": 3 },
+                      { "x": 3, "y": 4 },
+                      { "x": 4, "y": 2 },
+                      { "x": 1, "y": 3 }
+                    ],
+                    "explanation": "The first number is the x-coordinate (horizontal), the second is the y-coordinate (vertical): (4, 3)."
+                  },
+                  {
+                    "id": "s3",
+                    "title": "3. Plot (5, 2)",
+                    "instruction": "Select the point at (5, 2).",
+                    "mode": "select_point",
+                    "target": { "x": 5, "y": 2 },
+                    "candidatePoints": [
+                      { "x": 5, "y": 3 },
+                      { "x": 2, "y": 5 },
+                      { "x": 5, "y": 2 },
+                      { "x": 4, "y": 4 },
+                      { "x": 6, "y": 2 }
+                    ],
+                    "explanation": "5 right and 2 up gives the point (5, 2)."
+                  }
+                ]
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-cg1-w5-q1",
+              "type": "multiple_choice",
+              "question": "Which point is at (4, 3)?",
+              "options": [
+                "4 steps right, 3 steps up",
+                "3 steps right, 4 steps up",
+                "4 steps up, 3 steps right",
+                "7 steps along the diagonal"
+              ],
+              "correctAnswer": "4 steps right, 3 steps up",
+              "explanation": "The pair (4, 3) means 4 steps right first, then 3 steps up."
+            }
+          ]
+        },
+        {
+          "title": "6. Order Matters",
+          "sequenceOrder": 6,
+          "status": "published",
+          "xpReward": 140,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 12,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-cg1-w6-txt",
+              "type": "text",
+              "content": "The order in a coordinate pair matters! (5, 2) is NOT the same as (2, 5). The first number is always the horizontal move; the second is always the vertical move."
+            },
+            {
+              "id": "lb-cg1-w6-plane",
+              "type": "coordinate_plane",
+              "content": "Distinguish swapped pairs.",
+              "metadata": {
+                "title": "Spot the Difference",
+                "steps": [
+                  {
+                    "id": "s1",
+                    "title": "1. Find (5, 2)",
+                    "instruction": "Select the point at (5, 2).",
+                    "mode": "select_point",
+                    "target": { "x": 5, "y": 2 },
+                    "candidatePoints": [
+                      { "x": 2, "y": 5 },
+                      { "x": 5, "y": 2 },
+                      { "x": 5, "y": 5 },
+                      { "x": 2, "y": 2 }
+                    ],
+                    "explanation": "(5, 2) means 5 right first, then 2 up — far from the y-axis."
+                  },
+                  {
+                    "id": "s2",
+                    "title": "2. Find (2, 5)",
+                    "instruction": "Select the point at (2, 5).",
+                    "mode": "select_point",
+                    "target": { "x": 2, "y": 5 },
+                    "candidatePoints": [
+                      { "x": 2, "y": 5 },
+                      { "x": 5, "y": 2 },
+                      { "x": 5, "y": 5 },
+                      { "x": 2, "y": 2 }
+                    ],
+                    "explanation": "(2, 5) means only 2 right, but 5 up — tall and close to the y-axis."
+                  },
+                  {
+                    "id": "s3",
+                    "title": "3. Find (1, 4)",
+                    "instruction": "Select the point at (1, 4).",
+                    "mode": "select_point",
+                    "target": { "x": 1, "y": 4 },
+                    "candidatePoints": [
+                      { "x": 4, "y": 1 },
+                      { "x": 1, "y": 4 },
+                      { "x": 1, "y": 1 },
+                      { "x": 4, "y": 4 }
+                    ],
+                    "explanation": "(1, 4) is 1 right and 4 up; (4, 1) would be 4 right and 1 up."
+                  }
+                ]
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-cg1-w6-q1",
+              "type": "multiple_choice",
+              "question": "Which point is further to the right: (5, 2) or (2, 5)?",
+              "options": ["(5, 2)", "(2, 5)", "Both are equally far right", "They are the same point"],
+              "correctAnswer": "(5, 2)",
+              "explanation": "The first number is the horizontal move, so (5, 2) with x = 5 is further right than (2, 5)."
+            },
+            {
+              "id": "eb-cg1-w6-q2",
+              "type": "multiple_choice",
+              "question": "What does the second number in a coordinate pair tell you?",
+              "options": [
+                "How far up (vertical position)",
+                "How far right (horizontal position)",
+                "The total distance from the origin",
+                "The distance along the x-axis"
+              ],
+              "correctAnswer": "How far up (vertical position)",
+              "explanation": "The second number y is the vertical position: how far up you move."
+            }
+          ]
+        },
+        {
+          "title": "7. Gridline Distance",
+          "sequenceOrder": 7,
+          "status": "published",
+          "xpReward": 150,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 14,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-cg1-w7-txt",
+              "type": "text",
+              "content": "When two points lie on the same horizontal gridline (same y), the distance between them is simply the difference of their x-coordinates: |x2 - x1|. Count the grid steps to check."
+            },
+            {
+              "id": "lb-cg1-w7-plane",
+              "type": "coordinate_plane",
+              "content": "Count distance along gridlines.",
+              "metadata": {
+                "title": "Count the Steps",
+                "steps": [
+                  {
+                    "id": "s1",
+                    "title": "1. Distance of 5",
+                    "instruction": "Observe the horizontal distance from the origin to point (5, 0).",
+                    "mode": "vector_demo",
+                    "initial": { "x": 0, "y": 0 },
+                    "target": { "x": 5, "y": 0 },
+                    "explanation": "The horizontal distance is |5 - 0| = 5 grid steps."
+                  },
+                  {
+                    "id": "s2",
+                    "title": "2. Distance of 4",
+                    "instruction": "Observe the vertical distance from the origin to point (0, 4).",
+                    "mode": "vector_demo",
+                    "initial": { "x": 0, "y": 0 },
+                    "target": { "x": 0, "y": 4 },
+                    "explanation": "The vertical distance is |4 - 0| = 4 grid steps."
+                  },
+                  {
+                    "id": "s3",
+                    "title": "3. Count to (4, 3)",
+                    "instruction": "Observe the horizontal (4) and vertical (3) distances that reach (4, 3).",
+                    "mode": "vector_demo",
+                    "initial": { "x": 0, "y": 0 },
+                    "target": { "x": 4, "y": 3 },
+                    "explanation": "From the origin, 4 steps right then 3 steps up reaches (4, 3)."
+                  }
+                ]
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-cg1-w7-q1",
+              "type": "multiple_choice",
+              "question": "What is the horizontal distance between point A(2, 3) and point B(7, 3)?",
+              "options": ["5 units", "7 units", "2 units", "10 units"],
+              "correctAnswer": "5 units",
+              "explanation": "Both points share y = 3, so distance = |7 - 2| = 5 units."
+            },
+            {
+              "id": "eb-cg1-w7-q2",
+              "type": "multiple_choice",
+              "question": "What is the vertical distance between point A(4, 1) and point B(4, 6)?",
+              "options": ["5 units", "6 units", "4 units", "2 units"],
+              "correctAnswer": "5 units",
+              "explanation": "Both points share x = 4, so distance = |6 - 1| = 5 units."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 2: The 4 Quadrants",
+      "sequenceOrder": 2,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Negative Coordinates",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-quad-1",
+              "type": "text",
+              "content": "Moving left along the x-axis or down along the y-axis gives negative values."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-quad-1",
+              "type": "multiple_choice",
+              "question": "Which direction do you move for a negative x-coordinate?",
+              "options": ["Left", "Right", "Up", "Down"],
+              "correctAnswer": "Left",
+              "explanation": "Negative x-values lie to the left of the y-axis."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 3: Lines",
+      "sequenceOrder": 3,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Horizontal & Vertical Lines",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 140,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 12,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-line-1",
+              "type": "text",
+              "content": "A horizontal line has equation y = c. A vertical line has equation x = k."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-line-1",
+              "type": "multiple_choice",
+              "question": "What is the equation of a horizontal line passing through y = 4?",
+              "options": ["y = 4", "x = 4", "x + y = 4", "y = 4x"],
+              "correctAnswer": "y = 4",
+              "explanation": "Every point on a horizontal line has constant y-value."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 4: Inequalities",
+      "sequenceOrder": 4,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Half-Planes & Regions",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 150,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 15,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "lb-ineq-1",
+              "type": "text",
+              "content": "An inequality divides the Cartesian plane into half-planes above/below or left/right of boundary lines."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-ineq-1",
+              "type": "multiple_choice",
+              "question": "Which half-plane represents y > 2?",
+              "options": [
+                "The region strictly above the line y = 2",
+                "The region below y = 2",
+                "The region left of x = 2",
+                "The line y = 2 itself"
+              ],
+              "correctAnswer": "The region strictly above the line y = 2",
+              "explanation": "y > 2 includes all points with y-coordinate greater than 2."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 5: Gridline Distance",
+      "sequenceOrder": 5,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Distance Between Points",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 150,
+          "maxReattempts": 3,
+          "passingThreshold": 50,
+          "estimatedDuration": 15,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "lb-dist-1",
+              "type": "text",
+              "content": "For points on the same horizontal line (y1 = y2), distance = |x2 - x1|."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-dist-1",
+              "type": "multiple_choice",
+              "question": "What is the horizontal distance between point A(2, 3) and point B(7, 3)?",
+              "options": ["5 units", "7 units", "2 units", "10 units"],
+              "correctAnswer": "5 units",
+              "explanation": "Distance = |7 - 2| = 5 units."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

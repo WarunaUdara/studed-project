@@ -1,0 +1,881 @@
+{
+  "slug": "thinking-in-python",
+  "title": "Thinking in Python",
+  "description": "Build Python programs step by step to develop strong foundations for creating with code. From your first variable to searching and time complexity.",
+  "gradeLevel": "G9",
+  "subject": "ICT",
+  "price": 0,
+  "version": 1,
+  "lessons": [
+    {
+      "title": "Level 1: Variables",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. What Is a Variable?",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 100,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-py1-w1-txt",
+              "type": "text",
+              "content": "A variable is a named box that stores a value. You give it a name and assign a value with the = sign. Later you can read the box by using its name."
+            },
+            {
+              "id": "lb-py1-w1-code",
+              "type": "code",
+              "content": "score = 100\nprint(score)"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py1-w1-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\nscore = 100\nprint(score)",
+              "options": ["100", "score", "print", "None"],
+              "correctAnswer": "100",
+              "explanation": "print(score) outputs the value stored in the variable score, which is 100."
+            }
+          ]
+        },
+        {
+          "title": "2. Names and Values",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 100,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-py1-w2-txt",
+              "type": "text",
+              "content": "A variable always has a name and a value. The name is a label you choose; the value is what is stored inside. You can change the value later without changing the name."
+            },
+            {
+              "id": "lb-py1-w2-code",
+              "type": "code",
+              "content": "player = \"Ada\"\nprint(player)"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py1-w2-q1",
+              "type": "multiple_choice",
+              "question": "What is stored in the variable player after this code runs?\n\nplayer = \"Ada\"",
+              "options": ["Ada", "player", "String", "Nothing"],
+              "correctAnswer": "Ada",
+              "explanation": "The = sign stores the value \"Ada\" into the variable named player."
+            }
+          ]
+        },
+        {
+          "title": "3. Text vs Numbers",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 100,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-py1-w3-txt",
+              "type": "text",
+              "content": "Values can be text (strings, written in quotes) or numbers (written without quotes). Numbers can be used in math; text cannot."
+            },
+            {
+              "id": "lb-py1-w3-code",
+              "type": "code",
+              "content": "age = 12\nname = \"Nimal\"\nprint(age + 1)"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py1-w3-q1",
+              "type": "multiple_choice",
+              "question": "Which of these is a number (not text)?",
+              "options": ["12", "\"12\"", "\"twelve\"", "twelve"],
+              "correctAnswer": "12",
+              "explanation": "12 without quotes is a number. \"12\" in quotes is text even though it looks like a number."
+            },
+            {
+              "id": "eb-py1-w3-q2",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\nage = 12\nprint(age + 1)",
+              "options": ["13", "121", "12 + 1", "age + 1"],
+              "correctAnswer": "13",
+              "explanation": "age holds 12, and 12 + 1 = 13."
+            }
+          ]
+        },
+        {
+          "title": "4. Updating a Variable",
+          "sequenceOrder": 4,
+          "status": "published",
+          "xpReward": 110,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-py1-w4-txt",
+              "type": "text",
+              "content": "Variables can be updated. When you assign a new value, the old one is replaced. The line reads right to left: compute the right side, then store it into the variable on the left."
+            },
+            {
+              "id": "lb-py1-w4-code",
+              "type": "code",
+              "content": "score = 5\nscore = score + 3\nprint(score)"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py1-w4-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\nscore = 5\nscore = score + 3\nprint(score)",
+              "options": ["8", "5", "3", "score + 3"],
+              "correctAnswer": "8",
+              "explanation": "score starts at 5, then becomes 5 + 3 = 8."
+            }
+          ]
+        },
+        {
+          "title": "5. Variable Naming Rules",
+          "sequenceOrder": 5,
+          "status": "published",
+          "xpReward": 100,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-py1-w5-txt",
+              "type": "text",
+              "content": "Variable names can contain letters, digits, and underscores, but cannot start with a digit and cannot contain spaces. Good names describe what the variable holds."
+            },
+            {
+              "id": "lb-py1-w5-code",
+              "type": "code",
+              "content": "player_score = 10\nlevel_2 = 2\nprint(player_score + level_2)"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py1-w5-q1",
+              "type": "multiple_choice",
+              "question": "Which of these is a valid variable name in Python?",
+              "options": ["high_score", "high score", "2players", "high-score"],
+              "correctAnswer": "high_score",
+              "explanation": "high_score uses only letters and an underscore. The others contain a space, start with a digit, or use a hyphen."
+            },
+            {
+              "id": "eb-py1-w5-q2",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\nplayer_score = 10\nlevel_2 = 2\nprint(player_score + level_2)",
+              "options": ["12", "102", "10 + 2", "player_score + level_2"],
+              "correctAnswer": "12",
+              "explanation": "player_score is 10 and level_2 is 2, so 10 + 2 = 12."
+            }
+          ]
+        },
+        {
+          "title": "6. Variables Challenge",
+          "sequenceOrder": 6,
+          "status": "published",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-py1-w6-txt",
+              "type": "text",
+              "content": "Put it together: create variables, combine them, and print results. Track what each variable holds at every step of the program."
+            },
+            {
+              "id": "lb-py1-w6-code",
+              "type": "code",
+              "content": "apples = 4\nbananas = 3\nfruits = apples + bananas\nprint(fruits)\nfruits = fruits + 2\nprint(fruits)"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py1-w6-q1",
+              "type": "multiple_choice",
+              "question": "What does the first print() output?\n\napples = 4\nbananas = 3\nfruits = apples + bananas\nprint(fruits)",
+              "options": ["7", "43", "4", "3"],
+              "correctAnswer": "7",
+              "explanation": "fruits = 4 + 3 = 7, so the first print outputs 7."
+            },
+            {
+              "id": "eb-py1-w6-q2",
+              "type": "multiple_choice",
+              "question": "What does the second print() output?\n\nfruits = 7\nfruits = fruits + 2\nprint(fruits)",
+              "options": ["9", "7", "2", "72"],
+              "correctAnswer": "9",
+              "explanation": "fruits becomes 7 + 2 = 9."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 2: Conditional Logic",
+      "sequenceOrder": 2,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. True or False",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 110,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-py2-w1-txt",
+              "type": "text",
+              "content": "Programs make decisions with conditions, which are always either True or False. You build conditions with comparisons like == (equals), < (less than), and > (greater than)."
+            },
+            {
+              "id": "lb-py2-w1-code",
+              "type": "code",
+              "content": "print(5 < 3)\nprint(5 > 3)\nprint(5 == 5)"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py2-w1-q1",
+              "type": "multiple_choice",
+              "question": "Which of these conditions is True?",
+              "options": ["10 > 20", "10 < 20", "10 == 20", "20 < 10"],
+              "correctAnswer": "10 < 20",
+              "explanation": "10 is less than 20, so the condition 10 < 20 evaluates to True."
+            },
+            {
+              "id": "eb-py2-w1-q2",
+              "type": "true_false",
+              "question": "The condition 5 == 5 is True.",
+              "correctAnswer": "True",
+              "explanation": "The == operator checks equality, and 5 equals 5, so this is True."
+            }
+          ]
+        },
+        {
+          "title": "2. The if Statement",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-py2-w2-txt",
+              "type": "text",
+              "content": "The if statement runs a block of code only when its condition is True. Notice the colon and the indented code underneath the if."
+            },
+            {
+              "id": "lb-py2-w2-code",
+              "type": "code",
+              "content": "age = 16\nif age >= 13:\n    print(\"Teenager\")"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py2-w2-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\nage = 16\nif age >= 13:\n    print(\"Teenager\")",
+              "options": ["Teenager", "Nothing", "age >= 13", "16"],
+              "correctAnswer": "Teenager",
+              "explanation": "16 >= 13 is True, so the indented print runs and outputs Teenager."
+            },
+            {
+              "id": "eb-py2-w2-q2",
+              "type": "multiple_choice",
+              "question": "What would this code print if age were 10?\n\nif age >= 13:\n    print(\"Teenager\")",
+              "options": ["Nothing", "Teenager", "10", "False"],
+              "correctAnswer": "Nothing",
+              "explanation": "10 >= 13 is False, so the indented block is skipped and nothing is printed."
+            }
+          ]
+        },
+        {
+          "title": "3. else and elif",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-py2-w3-txt",
+              "type": "text",
+              "content": "Use else to run code when the if condition is False. Use elif (short for else if) to check additional conditions in order."
+            },
+            {
+              "id": "lb-py2-w3-code",
+              "type": "code",
+              "content": "score = 75\nif score >= 90:\n    print(\"A\")\nelif score >= 60:\n    print(\"B\")\nelse:\n    print(\"C\")"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py2-w3-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\nscore = 75\nif score >= 90:\n    print(\"A\")\nelif score >= 60:\n    print(\"B\")\nelse:\n    print(\"C\")",
+              "options": ["B", "A", "C", "Nothing"],
+              "correctAnswer": "B",
+              "explanation": "75 is not >= 90, but it is >= 60, so the elif branch runs and prints B."
+            }
+          ]
+        },
+        {
+          "title": "4. Conditions Challenge",
+          "sequenceOrder": 4,
+          "status": "published",
+          "xpReward": 130,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "lb-py2-w4-txt",
+              "type": "text",
+              "content": "Combine comparisons with decisions. Trace through the program step by step, keeping track of what each condition evaluates to."
+            },
+            {
+              "id": "lb-py2-w4-code",
+              "type": "code",
+              "content": "temperature = 35\nif temperature > 30:\n    print(\"Hot\")\nelif temperature > 20:\n    print(\"Warm\")\nelse:\n    print(\"Cool\")"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py2-w4-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\ntemperature = 35\nif temperature > 30:\n    print(\"Hot\")\nelif temperature > 20:\n    print(\"Warm\")\nelse:\n    print(\"Cool\")",
+              "options": ["Hot", "Warm", "Cool", "Nothing"],
+              "correctAnswer": "Hot",
+              "explanation": "35 > 30 is True, so the first branch runs and prints Hot."
+            },
+            {
+              "id": "eb-py2-w4-q2",
+              "type": "multiple_choice",
+              "question": "What would this code print if temperature were 25?",
+              "options": ["Warm", "Hot", "Cool", "Nothing"],
+              "correctAnswer": "Warm",
+              "explanation": "25 > 30 is False, but 25 > 20 is True, so the elif branch prints Warm."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 3: Loops",
+      "sequenceOrder": 3,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Repeat with for",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-py3-w1-txt",
+              "type": "text",
+              "content": "Loops repeat a block of code. A for loop runs once for each item in a collection."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py3-w1-q1",
+              "type": "multiple_choice",
+              "question": "How many times does this loop print?\n\nfor i in range(3):\n    print(\"Hi\")",
+              "options": ["3", "2", "1", "0"],
+              "correctAnswer": "3",
+              "explanation": "range(3) produces 0, 1, 2, so the body runs three times."
+            }
+          ]
+        },
+        {
+          "title": "2. while Loops",
+          "sequenceOrder": 2,
+          "status": "draft",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-py3-w2-txt",
+              "type": "text",
+              "content": "A while loop repeats as long as its condition stays True. Update a counter so the loop eventually ends."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py3-w2-q1",
+              "type": "multiple_choice",
+              "question": "What does this print?\n\nn = 0\nwhile n < 3:\n    n = n + 1\nprint(n)",
+              "options": ["3", "0", "1", "2"],
+              "correctAnswer": "3",
+              "explanation": "The loop increments n until it reaches 3, then prints 3."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 4: Functions",
+      "sequenceOrder": 4,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Defining Functions",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-py4-w1-txt",
+              "type": "text",
+              "content": "A function packages a block of code under a name so you can reuse it. Define it with def, then call it by name."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py4-w1-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\ndef greet():\n    print(\"Hello\")\n\ngreet()",
+              "options": ["Hello", "greet", "def greet", "Nothing"],
+              "correctAnswer": "Hello",
+              "explanation": "Calling greet() runs the function body, which prints Hello."
+            }
+          ]
+        },
+        {
+          "title": "2. Parameters",
+          "sequenceOrder": 2,
+          "status": "draft",
+          "xpReward": 130,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-py4-w2-txt",
+              "type": "text",
+              "content": "Functions can take inputs called parameters, so one function can work on different data."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py4-w2-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\ndef add(a, b):\n    return a + b\n\nprint(add(2, 3))",
+              "options": ["5", "23", "a + b", "2 3"],
+              "correctAnswer": "5",
+              "explanation": "add(2, 3) returns 2 + 3 = 5."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 5: Lists",
+      "sequenceOrder": 5,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Storing Many Values",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-py5-w1-txt",
+              "type": "text",
+              "content": "A list stores many values in order. Use square brackets and separate items with commas."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py5-w1-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\nfruits = [\"apple\", \"banana\", \"mango\"]\nprint(fruits[1])",
+              "options": ["banana", "apple", "mango", "1"],
+              "correctAnswer": "banana",
+              "explanation": "List indexes start at 0, so index 1 is the second item, banana."
+            }
+          ]
+        },
+        {
+          "title": "2. Modifying Lists",
+          "sequenceOrder": 2,
+          "status": "draft",
+          "xpReward": 130,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-py5-w2-txt",
+              "type": "text",
+              "content": "Lists can grow and change. Use append to add an item, and len to count items."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py5-w2-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\nnums = [1, 2]\nnums.append(3)\nprint(len(nums))",
+              "options": ["3", "2", "1", "123"],
+              "correctAnswer": "3",
+              "explanation": "After appending, nums holds 3 items, so len returns 3."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 6: Dictionaries",
+      "sequenceOrder": 6,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Key-Value Pairs",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-py6-w1-txt",
+              "type": "text",
+              "content": "A dictionary stores key-value pairs. Use a key to look up its value instead of using an index."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py6-w1-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\nstudent = {\"name\": \"Nimal\", \"grade\": 9}\nprint(student[\"name\"])",
+              "options": ["Nimal", "9", "name", "student"],
+              "correctAnswer": "Nimal",
+              "explanation": "Looking up the key \"name\" returns its value Nimal."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 7: Strings",
+      "sequenceOrder": 7,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Working with Text",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-py7-w1-txt",
+              "type": "text",
+              "content": "Strings are text values. You can join them with + and measure them with len."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py7-w1-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\nword = \"hello\"\nprint(len(word))",
+              "options": ["5", "hello", "4", "h"],
+              "correctAnswer": "5",
+              "explanation": "len counts the characters in \"hello\", which is 5."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 8: Errors & Debugging",
+      "sequenceOrder": 8,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Reading Errors",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 120,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-py8-w1-txt",
+              "type": "text",
+              "content": "Errors are clues. Read the error message, find the line it points to, and figure out what went wrong."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py8-w1-q1",
+              "type": "multiple_choice",
+              "question": "Which line causes an error?\n\nprint(\"Hello\")\nprint(10 + \"5\")",
+              "options": ["The second line", "The first line", "Neither line", "Both lines"],
+              "correctAnswer": "The second line",
+              "explanation": "You cannot add a number and a string, so line 2 raises a TypeError."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 9: Recursion",
+      "sequenceOrder": 9,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Functions Calling Themselves",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 130,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 12,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "lb-py9-w1-txt",
+              "type": "text",
+              "content": "A recursive function calls itself on a smaller problem, until it reaches a base case that stops the calls."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py9-w1-q1",
+              "type": "multiple_choice",
+              "question": "What does this function return for countdown(3)?\n\ndef countdown(n):\n    if n == 0:\n        return 0\n    return n + countdown(n - 1)",
+              "options": ["6", "3", "2", "1"],
+              "correctAnswer": "6",
+              "explanation": "3 + 2 + 1 + 0 = 6."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 10: Classes & Objects",
+      "sequenceOrder": 10,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Blueprints and Objects",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 130,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 12,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "lb-py10-w1-txt",
+              "type": "text",
+              "content": "A class is a blueprint, and an object is a concrete instance built from that blueprint. Objects can hold data and have behaviors."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py10-w1-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\nclass Dog:\n    def __init__(self):\n        self.tricks = 0\n\nd = Dog()\nprint(d.tricks)",
+              "options": ["0", "Dog", "tricks", "None"],
+              "correctAnswer": "0",
+              "explanation": "The __init__ method runs when the object is created and sets tricks to 0."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 11: Nested Data",
+      "sequenceOrder": 11,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Structures Within Structures",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 130,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 12,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "lb-py11-w1-txt",
+              "type": "text",
+              "content": "Lists and dictionaries can hold other lists and dictionaries, letting you model rich, real-world data."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py11-w1-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\nstudents = [{\"name\": \"Nimal\"}, {\"name\": \"Kamal\"}]\nprint(students[1][\"name\"])",
+              "options": ["Kamal", "Nimal", "students", "1"],
+              "correctAnswer": "Kamal",
+              "explanation": "students[1] is the second dictionary, whose \"name\" key is Kamal."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 12: Sorting",
+      "sequenceOrder": 12,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Sorting Data",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 130,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 12,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "lb-py12-w1-txt",
+              "type": "text",
+              "content": "Sorting arranges data in order. Python's sort method reorders a list in place."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py12-w1-q1",
+              "type": "multiple_choice",
+              "question": "What does this code print?\n\nnums = [3, 1, 2]\nnums.sort()\nprint(nums)",
+              "options": ["[1, 2, 3]", "[3, 1, 2]", "[2, 1, 3]", "1"],
+              "correctAnswer": "[1, 2, 3]",
+              "explanation": "sort() reorders the list in ascending order: 1, 2, 3."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 13: Search Algorithms",
+      "sequenceOrder": 13,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. Linear & Binary Search",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 130,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 12,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "lb-py13-w1-txt",
+              "type": "text",
+              "content": "Linear search checks items one by one. Binary search repeatedly halves a sorted list to find an item faster."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py13-w1-q1",
+              "type": "multiple_choice",
+              "question": "In a sorted list of 8 items, how many comparisons does binary search need in the worst case?",
+              "options": ["3", "8", "4", "1"],
+              "correctAnswer": "3",
+              "explanation": "Binary search halves the search space each step: 8 -> 4 -> 2 -> 1, so up to 3 comparisons."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Level 14: Time Complexity",
+      "sequenceOrder": 14,
+      "status": "draft",
+      "waves": [
+        {
+          "title": "1. How Fast Is My Code?",
+          "sequenceOrder": 1,
+          "status": "draft",
+          "xpReward": 140,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 14,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "lb-py14-w1-txt",
+              "type": "text",
+              "content": "Time complexity describes how the running time grows as the input grows. Big-O notation captures this: O(1), O(n), O(n^2), and so on."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-py14-w1-q1",
+              "type": "multiple_choice",
+              "question": "A loop that runs once for each of n items has what time complexity?",
+              "options": ["O(n)", "O(1)", "O(n^2)", "O(log n)"],
+              "correctAnswer": "O(n)",
+              "explanation": "The work grows linearly with the input size n, so it is O(n)."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

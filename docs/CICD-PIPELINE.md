@@ -92,3 +92,4 @@ flowchart TB
 2. **Immutable OCI Artifacts (GHCR)**: Service containers are tagged with the exact Git commit SHA (`sha-<commit>`) ensuring total auditability and reproducible rollbacks.
 3. **Submodule-Safe GitOps Rendering**: ArgoCD `reposerver` explicitly disables recursive git submodule expansion (`reposerver.enable.git.submodule=false`) to prevent nested repository links (such as `submodules/math-to-manim`) from breaking manifest rendering.
 4. **Secretless CI/CD Pipeline**: GitHub Actions does not store long-lived Cloud SQL or GKE credentials; workload deployments are handled pull-style by in-cluster ArgoCD via Workload Identity.
+

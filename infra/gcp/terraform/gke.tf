@@ -65,6 +65,11 @@ resource "google_container_node_pool" "primary" {
   initial_node_count = var.node_count
   max_pods_per_node  = 32
 
+  autoscaling {
+    min_node_count = var.node_min_count
+    max_node_count = var.node_max_count
+  }
+
   node_config {
     service_account = google_service_account.gke_node_sa.email
     oauth_scopes = [

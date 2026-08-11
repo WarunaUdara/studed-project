@@ -33,9 +33,15 @@ import { LiveLeaderboard } from "@/components/public/LiveLeaderboard";
 import { PlayableWave } from "@/components/public/PlayableWave";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { ScrollXpMeter } from "@/components/public/ScrollXpMeter";
+import { CTAAuroraMesh } from "@/components/public/CTAAuroraMesh";
 import { WaveMapHero } from "@/components/public/WaveMapHero";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/Card";
+import { ScrollExpand } from "@/components/ui/ScrollExpand";
+import { SplitText } from "@/components/ui/SplitText";
+import { TextLoop } from "@/components/ui/TextLoop";
+import { MagicBento, MagicBentoCard } from "@/components/ui/MagicBento";
+import { SpecularButton } from "@/components/ui/SpecularButton";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { FEATURED_COURSES, type FeaturedCourse } from "@/lib/demoData";
 import { type ProficiencyLevel, proficiencyMeta } from "@/lib/gamification";
@@ -62,6 +68,7 @@ function IndexPage() {
   return (
     <div className={cn(isSinhala && "font-sinhala")}>
       <Hero ctaLink={ctaLink} authed={isAuthenticated} />
+      
       <StatsBar />
       <HowItWorks />
       <PlayableWaveSection />
@@ -69,6 +76,7 @@ function IndexPage() {
       <CatalogPreview />
       <AudienceSegments />
       <PricingPreview authed={isAuthenticated} />
+      <TextLoopBanner />
       <Testimonials />
       <FinalCta authed={isAuthenticated} />
       <PublicFooter />
@@ -90,8 +98,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage:
-              "radial-gradient(oklch(0.484 0.164 145 / 0.07) 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(oklch(0.484 0.164 145 / 0.07) 1px, transparent 1px)",
             backgroundSize: "28px 28px",
             maskImage: "linear-gradient(to bottom, black 0%, transparent 80%)",
             WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 80%)",
@@ -99,6 +106,20 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
         />
         <div className="absolute -top-40 left-[-15%] h-[560px] w-[70vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.484_0.164_145_/_0.12)_0%,transparent_70%)] blur-[100px]" />
         <div className="absolute -top-32 right-[-15%] h-[520px] w-[60vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.571_0.181_145_/_0.1)_0%,transparent_70%)] blur-[100px]" />
+        
+        {/* Editorial Abstract Shape Overlay — scaled & cropped by screen borders */}
+        <img
+          src="/abstract-shapes/Union.svg"
+          alt=""
+          aria-hidden
+          className="absolute -top-32 -left-32 w-[540px] h-[540px] opacity-[0.22] dark:opacity-[0.14] pointer-events-none select-none rotate-12"
+        />
+        <img
+          src="/abstract-shapes/Group 211.svg"
+          alt=""
+          aria-hidden
+          className="absolute top-1/4 -right-48 w-[640px] h-[640px] opacity-[0.22] dark:opacity-[0.14] pointer-events-none select-none -rotate-45"
+        />
       </div>
 
       <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
@@ -132,7 +153,19 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
           >
             {t("heroTitleA")}
             <br />
-            <span className="italic text-primary">{t("heroTitleB")}</span>
+            <span className="italic text-primary">
+              <SplitText
+                text={t("heroTitleB")}
+                tag="span"
+                splitType="chars"
+                delay={35}
+                duration={0.65}
+                ease="power3.out"
+                from={{ opacity: 0, y: 28 }}
+                to={{ opacity: 1, y: 0 }}
+                className="inline-block"
+              />
+            </span>
             <span className="text-primary">.</span>
           </motion.h1>
 
@@ -152,26 +185,36 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             className="flex flex-wrap items-center gap-3.5 pt-1"
           >
             {authed ? (
-              <Link to={ctaLink}>
-                <Button size="lg" className="h-11 gap-2 rounded-full px-6 text-sm font-semibold shadow-md">
+              <Button asChild size="lg">
+                <Link to={ctaLink}>
                   <Zap className="h-4 w-4" />
                   {t("ctaPortal")}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             ) : (
               <>
                 <Link to="/register">
-                  <Button size="lg" className="h-11 gap-2 rounded-full px-6 text-sm font-semibold shadow-md">
-                    <Zap className="h-4 w-4" />
+                  <SpecularButton
+                    size="lg"
+                    radius={22}
+                    lineColor="#ffffff"
+                    baseColor="#059669"
+                    tint="#10b981"
+                    tintOpacity={0.25}
+                    followMouse
+                    proximity={300}
+                    autoAnimate={false}
+                  >
+                    <Zap className="h-4.5 w-4.5 text-white" />
                     {t("ctaGetStarted")}
-                  </Button>
+                  </SpecularButton>
                 </Link>
-                <Link to="/courses">
-                  <Button size="lg" variant="outline" className="h-11 gap-2 rounded-full border-border/80 bg-card/80 px-6 text-sm font-semibold shadow-xs hover:bg-card">
+                <Button asChild size="lg" variant="outline">
+                  <Link to="/courses">
                     <Compass className="h-4 w-4 text-muted-foreground" />
                     {t("ctaBrowseCourses")}
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </>
             )}
           </motion.div>
@@ -186,7 +229,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
               {["a", "b", "c", "d"].map((k) => (
                 <span
                   key={k}
-                  className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary/50 to-purple/50 text-[10px] font-bold text-white ring-2 ring-background"
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary to-purple text-[10px] font-bold text-white ring-2 ring-background"
                 >
                   {k.toUpperCase()}
                 </span>
@@ -233,16 +276,42 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
   );
 }
 
+/* ------------------------------ Text Loop Ribbon --------------------------- */
+
+function TextLoopBanner() {
+  const reduce = useReducedMotion();
+  if (reduce) return null;
+
+  return (
+    <div className="relative py-2 overflow-hidden bg-transparent">
+      <TextLoop
+        text="StudEd ✦ Interactive STEM Learning ✦ Gamified Waves ✦ Real-Time Mastery ✦ Sri Lanka's Modern Platform ✦"
+        shape="wave"
+        speed={70}
+        curviness={50}
+        fontSize={16}
+        fontWeight={700}
+        letterSpacing={2}
+        color="var(--primary)"
+        ribbon
+        ribbonColor="rgba(16, 185, 129, 0.08)"
+        ribbonWidth={26}
+        pauseOnHover={false}
+      />
+    </div>
+  );
+}
+
 /* --------------------------------- Stats --------------------------------- */
 
 function StatsBar() {
   const { t } = usePublicI18n();
 
-  const stats: { to: number; label: string; icon: LucideIcon }[] = [
+  const stats: { to: number; label: string; icon: LucideIcon; separator?: string }[] = [
     { to: 13, label: t("statsGradeLevels"), icon: GraduationCap },
     { to: 24, label: t("statsSubjects"), icon: BookOpen },
-    { to: 12500, label: t("statsLearners"), icon: Users },
-    { to: 1840000, label: t("statsXpAwarded"), icon: Zap },
+    { to: 12500, label: t("statsLearners"), icon: Users, separator: "," },
+    { to: 1840000, label: t("statsXpAwarded"), icon: Zap, separator: "," },
   ];
 
   return (
@@ -261,7 +330,7 @@ function StatsBar() {
               <s.icon className="h-4.5 w-4.5" />
             </span>
             <p className="text-3xl font-extrabold tabular-nums tracking-tight text-foreground sm:text-4xl">
-              <CountUp to={s.to} />
+              <CountUp to={s.to} separator={s.separator || ""} duration={1.8} />
             </p>
             <p className="text-xs font-medium text-muted-foreground sm:text-sm">{s.label}</p>
           </motion.div>
@@ -284,7 +353,14 @@ function HowItWorks() {
   ];
 
   return (
-    <section className="px-4 py-24 sm:px-6">
+    <section className="relative overflow-hidden px-4 py-24 sm:px-6">
+      {/* Upper Right Abstract Shape */}
+      <img
+        src="/abstract-shapes/Group 215.svg"
+        alt=""
+        aria-hidden
+        className="absolute -top-36 -right-40 w-[580px] h-[580px] opacity-[0.10] dark:opacity-[0.05] pointer-events-none select-none rotate-90"
+      />
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("howHeading")} subhead={t("howSubhead")} />
 
@@ -360,48 +436,119 @@ function GamificationShowcase() {
   };
 
   return (
-    <section className="px-4 py-24 sm:px-6">
+    <section className="relative overflow-hidden px-4 py-24 sm:px-6">
+      {/* Background Abstract Shapes on upper and bottom sides */}
+      <img
+        src="/abstract-shapes/Group 216.svg"
+        alt=""
+        aria-hidden
+        className="absolute -top-36 -right-36 w-[540px] h-[540px] opacity-[0.10] dark:opacity-[0.05] pointer-events-none select-none rotate-45"
+      />
+      <img
+        src="/abstract-shapes/Group 211.svg"
+        alt=""
+        aria-hidden
+        className="absolute -bottom-36 -left-36 w-[580px] h-[580px] opacity-[0.22] dark:opacity-[0.14] pointer-events-none select-none -rotate-12"
+      />
+      <img
+        src="/abstract-shapes/Union.svg"
+        alt=""
+        aria-hidden
+        className="absolute -bottom-40 -right-40 w-[600px] h-[600px] opacity-[0.24] dark:opacity-[0.15] pointer-events-none select-none rotate-45"
+      />
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("gamificationHeading")} subhead={t("gamificationSubhead")} />
 
-        <div className="mt-12 grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {/* XP & Levels */}
-          <ShowcaseCard
-            icon={Zap}
-            title={t("mechanicXpTitle")}
-            copy={t("mechanicXpCopy")}
+        <MagicBento className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+          {/* Live Leaderboard — Tall 1x2 Hero Card on the Left */}
+          <MagicBentoCard
+            enableStars={true}
+            enableTilt={true}
+            enableMagnetism={true}
+            clickEffect={true}
+            className="lg:col-span-1 lg:row-span-2 flex flex-col justify-between"
+          >
+            <div className="flex flex-col gap-4">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                <Trophy className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold">{t("mechanicLeaderboardTitle")}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("mechanicLeaderboardCopy")}</p>
+              </div>
+            </div>
+            <div className="pt-4">
+              <LiveLeaderboard />
+            </div>
+          </MagicBentoCard>
+
+          {/* XP & Levels — Top Middle */}
+          <MagicBentoCard
+            enableStars={true}
+            enableTilt={true}
+            enableMagnetism={true}
+            clickEffect={true}
             onMouseEnter={handleXpCardHover}
+            className="lg:col-span-1 lg:row-span-1 flex flex-col justify-between"
           >
-            <XPBar totalXp={1750} />
-          </ShowcaseCard>
+            <div className="flex flex-col gap-4">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                <Zap className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold">{t("mechanicXpTitle")}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("mechanicXpCopy")}</p>
+              </div>
+            </div>
+            <div className="pt-4">
+              <XPBar totalXp={1750} />
+            </div>
+          </MagicBentoCard>
 
-          {/* Live leaderboard */}
-          <ShowcaseCard
-            icon={Trophy}
-            title={t("mechanicLeaderboardTitle")}
-            copy={t("mechanicLeaderboardCopy")}
+          {/* Daily Streaks — Top Right */}
+          <MagicBentoCard
+            enableStars={true}
+            enableTilt={true}
+            enableMagnetism={true}
+            clickEffect={true}
+            className="lg:col-span-1 lg:row-span-1 flex flex-col justify-between"
           >
-            <LiveLeaderboard />
-          </ShowcaseCard>
+            <div className="flex flex-col gap-4">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                <Gamepad2 className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold">{t("mechanicStreakTitle")}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("mechanicStreakCopy")}</p>
+              </div>
+            </div>
+            <div className="pt-4">
+              <StreakWeek />
+            </div>
+          </MagicBentoCard>
 
-          {/* Proficiency ladder */}
-          <ShowcaseCard
-            icon={LineChart}
-            title={t("mechanicProficiencyTitle")}
-            copy={t("mechanicProficiencyCopy")}
+          {/* Proficiency Ladder — Wide 2x1 Hero Card at Bottom Right */}
+          <MagicBentoCard
+            enableStars={true}
+            enableTilt={true}
+            enableMagnetism={true}
+            clickEffect={true}
+            className="lg:col-span-2 lg:row-span-1 flex flex-col justify-between"
           >
-            <ProficiencyLadder />
-          </ShowcaseCard>
-
-          {/* Streaks */}
-          <ShowcaseCard
-            icon={Gamepad2}
-            title={t("mechanicStreakTitle")}
-            copy={t("mechanicStreakCopy")}
-          >
-            <StreakWeek />
-          </ShowcaseCard>
-        </div>
+            <div className="flex flex-col gap-4">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                <LineChart className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold">{t("mechanicProficiencyTitle")}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("mechanicProficiencyCopy")}</p>
+              </div>
+            </div>
+            <div className="pt-4">
+              <ProficiencyLadder />
+            </div>
+          </MagicBentoCard>
+        </MagicBento>
       </div>
 
       <XPToast
@@ -492,40 +639,6 @@ function StreakWeek() {
   );
 }
 
-function ShowcaseCard({
-  icon: Icon,
-  title,
-  copy,
-  children,
-  onMouseEnter,
-}: {
-  icon: LucideIcon;
-  title: string;
-  copy: string;
-  children: React.ReactNode;
-  onMouseEnter?: () => void;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.45 }}
-      whileHover={{ y: -4 }}
-      onMouseEnter={onMouseEnter}
-      className="group flex flex-col gap-4 rounded-3xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
-    >
-      <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
-        <Icon className="h-5 w-5" />
-      </div>
-      <div>
-        <h3 className="text-base font-semibold">{title}</h3>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{copy}</p>
-      </div>
-      <div className="mt-auto pt-2">{children}</div>
-    </motion.div>
-  );
-}
 
 /* ---------------------------- Catalog preview ----------------------------- */
 
@@ -558,12 +671,12 @@ function CatalogPreview() {
         </div>
 
         <div className="mt-10 flex justify-center">
-          <Link to="/courses">
-            <Button variant="outline" className="gap-2 rounded-full">
+          <Button asChild variant="outline" className="gap-2 rounded-full">
+            <Link to="/courses">
               <Compass className="h-4 w-4" />
               {t("catalogViewAll")}
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
     </section>
@@ -660,7 +773,14 @@ function AudienceSegments() {
   ];
 
   return (
-    <section className="px-4 py-24 sm:px-6">
+    <section className="relative overflow-hidden px-4 py-24 sm:px-6">
+      {/* Background Abstract Shape */}
+      <img
+        src="/abstract-shapes/Group 214.svg"
+        alt=""
+        aria-hidden
+        className="absolute top-10 -right-28 w-[420px] h-[420px] opacity-[0.08] dark:opacity-[0.04] pointer-events-none select-none rotate-180"
+      />
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("audienceHeading")} />
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -753,7 +873,14 @@ function PricingPreview({ authed }: { authed: boolean }) {
   const { t } = usePublicI18n();
 
   return (
-    <section id="pricing" className="scroll-mt-20 border-y bg-card/30 px-4 py-24 sm:px-6">
+    <section id="pricing" className="relative overflow-hidden scroll-mt-20 px-4 py-24 sm:px-6">
+      {/* Background Abstract Shape */}
+      <img
+        src="/abstract-shapes/Group 215.svg"
+        alt=""
+        aria-hidden
+        className="absolute -top-28 -left-36 w-[480px] h-[480px] opacity-[0.08] dark:opacity-[0.04] pointer-events-none select-none -rotate-45"
+      />
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("pricingHeading")} subhead={t("pricingSubhead")} />
 
@@ -814,15 +941,14 @@ function PricingTierCard({
       </ul>
 
       <div className="mt-7">
-        <Link to={authed ? "/dashboard" : "/register"}>
-          <Button
-            className="w-full rounded-full"
-            variant={tier.highlighted ? "default" : "outline"}
-            onClick={() => playSuccessSound()}
-          >
-            {tier.cta}
-          </Button>
-        </Link>
+        <Button
+          asChild
+          className="w-full rounded-full"
+          variant={tier.highlighted ? "default" : "outline"}
+          onClick={() => playSuccessSound()}
+        >
+          <Link to={authed ? "/dashboard" : "/register"}>{tier.cta}</Link>
+        </Button>
       </div>
     </motion.div>
   );
@@ -907,68 +1033,74 @@ function Testimonials() {
 
 function FinalCta({ authed }: { authed: boolean }) {
   const { t } = usePublicI18n();
-  const reduce = useReducedMotion();
 
   return (
-    <section className="px-4 pb-24 pt-4 sm:px-6">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border bg-gradient-to-br from-primary via-primary/85 to-purple/70 p-10 text-center shadow-2xl sm:p-16"
-      >
-        {!reduce && (
-          <>
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -left-12 -top-12 h-48 w-48 rounded-full bg-gold/30 blur-3xl"
-            />
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -bottom-16 -right-12 h-64 w-64 rounded-full bg-purple/40 blur-3xl"
-            />
-          </>
-        )}
-        <div className="relative space-y-6">
-          <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-white/90 ring-1 ring-white/20">
-            <Zap className="h-3.5 w-3.5 fill-gold text-gold" />
-            +250 XP
-          </p>
-          <h2 className="font-serif text-4xl text-white sm:text-6xl">{t("finalCtaHeading")}</h2>
-          <p className="mx-auto max-w-xl text-pretty text-white/80">{t("finalCtaSubhead")}</p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {authed ? (
-              <Link to="/dashboard">
-                <Button size="lg" className="rounded-full bg-white text-primary hover:bg-white/90">
-                  {t("ctaPortal")}
-                </Button>
-              </Link>
-            ) : (
-              <>
-                <Link to="/register">
-                  <Button
-                    size="lg"
-                    className="rounded-full bg-white text-primary hover:bg-white/90"
-                    onClick={() => playSuccessSound()}
-                  >
-                    {t("finalCtaCreate")}
+    <section className="relative px-4 pb-12 pt-4 sm:px-6">
+      <div className="relative mx-auto max-w-5xl">
+        <ScrollExpand
+          useWindowScroll
+          startWidth={48}
+          startHeight={58}
+          maxWidth={92}
+          maxHeight={88}
+          startRadius={20}
+          endRadius={16}
+          mediaZoom={1.25}
+          scrollDistance={0.55}
+          holdDistance={0.0}
+          smoothing={0.0}
+          overlayScrim={0.82}
+          title={t("finalCtaHeading")}
+          scrollHint="Scroll to Expand"
+          className="w-full min-h-[460px] sm:min-h-[520px]"
+          backgroundComponent={<CTAAuroraMesh />}
+        >
+            <div className="relative space-y-5 max-w-xl mx-auto text-center px-4">
+              <p className="inline-flex items-center gap-2 rounded-full bg-primary/20 backdrop-blur-md px-4 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-white ring-1 ring-primary/40 shadow-xs">
+                <Zap className="h-3.5 w-3.5 fill-gold text-gold" />
+                +250 XP
+              </p>
+              <h2 className="font-serif text-3xl font-normal tracking-tight text-white sm:text-5xl drop-shadow-md whitespace-pre-line">
+                {t("finalCtaHeading")}
+              </h2>
+              <p className="mx-auto max-w-md text-pretty text-sm leading-relaxed text-white/90 sm:text-base drop-shadow-xs">
+                {t("finalCtaSubhead")}
+              </p>
+              <div className="flex flex-wrap justify-center gap-3 pt-1">
+                {authed ? (
+                  <Button asChild size="lg" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md font-semibold px-6">
+                    <Link to="/dashboard">
+                      {t("ctaPortal")}
+                    </Link>
                   </Button>
-                </Link>
-                <Link to="/login">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="rounded-full border-white/30 bg-white/10 text-white hover:bg-white/20"
-                  >
-                    {t("finalCtaSignin")}
-                  </Button>
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </motion.div>
+                ) : (
+                  <>
+                    <Button
+                      asChild
+                      size="lg"
+                      className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md font-semibold px-6"
+                      onClick={() => playSuccessSound()}
+                    >
+                      <Link to="/register">
+                        {t("finalCtaCreate")}
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      size="lg"
+                      variant="outline"
+                      className="rounded-full border-white/30 bg-white/10 text-white backdrop-blur-md hover:bg-white/20 font-semibold px-6"
+                    >
+                      <Link to="/login">
+                        {t("finalCtaSignin")}
+                      </Link>
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+          </ScrollExpand>
+      </div>
     </section>
   );
 }

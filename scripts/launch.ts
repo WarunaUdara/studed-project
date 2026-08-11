@@ -224,20 +224,28 @@ async function stopAll() {
 // ─── Main loop ────────────────────────────────────────────────────────────────
 
 async function main() {
-  // Pre-flight: check Docker
+  // Pre-flight: check Docker / Podman container engine
   try {
     const dockerCheck = Bun.spawn({
       cmd: ["docker", "info"],
       stdout: "pipe",
       stderr: "pipe",
     });
-    const exitCode = await dockerCheck.exited.catch(() => 1);
+    let exitCode = await dockerCheck.exited.catch(() => 1);
     if (exitCode !== 0) {
-      process.stdout.write(`${red("Docker Desktop is not running. Please start it and try again.")}\n`);
+      const podmanCheck = Bun.spawn({
+        cmd: ["podman", "info"],
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+      exitCode = await podmanCheck.exited.catch(() => 1);
+    }
+    if (exitCode !== 0) {
+      process.stdout.write(`${red("Container engine (Docker or Podman) is not running. Please start it and try again.")}\n`);
       process.exit(1);
     }
   } catch {
-    process.stdout.write(`${red("Docker is not installed or not in PATH.")}\n`);
+    process.stdout.write(`${red("Container engine (Docker or Podman) is not installed or not in PATH.")}\n`);
     process.exit(1);
   }
 

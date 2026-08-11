@@ -49,10 +49,10 @@ function LoginPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="w-full max-w-md"
+          className="relative w-full max-w-md"
         >
-          <Card className="border-border/50 shadow-xl">
-            <CardContent className="p-8">
+          <Card className="relative border-border/50 shadow-xl overflow-visible">
+            <CardContent className="p-8 pt-9">
               <div className="mb-6 text-center">
                 <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
                 <p className="mt-1 text-sm text-muted-foreground">

@@ -8,10 +8,12 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { XPBar } from "@/components/gamification/XPBar";
+import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
+import { StreakCelebrationModal } from "@/components/scenes/StreakCelebrationModal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
@@ -50,35 +52,42 @@ export interface StudentShellProps {
 /**
  * StudentShell — the per-page student layout: left sidebar (desktop) +
  * bottom tab bar (mobile). Used by dashboard, leaderboard, achievements,
- * settings and the courses catalog. The global top Navbar still renders the
- * brand + XP bar; this shell adds the contextual navigation chrome.
+ * settings and the courses catalog.
+ *
+ * Navigation and identity only. Progression state (XP, level, streak) and the
+ * logout action live in the global Navbar and the dashboard greeting band; the
+ * sidebar deliberately does not repeat them.
  */
 export function StudentShell({ children, banner, className }: StudentShellProps) {
   const { user } = useAuthStore();
   const matchRoute = useMatchRoute();
+  const [showStreakModal, setShowStreakModal] = useState(false);
 
   return (
     <div className={cn("mx-auto max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:flex", className)}>
       {/* Sidebar — desktop */}
-      <aside className="hidden w-60 shrink-0 lg:block">
+      <aside className="hidden w-56 shrink-0 lg:block">
         <div className="sticky top-20 space-y-4">
-          <div className="rounded-2xl border bg-sidebar p-3 text-sidebar-foreground shadow-sm">
-            <div className="flex items-center gap-3 px-1 pb-3">
+          <div className="relative rounded-2xl border bg-card/70 backdrop-blur-md p-3 text-sidebar-foreground shadow-sm">
+            {/* Peeking Helmet Companion */}
+            <HelmetCompanion peeking size="sm" mood="neutral" className="right-3 -top-12 z-20" />
+
+            <div className="flex items-center gap-3 px-1 pb-3 pt-1 border-b border-border/40">
               <span
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 font-bold text-primary-foreground"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 font-bold text-xs text-primary-foreground shadow-xs"
                 aria-hidden
               >
                 {user?.fullName?.charAt(0).toUpperCase() ?? "S"}
               </span>
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold">{user?.fullName ?? "Learner"}</p>
-                <p className="truncate text-xs text-muted-foreground">
+                <p className="truncate text-xs font-bold text-foreground">{user?.fullName ?? "Learner"}</p>
+                <p className="truncate text-[10px] text-muted-foreground font-mono">
                   {user?.grade ?? "—"} · {user?.preferredLanguage.toUpperCase() ?? "EN"}
                 </p>
               </div>
             </div>
 
-            <nav className="space-y-1">
+            <nav className="space-y-1 mt-2">
               {NAV_ITEMS.map((item) => {
                 const active = matchRoute({ to: item.matchPrefix, fuzzy: true });
                 const Icon = item.icon;
@@ -87,10 +96,10 @@ export function StudentShell({ children, banner, className }: StudentShellProps)
                     key={item.to}
                     to={item.to}
                     className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                      "flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-150",
                       active
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "text-sidebar-foreground hover:bg-sidebar-accent",
+                        ? "bg-primary text-primary-foreground shadow-xs font-bold"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/60",
                     )}
                   >
                     <Icon className="h-4 w-4 shrink-0" />
@@ -100,17 +109,25 @@ export function StudentShell({ children, banner, className }: StudentShellProps)
               })}
             </nav>
 
-            <div className="mt-3 border-t border-sidebar-border pt-3">
+            <div className="mt-3 border-t border-border/40 pt-3 space-y-2">
               <XPBar totalXp={user?.totalXp ?? 0} compact />
-              <div className="mt-2 flex items-center justify-between gap-2">
-                <StreakFlame dayCount={user?.streak ?? 0} size="sm" />
+              <div className="flex items-center justify-between gap-2 pt-1">
+                <StreakFlame 
+                  dayCount={user?.streak ?? 0} 
+                  size="sm" 
+                  onClick={() => setShowStreakModal(true)}
+                />
                 <LogoutButton size="sm" variant="ghost" />
               </div>
             </div>
           </div>
-
-          <p className="px-2 text-[11px] text-muted-foreground">Grade 1–11 · O/L · A/L</p>
         </div>
+        <StreakCelebrationModal
+          isOpen={showStreakModal}
+          onClose={() => setShowStreakModal(false)}
+          streakCount={user?.streak ?? 7}
+          longestStreak={Math.max(user?.streak ?? 7, 12)}
+        />
       </aside>
 
       {/* Content */}

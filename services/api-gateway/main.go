@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -14,7 +15,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/vektah/gqlparser/v2/gqlerror"
 	coderws "github.com/coder/websocket"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -24,15 +24,28 @@ import (
 	"github.com/studed/api-gateway/internal/client"
 	"github.com/studed/api-gateway/internal/config"
 	"github.com/studed/api-gateway/internal/events"
+	gwhandler "github.com/studed/api-gateway/internal/handler"
 	authmiddleware "github.com/studed/api-gateway/internal/middleware"
 	"github.com/studed/shared/go/logger"
 	"github.com/studed/shared/go/metrics"
+	"github.com/studed/shared/go/otel"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 func main() {
 	_ = godotenv.Load()
 
 	log := logger.New("api-gateway")
+
+	tracerShutdown, err := otel.SetupTracerProvider(otel.TracerProviderConfig{
+		ServiceName:    "api-gateway",
+		Environment:    otel.Env("APP_ENV", "development"),
+		SampleFraction: 1.0,
+	})
+	if err != nil {
+		log.Error("failed to init tracer provider", slog.Any("error", err))
+		os.Exit(1)
+	}
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -83,7 +96,12 @@ func main() {
 	}
 	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
 	srv.AddTransport(transport.Options{})
+	// GET transport enables GraphQL queries over HTTP GET (urql and TanStack
+	// Router prefetch issue GET requests); without it every data query returns
+	// 400 "transport not supported" and the app cannot browse any data.
+	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.POST{})
+	srv.AddTransport(transport.MultipartForm{})
 	srv.AddTransport(transport.Websocket{
 		KeepAlivePingInterval: 10 * time.Second,
 		// Auth is enforced per subscription via the session cookie the Auth
@@ -117,6 +135,14 @@ func main() {
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr: cfg.RedisAddr,
+		// Command-level retries with exponential backoff so transient Redis
+		// blips do not surface as 429s or dropped requests.
+		MaxRetries:      5,
+		MinRetryBackoff: 100 * time.Millisecond,
+		MaxRetryBackoff: 2 * time.Second,
+		DialTimeout:     2 * time.Second,
+		ReadTimeout:     2 * time.Second,
+		WriteTimeout:    2 * time.Second,
 	})
 	rateLimiter := authmiddleware.NewRateLimiter(rdb)
 
@@ -125,8 +151,19 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// The AI chat stream carries uploaded images (base64) and can be
+			// long-lived; exempt it from the 1MB payload cap and the request
+			// timeout. The proxy handler enforces its own 15MB read limit.
+			if r.URL.Path == "/ai/chat" {
+				next.ServeHTTP(w, r)
+				return
+			}
 			r.Body = http.MaxBytesReader(w, r.Body, 1<<20) // 1MB payload cap (SEC-21)
-			ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
+			// Request timeout. AI generation (learn blocks, visualizations,
+			// agent runs) can take 20-90s, so the default is generous; set
+			// REQUEST_TIMEOUT_SECONDS to tighten it (e.g. 15 in production).
+			timeout := time.Duration(envInt("REQUEST_TIMEOUT_SECONDS", 100)) * time.Second
+			ctx, cancel := context.WithTimeout(r.Context(), timeout)
 			defer cancel()
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
@@ -146,6 +183,11 @@ func main() {
 		_, _ = w.Write([]byte("ready"))
 	}))
 
+	// Educator AI assistant: streams agent events (SSE) from the ai-service
+	// to the wave editor chat panel. Educator-only (enforced in the handler).
+	aiChatProxy := gwhandler.NewAIChatProxy(cfg.AIServiceURL)
+	r.Handle("/ai/chat", aiChatProxy)
+
 	if cfg.GraphQLPlayground {
 		r.Handle("/", playground.Handler("StudEd GraphQL", "/graphql"))
 	}
@@ -156,12 +198,17 @@ func main() {
 		Handler:           r,
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       30 * time.Second,
-		WriteTimeout:      30 * time.Second,
-		IdleTimeout:       120 * time.Second,
+		// WriteTimeout is disabled: the AI chat stream (/ai/chat) is long-lived
+		// by design and the agent may stream for minutes. Non-stream routes are
+		// bounded by the per-request context timeout middleware instead.
+		WriteTimeout: 0,
+		IdleTimeout:  120 * time.Second,
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+
+	go rateLimiter.StartReconnectLoop(ctx)
 
 	go func() {
 		log.Info("api-gateway listening", slog.String("addr", cfg.ServiceAddr))
@@ -181,4 +228,22 @@ func main() {
 	} else {
 		log.Info("api-gateway shutdown complete")
 	}
+
+	if err := tracerShutdown(shutdownCtx); err != nil {
+		log.Error("failed to flush tracer", slog.Any("error", err))
+	}
+}
+
+// envInt reads a positive integer from the environment, falling back to the
+// provided default when unset, empty, or invalid.
+func envInt(key string, fallback int) int {
+	v := os.Getenv(key)
+	if v == "" {
+		return fallback
+	}
+	n, err := strconv.Atoi(v)
+	if err != nil || n <= 0 {
+		return fallback
+	}
+	return n
 }

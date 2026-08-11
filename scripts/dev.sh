@@ -55,8 +55,8 @@ trap cleanup INT TERM EXIT
 mkdir -p "${LOG_DIR}"
 rm -f "${PID_FILE}"
 
-if ! docker info >/dev/null 2>&1; then
-  echo "[dev] error: docker daemon is not running. Start Docker Desktop first."
+if ! docker info >/dev/null 2>&1 && ! podman info >/dev/null 2>&1; then
+  echo "[dev] error: container engine (Docker or Podman) is not running. Please start it and try again."
   exit 1
 fi
 
@@ -65,7 +65,7 @@ docker compose -f "${REPO_ROOT}/docker-compose.yml" up -d postgres redis elastic
 
 echo "[dev] waiting for postgres..."
 for _ in {1..30}; do
-  if docker exec studed-postgres pg_isready -U studed -d studed >/dev/null 2>&1; then
+  if docker exec studed-postgres pg_isready -U studed -d studed >/dev/null 2>&1 || podman exec studed-postgres pg_isready -U studed -d studed >/dev/null 2>&1; then
     break
   fi
   sleep 1

@@ -186,6 +186,26 @@ message PublishWaveRequest {
   string educator_id = 2;
 }
 
+message DeleteCourseRequest {
+  string id = 1;
+  string educator_id = 2;
+}
+
+message DeleteLessonRequest {
+  string id = 1;
+  string educator_id = 2;
+}
+
+message DeleteWaveRequest {
+  string id = 1;
+  string educator_id = 2;
+}
+
+message DeleteResponse {
+  bool success = 1;
+  string error = 2;
+}
+
 message WaveResponse {
   Wave wave = 1;
   string error = 2;
@@ -201,12 +221,14 @@ service CourseService {
   rpc ListCourses(ListCoursesRequest) returns (CourseListResponse);
   rpc UpdateCourse(UpdateCourseRequest) returns (CourseResponse);
   rpc PublishCourse(PublishCourseRequest) returns (CourseResponse);
+  rpc DeleteCourse(DeleteCourseRequest) returns (DeleteResponse);
 
   rpc CreateLesson(CreateLessonRequest) returns (LessonResponse);
   rpc GetLesson(GetLessonRequest) returns (LessonResponse);
   rpc ListLessons(ListLessonsRequest) returns (LessonListResponse);
   rpc UpdateLesson(UpdateLessonRequest) returns (LessonResponse);
   rpc PublishLesson(PublishLessonRequest) returns (LessonResponse);
+  rpc DeleteLesson(DeleteLessonRequest) returns (DeleteResponse);
 
   rpc CreateWave(CreateWaveRequest) returns (WaveResponse);
   rpc GetWave(GetWaveRequest) returns (WaveResponse);
@@ -214,4 +236,5 @@ service CourseService {
   rpc ListWavesByLessonIds(ListWavesByLessonIdsRequest) returns (WaveListResponse);
   rpc UpdateWave(UpdateWaveRequest) returns (WaveResponse);
   rpc PublishWave(PublishWaveRequest) returns (WaveResponse);
+  rpc DeleteWave(DeleteWaveRequest) returns (DeleteResponse);
 }

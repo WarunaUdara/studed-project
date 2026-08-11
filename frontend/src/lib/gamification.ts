@@ -282,8 +282,14 @@ export function rankBadgeGlyph(rank: number, total?: number): string {
 
 /** Display leaderboard names as "First name + initial." for privacy (per spec). */
 export function privateLeaderboardName(fullName: string): string {
-  const parts = fullName.trim().split(/\s+/);
-  if (parts.length < 2) return fullName;
+  if (!fullName || fullName.trim() === "") return "Student Scholar";
+  const trimmed = fullName.trim();
+  // Prevent raw DB UUIDs or hashes from leaking as names on public leaderboards
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(trimmed) || /^[0-9a-f]{32,}$/i.test(trimmed)) {
+    return "Student Scholar";
+  }
+  const parts = trimmed.split(/\s+/);
+  if (parts.length < 2) return trimmed;
   const first = parts[0] ?? "";
   const initial = (parts[parts.length - 1] ?? "").charAt(0);
   return initial ? `${first} ${initial}.` : first;

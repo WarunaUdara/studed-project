@@ -37,7 +37,11 @@ export function ProficiencyBadge({
       className={cn(
         "inline-flex items-center rounded-full font-semibold ring-1",
         s.badge,
-        meta.textColor,
+        // Use the base hue, not `meta.textColor`. The `-foreground` tokens are
+        // sized for a solid fill of their colour; over a 15% wash they invert
+        // against the surface and vanish (near-white in light mode for
+        // success/purple, near-black in dark mode for all four tiers).
+        meta.color,
         meta.bgColor,
         meta.ringColor,
         className,

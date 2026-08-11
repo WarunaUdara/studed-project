@@ -1,8 +1,15 @@
 import { Link } from "@tanstack/react-router";
 import { Code, Send } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { LanguageToggle } from "@/components/public/LanguageToggle";
+import { MaskedHeading } from "@/components/ui/MaskedHeading";
 import { usePublicI18n } from "@/lib/i18n";
+
+const FOOTER_IMAGES = [
+  "/footer/footer-1.webp",
+  "/footer/footer-2.webp",
+  "/footer/footer-3.webp",
+];
 
 interface FooterColumn {
   heading: string;
@@ -11,12 +18,23 @@ interface FooterColumn {
 
 /**
  * PublicFooter — multi-column site footer on public pages.
- * Has an atmospheric bottom glow that intensifies when scrolled to the very bottom.
- * The CTA section above sits on top of the footer and "peels away" as you scroll down.
+ * Features a large MaskedHeading "STUDED" showcasing imagery from /public/footer.
  */
 export function PublicFooter() {
   const { t } = usePublicI18n();
   const [bottomGlow, setBottomGlow] = useState(0);
+  const [currentImageIdx, setCurrentImageIdx] = useState(0);
+
+  const nextFooterImage = useCallback(() => {
+    setCurrentImageIdx((prev) => (prev + 1) % FOOTER_IMAGES.length);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      nextFooterImage();
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [nextFooterImage]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -139,6 +157,25 @@ export function PublicFooter() {
             © {new Date().getFullYear()} StudEd. {t("footerRights")}
           </span>
           <span>Grade 1–11 · O/L · A/L</span>
+        </div>
+
+        {/* Large Masked Heading "STUDED" at the bottom of the footer */}
+        <div className="mt-12 pt-6 border-t border-border/40 overflow-hidden flex flex-col items-center justify-center">
+          <MaskedHeading
+            text="STUDED"
+            src={FOOTER_IMAGES[currentImageIdx]}
+            fillScale={1.35}
+            parallax={45}
+            drift={22}
+            textScale={0.22}
+            weight={900}
+            tracking={0.06}
+            reveal="rise"
+            trigger="scroll"
+            duration={1.2}
+            className="w-full text-center select-none font-black tracking-widest uppercase cursor-pointer"
+            onClick={nextFooterImage}
+          />
         </div>
       </div>
     </footer>

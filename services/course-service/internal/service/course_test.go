@@ -71,6 +71,14 @@ func (r *fakeCourseRepo) Update(ctx context.Context, c *model.Course) error {
 	return nil
 }
 
+func (r *fakeCourseRepo) Delete(ctx context.Context, id string) error {
+	if _, ok := r.courses[id]; !ok {
+		return notFoundErr{"course"}
+	}
+	delete(r.courses, id)
+	return nil
+}
+
 type fakeLessonRepo struct {
 	lessons map[string]*model.Lesson
 	nextID  int
@@ -120,6 +128,14 @@ func (r *fakeLessonRepo) GetCourseID(ctx context.Context, id string) (string, er
 		return "", notFoundErr{"lesson"}
 	}
 	return l.CourseID, nil
+}
+
+func (r *fakeLessonRepo) Delete(ctx context.Context, id string) error {
+	if _, ok := r.lessons[id]; !ok {
+		return notFoundErr{"lesson"}
+	}
+	delete(r.lessons, id)
+	return nil
 }
 
 type fakeWaveRepo struct {
@@ -189,6 +205,14 @@ func (r *fakeWaveRepo) GetLessonID(ctx context.Context, id string) (string, erro
 		return "", notFoundErr{"wave"}
 	}
 	return w.LessonID, nil
+}
+
+func (r *fakeWaveRepo) Delete(ctx context.Context, id string) error {
+	if _, ok := r.waves[id]; !ok {
+		return notFoundErr{"wave"}
+	}
+	delete(r.waves, id)
+	return nil
 }
 
 func itoa(n int) string {
@@ -581,5 +605,107 @@ func TestGetCourse_NotFoundPropagatesError(t *testing.T) {
 	var nf notFoundErr
 	if !errors.As(err, &nf) {
 		t.Fatalf("expected a notFoundErr, got %T: %v", err, err)
+	}
+}
+
+/* ----- Delete ----- */
+
+func TestDeleteCourse_RemovesCourseAndRequiresOwner(t *testing.T) {
+	svc, courseRepo, _, _ := newTestCourseService()
+
+	created, err := svc.CreateCourse(context.Background(), &coursepb.CreateCourseRequest{
+		Title: "Physics", Slug: "physics", EducatorId: "edu-1",
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	id := created.Course.Id
+
+	// Non-owner cannot delete.
+	if _, err := svc.DeleteCourse(context.Background(), &coursepb.DeleteCourseRequest{Id: id, EducatorId: "edu-2"}); err == nil {
+		t.Fatal("expected authorization error for non-owner delete")
+	}
+
+	// Owner can delete.
+	resp, err := svc.DeleteCourse(context.Background(), &coursepb.DeleteCourseRequest{Id: id, EducatorId: "edu-1"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !resp.Success {
+		t.Fatal("expected success=true")
+	}
+	if _, ok := courseRepo.courses[id]; ok {
+		t.Fatal("course should be removed from the repository")
+	}
+
+	// Deleting again fails (not found).
+	if _, err := svc.DeleteCourse(context.Background(), &coursepb.DeleteCourseRequest{Id: id, EducatorId: "edu-1"}); err == nil {
+		t.Fatal("expected not-found error on second delete")
+	}
+}
+
+func TestDeleteLesson_RequiresCourseOwnership(t *testing.T) {
+	svc, _, _, _ := newTestCourseService()
+
+	course, err := svc.CreateCourse(context.Background(), &coursepb.CreateCourseRequest{
+		Title: "Chemistry", Slug: "chem", EducatorId: "edu-1",
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	lesson, err := svc.CreateLesson(context.Background(), &coursepb.CreateLessonRequest{
+		CourseId: course.Course.Id, Title: "Atoms", SequenceOrder: 1, EducatorId: "edu-1",
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Non-owner cannot delete.
+	if _, err := svc.DeleteLesson(context.Background(), &coursepb.DeleteLessonRequest{Id: lesson.Lesson.Id, EducatorId: "edu-2"}); err == nil {
+		t.Fatal("expected authorization error for non-owner lesson delete")
+	}
+
+	// Owner can delete.
+	resp, err := svc.DeleteLesson(context.Background(), &coursepb.DeleteLessonRequest{Id: lesson.Lesson.Id, EducatorId: "edu-1"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !resp.Success {
+		t.Fatal("expected success=true")
+	}
+}
+
+func TestDeleteWave_RequiresCourseOwnership(t *testing.T) {
+	svc, _, _, _ := newTestCourseService()
+
+	course, err := svc.CreateCourse(context.Background(), &coursepb.CreateCourseRequest{
+		Title: "Biology", Slug: "bio", EducatorId: "edu-1",
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	lesson, err := svc.CreateLesson(context.Background(), &coursepb.CreateLessonRequest{
+		CourseId: course.Course.Id, Title: "Cells", SequenceOrder: 1, EducatorId: "edu-1",
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	wave, err := svc.CreateWave(context.Background(), &coursepb.CreateWaveRequest{
+		LessonId: lesson.Lesson.Id, Title: "Cell Structure", SequenceOrder: 1, EducatorId: "edu-1",
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if _, err := svc.DeleteWave(context.Background(), &coursepb.DeleteWaveRequest{Id: wave.Wave.Id, EducatorId: "edu-2"}); err == nil {
+		t.Fatal("expected authorization error for non-owner wave delete")
+	}
+
+	resp, err := svc.DeleteWave(context.Background(), &coursepb.DeleteWaveRequest{Id: wave.Wave.Id, EducatorId: "edu-1"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !resp.Success {
+		t.Fatal("expected success=true")
 	}
 }

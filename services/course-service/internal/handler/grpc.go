@@ -127,3 +127,27 @@ func (h *CourseGRPCHandler) PublishWave(ctx context.Context, req *coursepb.Publi
 	}
 	return resp, nil
 }
+
+func (h *CourseGRPCHandler) DeleteCourse(ctx context.Context, req *coursepb.DeleteCourseRequest) (*coursepb.DeleteResponse, error) {
+	resp, err := h.svc.DeleteCourse(ctx, req)
+	if err != nil {
+		return &coursepb.DeleteResponse{Error: err.Error()}, nil
+	}
+	return resp, nil
+}
+
+func (h *CourseGRPCHandler) DeleteLesson(ctx context.Context, req *coursepb.DeleteLessonRequest) (*coursepb.DeleteResponse, error) {
+	resp, err := h.svc.DeleteLesson(ctx, req)
+	if err != nil {
+		return &coursepb.DeleteResponse{Error: err.Error()}, nil
+	}
+	return resp, nil
+}
+
+func (h *CourseGRPCHandler) DeleteWave(ctx context.Context, req *coursepb.DeleteWaveRequest) (*coursepb.DeleteResponse, error) {
+	resp, err := h.svc.DeleteWave(ctx, req)
+	if err != nil {
+		return &coursepb.DeleteResponse{Error: err.Error()}, nil
+	}
+	return resp, nil
+}

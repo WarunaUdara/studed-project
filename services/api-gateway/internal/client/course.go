@@ -21,6 +21,7 @@ type CourseClient struct {
 
 func NewCourseClient(addr, serviceToken string) (*CourseClient, error) {
 	interceptors := []grpc.UnaryClientInterceptor{
+		grpcauth.UnaryClientTraceInterceptor(),
 		grpcauth.UnaryClientTimeoutInterceptor(5 * time.Second),
 	}
 	if serviceToken != "" {
@@ -637,4 +638,40 @@ func valueOrZero(v *float64) float64 {
 		return 0
 	}
 	return *v
+}
+
+// DeleteCourse removes a course (and cascades to lessons + waves via FK).
+func (c *CourseClient) DeleteCourse(ctx context.Context, educatorID string, id string) error {
+	resp, err := c.client.DeleteCourse(ctx, &coursepb.DeleteCourseRequest{Id: id, EducatorId: educatorID})
+	if err != nil {
+		return fmt.Errorf("delete course failed: %w", err)
+	}
+	if resp.Error != "" {
+		return fmt.Errorf("delete course failed: %s", resp.Error)
+	}
+	return nil
+}
+
+// DeleteLesson removes a lesson (and cascades to its waves via FK).
+func (c *CourseClient) DeleteLesson(ctx context.Context, educatorID string, id string) error {
+	resp, err := c.client.DeleteLesson(ctx, &coursepb.DeleteLessonRequest{Id: id, EducatorId: educatorID})
+	if err != nil {
+		return fmt.Errorf("delete lesson failed: %w", err)
+	}
+	if resp.Error != "" {
+		return fmt.Errorf("delete lesson failed: %s", resp.Error)
+	}
+	return nil
+}
+
+// DeleteWave removes a single wave.
+func (c *CourseClient) DeleteWave(ctx context.Context, educatorID string, id string) error {
+	resp, err := c.client.DeleteWave(ctx, &coursepb.DeleteWaveRequest{Id: id, EducatorId: educatorID})
+	if err != nil {
+		return fmt.Errorf("delete wave failed: %w", err)
+	}
+	if resp.Error != "" {
+		return fmt.Errorf("delete wave failed: %s", resp.Error)
+	}
+	return nil
 }
