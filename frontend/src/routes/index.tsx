@@ -41,6 +41,7 @@ import { ScrollExpand } from "@/components/ui/ScrollExpand";
 import { SplitText } from "@/components/ui/SplitText";
 import { TextLoop } from "@/components/ui/TextLoop";
 import { MagicBento, MagicBentoCard } from "@/components/ui/MagicBento";
+import { SpecularButton } from "@/components/ui/SpecularButton";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { FEATURED_COURSES, type FeaturedCourse } from "@/lib/demoData";
 import { type ProficiencyLevel, proficiencyMeta } from "@/lib/gamification";
@@ -184,36 +185,36 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             className="flex flex-wrap items-center gap-3.5 pt-1"
           >
             {authed ? (
-              <Link to={ctaLink}>
-                <Button
-                  size="lg"
-                  className="h-11 gap-2 rounded-full px-6 text-sm font-semibold shadow-md"
-                >
+              <Button asChild size="lg">
+                <Link to={ctaLink}>
                   <Zap className="h-4 w-4" />
                   {t("ctaPortal")}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             ) : (
               <>
                 <Link to="/register">
-                  <Button
+                  <SpecularButton
                     size="lg"
-                    className="h-11 gap-2 rounded-full px-6 text-sm font-semibold shadow-md"
+                    radius={22}
+                    lineColor="#ffffff"
+                    baseColor="#059669"
+                    tint="#10b981"
+                    tintOpacity={0.25}
+                    followMouse
+                    proximity={300}
+                    autoAnimate={false}
                   >
-                    <Zap className="h-4 w-4" />
+                    <Zap className="h-4.5 w-4.5 text-white" />
                     {t("ctaGetStarted")}
-                  </Button>
+                  </SpecularButton>
                 </Link>
-                <Link to="/courses">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="h-11 gap-2 rounded-full border-border/80 bg-card/80 px-6 text-sm font-semibold shadow-xs hover:bg-card"
-                  >
+                <Button asChild size="lg" variant="outline">
+                  <Link to="/courses">
                     <Compass className="h-4 w-4 text-muted-foreground" />
                     {t("ctaBrowseCourses")}
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </>
             )}
           </motion.div>
@@ -670,12 +671,12 @@ function CatalogPreview() {
         </div>
 
         <div className="mt-10 flex justify-center">
-          <Link to="/courses">
-            <Button variant="outline" className="gap-2 rounded-full">
+          <Button asChild variant="outline" className="gap-2 rounded-full">
+            <Link to="/courses">
               <Compass className="h-4 w-4" />
               {t("catalogViewAll")}
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
     </section>
@@ -940,15 +941,14 @@ function PricingTierCard({
       </ul>
 
       <div className="mt-7">
-        <Link to={authed ? "/dashboard" : "/register"}>
-          <Button
-            className="w-full rounded-full"
-            variant={tier.highlighted ? "default" : "outline"}
-            onClick={() => playSuccessSound()}
-          >
-            {tier.cta}
-          </Button>
-        </Link>
+        <Button
+          asChild
+          className="w-full rounded-full"
+          variant={tier.highlighted ? "default" : "outline"}
+          onClick={() => playSuccessSound()}
+        >
+          <Link to={authed ? "/dashboard" : "/register"}>{tier.cta}</Link>
+        </Button>
       </div>
     </motion.div>
   );
@@ -1068,31 +1068,33 @@ function FinalCta({ authed }: { authed: boolean }) {
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-1">
                 {authed ? (
-                  <Link to="/dashboard">
-                    <Button size="lg" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md font-semibold px-6">
+                  <Button asChild size="lg" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md font-semibold px-6">
+                    <Link to="/dashboard">
                       {t("ctaPortal")}
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 ) : (
                   <>
-                    <Link to="/register">
-                      <Button
-                        size="lg"
-                        className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md font-semibold px-6"
-                        onClick={() => playSuccessSound()}
-                      >
+                    <Button
+                      asChild
+                      size="lg"
+                      className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md font-semibold px-6"
+                      onClick={() => playSuccessSound()}
+                    >
+                      <Link to="/register">
                         {t("finalCtaCreate")}
-                      </Button>
-                    </Link>
-                    <Link to="/login">
-                      <Button
-                        size="lg"
-                        variant="outline"
-                        className="rounded-full border-white/30 bg-white/10 text-white backdrop-blur-md hover:bg-white/20 font-semibold px-6"
-                      >
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      size="lg"
+                      variant="outline"
+                      className="rounded-full border-white/30 bg-white/10 text-white backdrop-blur-md hover:bg-white/20 font-semibold px-6"
+                    >
+                      <Link to="/login">
                         {t("finalCtaSignin")}
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
                   </>
                 )}
               </div>
