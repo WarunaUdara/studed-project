@@ -162,9 +162,94 @@ export function WaveMapHero() {
         </>
       )}
 
-      <div className="relative overflow-hidden rounded-3xl border bg-card/85 shadow-2xl backdrop-blur">
+      <div className="relative overflow-visible rounded-3xl border border-emerald-500/20 bg-gradient-to-b from-[#021f17] via-[#03140e] to-[#010a07] text-card-foreground shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+        {/* Ambient Emerald Glow Radial */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.25),transparent_70%)] rounded-3xl" />
+
+        {/* Twinkling Starlight Particles */}
+        {!reduce && (
+          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl z-0">
+            {[...Array(12)].map((_, i) => (
+              <motion.div
+                key={`hero-star-${i}`}
+                className="absolute rounded-full bg-emerald-300 shadow-[0_0_8px_rgba(110,231,183,0.8)]"
+                style={{
+                  width: i % 3 === 0 ? "4px" : "2px",
+                  height: i % 3 === 0 ? "4px" : "2px",
+                  left: `${(i * 27) % 92 + 4}%`,
+                  top: `${(i * 19) % 88 + 6}%`,
+                }}
+                animate={{
+                  opacity: [0.2, 0.9, 0.2],
+                  scale: [0.8, 1.4, 0.8],
+                  y: [-3, 3, -3],
+                }}
+                transition={{
+                  duration: 3 + (i % 3),
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "easeInOut",
+                  delay: (i % 4) * 0.4,
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* 3D Floating Background Islands */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl z-0">
+          {/* Top Right: Flag Island with Wind Swaying Effect */}
+          <motion.div
+            className="absolute -top-2 -right-8 w-36 sm:w-44 opacity-80 select-none"
+            animate={{
+              y: [-5, 5, -5],
+              rotate: [-1.2, 1.2, -1.2],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "easeInOut",
+            }}
+          >
+            <motion.img
+              src="/images/islands/flag-island.png"
+              alt="Floating Flag Island"
+              className="w-full h-auto drop-shadow-[0_12px_20px_rgba(0,0,0,0.6)]"
+              style={{ transformOrigin: "bottom center" }}
+              animate={{
+                skewX: [-2.5, 2.5, -2.5],
+              }}
+              transition={{
+                duration: 4.5,
+                repeat: Number.POSITIVE_INFINITY,
+                ease: "easeInOut",
+              }}
+            />
+          </motion.div>
+
+          {/* Bottom Left: Mascot Island */}
+          <motion.div
+            className="absolute bottom-12 -left-8 w-36 sm:w-44 opacity-75 select-none"
+            animate={{
+              y: [7, -7, 7],
+              rotate: [1.5, -1.5, 1.5],
+            }}
+            transition={{
+              duration: 7,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "easeInOut",
+              delay: 1,
+            }}
+          >
+            <img
+              src="/images/islands/mascot-island.png"
+              alt="Floating Mascot Island"
+              className="w-full h-auto drop-shadow-[0_12px_20px_rgba(0,0,0,0.6)]"
+            />
+          </motion.div>
+        </div>
+
         {/* Header */}
-        <div className="flex items-start justify-between gap-3 border-b px-5 py-4">
+        <div className="relative z-10 flex items-start justify-between gap-3 border-b border-emerald-500/20 px-5 py-4 bg-emerald-950/30 backdrop-blur-md">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
               {t("waveMapTitle")}

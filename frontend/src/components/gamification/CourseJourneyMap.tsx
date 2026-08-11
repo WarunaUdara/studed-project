@@ -313,9 +313,115 @@ export function CourseJourneyMap({
       </div>
 
       {/* Main Interactive Map Container */}
-      <Card className="relative overflow-visible rounded-3xl border bg-card/90 shadow-2xl backdrop-blur">
+      <Card className="relative overflow-visible rounded-3xl border border-emerald-500/20 bg-gradient-to-b from-[#021f17] via-[#03140e] to-[#010a07] text-card-foreground shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+        {/* Ambient Emerald Glow Radial */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.22),transparent_70%)] rounded-3xl" />
+
+        {/* Twinkling Starlight Particles */}
+        {!reduce && (
+          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl z-0">
+            {[...Array(16)].map((_, i) => (
+              <motion.div
+                key={`star-particle-${i}`}
+                className="absolute rounded-full bg-emerald-300 shadow-[0_0_8px_rgba(110,231,183,0.8)]"
+                style={{
+                  width: i % 3 === 0 ? "4px" : i % 2 === 0 ? "3px" : "2px",
+                  height: i % 3 === 0 ? "4px" : i % 2 === 0 ? "3px" : "2px",
+                  left: `${(i * 23) % 95 + 2}%`,
+                  top: `${(i * 17) % 90 + 5}%`,
+                }}
+                animate={{
+                  opacity: [0.15, 0.85, 0.15],
+                  scale: [0.8, 1.4, 0.8],
+                  y: [-4, 4, -4],
+                }}
+                transition={{
+                  duration: 3 + (i % 4),
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "easeInOut",
+                  delay: (i % 5) * 0.5,
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* 3D Floating Background Islands */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl z-0">
+          {/* Top Right: Flag Island with Wind Swaying Effect */}
+          <motion.div
+            className="absolute -top-4 -right-12 sm:right-2 w-44 sm:w-56 opacity-85 select-none"
+            animate={{
+              y: [-6, 6, -6],
+              rotate: [-1.2, 1.2, -1.2],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "easeInOut",
+            }}
+          >
+            <motion.img
+              src="/images/islands/flag-island.png"
+              alt="Floating Flag Island"
+              className="w-full h-auto drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)]"
+              style={{ transformOrigin: "bottom center" }}
+              animate={{
+                skewX: [-2.5, 2.5, -2.5],
+              }}
+              transition={{
+                duration: 4.5,
+                repeat: Number.POSITIVE_INFINITY,
+                ease: "easeInOut",
+              }}
+            />
+          </motion.div>
+
+          {/* Mid Left: Mascot Island */}
+          <motion.div
+            className="absolute top-1/3 -left-12 sm:-left-4 w-40 sm:w-52 opacity-80 select-none"
+            animate={{
+              y: [8, -8, 8],
+              rotate: [1.5, -1.5, 1.5],
+            }}
+            transition={{
+              duration: 7,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "easeInOut",
+              delay: 1,
+            }}
+          >
+            <img
+              src="/images/islands/mascot-island.png"
+              alt="Floating Mascot Island"
+              className="w-full h-auto drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)]"
+            />
+          </motion.div>
+
+          {/* Bottom Right: Stepping Stones Empty Island */}
+          <motion.div
+            className="absolute bottom-8 -right-10 sm:-right-2 w-40 sm:w-52 opacity-75 select-none"
+            animate={{
+              y: [-7, 7, -7],
+              rotate: [-1, 1, -1],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "easeInOut",
+              delay: 2,
+            }}
+          >
+            <img
+              src="/images/islands/empty-island.png"
+              alt="Floating Island"
+              className="w-full h-auto drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)]"
+            />
+          </motion.div>
+        </div>
+
         {/* Map Header */}
-        <div className="flex items-center justify-between border-b px-6 py-4 bg-muted/20">
+        <div className="relative z-10 flex items-center justify-between border-b border-emerald-500/20 px-6 py-4 bg-emerald-950/30 backdrop-blur-md">
           <div className="flex items-center gap-2">
             <Compass className="h-5 w-5 text-primary animate-spin-slow" />
             <span className="text-xs font-extrabold uppercase tracking-widest text-foreground">
