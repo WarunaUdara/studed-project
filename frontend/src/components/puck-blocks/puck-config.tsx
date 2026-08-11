@@ -127,6 +127,40 @@ function VizBlockPreview({ vizType, content, metadata }: VizBlockProps) {
 
 export const puckConfig: Config = {
   components: {
+    HeadingBlock: {
+      fields: {
+        content: { type: "text", label: "Heading Text" },
+      },
+      defaultProps: {
+        content: "Section Heading",
+      },
+      render: ({ content }) => (
+        <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+          <LearnBadge label="Heading" />
+          <h3 className="font-serif text-xl font-semibold text-foreground">{content || "Heading"}</h3>
+        </div>
+      ),
+    },
+
+    CodeBlock: {
+      fields: {
+        content: { type: "textarea", label: "Code Content" },
+        language: { type: "text", label: "Language" },
+      },
+      defaultProps: {
+        content: "console.log('Hello StudEd!');",
+        language: "javascript",
+      },
+      render: ({ content, language }) => (
+        <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+          <LearnBadge label={`Code (${language || "auto"})`} />
+          <pre className="overflow-x-auto rounded bg-muted p-3 text-xs font-mono text-foreground">
+            <code>{content || "// Code here"}</code>
+          </pre>
+        </div>
+      ),
+    },
+
     TextBlock: {
       fields: {
         content: { type: "textarea", label: "Text Content" },
@@ -591,6 +625,10 @@ function learnBlockToItem(lb: LearnBlockRaw): PuckData["content"][number] {
   const type = lb.type.toLowerCase();
   const common = { id: lb.id };
   switch (type) {
+    case "heading":
+      return { type: "HeadingBlock", props: { ...common, content: lb.content } };
+    case "code":
+      return { type: "CodeBlock", props: { ...common, content: lb.content, language: lb.metadata || "javascript" } };
     case "image":
       return { type: "ImageBlock", props: { ...common, src: lb.content, alt: "Visual aid", caption: lb.metadata || "" } };
     case "video":
@@ -599,17 +637,32 @@ function learnBlockToItem(lb: LearnBlockRaw): PuckData["content"][number] {
     case "math":
       return { type: "MathViz", props: { ...common, formula: lb.content } };
     case "callout":
+    case "note":
       return { type: "CalloutBlock", props: { ...common, content: lb.content } };
     case "example":
       return { type: "ExampleBlock", props: { ...common, content: lb.content } };
+    case "coordinate_plane":
+    case "coordinate_grid":
+    case "coordinates":
+      return { type: "VizBlock", props: { ...common, vizType: "coordinate_plane", content: lb.content, metadata: lb.metadata || "{}" } };
     case "mathviz_manim":
-      return { type: "VizBlock", props: { ...common, vizType: type, content: lb.content, metadata: lb.metadata || "{}" } };
+    case "manim":
+    case "math_animation":
+      return { type: "VizBlock", props: { ...common, vizType: "mathviz_manim", content: lb.content, metadata: lb.metadata || "{}" } };
     case "chemviz_3dmol":
+    case "molecule_3dmol":
+    case "molecule":
+    case "3dmol":
       return { type: "HtmlSimulationBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
     case "elecsim_tscircuit":
-    return { type: "CircuitBlock", props: { ...common, vizType: type, circuitCode: circuitCodeFrom(lb), content: lb.content, metadata: lb.metadata || "{}" } };
+    case "circuit_tscircuit":
+    case "tscircuit":
+    case "circuit":
+      return { type: "CircuitBlock", props: { ...common, vizType: "elecsim_tscircuit", circuitCode: circuitCodeFrom(lb), content: lb.content, metadata: lb.metadata || "{}" } };
     case "html_simulation":
-    return { type: "HtmlSimulationBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
+    case "simulation_html":
+    case "simulation":
+      return { type: "HtmlSimulationBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
     default:
       return { type: "TextBlock", props: { ...common, content: lb.content } };
   }
@@ -734,6 +787,17 @@ export function puckToWaveData(puckData: PuckData) {
     const type = block.type;
 
     switch (type) {
+      case "HeadingBlock":
+        learnBlocks.push({ id, type: "heading", content: str(block.props.content), metadata: null });
+        break;
+      case "CodeBlock":
+        learnBlocks.push({
+          id,
+          type: "code",
+          content: str(block.props.content),
+          metadata: str(block.props.language) || "javascript",
+        });
+        break;
       case "TextBlock":
         learnBlocks.push({ id, type: "text", content: str(block.props.content), metadata: null });
         break;

@@ -92,7 +92,7 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 			_ = json.Unmarshal([]byte(existing.AnswersJSON), &existingAnswers)
 			_, feedback := scoreAnswers(evaluateBlocks, existingAnswers)
 
-			remaining := int32(0)
+			remaining := int32(-1)
 			if wave.MaxReattempts > 0 {
 				if attempts, err := s.repo.GetAttemptsByWave(ctx, userID, waveID); err == nil {
 					remaining = wave.MaxReattempts - int32(len(attempts))
@@ -285,9 +285,12 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 		}
 	}
 
-	remainingAttempts := wave.MaxReattempts - int32(len(attempts)) - 1
-	if remainingAttempts < 0 {
-		remainingAttempts = 0
+	remainingAttempts := int32(-1)
+	if wave.MaxReattempts > 0 {
+		remainingAttempts = wave.MaxReattempts - int32(len(attempts)) - 1
+		if remainingAttempts < 0 {
+			remainingAttempts = 0
+		}
 	}
 
 	return &progresspb.RecordAttemptResponse{
