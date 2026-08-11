@@ -351,7 +351,14 @@ function HowItWorks() {
   ];
 
   return (
-    <section className="px-4 py-24 sm:px-6">
+    <section className="relative overflow-hidden px-4 py-24 sm:px-6">
+      {/* Upper Right Abstract Shape */}
+      <img
+        src="/abstract-shapes/Group 215.svg"
+        alt=""
+        aria-hidden
+        className="absolute -top-36 -right-40 w-[580px] h-[580px] opacity-[0.10] dark:opacity-[0.05] pointer-events-none select-none rotate-90"
+      />
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("howHeading")} subhead={t("howSubhead")} />
 
@@ -428,18 +435,24 @@ function GamificationShowcase() {
 
   return (
     <section className="relative overflow-hidden px-4 py-24 sm:px-6">
-      {/* Background Abstract Shapes */}
+      {/* Background Abstract Shapes on upper and bottom sides */}
       <img
-        src="/abstract-shapes/Group 212.svg"
+        src="/abstract-shapes/Group 216.svg"
         alt=""
         aria-hidden
-        className="absolute -top-24 -right-36 w-[480px] h-[480px] opacity-[0.08] dark:opacity-[0.04] pointer-events-none select-none rotate-45"
+        className="absolute -top-36 -right-36 w-[540px] h-[540px] opacity-[0.10] dark:opacity-[0.05] pointer-events-none select-none rotate-45"
       />
       <img
-        src="/abstract-shapes/Group 213.svg"
+        src="/abstract-shapes/Group 211.svg"
         alt=""
         aria-hidden
-        className="absolute -bottom-24 -left-32 w-[440px] h-[440px] opacity-[0.08] dark:opacity-[0.04] pointer-events-none select-none -rotate-12"
+        className="absolute -bottom-36 -left-36 w-[580px] h-[580px] opacity-[0.10] dark:opacity-[0.05] pointer-events-none select-none -rotate-12"
+      />
+      <img
+        src="/abstract-shapes/Union.svg"
+        alt=""
+        aria-hidden
+        className="absolute -bottom-40 -right-40 w-[600px] h-[600px] opacity-[0.12] dark:opacity-[0.06] pointer-events-none select-none rotate-45"
       />
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("gamificationHeading")} subhead={t("gamificationSubhead")} />
