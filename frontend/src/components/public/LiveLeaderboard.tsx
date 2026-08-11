@@ -32,17 +32,44 @@ export function LiveLeaderboard() {
 
   useEffect(() => {
     if (reduce) return;
+
+    // Trigger an immediate quick rank boost when scrolled into view
+    const initialTimer = setTimeout(() => {
+      setRows((prev) => {
+        const next = prev.map((r) => ({ ...r }));
+        const youRow = next.find((r) => r.you);
+        if (youRow) {
+          youRow.xp += 650;
+        }
+        return next.sort((a, b) => b.xp - a.xp);
+      });
+    }, 400);
+
     const id = setInterval(() => {
       setRows((prev) => {
         const next = prev.map((r) => ({ ...r }));
-        const idx = Math.floor(Math.random() * next.length);
-        const row = next[idx];
-        if (!row) return prev;
-        row.xp += 40 + Math.floor(Math.random() * 120);
+        // 60% chance for "You" to gain XP and climb, 40% chance for random peer to surge
+        const boostYou = Math.random() < 0.6;
+        if (boostYou) {
+          const youRow = next.find((r) => r.you);
+          if (youRow) {
+            youRow.xp += 180 + Math.floor(Math.random() * 240);
+          }
+        } else {
+          const idx = Math.floor(Math.random() * next.length);
+          const row = next[idx];
+          if (row) {
+            row.xp += 80 + Math.floor(Math.random() * 160);
+          }
+        }
         return next.sort((a, b) => b.xp - a.xp);
       });
-    }, 2600);
-    return () => clearInterval(id);
+    }, 1250);
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(id);
+    };
   }, [reduce]);
 
   return (

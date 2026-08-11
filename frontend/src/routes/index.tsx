@@ -111,13 +111,13 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
           src="/abstract-shapes/Union.svg"
           alt=""
           aria-hidden
-          className="absolute -top-32 -left-32 w-[540px] h-[540px] opacity-[0.10] dark:opacity-[0.05] pointer-events-none select-none rotate-12"
+          className="absolute -top-32 -left-32 w-[540px] h-[540px] opacity-[0.22] dark:opacity-[0.14] pointer-events-none select-none rotate-12"
         />
         <img
           src="/abstract-shapes/Group 211.svg"
           alt=""
           aria-hidden
-          className="absolute top-1/4 -right-48 w-[640px] h-[640px] opacity-[0.09] dark:opacity-[0.04] pointer-events-none select-none -rotate-45"
+          className="absolute top-1/4 -right-48 w-[640px] h-[640px] opacity-[0.22] dark:opacity-[0.14] pointer-events-none select-none -rotate-45"
         />
       </div>
 
@@ -306,11 +306,11 @@ function TextLoopBanner() {
 function StatsBar() {
   const { t } = usePublicI18n();
 
-  const stats: { to: number; label: string; icon: LucideIcon }[] = [
+  const stats: { to: number; label: string; icon: LucideIcon; separator?: string }[] = [
     { to: 13, label: t("statsGradeLevels"), icon: GraduationCap },
     { to: 24, label: t("statsSubjects"), icon: BookOpen },
-    { to: 12500, label: t("statsLearners"), icon: Users },
-    { to: 1840000, label: t("statsXpAwarded"), icon: Zap },
+    { to: 12500, label: t("statsLearners"), icon: Users, separator: "," },
+    { to: 1840000, label: t("statsXpAwarded"), icon: Zap, separator: "," },
   ];
 
   return (
@@ -329,7 +329,7 @@ function StatsBar() {
               <s.icon className="h-4.5 w-4.5" />
             </span>
             <p className="text-3xl font-extrabold tabular-nums tracking-tight text-foreground sm:text-4xl">
-              <CountUp to={s.to} />
+              <CountUp to={s.to} separator={s.separator || ""} duration={1.8} />
             </p>
             <p className="text-xs font-medium text-muted-foreground sm:text-sm">{s.label}</p>
           </motion.div>
@@ -447,13 +447,13 @@ function GamificationShowcase() {
         src="/abstract-shapes/Group 211.svg"
         alt=""
         aria-hidden
-        className="absolute -bottom-36 -left-36 w-[580px] h-[580px] opacity-[0.10] dark:opacity-[0.05] pointer-events-none select-none -rotate-12"
+        className="absolute -bottom-36 -left-36 w-[580px] h-[580px] opacity-[0.22] dark:opacity-[0.14] pointer-events-none select-none -rotate-12"
       />
       <img
         src="/abstract-shapes/Union.svg"
         alt=""
         aria-hidden
-        className="absolute -bottom-40 -right-40 w-[600px] h-[600px] opacity-[0.12] dark:opacity-[0.06] pointer-events-none select-none rotate-45"
+        className="absolute -bottom-40 -right-40 w-[600px] h-[600px] opacity-[0.24] dark:opacity-[0.15] pointer-events-none select-none rotate-45"
       />
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("gamificationHeading")} subhead={t("gamificationSubhead")} />
