@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
@@ -154,7 +155,11 @@ func main() {
 			// The AI chat stream carries uploaded images (base64) and can be
 			// long-lived; exempt it from the 1MB payload cap and the request
 			// timeout. The proxy handler enforces its own 15MB read limit.
-			if r.URL.Path == "/ai/chat" {
+			//
+			// File uploads are exempt for the same reason: a 1MB cap here would
+			// truncate every image before upload-service ever saw it, and that
+			// service enforces its own UPLOAD_MAX_BYTES limit.
+			if r.URL.Path == "/ai/chat" || strings.HasPrefix(r.URL.Path, "/v1/uploads") {
 				next.ServeHTTP(w, r)
 				return
 			}
@@ -187,6 +192,16 @@ func main() {
 	// to the wave editor chat panel. Educator-only (enforced in the handler).
 	aiChatProxy := gwhandler.NewAIChatProxy(cfg.AIServiceURL)
 	r.Handle("/ai/chat", aiChatProxy)
+
+	// Course image and attachment storage. Reads are public so <img> tags work;
+	// writes require an educator and carry the service token upstream.
+	uploadProxy, err := gwhandler.NewUploadProxy(cfg.UploadServiceURL, cfg.ServiceToken, log)
+	if err != nil {
+		log.Error("invalid UPLOAD_SERVICE_URL", slog.Any("error", err))
+		os.Exit(1)
+	}
+	r.Handle("/v1/uploads", uploadProxy)
+	r.Handle("/v1/uploads/*", uploadProxy)
 
 	if cfg.GraphQLPlayground {
 		r.Handle("/", playground.Handler("StudEd GraphQL", "/graphql"))

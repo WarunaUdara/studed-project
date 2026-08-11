@@ -12,6 +12,11 @@ data:
   AI_SERVICE_URL: "http://ai-service:8090"
   PAYMENT_SERVICE_URL: "http://payment-service:8091"
   NOTIFICATION_SERVICE_ADDR: ":8092"
+  UPLOAD_SERVICE_URL: "http://upload-service:8093"
+  UPLOAD_SERVICE_ADDR: ":8093"
+  # GCS_BUCKET_NAME is intentionally NOT set here: it is delivered by the
+  # studed-secrets ExternalSecret so it always tracks the real project ID.
+  UPLOAD_MAX_BYTES: "10485760"
   # Dependencies
   REDIS_ADDR: "redis:6379"
   ELASTICSEARCH_URL: "http://elasticsearch:9200"

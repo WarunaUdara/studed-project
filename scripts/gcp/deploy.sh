@@ -15,7 +15,9 @@ REGION="${REGION:-us-central1}"
 ZONE="${ZONE:-us-central1-a}"
 CLUSTER="${CLUSTER_NAME:-studed-backend}"
 NODE_COUNT="${NODE_COUNT:-2}"
-STUDED_API_URL="${STUDED_API_URL:-https://api.34.149.224.124.sslip.io}"
+# Derived from the OpenTofu ingress_static_ip output after apply; override only
+# to point the seeder at an existing deployment.
+STUDED_API_URL="${STUDED_API_URL:-}"
 
 log() { echo; echo "===> $*"; }
 
@@ -123,11 +125,21 @@ seed_demo() {
 main() {
   require gcloud kubectl jq curl
 
-  local ip
-  ip="$(cd "${TF_DIR}" && tofu output -raw ingress_static_ip 2>/dev/null || echo "34.149.224.124")"
-
   check_auth
   terraform_apply
+
+  # Read the ingress IP only AFTER apply, so a first-time deploy (empty state)
+  # gets the real address instead of a stale hard-coded one that would point the
+  # health checks and the seeder at somebody else's cluster.
+  local ip
+  ip="$(cd "${TF_DIR}" && tofu output -raw ingress_static_ip 2>/dev/null || true)"
+  if [[ -z "${ip}" ]]; then
+    echo "error: could not read ingress_static_ip from OpenTofu outputs" >&2
+    echo "       run 'cd ${TF_DIR} && tofu output' to inspect the state" >&2
+    exit 1
+  fi
+  STUDED_API_URL="${STUDED_API_URL:-https://api.${ip}.sslip.io}"
+  echo "  ingress IP: ${ip}"
   populate_secrets
   cluster_credentials
   deploy_gitops

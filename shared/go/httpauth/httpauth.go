@@ -24,6 +24,13 @@ func ServiceTokenMiddleware(expectedToken string) func(http.Handler) http.Handle
 	}
 }
 
+// ValidToken reports whether r carries the expected service token. It is
+// exported for services that protect only some routes (upload-service serves
+// public reads but token-guarded writes) and so cannot wrap the whole mux.
+func ValidToken(r *http.Request, expected string) bool {
+	return validToken(r, expected)
+}
+
 func validToken(r *http.Request, expected string) bool {
 	if expected == "" {
 		return false

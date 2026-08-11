@@ -44,6 +44,16 @@ output "gke_node_sa" {
   value       = google_service_account.gke_node_sa.email
 }
 
+output "uploads_bucket" {
+  description = "GCS bucket backing upload-service (GCS_BUCKET_NAME)"
+  value       = google_storage_bucket.studed_uploads.name
+}
+
+output "upload_service_sa" {
+  description = "GSA used by upload-service (annotate the upload-service-sa KSA with this)"
+  value       = google_service_account.upload_sa.email
+}
+
 output "secret_ids" {
   description = "Secret Manager secret IDs (populate versions via gcloud)"
   value       = tomap({ for k, v in google_secret_manager_secret.studed_secrets : k => v.id })

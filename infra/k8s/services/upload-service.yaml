@@ -1,12 +1,17 @@
+# Local/dev overlay for upload-service (kind, minikube, k8s-dev.sh).
+#
+# The production manifest lives in infra/k8s/production/services/upload-service.yaml
+# and is the one ArgoCD syncs. This one runs against the in-cluster GCS emulator
+# instead of real GCS, so it needs no Workload Identity binding.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-service
+  name: upload-service
   namespace: studed
   labels:
-    app: auth-service
+    app: upload-service
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -14,13 +19,12 @@ spec:
       maxUnavailable: 0
   selector:
     matchLabels:
-      app: auth-service
+      app: upload-service
   template:
     metadata:
       labels:
-        app: auth-service
+        app: upload-service
     spec:
-      terminationGracePeriodSeconds: 45
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
@@ -30,9 +34,9 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - name: auth-service
-          image: ghcr.io/warunaudara/studed-auth-service:latest
-          imagePullPolicy: Always
+        - name: upload-service
+          image: ghcr.io/warunaudara/studed-upload-service:latest
+          imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
             privileged: false
@@ -41,67 +45,58 @@ spec:
               drop:
                 - ALL
           ports:
-            - containerPort: 8081
-            - containerPort: 8085
+            - containerPort: 8093
+          env:
+            - name: UPLOAD_SERVICE_ADDR
+              value: ":8093"
+            - name: GCS_BUCKET_NAME
+              value: "studed-uploads-local"
+            - name: STORAGE_EMULATOR_HOST
+              value: "http://gcs-emulator:4443"
           envFrom:
             - configMapRef:
                 name: studed-config
+                optional: true
             - secretRef:
                 name: studed-secrets
+                optional: true
           resources:
             requests:
-              memory: "30Mi"
+              memory: "48Mi"
               cpu: "15m"
             limits:
-              memory: "96Mi"
-              cpu: "150m"
-          lifecycle:
-            preStop:
-              exec:
-                command: ["sleep", "10"]
-          startupProbe:
-            httpGet:
-              path: /health
-              port: 8085
-            failureThreshold: 30
-            periodSeconds: 2
+              memory: "256Mi"
+              cpu: "250m"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           readinessProbe:
             httpGet:
               path: /ready
-              port: 8085
+              port: 8093
             initialDelaySeconds: 5
             periodSeconds: 5
           livenessProbe:
             httpGet:
               path: /health
-              port: 8085
+              port: 8093
             initialDelaySeconds: 15
             periodSeconds: 10
             failureThreshold: 3
----
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: auth-service-pdb
-  namespace: studed
-spec:
-  minAvailable: 1
-  selector:
-    matchLabels:
-      app: auth-service
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 512Mi
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-service
+  name: upload-service
   namespace: studed
 spec:
   ports:
-    - port: 8081
-      targetPort: 8081
-      name: grpc
-    - port: 8085
-      targetPort: 8085
+    - port: 8093
+      targetPort: 8093
       name: http
   selector:
-    app: auth-service
+    app: upload-service

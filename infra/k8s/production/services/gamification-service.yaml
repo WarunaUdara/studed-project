@@ -7,6 +7,11 @@ metadata:
     app: gamification-service
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: gamification-service
@@ -15,10 +20,26 @@ spec:
       labels:
         app: gamification-service
     spec:
+      terminationGracePeriodSeconds: 45
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: gamification-service
           image: ghcr.io/warunaudara/studed-gamification-service:latest
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8088
             - containerPort: 8089
@@ -34,12 +55,29 @@ spec:
             limits:
               memory: "96Mi"
               cpu: "150m"
-          readinessProbe:
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "10"]
+          startupProbe:
             httpGet:
               path: /health
               port: 8089
+            failureThreshold: 30
+            periodSeconds: 2
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8089
             initialDelaySeconds: 5
             periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8089
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
 ---
 apiVersion: v1
 kind: Service

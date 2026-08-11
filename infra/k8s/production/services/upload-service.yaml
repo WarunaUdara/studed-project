@@ -1,16 +1,24 @@
+# upload-service: course image and attachment storage backed by GCS.
+#
+# Authentication to GCS is via Workload Identity - the ServiceAccount below is
+# bound to the studed-upload GSA created in infra/gcp/terraform/storage.tf, so
+# no service account key ever exists. If project_id is changed from the default
+# "studed-prod", update the annotation to match.
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: api-gateway-sa
+  name: upload-service-sa
   namespace: studed
+  annotations:
+    iam.gke.io/gcp-service-account: studed-upload@studed-prod.iam.gserviceaccount.com
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-gateway
+  name: upload-service
   namespace: studed
   labels:
-    app: api-gateway
+    app: upload-service
 spec:
   replicas: 2
   strategy:
@@ -20,22 +28,17 @@ spec:
       maxUnavailable: 0
   selector:
     matchLabels:
-      app: api-gateway
+      app: upload-service
   template:
     metadata:
       labels:
-        app: api-gateway
+        app: upload-service
     spec:
-      serviceAccountName: api-gateway-sa
-      automountServiceAccountToken: false
+      serviceAccountName: upload-service-sa
+      # Unlike the other services this MUST stay true: the projected token is
+      # how Workload Identity authenticates the pod to GCS.
+      automountServiceAccountToken: true
       terminationGracePeriodSeconds: 45
-      topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: ScheduleAnyway
-          labelSelector:
-            matchLabels:
-              app: api-gateway
       securityContext:
         runAsNonRoot: true
         runAsUser: 10001
@@ -44,8 +47,8 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - name: api-gateway
-          image: ghcr.io/warunaudara/studed-api-gateway:latest
+        - name: upload-service
+          image: ghcr.io/warunaudara/studed-upload-service:latest
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
@@ -55,10 +58,10 @@ spec:
               drop:
                 - ALL
           ports:
-            - containerPort: 8080
+            - containerPort: 8093
           env:
             - name: GOMEMLIMIT
-              value: "110MiB"
+              value: "220MiB"
           envFrom:
             - configMapRef:
                 name: studed-config
@@ -66,11 +69,18 @@ spec:
                 name: studed-secrets
           resources:
             requests:
-              memory: "40Mi"
+              memory: "48Mi"
               cpu: "25m"
             limits:
-              memory: "128Mi"
-              cpu: "250m"
+              # Uploads stream rather than buffer, but multipart parsing still
+              # spills to /tmp, so this sits above the other services.
+              memory: "256Mi"
+              cpu: "300m"
+          volumeMounts:
+            # Root filesystem is read-only; multipart spillover needs a writable
+            # scratch path.
+            - name: tmp
+              mountPath: /tmp
           lifecycle:
             preStop:
               exec:
@@ -78,44 +88,47 @@ spec:
           startupProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: 8093
             failureThreshold: 30
             periodSeconds: 2
           readinessProbe:
             httpGet:
               path: /ready
-              port: 8080
+              port: 8093
             initialDelaySeconds: 5
             periodSeconds: 5
           livenessProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: 8093
             initialDelaySeconds: 15
             periodSeconds: 10
+            failureThreshold: 3
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 512Mi
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: api-gateway-pdb
+  name: upload-service-pdb
   namespace: studed
 spec:
   minAvailable: 1
   selector:
     matchLabels:
-      app: api-gateway
+      app: upload-service
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: api-gateway
+  name: upload-service
   namespace: studed
-  annotations:
-    cloud.google.com/backend-config: '{"default": "studed-backend-config"}'
 spec:
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 8093
+      targetPort: 8093
       name: http
   selector:
-    app: api-gateway
+    app: upload-service

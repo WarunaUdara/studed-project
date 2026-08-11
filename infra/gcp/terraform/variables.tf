@@ -69,6 +69,15 @@ variable "waf_rate_limit_per_ip" {
   default     = 120
 }
 
+variable "uploads_cors_origins" {
+  description = "Browser origins allowed to read objects from the uploads bucket directly"
+  type        = list(string)
+  default = [
+    "https://studed-project-frontend.pages.dev",
+    "http://localhost:5173",
+  ]
+}
+
 variable "use_floci_gcp" {
   description = "Set to true to point OpenTofu GCP provider at local floci-gcp emulator (:4588)"
   type        = bool

@@ -27,5 +27,4 @@ submodules
 *.md
 *.base
 services/content-service
-services/upload-service
 services/user-service
