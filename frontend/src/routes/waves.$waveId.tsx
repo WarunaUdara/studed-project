@@ -360,34 +360,39 @@ function WavePlayerPage() {
                       resetting={resetResult.fetching}
                     />
                     <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                      {nextWave && (displayResult.passed || attemptsExhausted || !canReattempt) && (
+                      {nextWave ? (
                         <Link
                           to="/waves/$waveId"
                           params={{ waveId: nextWave.id }}
                           className="flex-1"
                         >
                           <Button className="w-full" size="lg">
-                            Next Wave: {nextWave.title} <ArrowRight className="ml-1.5 h-4 w-4" />
+                            {displayResult.passed ? "Next Wave: " : "Skip & Go to Next Wave: "} {nextWave.title}{" "}
+                            <ArrowRight className="ml-1.5 h-4 w-4" />
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Link
+                          to="/courses/$courseId"
+                          params={{ courseId: wave.lesson?.course?.id ?? "" }}
+                          className="flex-1"
+                        >
+                          <Button className="w-full" size="lg">
+                            Back to Course
                           </Button>
                         </Link>
                       )}
-                      <Link
-                        to="/courses/$courseId"
-                        params={{ courseId: wave.lesson?.course?.id ?? "" }}
-                        className="flex-1"
-                      >
-                        <Button
-                          variant={
-                            nextWave && (displayResult.passed || attemptsExhausted || !canReattempt)
-                              ? "outline"
-                              : "default"
-                          }
-                          className="w-full"
-                          size="lg"
+                      {nextWave && (
+                        <Link
+                          to="/courses/$courseId"
+                          params={{ courseId: wave.lesson?.course?.id ?? "" }}
+                          className="flex-1"
                         >
-                          Back to Course
-                        </Button>
-                      </Link>
+                          <Button variant="outline" className="w-full" size="lg">
+                            Back to Course
+                          </Button>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 )}
@@ -524,9 +529,9 @@ function ResultCard({
           </Button>
         )}
         {!passed && remainingAttempts >= 0 && remainingAttempts === 0 && (
-          <p className="rounded-lg bg-muted px-3 py-2 text-center text-sm text-muted-foreground">
-            No reattempts remaining. You can reset attempts to try again or move forward.
-          </p>
+          <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-center text-sm text-amber-500 font-medium">
+            Maximum attempts reached. You can skip to the next wave or reset attempts to try again.
+          </div>
         )}
       </CardContent>
     </Card>
