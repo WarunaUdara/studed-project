@@ -107,6 +107,16 @@ message ListEnrollmentsResponse {
   string error = 2;
 }
 
+message ResetWaveAttemptsRequest {
+  string user_id = 1;
+  string wave_id = 2;
+}
+
+message ResetWaveAttemptsResponse {
+  bool success = 1;
+  string error = 2;
+}
+
 service ProgressService {
   rpc EnrollInCourse(EnrollRequest) returns (EnrollResponse);
   rpc RecordAttempt(RecordAttemptRequest) returns (RecordAttemptResponse);
@@ -114,4 +124,5 @@ service ProgressService {
   rpc GetCourseProgress(GetCourseProgressRequest) returns (CourseProgressResponse);
   rpc IsEnrolled(IsEnrolledRequest) returns (IsEnrolledResponse);
   rpc ListEnrollments(ListEnrollmentsRequest) returns (ListEnrollmentsResponse);
+  rpc ResetWaveAttempts(ResetWaveAttemptsRequest) returns (ResetWaveAttemptsResponse);
 }

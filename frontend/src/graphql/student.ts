@@ -13,6 +13,12 @@ export const ENROLL_IN_COURSE_MUTATION = `
   }
 ` as const;
 
+export const RESET_WAVE_ATTEMPTS_MUTATION = `
+  mutation ResetWaveAttempts($waveId: ID!) {
+    resetWaveAttempts(waveId: $waveId)
+  }
+` as const;
+
 export const SUBMIT_WAVE_ANSWERS_MUTATION = `
   mutation SubmitWaveAnswers($waveId: ID!, $answers: [AnswerInput!]!) {
     submitWaveAnswers(waveId: $waveId, answers: $answers) {

@@ -367,6 +367,7 @@ type Mutation {
   deleteWave(id: ID!): Boolean!
 
   submitWaveAnswers(waveId: ID!, answers: [AnswerInput!]!, submissionId: String): WaveResult!
+  resetWaveAttempts(waveId: ID!): Boolean!
   enrollInCourse(courseId: ID!): Course!
 
   generateLearnBlocks(prompt: String!, language: String, grade: Grade): [LearnBlock!]!

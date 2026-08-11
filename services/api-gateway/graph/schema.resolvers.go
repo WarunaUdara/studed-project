@@ -321,6 +321,15 @@ func (r *mutationResolver) SubmitWaveAnswers(ctx context.Context, waveID string,
 	return result, nil
 }
 
+// ResetWaveAttempts is the resolver for the resetWaveAttempts field.
+func (r *mutationResolver) ResetWaveAttempts(ctx context.Context, waveID string) (bool, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
+		return false, err
+	}
+	return r.ProgressClient.ResetWaveAttempts(ctx, userCtx.UserID, waveID)
+}
+
 // EnrollInCourse is the resolver for the enrollInCourse field.
 func (r *mutationResolver) EnrollInCourse(ctx context.Context, courseID string) (*model.Course, error) {
 	userCtx, err := requireUser(ctx)

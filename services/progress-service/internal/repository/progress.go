@@ -13,6 +13,7 @@ type ProgressRepository interface {
 	ListEnrollmentsByUser(ctx context.Context, userID string) ([]model.Enrollment, error)
 	CreateAttempt(ctx context.Context, attempt *model.WaveAttempt) error
 	GetAttemptsByWave(ctx context.Context, userID, waveID string) ([]model.WaveAttempt, error)
+	DeleteAttemptsByWave(ctx context.Context, userID, waveID string) error
 	GetAttemptBySubmissionID(ctx context.Context, submissionID string) (*model.WaveAttempt, error)
 	UpdateAttemptXPAwarded(ctx context.Context, attemptID string, xpEarned int32) error
 	CountPassedWavesInCourse(ctx context.Context, userID, courseID string) (int64, error)
@@ -59,6 +60,10 @@ func (r *progressRepository) GetAttemptsByWave(ctx context.Context, userID, wave
 		return nil, err
 	}
 	return attempts, nil
+}
+
+func (r *progressRepository) DeleteAttemptsByWave(ctx context.Context, userID, waveID string) error {
+	return r.db.WithContext(ctx).Where("user_id = ? AND wave_id = ?", userID, waveID).Delete(&model.WaveAttempt{}).Error
 }
 
 func (r *progressRepository) GetAttemptBySubmissionID(ctx context.Context, submissionID string) (*model.WaveAttempt, error) {

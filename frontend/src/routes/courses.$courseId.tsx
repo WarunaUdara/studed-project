@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowLeft, BookOpen, CheckCircle, Clock, Compass, Layers, Lock, PlayCircle, Zap } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle, Clock, Compass, Layers, Lock, PlayCircle, RotateCcw, Zap } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { CourseJourneyMap } from "@/components/gamification/CourseJourneyMap";
@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
-import { COURSE_PLAYER_QUERY, ENROLL_IN_COURSE_MUTATION } from "@/graphql/student";
+import { COURSE_PLAYER_QUERY, ENROLL_IN_COURSE_MUTATION, RESET_WAVE_ATTEMPTS_MUTATION } from "@/graphql/student";
 import { sanitizeGraphQLError } from "@/lib/errors";
 import { cn } from "@/lib/utils";
 
@@ -70,6 +70,18 @@ function CoursePlayerPage() {
 
   const { toast } = useToast();
   const [enrollResult, enroll] = useMutation(ENROLL_IN_COURSE_MUTATION);
+  const [resetResult, resetAttempts] = useMutation(RESET_WAVE_ATTEMPTS_MUTATION);
+
+  const handleResetWave = async (waveId: string) => {
+    const result = await resetAttempts({ waveId });
+    if (result.error) {
+      const e = sanitizeGraphQLError(result.error);
+      toast({ type: "error", title: e.title, message: e.message });
+    } else {
+      toast({ type: "success", title: "Attempts Reset!", message: "You can now try this wave again." });
+      reexecuteQuery({ requestPolicy: "network-only" });
+    }
+  };
 
   const handleEnroll = async () => {
     if (!courseId) return;
@@ -325,13 +337,31 @@ function CoursePlayerPage() {
                         ) : isCompleted ? (
                           <span className="text-sm font-medium text-success">Completed</span>
                         ) : (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="group-hover:bg-primary group-hover:text-primary-foreground"
-                          >
-                            {isExhausted ? "Review" : "Start"}
-                          </Button>
+                          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                            {isExhausted && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                disabled={resetResult.fetching}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleResetWave(wave.id);
+                                }}
+                                className="text-xs text-primary hover:bg-primary/10"
+                                title="Reset attempts to try again"
+                              >
+                                <RotateCcw className="h-3.5 w-3.5 mr-1" /> Reset
+                              </Button>
+                            )}
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="group-hover:bg-primary group-hover:text-primary-foreground"
+                            >
+                              {isExhausted ? "Review" : "Start"}
+                            </Button>
+                          </div>
                         )}
                       </div>
                     );

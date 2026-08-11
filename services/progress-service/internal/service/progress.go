@@ -27,6 +27,7 @@ type ProgressService interface {
 	GetCourseProgress(ctx context.Context, userID, courseID string) (*progresspb.CourseProgressResponse, error)
 	IsEnrolled(ctx context.Context, userID, courseID string) (*progresspb.IsEnrolledResponse, error)
 	ListEnrollments(ctx context.Context, userID string) (*progresspb.ListEnrollmentsResponse, error)
+	ResetWaveAttempts(ctx context.Context, req *progresspb.ResetWaveAttemptsRequest) (*progresspb.ResetWaveAttemptsResponse, error)
 }
 
 type progressService struct {
@@ -579,6 +580,26 @@ func (s *progressService) ListEnrollments(ctx context.Context, userID string) (*
 
 	return &progresspb.ListEnrollmentsResponse{
 		Enrollments: protoEnrollments,
+	}, nil
+}
+
+func (s *progressService) ResetWaveAttempts(ctx context.Context, req *progresspb.ResetWaveAttemptsRequest) (*progresspb.ResetWaveAttemptsResponse, error) {
+	if req.UserId == "" || req.WaveId == "" {
+		return &progresspb.ResetWaveAttemptsResponse{
+			Success: false,
+			Error:   "user_id and wave_id are required",
+		}, nil
+	}
+
+	if err := s.repo.DeleteAttemptsByWave(ctx, req.UserId, req.WaveId); err != nil {
+		return &progresspb.ResetWaveAttemptsResponse{
+			Success: false,
+			Error:   fmt.Sprintf("failed to reset wave attempts: %v", err),
+		}, nil
+	}
+
+	return &progresspb.ResetWaveAttemptsResponse{
+		Success: true,
 	}, nil
 }
 

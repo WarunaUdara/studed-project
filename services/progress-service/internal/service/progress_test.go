@@ -167,6 +167,17 @@ func (r *fakeProgressRepo) GetAttemptsByWave(ctx context.Context, userID, waveID
 	return out, nil
 }
 
+func (r *fakeProgressRepo) DeleteAttemptsByWave(ctx context.Context, userID, waveID string) error {
+	var remaining []model.WaveAttempt
+	for _, a := range r.attempts {
+		if !(a.UserID == userID && a.WaveID == waveID) {
+			remaining = append(remaining, a)
+		}
+	}
+	r.attempts = remaining
+	return nil
+}
+
 func (r *fakeProgressRepo) GetAttemptBySubmissionID(ctx context.Context, submissionID string) (*model.WaveAttempt, error) {
 	if submissionID == "" {
 		return nil, errNotFound
@@ -706,6 +717,33 @@ func TestGetWaveProgress_UnlockedWhenPriorWaveAttemptsExhausted(t *testing.T) {
 	}
 	if resp.Status != string(model.ProgressStatusAvailable) {
 		t.Fatalf("expected AVAILABLE for wave-2 when wave-1 attempts are exhausted, got %s", resp.Status)
+	}
+}
+
+func TestResetWaveAttempts(t *testing.T) {
+	svc, repo, _, _ := newTestProgressService()
+
+	repo.attempts = append(repo.attempts, model.WaveAttempt{
+		ID:     "att-1",
+		UserID: "u1",
+		WaveID: "wave-1",
+		Passed: false,
+	})
+
+	resp, err := svc.ResetWaveAttempts(context.Background(), &progresspb.ResetWaveAttemptsRequest{
+		UserId: "u1",
+		WaveId: "wave-1",
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !resp.Success {
+		t.Fatalf("expected success, got error %s", resp.Error)
+	}
+
+	attempts, _ := repo.GetAttemptsByWave(context.Background(), "u1", "wave-1")
+	if len(attempts) != 0 {
+		t.Fatalf("expected 0 attempts after reset, got %d", len(attempts))
 	}
 }
 

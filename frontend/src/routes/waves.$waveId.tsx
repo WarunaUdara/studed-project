@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { PointsBadge } from "@/components/ui/points-badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
-import { SUBMIT_WAVE_ANSWERS_MUTATION, WAVE_PLAYER_QUERY } from "@/graphql/student";
+import { RESET_WAVE_ATTEMPTS_MUTATION, SUBMIT_WAVE_ANSWERS_MUTATION, WAVE_PLAYER_QUERY } from "@/graphql/student";
 import { sanitizeGraphQLError } from "@/lib/errors";
 import { computeProficiency } from "@/lib/gamification";
 import { playErrorSound, playSuccessSound } from "@/lib/sounds";
@@ -62,6 +62,7 @@ function WavePlayerPage() {
     variables: { id: waveId },
   });
   const [submitResult, submitAnswers] = useMutation(SUBMIT_WAVE_ANSWERS_MUTATION);
+  const [resetResult, resetAttempts] = useMutation(RESET_WAVE_ATTEMPTS_MUTATION);
   const { user, updateTotalXp } = useAuthStore();
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -132,6 +133,18 @@ function WavePlayerPage() {
   const handleTryAgain = () => {
     setAnswers({});
     setResult(null);
+  };
+
+  const handleResetAttempts = async () => {
+    setSubmitError(null);
+    const res = await resetAttempts({ waveId });
+    if (res.error) {
+      setSubmitError(res.error.message);
+      return;
+    }
+    setAnswers({});
+    setResult(null);
+    reexecuteQuery({ requestPolicy: "network-only" });
   };
 
   if (fetching) {
@@ -343,6 +356,8 @@ function WavePlayerPage() {
                       justEarnedXp={!!justEarnedXp}
                       canReattempt={canReattempt}
                       onTryAgain={handleTryAgain}
+                      onResetAttempts={handleResetAttempts}
+                      resetting={resetResult.fetching}
                     />
                     <div className="flex flex-col sm:flex-row gap-3 pt-2">
                       {nextWave && (displayResult.passed || attemptsExhausted || !canReattempt) && (
@@ -378,21 +393,40 @@ function WavePlayerPage() {
                 )}
 
                 {!displayResult && (
-                  <>
+                  <div className="space-y-3">
                     {submitError && <p className="text-sm text-destructive">{submitError}</p>}
-                    <Button
-                      onClick={handleSubmit}
-                      disabled={
-                        submitResult.fetching ||
-                        evaluateBlocks.length === 0 ||
-                        (maxAttempts !== null && attemptsCount >= maxAttempts)
-                      }
-                      className="w-full"
-                      size="lg"
-                    >
-                      {submitResult.fetching ? "Submitting..." : "Submit Answers"}
-                    </Button>
-                  </>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button
+                        onClick={handleSubmit}
+                        disabled={
+                          submitResult.fetching ||
+                          evaluateBlocks.length === 0 ||
+                          (maxAttempts !== null && attemptsCount >= maxAttempts)
+                        }
+                        className="flex-1"
+                        size="lg"
+                      >
+                        {submitResult.fetching ? "Submitting..." : "Submit Answers"}
+                      </Button>
+                      {nextWave ? (
+                        <Link to="/waves/$waveId" params={{ waveId: nextWave.id }} className="flex-1">
+                          <Button variant="outline" className="w-full" size="lg">
+                            Skip & Next Wave <ArrowRight className="ml-1.5 h-4 w-4" />
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Link
+                          to="/courses/$courseId"
+                          params={{ courseId: wave.lesson?.course?.id ?? "" }}
+                          className="flex-1"
+                        >
+                          <Button variant="outline" className="w-full" size="lg">
+                            Skip & Back to Course
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
+                  </div>
                 )}
               </>
             )}
@@ -413,6 +447,8 @@ interface ResultCardProps {
   justEarnedXp: boolean;
   canReattempt: boolean;
   onTryAgain: () => void;
+  onResetAttempts?: () => void;
+  resetting?: boolean;
 }
 
 function ResultCard({
@@ -425,6 +461,8 @@ function ResultCard({
   justEarnedXp,
   canReattempt,
   onTryAgain,
+  onResetAttempts,
+  resetting,
 }: ResultCardProps) {
   return (
     <Card
@@ -471,12 +509,23 @@ function ResultCard({
 
         {canReattempt && (
           <Button onClick={onTryAgain} variant="outline" className="w-full">
-            <RotateCcw className="mr-1 h-4 w-4" /> Try Again
+            <RotateCcw className="mr-1.5 h-4 w-4" /> Try Again
+          </Button>
+        )}
+        {onResetAttempts && (
+          <Button
+            onClick={onResetAttempts}
+            disabled={resetting}
+            variant="outline"
+            className="w-full border-primary/40 text-primary hover:bg-primary/10"
+          >
+            <RotateCcw className="mr-1.5 h-4 w-4" />
+            {resetting ? "Resetting Attempts..." : "Reset Attempts & Try Again"}
           </Button>
         )}
         {!passed && remainingAttempts >= 0 && remainingAttempts === 0 && (
           <p className="rounded-lg bg-muted px-3 py-2 text-center text-sm text-muted-foreground">
-            No reattempts remaining. This wave is now review-only.
+            No reattempts remaining. You can reset attempts to try again or move forward.
           </p>
         )}
       </CardContent>
