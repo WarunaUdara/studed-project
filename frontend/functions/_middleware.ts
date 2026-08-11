@@ -24,13 +24,16 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     reqHeaders.set('x-studed-client-ip', clientIP);
   }
 
-  // GraphQL is short-lived, but file uploads over mobile links and the SSE
-  // agent stream both routinely exceed 15s; aborting them mid-flight would
-  // surface as a truncated upload or a dead chat panel.
+  // GraphQL is short-lived, but Neon scale-to-zero cold starts can stretch past
+  // 60s (the database wakes on first hit after idle), which would otherwise
+  // abort every dashboard/course query in the cold window as a 502. File
+  // uploads over mobile links and the SSE agent stream are even longer-lived;
+  // aborting them mid-flight would surface as a truncated upload or a dead chat
+  // panel.
   const isLongRunning =
     url.pathname.startsWith('/v1/uploads') || url.pathname.startsWith('/ai/chat');
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), isLongRunning ? 120000 : 15000);
+  const timeoutId = setTimeout(() => controller.abort(), isLongRunning ? 120000 : 70000);
 
   try {
     const response = await fetch(targetUrl, {
