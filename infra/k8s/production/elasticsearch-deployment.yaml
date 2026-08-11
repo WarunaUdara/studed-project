@@ -27,12 +27,27 @@ spec:
         app: elasticsearch
     spec:
       securityContext:
-        fsGroup: 1000
+        runAsNonRoot: true
         runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: elasticsearch
           image: elasticsearch:8.14.0
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            # Deliberately NOT read-only: Elasticsearch 8 regenerates
+            # elasticsearch.keystore under config/ and writes logs/ and tmp/ on
+            # every boot. Locking the root filesystem here fails startup, so the
+            # kyverno require-read-only-root-filesystem policy excludes this pod.
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 9200
           env:
@@ -54,6 +69,14 @@ spec:
               command: ["sh", "-c", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"\\|\"status\":\"yellow\"'"]
             initialDelaySeconds: 30
             periodSeconds: 10
+          # Liveness only checks that the HTTP port answers: a yellow/red
+          # cluster should drain from the Service via readiness, not be killed.
+          livenessProbe:
+            tcpSocket:
+              port: 9200
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            failureThreshold: 4
           volumeMounts:
             - name: elasticsearch-data
               mountPath: /usr/share/elasticsearch/data
