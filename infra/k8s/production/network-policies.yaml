@@ -130,10 +130,65 @@ spec:
     - to:
         - podSelector:
             matchLabels:
+              app: upload-service
+      ports:
+        - protocol: TCP
+          port: 8093
+    - to:
+        - podSelector:
+            matchLabels:
               app: redis
       ports:
         - protocol: TCP
           port: 6379
+---
+# upload-service is reachable only from the gateway, which is what enforces
+# educator-only writes; it is never exposed directly to the internet.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-upload-ingress-from-gateway
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: upload-service
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api-gateway
+      ports:
+        - protocol: TCP
+          port: 8093
+---
+# Egress to the Google Cloud Storage API (HTTPS) and to the GKE metadata server
+# for the Workload Identity token exchange.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-upload-gcs-egress
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: upload-service
+  policyTypes: ["Egress"]
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443
+    # metadata.google.internal - required for Workload Identity credentials.
+    - to:
+        - ipBlock:
+            cidr: 169.254.169.254/32
+      ports:
+        - protocol: TCP
+          port: 80
 ---
 # Internal services accept only gateway-originated traffic.
 apiVersion: networking.k8s.io/v1

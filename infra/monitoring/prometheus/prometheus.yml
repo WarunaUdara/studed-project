@@ -69,6 +69,13 @@ scrape_configs:
           tier: "messaging"
           service: "notification-service"
 
+  - job_name: "studed-upload-service"
+    static_configs:
+      - targets: ["upload-service:8093"]
+        labels:
+          tier: "storage"
+          service: "upload-service"
+
   - job_name: "postgres-exporter"
     static_configs:
       - targets: ["postgres-exporter:9187"]
