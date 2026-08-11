@@ -130,6 +130,90 @@
     --chart-streak: oklch(0.67 0.185 55);
     --chart-proficient: oklch(0.579 0.191 252);
 
+    /*
+     * Login surface tokens — LIGHT values.
+     *
+     * The login page was originally hard-coded dark. These pairs let it follow
+     * the app theme without the components knowing which theme is active: every
+     * value here has a `.dark` counterpart below, and the dark side is a verbatim
+     * copy of the literal classes the components used before, so the dark
+     * rendering is unchanged by construction.
+     *
+     * Ink runs strong -> faint. Five steps look excessive, but they exist because
+     * the dark design genuinely used five different white opacities; collapsing
+     * them would alter the dark output.
+     */
+    --login-ink: #1e293b;             /* headings, field labels        */
+    --login-ink-body: #334155;        /* sub-copy, quest counter       */
+    --login-ink-muted: #475569;       /* subtitles, XP, footer         */
+    --login-ink-soft: #64748b;        /* placeholders, "coming soon"   */
+    --login-ink-faint: #64748b;       /* field icons, "or" — kept at the
+                                         same value as soft so it stays
+                                         legible on white               */
+
+    /*
+     * Accent ink. NOT the same as --color-brand-green: #4ade80 on white is
+     * 1.74:1, so the brand green is unusable as text in light theme. This is the
+     * darkened green used wherever green *text* appears; the brand green itself
+     * still fills buttons, bars and chips.
+     */
+    --login-accent: #15803d;
+
+    /* Surfaces */
+    --login-card: #ffffff;
+    --login-card-border: #e2e8f0;
+    --login-card-shadow:
+      0 1px 2px rgb(15 23 42 / 0.04),
+      0 8px 24px -6px rgb(15 23 42 / 0.10),
+      0 24px 48px -12px rgb(15 23 42 / 0.10);
+    --login-inset: #f8fafc;           /* level/XP strip                */
+    --login-inset-border: #e2e8f0;
+    --login-field: #f1f5f9;           /* input fill, recessed vs card  */
+    --login-field-border: #e2e8f0;
+    --login-line: #e2e8f0;            /* dividers, progress track      */
+    --login-quest: #ffffff;
+    --login-quest-border: #e2e8f0;
+    /* The dark quest card is flat; the light one lifts off the pale panel. */
+    --login-quest-shadow:
+      0 1px 2px rgb(15 23 42 / 0.04),
+      0 6px 16px -4px rgb(15 23 42 / 0.10);
+
+    /* Wordmark star badge */
+    --login-badge: #4ade80;
+    --login-badge-ink: #ffffff;
+
+    /* Feature chips — solid fill + white icon in light. */
+    --login-chip-green: #22c55e;
+    --login-chip-green-fg: #ffffff;
+    --login-chip-purple: #a855f7;
+    --login-chip-purple-fg: #ffffff;
+    --login-chip-gold: #f59e0b;
+    --login-chip-gold-fg: #ffffff;
+    --login-chip-blue: #3b82f6;
+    --login-chip-blue-fg: #ffffff;
+
+    /* Level hexagon */
+    --login-hex-core: #f0fdf4;
+    --login-hex-rim: #86efac;
+    --login-hex-ink: #16a34a;         /* darker green: readable on a pale core */
+
+    /*
+     * Primary CTA. The fill is NOT brand green in light theme: a white label on
+     * #4ade80 is 1.74:1, and even on #22c55e only 2.26:1. #15803d carries the
+     * white label at 5.02:1 while still reading as the brand green.
+     */
+    --login-cta: #15803d;
+    --login-cta-hover: #166534;
+    --login-cta-border: #14532d;
+    --login-cta-ink: #ffffff;
+    /* Circled arrow at the button's right edge. */
+    --login-cta-pip: #14532d;
+    --login-cta-pip-ink: #ffffff;
+
+    /* Daily-quest gift chip. Matches each comp: violet in light, green in dark. */
+    --login-gift: #f3e8ff;
+    --login-gift-fg: #a855f7;
+
     /* PullCord interactive theme toggle variables */
     --pullcord-top: 0px;
     --pullcord-right: 4.5rem;
@@ -208,6 +292,67 @@
     --chart-xp-soft: oklch(0.62 0.19 262.9 / 0.5);
     --chart-streak: oklch(0.8 0.16 75);
     --chart-proficient: oklch(0.8 0.16 75);
+
+    /*
+     * Login surface tokens — DARK values.
+     *
+     * Every entry is the literal colour the components already used, so the dark
+     * theme renders identically before and after the token migration:
+     *   --login-ink        was text-white
+     *   --login-ink-body   was text-white/80
+     *   --login-ink-muted  was text-white/70
+     *   --login-ink-soft   was text-white/60
+     *   --login-ink-faint  was text-white/50
+     *   --login-card       was bg-black/40      --login-quest was bg-black/25
+     *   --login-field      was bg-white/5       --login-line  was bg-white/15
+     */
+    --login-ink: #ffffff;
+    --login-ink-body: rgb(255 255 255 / 0.8);
+    --login-ink-muted: rgb(255 255 255 / 0.7);
+    --login-ink-soft: rgb(255 255 255 / 0.6);
+    --login-ink-faint: rgb(255 255 255 / 0.5);
+    --login-accent: #4ade80;          /* was text-brand-green */
+
+    --login-card: rgb(0 0 0 / 0.4);
+    --login-card-border: rgb(74 222 128 / 0.3);
+    --login-card-shadow:
+      0 0 0 1px rgb(74 222 128 / 0.06),
+      0 0 40px -8px rgb(74 222 128 / 0.28),
+      0 0 90px -20px rgb(74 222 128 / 0.18);
+    --login-inset: rgb(255 255 255 / 0.05);
+    --login-inset-border: rgb(255 255 255 / 0.1);
+    --login-field: rgb(255 255 255 / 0.05);
+    --login-field-border: rgb(255 255 255 / 0.1);
+    --login-line: rgb(255 255 255 / 0.15);
+    --login-quest: rgb(0 0 0 / 0.25);
+    --login-quest-border: rgb(74 222 128 / 0.3);
+    --login-quest-shadow: none;
+
+    --login-badge: #4ade80;
+    --login-badge-ink: #14532d;
+
+    --login-chip-green: #14532d;
+    --login-chip-green-fg: #4ade80;
+    --login-chip-purple: #3b0764;
+    --login-chip-purple-fg: #c084fc;
+    --login-chip-gold: #451a03;
+    --login-chip-gold-fg: #fbbf24;
+    --login-chip-blue: #082f49;
+    --login-chip-blue-fg: #38bdf8;
+
+    --login-hex-core: #14532d;
+    --login-hex-rim: rgb(74 222 128 / 0.4);
+    --login-hex-ink: #4ade80;
+
+    --login-cta: #4ade80;             /* was bg-brand-green            */
+    --login-cta-hover: #4ade80;       /* was hover:bg-brand-green-400  */
+    --login-cta-border: #16a34a;      /* was border-brand-green-600    */
+    --login-cta-ink: #14532d;         /* was text-chip-green           */
+    --login-cta-pip: #14532d;         /* was bg-chip-green             */
+    --login-cta-pip-ink: #4ade80;     /* was text-brand-green          */
+
+    --login-gift: rgb(74 222 128 / 0.15);
+    --login-gift-fg: #4ade80;
   }
 }
 
@@ -331,6 +476,90 @@
   --color-chart-streak: var(--chart-streak);
   --color-chart-proficient: var(--chart-proficient);
 
+  /*
+   * Student login surface tokens.
+   *
+   * These are literal hex rather than the OKLCH ramps above: they are matched
+   * to the mascot artwork and the target comp, so the exact sRGB values are the
+   * spec. The ramps stay the source of truth for the rest of the product.
+   */
+  --color-brand-green: #4ade80;
+  --color-brand-green-400: #4ade80;
+  --color-brand-green-500: #22c55e;
+  --color-brand-green-600: #16a34a;
+
+  /* Mascot-matched violet. Accents only — never a primary action colour. */
+  --color-brand-purple: #a855f7;
+
+  /* Feature-chip pairs: deep tinted disc + bright icon. */
+  --color-chip-green: #14532d;
+  --color-chip-green-foreground: #4ade80;
+  --color-chip-purple: #3b0764;
+  --color-chip-purple-foreground: #c084fc;
+  --color-chip-gold: #451a03;
+  --color-chip-gold-foreground: #fbbf24;
+  --color-chip-blue: #082f49;
+  --color-chip-blue-foreground: #38bdf8;
+
+  /* Wide, soft, low-opacity bloom for the auth card border and primary button. */
+  --shadow-glow-green:
+    0 0 0 1px rgb(74 222 128 / 0.06),
+    0 0 40px -8px rgb(74 222 128 / 0.28),
+    0 0 90px -20px rgb(74 222 128 / 0.18);
+
+  /* Theme-aware login tokens. `inline` + var() is what makes the `.dark`
+     overrides above take effect at runtime. */
+  --color-login-ink: var(--login-ink);
+  --color-login-ink-body: var(--login-ink-body);
+  --color-login-ink-muted: var(--login-ink-muted);
+  --color-login-ink-soft: var(--login-ink-soft);
+  --color-login-ink-faint: var(--login-ink-faint);
+  --color-login-accent: var(--login-accent);
+
+  --color-login-card: var(--login-card);
+  --color-login-card-border: var(--login-card-border);
+  --color-login-inset: var(--login-inset);
+  --color-login-inset-border: var(--login-inset-border);
+  --color-login-field: var(--login-field);
+  --color-login-field-border: var(--login-field-border);
+  --color-login-line: var(--login-line);
+  --color-login-quest: var(--login-quest);
+  --color-login-quest-border: var(--login-quest-border);
+
+  --color-login-badge: var(--login-badge);
+  --color-login-badge-ink: var(--login-badge-ink);
+
+  --color-login-chip-green: var(--login-chip-green);
+  --color-login-chip-green-fg: var(--login-chip-green-fg);
+  --color-login-chip-purple: var(--login-chip-purple);
+  --color-login-chip-purple-fg: var(--login-chip-purple-fg);
+  --color-login-chip-gold: var(--login-chip-gold);
+  --color-login-chip-gold-fg: var(--login-chip-gold-fg);
+  --color-login-chip-blue: var(--login-chip-blue);
+  --color-login-chip-blue-fg: var(--login-chip-blue-fg);
+
+  --color-login-hex-core: var(--login-hex-core);
+  --color-login-hex-rim: var(--login-hex-rim);
+  --color-login-hex-ink: var(--login-hex-ink);
+
+  --color-login-cta: var(--login-cta);
+  --color-login-cta-hover: var(--login-cta-hover);
+  --color-login-cta-border: var(--login-cta-border);
+  --color-login-cta-ink: var(--login-cta-ink);
+  --color-login-cta-pip: var(--login-cta-pip);
+  --color-login-cta-pip-ink: var(--login-cta-pip-ink);
+
+  --color-login-gift: var(--login-gift);
+  --color-login-gift-fg: var(--login-gift-fg);
+
+  --shadow-login-card: var(--login-card-shadow);
+  --shadow-login-quest: var(--login-quest-shadow);
+
+  --animate-float: float 6s ease-in-out infinite;
+  /* Deliberately out of step with --animate-float so the hero island and the
+     peeking mascot never bob in sync. */
+  --animate-float-slow: float-slow 8s ease-in-out infinite;
+
   /* Fonts */
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-serif: "IBM Plex Serif", Georgia, serif;
@@ -351,6 +580,30 @@
 @keyframes flame-pulse {
   0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
   50% { transform: scale(1.12); filter: drop-shadow(0 0 6px var(--orange)); }
+}
+
+/* Gentle hover for the login hero island. ~8px of travel, 6s round trip.
+   Animates `transform`, which in Tailwind v4 is independent of the `translate`
+   property used by -translate-x-1/2 etc., so centring survives the animation. */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Shallower, slower drift for the mascot peeking over the auth card. */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Both drifts are pure decoration, so stop them outright rather than relying on
+   the global reduced-motion rule, which only shortens animations. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-float-slow {
+    animation: none !important;
+    transform: none !important;
+  }
 }
 
 @keyframes unlock-glow {
@@ -416,6 +669,42 @@
       radial-gradient(circle 50vw at 100vw 15vh, oklch(0.322 0.103 145 / 0.3) 0%, oklch(0.322 0.103 145 / 0.08) 40%, transparent 80%),
       var(--background);
   }
+  /*
+   * Login panels. Light is the base, dark overrides — same shape as
+   * .bg-gradient-sarvam-hero above. The brand panel keeps a radial lift behind
+   * the hero island in both themes; only the palette changes.
+   */
+  .bg-login-panel-brand {
+    background:
+      radial-gradient(62% 50% at 55% 46%, #ffffff 0%, #f2fbf5 42%, transparent 74%),
+      linear-gradient(160deg, #f7fbff 0%, #eef7f1 45%, #e8f3ee 100%);
+  }
+  .dark .bg-login-panel-brand {
+    background:
+      radial-gradient(62% 50% at 55% 46%, #1d6640 0%, #123d28 40%, transparent 74%),
+      linear-gradient(160deg, #071a11 0%, #0a2417 45%, #050f0a 100%);
+  }
+  .bg-login-panel-sky {
+    background:
+      radial-gradient(90% 70% at 50% 28%, #ffffff 0%, #eff6ff 58%, #e4effb 100%);
+  }
+  .dark .bg-login-panel-sky {
+    background:
+      radial-gradient(90% 70% at 50% 28%, #0b1220 0%, #060a14 58%, #04070e 100%);
+  }
+
+  /* Superseded by the two utilities above; removed once the login components
+     stop referencing them in step 3. */
+  .bg-panel-forest {
+    background:
+      radial-gradient(62% 50% at 55% 46%, #1d6640 0%, #123d28 40%, transparent 74%),
+      linear-gradient(160deg, #071a11 0%, #0a2417 45%, #050f0a 100%);
+  }
+  .bg-panel-night {
+    background:
+      radial-gradient(90% 70% at 50% 28%, #0b1220 0%, #060a14 58%, #04070e 100%);
+  }
+
   .bg-gradient-intelligence {
     background: linear-gradient(135deg, oklch(0.484 0.164 145 / 0.06), oklch(0.571 0.181 145 / 0.06));
   }
