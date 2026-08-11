@@ -3,7 +3,6 @@ import { Check, Lock, Trophy, Zap } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { XPBar } from "@/components/gamification/XPBar";
-import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
 import { type PublicStringKey, usePublicI18n } from "@/lib/i18n";
 import { playClickSound } from "@/lib/sounds";
 import { cn } from "@/lib/utils";
@@ -31,58 +30,7 @@ interface WaveNodeDef {
   state: NodeState;
 }
 
-function TravelingMascot({
-  pathRef,
-  viewWidth,
-  viewHeight,
-}: {
-  pathRef: React.RefObject<SVGPathElement | null>;
-  viewWidth: number;
-  viewHeight: number;
-}) {
-  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
 
-  useEffect(() => {
-    let animId: number;
-    const duration = 11000;
-    const startTime = performance.now();
-
-    const loop = (now: number) => {
-      const path = pathRef.current;
-      if (path) {
-        try {
-          const len = path.getTotalLength();
-          if (len > 0) {
-            const elapsed = (now - startTime) % duration;
-            const progress = elapsed / duration;
-            const p = path.getPointAtLength(progress * len);
-            setPos({
-              x: (p.x / viewWidth) * 100,
-              y: (p.y / viewHeight) * 100,
-            });
-          }
-        } catch {
-          // ignore measurement error before SVG path mounts
-        }
-      }
-      animId = requestAnimationFrame(loop);
-    };
-
-    animId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(animId);
-  }, [pathRef, viewWidth, viewHeight]);
-
-  if (!pos) return null;
-
-  return (
-    <div
-      className="absolute pointer-events-none z-30 -translate-x-1/2 -translate-y-1/2"
-      style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-    >
-      <HelmetCompanion size="sm" mood="happy" className="h-10 w-10 drop-shadow-lg" />
-    </div>
-  );
-}
 
 /** Node positions along the path as fractions of its total length. */
 const NODE_FRACTIONS = [0.03, 0.185, 0.34, 0.5, 0.66, 0.815, 0.965];
@@ -162,44 +110,9 @@ export function WaveMapHero() {
         </>
       )}
 
-      <div className="relative overflow-visible rounded-3xl border border-emerald-500/20 bg-gradient-to-b from-[#021f17] via-[#03140e] to-[#010a07] text-card-foreground shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl">
-        {/* Ambient Emerald Glow Radial */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.25),transparent_70%)] rounded-3xl" />
-
-        {/* Twinkling Starlight Particles */}
-        {!reduce && (
-          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl z-0">
-            {[...Array(12)].map((_, i) => (
-              <motion.div
-                key={`hero-star-${i}`}
-                className="absolute rounded-full bg-emerald-300 shadow-[0_0_8px_rgba(110,231,183,0.8)]"
-                style={{
-                  width: i % 3 === 0 ? "4px" : "2px",
-                  height: i % 3 === 0 ? "4px" : "2px",
-                  left: `${(i * 27) % 92 + 4}%`,
-                  top: `${(i * 19) % 88 + 6}%`,
-                }}
-                animate={{
-                  opacity: [0.2, 0.9, 0.2],
-                  scale: [0.8, 1.4, 0.8],
-                  y: [-3, 3, -3],
-                }}
-                transition={{
-                  duration: 3 + (i % 3),
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "easeInOut",
-                  delay: (i % 4) * 0.4,
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-
-
-
+      <div className="relative overflow-hidden rounded-3xl border bg-card/85 shadow-2xl backdrop-blur">
         {/* Header */}
-        <div className="relative z-10 flex items-start justify-between gap-3 border-b border-emerald-500/20 px-5 py-4 bg-emerald-950/30 backdrop-blur-md">
+        <div className="flex items-start justify-between gap-3 border-b px-5 py-4">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
               {t("waveMapTitle")}
@@ -250,11 +163,8 @@ export function WaveMapHero() {
 
             </svg>
 
-            {/* Render Traveling Mascot & Node buttons overlay */}
+            {/* Node buttons overlay */}
             <div className="absolute inset-0">
-              {!reduce && (
-                <TravelingMascot pathRef={pathRef} viewWidth={VIEW_W} viewHeight={VIEW_H} />
-              )}
               {points.map((p, i) => {
               const node = NODES[i];
               if (!node) return null;

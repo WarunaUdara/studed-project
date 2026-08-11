@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
-import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/Card";
 import { ProgressRing } from "@/components/ui/ProgressRing";
@@ -68,58 +67,7 @@ interface Point {
 
 const VIEW_W = 480;
 
-function TravelingMascot({
-  pathRef,
-  viewWidth,
-  viewHeight,
-}: {
-  pathRef: React.RefObject<SVGPathElement | null>;
-  viewWidth: number;
-  viewHeight: number;
-}) {
-  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
 
-  useEffect(() => {
-    let animId: number;
-    const duration = 10000;
-    const startTime = performance.now();
-
-    const loop = (now: number) => {
-      const path = pathRef.current;
-      if (path) {
-        try {
-          const len = path.getTotalLength();
-          if (len > 0) {
-            const elapsed = (now - startTime) % duration;
-            const progress = elapsed / duration;
-            const p = path.getPointAtLength(progress * len);
-            setPos({
-              x: (p.x / viewWidth) * 100,
-              y: (p.y / viewHeight) * 100,
-            });
-          }
-        } catch {
-          // ignore measurement error before SVG path mounts
-        }
-      }
-      animId = requestAnimationFrame(loop);
-    };
-
-    animId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(animId);
-  }, [pathRef, viewWidth, viewHeight]);
-
-  if (!pos) return null;
-
-  return (
-    <div
-      className="absolute pointer-events-none z-30 -translate-x-1/2 -translate-y-1/2"
-      style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-    >
-      <HelmetCompanion size="sm" mood="happy" className="h-10 w-10 drop-shadow-lg" />
-    </div>
-  );
-}
 
 export function CourseJourneyMap({
   courseTitle,
@@ -313,44 +261,9 @@ export function CourseJourneyMap({
       </div>
 
       {/* Main Interactive Map Container */}
-      <Card className="relative overflow-visible rounded-3xl border border-emerald-500/20 bg-gradient-to-b from-[#021f17] via-[#03140e] to-[#010a07] text-card-foreground shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl">
-        {/* Ambient Emerald Glow Radial */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.22),transparent_70%)] rounded-3xl" />
-
-        {/* Twinkling Starlight Particles */}
-        {!reduce && (
-          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl z-0">
-            {[...Array(16)].map((_, i) => (
-              <motion.div
-                key={`star-particle-${i}`}
-                className="absolute rounded-full bg-emerald-300 shadow-[0_0_8px_rgba(110,231,183,0.8)]"
-                style={{
-                  width: i % 3 === 0 ? "4px" : i % 2 === 0 ? "3px" : "2px",
-                  height: i % 3 === 0 ? "4px" : i % 2 === 0 ? "3px" : "2px",
-                  left: `${(i * 23) % 95 + 2}%`,
-                  top: `${(i * 17) % 90 + 5}%`,
-                }}
-                animate={{
-                  opacity: [0.15, 0.85, 0.15],
-                  scale: [0.8, 1.4, 0.8],
-                  y: [-4, 4, -4],
-                }}
-                transition={{
-                  duration: 3 + (i % 4),
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "easeInOut",
-                  delay: (i % 5) * 0.5,
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-
-
-
+      <Card className="relative overflow-visible rounded-3xl border bg-card/90 shadow-2xl backdrop-blur">
         {/* Map Header */}
-        <div className="relative z-10 flex items-center justify-between border-b border-emerald-500/20 px-6 py-4 bg-emerald-950/30 backdrop-blur-md">
+        <div className="flex items-center justify-between border-b px-6 py-4 bg-muted/20">
           <div className="flex items-center gap-2">
             <Compass className="h-5 w-5 text-primary animate-spin-slow" />
             <span className="text-xs font-extrabold uppercase tracking-widest text-foreground">
@@ -408,11 +321,8 @@ export function CourseJourneyMap({
 
             </svg>
 
-            {/* Render Traveling Mascot & Node Buttons along Path */}
+            {/* Node Buttons along Path */}
             <div className="absolute inset-0">
-              {!reduce && (
-                <TravelingMascot pathRef={pathRef} viewWidth={VIEW_W} viewHeight={viewH} />
-              )}
               {points.map((p, idx) => {
                 const wave = flattenedWaves[idx];
                 if (!wave) return null;
