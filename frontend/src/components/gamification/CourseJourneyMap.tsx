@@ -150,8 +150,8 @@ export function CourseJourneyMap({
   const pathD = useMemo(() => {
     if (flattenedWaves.length === 0) return `M 240 50 L 240 ${viewH - 50}`;
 
-    let d = `M 240 40`;
-    const startY = 40;
+    let d = `M 240 70`;
+    const startY = 70;
     const endY = viewH - 50;
     const totalStep = (endY - startY) / Math.max(1, flattenedWaves.length - 1);
 
@@ -278,7 +278,7 @@ export function CourseJourneyMap({
         </div>
 
         {/* Map Area */}
-        <div className="relative py-8 px-4 flex justify-center">
+        <div className="relative pt-14 pb-8 px-4 flex justify-center">
           <div className="relative w-full max-w-[500px]">
             <svg
               viewBox={`0 0 ${VIEW_W} ${viewH}`}
@@ -344,9 +344,8 @@ export function CourseJourneyMap({
                 const isCurrent = wave.state === "current";
                 const isCompleted = wave.state === "completed";
                 const isLocked = wave.state === "locked";
-                const isTopNode = idx === 0 || p.y < 120;
-                const popoverPosClass = isTopNode ? "top-full mt-8" : "bottom-full mb-4";
-                const popoverAnimY = isTopNode ? -10 : 10;
+                const popoverPosClass = "bottom-full mb-4";
+                const popoverAnimY = 10;
 
                 // Check if this wave starts a new lesson header
                 const showLessonHeader =
