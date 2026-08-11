@@ -77,6 +77,18 @@ function WavePlayerPage() {
   const learnBlocks: LearnBlock[] = useMemo(() => wave?.learnBlocks ?? [], [wave]);
   const evaluateBlocks: EvaluateBlock[] = useMemo(() => wave?.evaluateBlocks ?? [], [wave]);
 
+  const nextWave = useMemo(() => {
+    const courseLessons = (wave?.lesson?.course as { lessons?: Array<{ sequenceOrder?: number; waves?: Array<{ id: string; title: string; sequenceOrder?: number }> }> })?.lessons ?? [];
+    const sortedLessons = [...courseLessons].sort(
+      (a, b) => (a.sequenceOrder ?? 0) - (b.sequenceOrder ?? 0),
+    );
+    const allWaves = sortedLessons.flatMap((l) =>
+      [...(l.waves ?? [])].sort((a, b) => (a.sequenceOrder ?? 0) - (b.sequenceOrder ?? 0)),
+    );
+    const currentIdx = allWaves.findIndex((w) => w.id === waveId);
+    return currentIdx !== -1 && currentIdx < allWaves.length - 1 ? allWaves[currentIdx + 1] : null;
+  }, [wave, waveId]);
+
   const hasLearn = learnBlocks.length > 0;
   const evaluateLocked = hasLearn && !learnViewed;
 
@@ -189,18 +201,6 @@ function WavePlayerPage() {
     : (maxAttempts === null || attemptsCount < maxAttempts);
   const justEarnedXp = result?.passed && result.xpEarned > 0;
   const attemptsExhausted = maxAttempts !== null && attemptsCount >= maxAttempts && !isCompleted;
-
-  const nextWave = useMemo(() => {
-    const courseLessons = (wave?.lesson?.course as { lessons?: Array<{ sequenceOrder?: number; waves?: Array<{ id: string; title: string; sequenceOrder?: number }> }> })?.lessons ?? [];
-    const sortedLessons = [...courseLessons].sort(
-      (a, b) => (a.sequenceOrder ?? 0) - (b.sequenceOrder ?? 0),
-    );
-    const allWaves = sortedLessons.flatMap((l) =>
-      [...(l.waves ?? [])].sort((a, b) => (a.sequenceOrder ?? 0) - (b.sequenceOrder ?? 0)),
-    );
-    const currentIdx = allWaves.findIndex((w) => w.id === waveId);
-    return currentIdx !== -1 && currentIdx < allWaves.length - 1 ? allWaves[currentIdx + 1] : null;
-  }, [wave, waveId]);
 
   // On a fresh page load of an already-completed or attempt-exhausted wave,
   // synthesize a read-only result from myProgress so returning students see

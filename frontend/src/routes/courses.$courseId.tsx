@@ -18,6 +18,7 @@ interface Wave {
   title: string;
   sequenceOrder: number;
   xpReward: number;
+  maxReattempts: number;
   difficulty: string;
   isPublished: boolean;
   myProgress?: {
