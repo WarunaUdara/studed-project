@@ -91,7 +91,7 @@ export function HelmetCompanion({
         className,
       )}
     >
-      <div className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap z-50 pointer-events-none">
+      <div className="absolute bottom-full -mb-1 left-1/2 -translate-x-1/2 whitespace-nowrap z-50 pointer-events-none">
         <AnimatePresence mode="wait">
           {activeSpeech && (
             <motion.div
