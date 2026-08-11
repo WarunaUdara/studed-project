@@ -4,6 +4,14 @@
 /* Dark mode is toggled via `.dark` class on <html> (same as v3 `darkMode: ["class"]`). */
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Short-viewport variant. The login page is a single fit-on-screen view, but a
+ * 1366x768 or 1440x900 laptop only gives ~640-790px of *inner* height once
+ * browser chrome is subtracted. Without this the left panel needs 861px and the
+ * page picks up a stray 60-95px of scroll. Used to tighten vertical rhythm only.
+ */
+@custom-variant short (@media (max-height: 900px));
+
 @layer base {
   :root {
     /* Core Platform Palette (OKLCH Hue 145 - Forest/Emerald Learning Theme) */

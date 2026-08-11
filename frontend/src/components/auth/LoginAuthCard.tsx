@@ -45,7 +45,7 @@ export function LoginAuthCard() {
   return (
     // Tighter gutters below sm: at 375px the full-width Google button's label
     // plus its "Coming soon" suffix overflows an 8-unit inset.
-    <div className="relative rounded-lg border border-login-card-border bg-login-card p-6 pt-14 shadow-login-card backdrop-blur-xl sm:p-8 sm:pt-16">
+    <div className="relative rounded-lg border border-login-card-border bg-login-card p-6 pt-14 shadow-login-card backdrop-blur-xl sm:p-8 sm:pt-16 short:p-6 short:pt-12 sm:short:p-6 sm:short:pt-12">
       {/* Peeking mascot. Anchored to the card, and deliberately not inside any
           overflow-hidden ancestor so it can break the top edge. Sized against
           the tight-cropped art: roughly a third of it overlaps the card, which
@@ -70,7 +70,7 @@ export function LoginAuthCard() {
 
       <LevelStrip />
 
-      <form onSubmit={submit} className="mt-6 space-y-4" noValidate>
+      <form onSubmit={submit} className="mt-6 space-y-4 short:mt-4 short:space-y-3" noValidate>
         <div className="space-y-2">
           <Label htmlFor={emailId} className="text-sm font-semibold text-login-ink">
             Email
@@ -160,7 +160,7 @@ export function LoginAuthCard() {
         </Button>
       </form>
 
-      <div className="my-5 flex items-center gap-3">
+      <div className="my-5 flex items-center gap-3 short:my-3">
         <span aria-hidden="true" className="h-px flex-1 bg-login-line" />
         <span className="text-xs text-login-ink-faint">or</span>
         <span aria-hidden="true" className="h-px flex-1 bg-login-line" />
@@ -182,7 +182,7 @@ export function LoginAuthCard() {
         </span>
       </Button>
 
-      <p className="mt-6 text-center text-sm text-login-ink-muted">
+      <p className="mt-6 text-center text-sm text-login-ink-muted short:mt-4">
         Don't have an account?{" "}
         <Link
           to="/register"
@@ -197,7 +197,7 @@ export function LoginAuthCard() {
 
 function LevelStrip() {
   return (
-    <div className="mt-6 flex items-center gap-3 rounded-2xl border border-login-inset-border bg-login-inset p-3">
+    <div className="mt-6 flex items-center gap-3 rounded-2xl border border-login-inset-border bg-login-inset p-3 short:mt-4">
       {/* Green rim + dark core, both hexagons. */}
       <span
         aria-hidden="true"

@@ -58,20 +58,20 @@ export function LoginBrandPanel() {
         className="pointer-events-none absolute top-1/2 right-0 size-[38rem] -translate-y-1/2 translate-x-1/4 rounded-full bg-brand-green/10 blur-3xl"
       />
 
-      <div className="relative flex w-full items-stretch gap-6 p-10 xl:p-14">
+      <div className="relative flex w-full items-stretch gap-6 p-10 short:gap-4 short:p-8 xl:p-14 xl:short:p-10">
         {/* Copy column. min-w-0 lets the headline shrink instead of colliding
             with the island lane at the lg breakpoint. */}
         <div className="flex min-w-0 flex-1 flex-col justify-between">
           <div>
             <Wordmark />
 
-            <p className="mt-4 text-base leading-snug font-medium text-login-ink">
+            <p className="mt-4 text-base leading-snug font-medium text-login-ink short:mt-3">
               Premium learning for
               <br />
               <span className="text-login-accent">Sri Lankan schools</span>
             </p>
 
-            <h1 className="mt-10 text-5xl leading-[0.95] font-extrabold tracking-tight text-login-ink xl:text-6xl">
+            <h1 className="mt-10 text-5xl leading-[0.95] font-extrabold tracking-tight text-login-ink short:mt-6 xl:text-6xl xl:short:text-5xl">
               Learn.
               <br />
               Play.
@@ -79,13 +79,13 @@ export function LoginBrandPanel() {
               <span className="text-login-accent">Level Up.</span>
             </h1>
 
-            <p className="mt-5 text-base leading-snug text-login-ink-body">
+            <p className="mt-5 text-base leading-snug text-login-ink-body short:mt-4">
               Your adventure to master new skills{" "}
               <span className="font-semibold text-login-accent">starts here!</span>
             </p>
           </div>
 
-          <ul className="my-8 space-y-4">
+          <ul className="my-8 space-y-4 short:my-5 short:space-y-3">
             {FEATURES.map((feature) => (
               <FeatureRow key={feature.title} {...feature} />
             ))}
