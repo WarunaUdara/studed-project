@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { XPBar } from "@/components/gamification/XPBar";
 import { type PublicStringKey, usePublicI18n } from "@/lib/i18n";
+import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
 import { playClickSound } from "@/lib/sounds";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +29,60 @@ interface WaveNodeDef {
   titleKey: PublicStringKey;
   xp: number;
   state: NodeState;
+}
+
+
+function TravelingMascot({
+  pathRef,
+  viewWidth,
+  viewHeight,
+}: {
+  pathRef: React.RefObject<SVGPathElement | null>;
+  viewWidth: number;
+  viewHeight: number;
+}) {
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    let animId: number;
+    const duration = 11000;
+    const startTime = performance.now();
+
+    const loop = (now: number) => {
+      const path = pathRef.current;
+      if (path) {
+        try {
+          const len = path.getTotalLength();
+          if (len > 0) {
+            const elapsed = (now - startTime) % duration;
+            const progress = elapsed / duration;
+            const p = path.getPointAtLength(progress * len);
+            setPos({
+              x: (p.x / viewWidth) * 100,
+              y: (p.y / viewHeight) * 100,
+            });
+          }
+        } catch {
+          // ignore measurement error before SVG path mounts
+        }
+      }
+      animId = requestAnimationFrame(loop);
+    };
+
+    animId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animId);
+  }, [pathRef, viewWidth, viewHeight]);
+
+  if (!pos) return null;
+
+  return (
+    <div
+      className="absolute pointer-events-none z-30 -translate-x-1/2 -translate-y-1/2"
+      style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+    >
+      <HelmetCompanion size="sm" mood="happy" className="h-10 w-10 drop-shadow-lg" />
+    </div>
+  );
 }
 
 /** Node positions along the path as fractions of its total length. */
@@ -159,22 +214,14 @@ export function WaveMapHero() {
               transition={{ duration: 1.8, ease: "easeOut", delay: 0.4 }}
             />
 
-            {/* Travelling glow orb */}
-            {!reduce && (
-              <>
-                <circle r={10} fill="var(--primary)" opacity={0.28}>
-                  <animateMotion dur="9s" repeatCount="indefinite" path={PATH_D} />
-                </circle>
-                <circle r={4} fill="var(--primary)">
-                  <animateMotion dur="9s" repeatCount="indefinite" path={PATH_D} />
-                </circle>
-              </>
-            )}
-          </svg>
+            </svg>
 
-          {/* Node buttons overlay */}
-          <div className="absolute inset-0">
-            {points.map((p, i) => {
+            {/* Traveling Mascot & Node buttons overlay */}
+            <div className="absolute inset-0">
+              {!reduce && (
+                <TravelingMascot pathRef={pathRef} viewWidth={VIEW_W} viewHeight={VIEW_H} />
+              )}
+              {points.map((p, i) => {
               const node = NODES[i];
               if (!node) return null;
               const left = `${(p.x / VIEW_W) * 100}%`;

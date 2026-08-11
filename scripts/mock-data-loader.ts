@@ -4,6 +4,7 @@ const GATEWAY = "http://localhost:8080/graphql";
 
 class Session {
   cookies: string[] = [];
+  token: string = "";
 
   constructor(public email: string) {}
 
@@ -11,6 +12,9 @@ class Session {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
     };
+    if (this.token) {
+      headers["Authorization"] = `Bearer ${this.token}`;
+    }
     if (this.cookies.length > 0) {
       headers["Cookie"] = this.cookies.join("; ");
     }
@@ -69,6 +73,7 @@ async function registerOrLogin(email: string, role: string, fullName: string, gr
   let res = await session.graphql(
     `mutation Register($input: RegisterInput!) {
       register(input: $input) {
+        accessToken
         user {
           id
           email
@@ -83,6 +88,7 @@ async function registerOrLogin(email: string, role: string, fullName: string, gr
     res = await session.graphql(
       `mutation Login($input: LoginInput!) {
         login(input: $input) {
+          accessToken
           user {
             id
             email
@@ -102,6 +108,11 @@ async function registerOrLogin(email: string, role: string, fullName: string, gr
   if (res.errors) {
     console.error(`[mock] failed to authenticate ${email}:`, JSON.stringify(res.errors, null, 2));
     process.exit(1);
+  }
+
+  const token = res.data?.register?.accessToken || res.data?.login?.accessToken;
+  if (token) {
+    session.token = token;
   }
 
   return session;
@@ -161,8 +172,8 @@ async function createCourse(session: Session, title: string, slug: string, grade
     }
   );
 
-  if (res.errors) {
-    console.error(`[mock] failed to create course ${title}:`, JSON.stringify(res.errors, null, 2));
+  if (res.errors || !res.data?.createCourse?.id) {
+    console.error(`[mock] failed to create course ${title}:`, JSON.stringify(res.errors || res, null, 2));
     process.exit(1);
   }
 
@@ -320,8 +331,8 @@ async function createWave(session: Session, courseId: string, lessonId: string, 
     }
   );
 
-  if (res.errors) {
-    console.error(`[mock] failed to create wave ${title}:`, JSON.stringify(res.errors, null, 2));
+  if (res.errors || !res.data?.createWave?.id) {
+    console.error(`[mock] failed to create wave ${title}:`, JSON.stringify(res.errors || res, null, 2));
     process.exit(1);
   }
 

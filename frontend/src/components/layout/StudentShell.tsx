@@ -67,10 +67,10 @@ export function StudentShell({ children, banner, className }: StudentShellProps)
     <div className={cn("mx-auto max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:flex", className)}>
       {/* Sidebar — desktop */}
       <aside className="hidden w-56 shrink-0 lg:block">
-        <div className="sticky top-20 space-y-4">
-          <div className="relative rounded-2xl border bg-card/70 backdrop-blur-md p-3 text-sidebar-foreground shadow-sm">
+        <div className="sticky top-24 space-y-4 z-45">
+          <div className="relative z-45 rounded-2xl border bg-card/70 backdrop-blur-md p-3 text-sidebar-foreground shadow-sm">
             {/* Peeking Helmet Companion */}
-            <HelmetCompanion peeking size="sm" mood="neutral" className="right-3 -top-12 z-20" />
+            <HelmetCompanion peeking size="sm" mood="neutral" className="right-3 -top-10 z-50" />
 
             <div className="flex items-center gap-3 px-1 pb-3 pt-1 border-b border-border/40">
               <span

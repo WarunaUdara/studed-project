@@ -197,7 +197,8 @@ function LeaderboardPage() {
 
                 {/* 1st Place */}
                 <div className="flex-1 flex flex-col items-center">
-                  <div className="mb-2 text-center">
+                  <div className="mb-2 text-center flex flex-col items-center">
+                    <Crown className="h-5 w-5 text-gold fill-gold/20 animate-bounce mb-0.5" />
                     <p className="text-sm font-bold text-foreground truncate max-w-[120px]">
                       {podium[1] ? privateLeaderboardName(podium[1].user.fullName) : "---"}
                     </p>
@@ -205,8 +206,7 @@ function LeaderboardPage() {
                       {podium[1] ? `${podium[1].totalXp.toLocaleString()} XP` : ""}
                     </p>
                   </div>
-                  <div className="flex flex-col items-center bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-gold/10 border-2 border-amber-500/25 rounded-t-[24px] p-5 h-[160px] w-full text-center justify-center shadow-md relative">
-                    <Crown className="absolute -top-6 h-6 w-6 text-gold fill-gold/20 animate-bounce" />
+                  <div className="flex flex-col items-center bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-gold/10 border-2 border-amber-500/25 rounded-t-[24px] p-5 h-[160px] w-full text-center justify-center shadow-md">
                     <span className="text-5xl font-serif font-semibold italic text-amber-600 mb-1">
                       1
                     </span>

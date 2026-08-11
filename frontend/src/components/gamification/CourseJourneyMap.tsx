@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
+import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/Card";
 import { ProgressRing } from "@/components/ui/ProgressRing";
@@ -67,6 +68,59 @@ interface Point {
 
 const VIEW_W = 480;
 
+function TravelingMascot({
+  pathRef,
+  viewWidth,
+  viewHeight,
+}: {
+  pathRef: React.RefObject<SVGPathElement | null>;
+  viewWidth: number;
+  viewHeight: number;
+}) {
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    let animId: number;
+    const duration = 10000;
+    const startTime = performance.now();
+
+    const loop = (now: number) => {
+      const path = pathRef.current;
+      if (path) {
+        try {
+          const len = path.getTotalLength();
+          if (len > 0) {
+            const elapsed = (now - startTime) % duration;
+            const progress = elapsed / duration;
+            const p = path.getPointAtLength(progress * len);
+            setPos({
+              x: (p.x / viewWidth) * 100,
+              y: (p.y / viewHeight) * 100,
+            });
+          }
+        } catch {
+          // ignore measurement error before SVG path mounts
+        }
+      }
+      animId = requestAnimationFrame(loop);
+    };
+
+    animId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animId);
+  }, [pathRef, viewWidth, viewHeight]);
+
+  if (!pos) return null;
+
+  return (
+    <div
+      className="absolute pointer-events-none z-30 -translate-x-1/2 -translate-y-1/2"
+      style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+    >
+      <HelmetCompanion size="sm" mood="happy" className="h-10 w-10 drop-shadow-lg" />
+    </div>
+  );
+}
+
 export function CourseJourneyMap({
   courseTitle,
   gradeLevel,
@@ -80,6 +134,7 @@ export function CourseJourneyMap({
   const pathRef = useRef<SVGPathElement>(null);
   const [points, setPoints] = useState<Point[]>([]);
   const [selectedWaveId, setSelectedWaveId] = useState<string | null>(null);
+  const [hoveredWaveId, setHoveredWaveId] = useState<string | null>(null);
 
   // Flatten lessons & waves into a single sequential journey list
   const { waves: flattenedWaves, completedCount, totalCount, currentWaveId } = useMemo(() => {
@@ -149,8 +204,8 @@ export function CourseJourneyMap({
   const pathD = useMemo(() => {
     if (flattenedWaves.length === 0) return `M 240 50 L 240 ${viewH - 50}`;
 
-    let d = `M 240 40`;
-    const startY = 40;
+    let d = `M 240 70`;
+    const startY = 70;
     const endY = viewH - 50;
     const totalStep = (endY - startY) / Math.max(1, flattenedWaves.length - 1);
 
@@ -258,7 +313,7 @@ export function CourseJourneyMap({
       </div>
 
       {/* Main Interactive Map Container */}
-      <Card className="relative overflow-hidden rounded-3xl border bg-card/90 shadow-2xl backdrop-blur">
+      <Card className="relative overflow-visible rounded-3xl border bg-card/90 shadow-2xl backdrop-blur">
         {/* Map Header */}
         <div className="flex items-center justify-between border-b px-6 py-4 bg-muted/20">
           <div className="flex items-center gap-2">
@@ -277,7 +332,7 @@ export function CourseJourneyMap({
         </div>
 
         {/* Map Area */}
-        <div className="relative py-8 px-4 flex justify-center">
+        <div className="relative pt-14 pb-8 px-4 flex justify-center">
           <div className="relative w-full max-w-[500px]">
             <svg
               viewBox={`0 0 ${VIEW_W} ${viewH}`}
@@ -316,21 +371,13 @@ export function CourseJourneyMap({
                 transition={{ duration: 1.5, ease: "easeOut" }}
               />
 
-              {/* Travelling Glow Orb */}
-              {!reduce && (
-                <>
-                  <circle r={12} fill="var(--primary)" opacity={0.25}>
-                    <animateMotion dur="8s" repeatCount="indefinite" path={pathD} />
-                  </circle>
-                  <circle r={5} fill="var(--primary)">
-                    <animateMotion dur="8s" repeatCount="indefinite" path={pathD} />
-                  </circle>
-                </>
-              )}
             </svg>
 
-            {/* Render Node Buttons along Path */}
+            {/* Traveling Mascot & Node Buttons along Path */}
             <div className="absolute inset-0">
+              {!reduce && (
+                <TravelingMascot pathRef={pathRef} viewWidth={VIEW_W} viewHeight={viewH} />
+              )}
               {points.map((p, idx) => {
                 const wave = flattenedWaves[idx];
                 if (!wave) return null;
@@ -338,9 +385,13 @@ export function CourseJourneyMap({
                 const left = `${(p.x / VIEW_W) * 100}%`;
                 const top = `${(p.y / viewH) * 100}%`;
                 const isSelected = selectedWaveId === wave.id;
+                const isHovered = hoveredWaveId === wave.id;
+                const showCard = isSelected || isHovered;
                 const isCurrent = wave.state === "current";
                 const isCompleted = wave.state === "completed";
                 const isLocked = wave.state === "locked";
+                const popoverPosClass = "bottom-full mb-4";
+                const popoverAnimY = 10;
 
                 // Check if this wave starts a new lesson header
                 const showLessonHeader =
@@ -349,8 +400,10 @@ export function CourseJourneyMap({
                 return (
                   <div
                     key={wave.id}
-                    className="absolute"
+                    className={cn("absolute transition-all", showCard ? "z-50" : "z-20")}
                     style={{ left, top, transform: "translate(-50%, -50%)" }}
+                    onMouseEnter={() => setHoveredWaveId(wave.id)}
+                    onMouseLeave={() => setHoveredWaveId(null)}
                   >
                     {/* Lesson Section Badge Header */}
                     {showLessonHeader && (
@@ -416,14 +469,17 @@ export function CourseJourneyMap({
                       </span>
                     </div>
 
-                    {/* Interactive Tooltip Card on Click / Selection */}
+                    {/* Interactive Tooltip Card on Click / Selection / Hover */}
                     <AnimatePresence>
-                      {isSelected && (
+                      {showCard && (
                         <motion.div
-                          initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                          initial={{ opacity: 0, scale: 0.9, y: popoverAnimY }}
                           animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                          className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 z-50 w-64 rounded-2xl border bg-card/95 p-4 shadow-2xl backdrop-blur text-left"
+                          exit={{ opacity: 0, scale: 0.9, y: popoverAnimY }}
+                          className={cn(
+                            "absolute left-1/2 -translate-x-1/2 z-[60] w-64 rounded-2xl border bg-card/95 p-4 shadow-2xl backdrop-blur text-left pointer-events-auto",
+                            popoverPosClass,
+                          )}
                         >
                           <div className="space-y-2.5">
                             <div className="flex items-center justify-between gap-2">
