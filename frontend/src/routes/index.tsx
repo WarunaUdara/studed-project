@@ -88,8 +88,13 @@ function IndexPage() {
 /* ---------------------------------- Hero ---------------------------------- */
 
 function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
-  const { t } = usePublicI18n();
+  const { t, isSinhala } = usePublicI18n();
   const reduce = useReducedMotion();
+
+  // In Sinhala, "Game එකක් ලෙසින්" wraps mid-phrase and the italic slant makes
+  // the overflow invisible. Join the words with non-breaking spaces (Sinhala
+  // only) so the tagline stays one unit instead of spilling past the layout.
+  const effectiveHeroTitleB = isSinhala ? t("heroTitleB").replace(/ /g, "\u00A0") : t("heroTitleB");
 
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden px-4 pb-12 pt-24 sm:px-6 sm:pb-16 sm:pt-28 lg:pb-20 lg:pt-32">
@@ -155,7 +160,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             <br />
             <span className="italic text-primary">
               <SplitText
-                text={t("heroTitleB")}
+                text={effectiveHeroTitleB}
                 tag="span"
                 splitType="chars"
                 delay={35}
@@ -354,12 +359,15 @@ function HowItWorks() {
 
   return (
     <section className="relative overflow-hidden px-4 py-24 sm:px-6">
-      {/* Upper Right Abstract Shape */}
-      <img
+      {/* Upper Right Abstract Shape — slow decorative rotation */}
+      <motion.img
         src="/abstract-shapes/Group 215.svg"
         alt=""
         aria-hidden
-        className="absolute -top-36 -right-40 w-[580px] h-[580px] opacity-[0.10] dark:opacity-[0.05] pointer-events-none select-none rotate-90"
+        initial={{ rotate: 90 }}
+        animate={{ rotate: reduce ? 90 : 450 }}
+        transition={{ duration: 90, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+        className="absolute -top-36 -right-40 w-[580px] h-[580px] opacity-[0.10] dark:opacity-[0.05] pointer-events-none select-none"
       />
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("howHeading")} subhead={t("howSubhead")} />
@@ -428,6 +436,7 @@ function PlayableWaveSection() {
 
 function GamificationShowcase() {
   const { t } = usePublicI18n();
+  const reduce = useReducedMotion();
   const [xpToastAmount, setXpToastAmount] = useState(0);
 
   const handleXpCardHover = () => {
@@ -438,11 +447,14 @@ function GamificationShowcase() {
   return (
     <section className="relative overflow-hidden px-4 py-24 sm:px-6">
       {/* Background Abstract Shapes on upper and bottom sides */}
-      <img
+      <motion.img
         src="/abstract-shapes/Group 216.svg"
         alt=""
         aria-hidden
-        className="absolute -top-36 -right-36 w-[540px] h-[540px] opacity-[0.10] dark:opacity-[0.05] pointer-events-none select-none rotate-45"
+        initial={{ rotate: 45 }}
+        animate={{ rotate: reduce ? 45 : 405 }}
+        transition={{ duration: 75, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+        className="absolute -top-36 -right-36 w-[540px] h-[540px] opacity-[0.10] dark:opacity-[0.05] pointer-events-none select-none"
       />
       <img
         src="/abstract-shapes/Group 211.svg"
