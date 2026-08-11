@@ -286,13 +286,8 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 		}
 	}
 
+	// Unlimited attempts: always indicate -1 (no limit)
 	remainingAttempts := int32(-1)
-	if wave.MaxReattempts > 0 {
-		remainingAttempts = wave.MaxReattempts - int32(len(attempts)) - 1
-		if remainingAttempts < 0 {
-			remainingAttempts = 0
-		}
-	}
 
 	return &progresspb.RecordAttemptResponse{
 		AttemptId:         attempt.ID,

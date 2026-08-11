@@ -356,7 +356,7 @@ function WavePlayerPage() {
                       justEarnedXp={!!justEarnedXp}
                       canReattempt={canReattempt}
                       onTryAgain={handleTryAgain}
-                      onResetAttempts={handleResetAttempts}
+
                       resetting={resetResult.fetching}
                     />
                     <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -517,17 +517,7 @@ function ResultCard({
             <RotateCcw className="mr-1.5 h-4 w-4" /> Try Again
           </Button>
         )}
-        {onResetAttempts && (
-          <Button
-            onClick={onResetAttempts}
-            disabled={resetting}
-            variant="outline"
-            className="w-full border-primary/40 text-primary hover:bg-primary/10"
-          >
-            <RotateCcw className="mr-1.5 h-4 w-4" />
-            {resetting ? "Resetting Attempts..." : "Reset Attempts & Try Again"}
-          </Button>
-        )}
+
         {!passed && remainingAttempts >= 0 && remainingAttempts === 0 && (
           <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-center text-sm text-amber-500 font-medium">
             Maximum attempts reached. You can skip to the next wave or reset attempts to try again.
