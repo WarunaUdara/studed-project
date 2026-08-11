@@ -260,8 +260,8 @@ export const PUBLIC_STRINGS = {
   },
 
   finalCtaHeading: {
-    EN: "Ready to start your journey?",
-    SI: "ඔබගේ ගමන ආරම්භ කිරීමට සූදානම්ද?",
+    EN: "Ready to start your\njourney?",
+    SI: "ඔබගේ ගමන ආරම්භ කිරීමට\nසූදානම්ද?",
   },
   finalCtaSubhead: {
     EN: "Join StudEd today and unlock structured courses, interactive waves, and gamified progress tracking.",

@@ -79,6 +79,7 @@
   padding: 0 1.5rem;
   max-width: 90%;
   text-align: center;
+  white-space: pre-line;
   font-size: clamp(1.25rem, 3.2vw, 2.5rem);
   font-weight: 600;
   letter-spacing: -0.02em;
