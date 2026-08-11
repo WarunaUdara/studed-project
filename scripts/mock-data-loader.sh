@@ -119,7 +119,7 @@ create_course() {
   local response
   response=$(graphql "${jar}" \
     'mutation CreateCourse($input: CreateCourseInput!) { createCourse(input: $input) { id title slug gradeLevel isPublished } }' \
-    "{\"input\":{\"title\":\"${title}\",\"description\":\"Mock course: ${title}\",\"slug\":\"${slug}\",\"gradeLevel\":${grade},\"price\":0}}")
+    "{\"input\":{\"title\":\"${title}\",\"description\":\"Mock course: ${title}\",\"slug\":\"${slug}\",\"gradeLevel\":\"${grade}\",\"price\":0}}")
 
   if echo "${response}" | jq -e '.errors' >/dev/null 2>&1; then
     echo "[mock] failed to create course ${title}:"
