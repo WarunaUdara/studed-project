@@ -60,4 +60,5 @@
   object-fit: cover;
   user-select: none;
   -webkit-user-drag: none;
+  transition: opacity 0.6s ease-in-out, transform 0.2s ease-out;
 }

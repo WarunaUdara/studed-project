@@ -6,9 +6,9 @@ import { MaskedHeading } from "@/components/ui/MaskedHeading";
 import { usePublicI18n } from "@/lib/i18n";
 
 const FOOTER_IMAGES = [
-  "/footer/505221662.webp",
-  "/footer/Srí Lanka – ostrov rajského vyhnanství shutterstock_535350205.webp",
-  "/footer/merlin_148552275_74c0d250-949c-46e0-b8a1-e6d499e992cf-superJumbo.webp",
+  "/footer/footer-1.webp",
+  "/footer/footer-2.webp",
+  "/footer/footer-3.webp",
 ];
 
 interface FooterColumn {
@@ -171,7 +171,7 @@ export function PublicFooter() {
             weight={900}
             tracking={0.06}
             reveal="rise"
-            trigger="view"
+            trigger="scroll"
             duration={1.2}
             className="w-full text-center select-none font-black tracking-widest uppercase cursor-pointer"
             onClick={nextFooterImage}
