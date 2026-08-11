@@ -80,6 +80,7 @@ export function CourseJourneyMap({
   const pathRef = useRef<SVGPathElement>(null);
   const [points, setPoints] = useState<Point[]>([]);
   const [selectedWaveId, setSelectedWaveId] = useState<string | null>(null);
+  const [hoveredWaveId, setHoveredWaveId] = useState<string | null>(null);
 
   // Flatten lessons & waves into a single sequential journey list
   const { waves: flattenedWaves, completedCount, totalCount, currentWaveId } = useMemo(() => {
@@ -338,6 +339,8 @@ export function CourseJourneyMap({
                 const left = `${(p.x / VIEW_W) * 100}%`;
                 const top = `${(p.y / viewH) * 100}%`;
                 const isSelected = selectedWaveId === wave.id;
+                const isHovered = hoveredWaveId === wave.id;
+                const showCard = isSelected || isHovered;
                 const isCurrent = wave.state === "current";
                 const isCompleted = wave.state === "completed";
                 const isLocked = wave.state === "locked";
@@ -351,6 +354,8 @@ export function CourseJourneyMap({
                     key={wave.id}
                     className="absolute"
                     style={{ left, top, transform: "translate(-50%, -50%)" }}
+                    onMouseEnter={() => setHoveredWaveId(wave.id)}
+                    onMouseLeave={() => setHoveredWaveId(null)}
                   >
                     {/* Lesson Section Badge Header */}
                     {showLessonHeader && (
@@ -416,9 +421,9 @@ export function CourseJourneyMap({
                       </span>
                     </div>
 
-                    {/* Interactive Tooltip Card on Click / Selection */}
+                    {/* Interactive Tooltip Card on Click / Selection / Hover */}
                     <AnimatePresence>
-                      {isSelected && (
+                      {showCard && (
                         <motion.div
                           initial={{ opacity: 0, scale: 0.9, y: 10 }}
                           animate={{ opacity: 1, scale: 1, y: 0 }}
