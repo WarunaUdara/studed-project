@@ -195,69 +195,8 @@ export function WaveMapHero() {
           </div>
         )}
 
-        {/* 3D Floating Background Islands & Interactive Companion */}
-        <div className="absolute inset-0 overflow-hidden rounded-3xl z-0 pointer-events-none">
-          {/* Top Right: Custom Flag Island with Wind Swaying Effect */}
-          <motion.div
-            className="absolute -top-4 -right-6 w-36 sm:w-44 opacity-85 select-none pointer-events-none"
-            animate={{
-              y: [-5, 5, -5],
-              rotate: [-1.2, 1.2, -1.2],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
-            }}
-          >
-            <motion.img
-              src="/images/islands/flag-island-custom.png"
-              alt="Floating Flag Island"
-              className="w-full h-auto drop-shadow-[0_12px_20px_rgba(0,0,0,0.6)]"
-              style={{ transformOrigin: "bottom center" }}
-              animate={{
-                skewX: [-2.5, 2.5, -2.5],
-              }}
-              transition={{
-                duration: 4.5,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
-              }}
-            />
-          </motion.div>
 
-          {/* Bottom Left: Custom Trophy Island with Interactive Touchable Mascot */}
-          <motion.div
-            className="absolute bottom-10 -left-6 w-36 sm:w-44 select-none pointer-events-auto z-20"
-            animate={{
-              y: [7, -7, 7],
-              rotate: [1.5, -1.5, 1.5],
-            }}
-            transition={{
-              duration: 7,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
-              delay: 0.8,
-            }}
-          >
-            <div className="relative">
-              <img
-                src="/images/islands/trophy-island-custom.png"
-                alt="Victory Trophy Island"
-                className="w-full h-auto drop-shadow-[0_12px_20px_rgba(0,0,0,0.7)]"
-              />
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-30">
-                <HelmetCompanion
-                  size="sm"
-                  mood="happy"
-                  showSpeech
-                  speech="Ready to level up?"
-                  className="h-14 w-14 drop-shadow-lg"
-                />
-              </div>
-            </div>
-          </motion.div>
-        </div>
+
 
         {/* Header */}
         <div className="relative z-10 flex items-start justify-between gap-3 border-b border-emerald-500/20 px-5 py-4 bg-emerald-950/30 backdrop-blur-md">
