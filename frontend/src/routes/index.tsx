@@ -281,7 +281,7 @@ function TextLoopBanner() {
   if (reduce) return null;
 
   return (
-    <div className="relative py-1 overflow-hidden bg-card/30 backdrop-blur-md border-y border-border/20">
+    <div className="relative py-2 overflow-hidden bg-transparent">
       <TextLoop
         text="StudEd ✦ Interactive STEM Learning ✦ Gamified Waves ✦ Real-Time Mastery ✦ Sri Lanka's Modern Platform ✦"
         shape="wave"
@@ -840,7 +840,7 @@ function PricingPreview({ authed }: { authed: boolean }) {
   const { t } = usePublicI18n();
 
   return (
-    <section id="pricing" className="relative overflow-hidden scroll-mt-20 border-y bg-card/30 px-4 py-24 sm:px-6">
+    <section id="pricing" className="relative overflow-hidden scroll-mt-20 px-4 py-24 sm:px-6">
       {/* Background Abstract Shape */}
       <img
         src="/abstract-shapes/Group 215.svg"
@@ -1028,7 +1028,7 @@ function FinalCta({ authed }: { authed: boolean }) {
                 <Zap className="h-3.5 w-3.5 fill-gold text-gold" />
                 +250 XP
               </p>
-              <h2 className="font-serif text-3xl font-normal tracking-tight text-white sm:text-5xl drop-shadow-md">
+              <h2 className="font-serif text-3xl font-normal tracking-tight text-white sm:text-5xl drop-shadow-md whitespace-pre-line">
                 {t("finalCtaHeading")}
               </h2>
               <p className="mx-auto max-w-md text-pretty text-sm leading-relaxed text-white/90 sm:text-base drop-shadow-xs">
