@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { useId, useState } from "react";
+import { useState } from "react";
 import { useLoginForm } from "@/components/auth/useLoginForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/Input";
@@ -37,8 +37,6 @@ const FOCUS_RING =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-login-accent focus-visible:ring-offset-2 focus-visible:ring-offset-transparent";
 
 export function LoginAuthCard() {
-  const emailId = useId();
-  const passwordId = useId();
   const [showPassword, setShowPassword] = useState(false);
   const { registerField, submit, errors, isSubmitting, error } = useLoginForm();
 
@@ -72,7 +70,7 @@ export function LoginAuthCard() {
 
       <form onSubmit={submit} className="mt-6 space-y-4 short:mt-4 short:space-y-3" noValidate>
         <div className="space-y-2">
-          <Label htmlFor={emailId} className="text-sm font-semibold text-login-ink">
+          <Label htmlFor="email" className="text-sm font-semibold text-login-ink">
             Email
           </Label>
           <div className="relative">
@@ -81,7 +79,7 @@ export function LoginAuthCard() {
               className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-login-ink-faint"
             />
             <Input
-              id={emailId}
+              id="email"
               type="email"
               placeholder="you@example.com"
               className={FIELD_CLASSNAME}
@@ -92,7 +90,7 @@ export function LoginAuthCard() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor={passwordId} className="text-sm font-semibold text-login-ink">
+          <Label htmlFor="password" className="text-sm font-semibold text-login-ink">
             Password
           </Label>
           <div className="relative">
@@ -101,7 +99,7 @@ export function LoginAuthCard() {
               className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-login-ink-faint"
             />
             <Input
-              id={passwordId}
+              id="password"
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               className={`${FIELD_CLASSNAME} pr-12`}
