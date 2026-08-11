@@ -9,12 +9,12 @@ metadata:
   namespace: studed
   annotations:
     kubernetes.io/ingress.class: gce
-    kubernetes.io/ingress.global-static-ip-name: studed-ingress-ip
+    kubernetes.io/ingress.global-static-ip-name: studed2-ingress-ip
     kubernetes.io/ingress.allow-http: "false"
     networking.gke.io/managed-certificates: studed-api-cert-v2
 spec:
   rules:
-    - host: api.8.232.85.250.sslip.io
+    - host: api.8.233.11.14.sslip.io
       http:
         paths:
           - path: /graphql
