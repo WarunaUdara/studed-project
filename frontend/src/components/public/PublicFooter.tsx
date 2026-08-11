@@ -6,9 +6,10 @@ import { MaskedHeading } from "@/components/ui/MaskedHeading";
 import { usePublicI18n } from "@/lib/i18n";
 
 const FOOTER_IMAGES = [
-  "/footer/footer-1.webp",
-  "/footer/footer-2.webp",
-  "/footer/footer-3.webp",
+  "/footer/footer-1.jpg",
+  "/footer/footer-2.jpg",
+  "/footer/footer-3.jpg",
+  "/footer/footer-4.jpg",
 ];
 
 interface FooterColumn {
