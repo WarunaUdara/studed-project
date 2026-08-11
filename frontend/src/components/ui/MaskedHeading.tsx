@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import "./MaskedHeading.css";
 
@@ -17,7 +17,7 @@ export interface MaskedHeadingProps extends React.HTMLAttributes<HTMLElement> {
   saturation?: number;
   grayscale?: boolean;
   reveal?: "rise" | "wipe" | "fade" | "none";
-  trigger?: "view" | "mount" | "hover";
+  trigger?: "view" | "mount" | "hover" | "scroll";
   duration?: number;
   stagger?: number;
   align?: "left" | "center" | "right";
@@ -63,6 +63,25 @@ export function MaskedHeading({
   const glyphRefs = useRef<Array<SVGTextElement | null>>([]);
   const tweenRef = useRef<gsap.core.Tween | gsap.core.Timeline | null>(null);
   const offsetRef = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
+  const hasRevealedRef = useRef(false);
+
+  // Smooth image cross-fading state
+  const [activeSrc, setActiveSrc] = useState(src);
+  const [prevSrc, setPrevSrc] = useState<string | null>(null);
+  const [isCrossFading, setIsCrossFading] = useState(false);
+
+  useEffect(() => {
+    if (src && src !== activeSrc) {
+      setPrevSrc(activeSrc);
+      setActiveSrc(src);
+      setIsCrossFading(true);
+      const timer = setTimeout(() => {
+        setIsCrossFading(false);
+        setPrevSrc(null);
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [src, activeSrc]);
 
   const rawId = useId();
   const clipId = `mh-${rawId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
@@ -206,6 +225,11 @@ export function MaskedHeading({
       gsap.set(layer, { opacity: 1, scale: 1, clipPath: "inset(0% 0% 0% 0%)" });
     };
 
+    if (hasRevealedRef.current) {
+      settle();
+      return;
+    }
+
     const rest = () => {
       if (reveal === "rise") {
         gsap.set(glyphs, { y: riseDistance() });
@@ -219,17 +243,26 @@ export function MaskedHeading({
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reveal === "none" || reduce) {
       settle();
+      hasRevealedRef.current = true;
       return;
     }
 
     const play = () => {
       tweenRef.current?.kill();
+      hasRevealedRef.current = true;
       if (reveal === "rise") {
         gsap.set(layer, { opacity: 1, scale: 1, clipPath: "inset(0% 0% 0% 0%)" });
         tweenRef.current = gsap.fromTo(
           glyphs,
           { y: riseDistance() },
-          { y: 0, duration, stagger, ease: "power4.out", overwrite: "auto" },
+          {
+            y: 0,
+            duration,
+            stagger,
+            ease: "power4.out",
+            overwrite: "auto",
+            onComplete: settle,
+          },
         );
       } else if (reveal === "wipe") {
         gsap.set(glyphs, { y: 0 });
@@ -244,13 +277,21 @@ export function MaskedHeading({
               layer.style.clipPath = `inset(0% ${state.p}% 0% 0%)`;
             }
           },
+          onComplete: settle,
         });
       } else {
         gsap.set(glyphs, { y: 0 });
         tweenRef.current = gsap.fromTo(
           layer,
           { opacity: 0, scale: 1.08 },
-          { opacity: 1, scale: 1, duration, ease: "power3.out", overwrite: "auto" },
+          {
+            opacity: 1,
+            scale: 1,
+            duration,
+            ease: "power3.out",
+            overwrite: "auto",
+            onComplete: settle,
+          },
         );
       }
     };
@@ -264,7 +305,7 @@ export function MaskedHeading({
       };
     }
 
-    if (trigger === "view") {
+    if (trigger === "view" || trigger === "scroll") {
       settle();
       rest();
       const io = new IntersectionObserver(
@@ -274,7 +315,7 @@ export function MaskedHeading({
             io.disconnect();
           }
         },
-        { threshold: 0.25 },
+        { threshold: 0.15 },
       );
       io.observe(root);
       return () => {
@@ -340,10 +381,19 @@ export function MaskedHeading({
       <span ref={revealRef} className="masked-heading__reveal">
         <span className="masked-heading__clip" style={{ clipPath: `url(#${clipId})` }}>
           <span ref={mediaRef} className="masked-heading__media">
+            {prevSrc && isCrossFading && (
+              <img
+                key={prevSrc}
+                className="masked-heading__source absolute inset-0 opacity-0 pointer-events-none"
+                src={prevSrc}
+                alt=""
+                draggable={false}
+              />
+            )}
             {mediaType === "video" ? (
-              <video className="masked-heading__source" src={src} poster={poster} autoPlay muted loop playsInline />
+              <video className="masked-heading__source" src={activeSrc} poster={poster} autoPlay muted loop playsInline />
             ) : (
-              <img className="masked-heading__source" src={src} alt="" draggable={false} />
+              <img className="masked-heading__source" src={activeSrc} alt="" draggable={false} />
             )}
           </span>
         </span>
