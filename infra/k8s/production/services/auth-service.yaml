@@ -7,6 +7,11 @@ metadata:
     app: auth-service
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: auth-service
@@ -16,15 +21,21 @@ spec:
         app: auth-service
     spec:
       terminationGracePeriodSeconds: 45
+      automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: auth-service
           image: ghcr.io/warunaudara/studed-auth-service:latest
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
+            privileged: false
             readOnlyRootFilesystem: true
             capabilities:
               drop:
@@ -60,6 +71,13 @@ spec:
               port: 8085
             initialDelaySeconds: 5
             periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8085
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget

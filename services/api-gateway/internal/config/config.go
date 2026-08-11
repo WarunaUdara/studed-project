@@ -14,6 +14,7 @@ type Config struct {
 	RedisAddr               string
 	AIServiceURL            string
 	PaymentServiceURL       string
+	UploadServiceURL        string
 	AccessSecret            string
 	GraphQLPlayground       bool
 	ServiceToken            string
@@ -34,6 +35,7 @@ func Load() (*Config, error) {
 		RedisAddr:               getEnv("REDIS_ADDR", "localhost:6379"),
 		AIServiceURL:            getEnv("AI_SERVICE_URL", "http://localhost:8090"),
 		PaymentServiceURL:       getEnv("PAYMENT_SERVICE_URL", "http://localhost:8091"),
+		UploadServiceURL:        getEnv("UPLOAD_SERVICE_URL", "http://localhost:8093"),
 		AccessSecret:            accessSecret,
 		GraphQLPlayground:       getEnv("GRAPHQL_PLAYGROUND", "false") == "true",
 		ServiceToken:            os.Getenv("SERVICE_TOKEN"),

@@ -99,6 +99,83 @@ spec:
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
+  name: require-read-only-root-filesystem
+  annotations:
+    policies.kyverno.io/title: Require Read-Only Root Filesystem
+    policies.kyverno.io/category: Pod Security Standards (Restricted)
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/description: >-
+      An immutable root filesystem stops an attacker who achieves code
+      execution from dropping tooling into the container. Elasticsearch is
+      excluded because it rewrites its keystore, logs, and tmp directories on
+      every boot and cannot start with a read-only root.
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: check-read-only-root
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - studed
+      exclude:
+        any:
+          - resources:
+              selector:
+                matchLabels:
+                  app: elasticsearch
+      validate:
+        message: "Containers must run with readOnlyRootFilesystem: true."
+        pattern:
+          spec:
+            containers:
+              - securityContext:
+                  readOnlyRootFilesystem: true
+
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-resource-limits
+  annotations:
+    policies.kyverno.io/title: Require CPU and Memory Limits
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/description: >-
+      Every node in this cluster is shared and small. A container without
+      limits can evict every other pod on its node, so limits are mandatory.
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: check-resource-limits
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - studed
+      validate:
+        message: "Containers must declare CPU and memory requests and limits."
+        pattern:
+          spec:
+            containers:
+              - resources:
+                  requests:
+                    memory: "?*"
+                    cpu: "?*"
+                  limits:
+                    memory: "?*"
+                    cpu: "?*"
+
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
   name: disallow-latest-tag
   annotations:
     policies.kyverno.io/title: Disallow Latest Tag

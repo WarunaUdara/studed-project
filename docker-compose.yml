@@ -217,16 +217,49 @@ services:
     environment:
       UPLOAD_SERVICE_ADDR: :8093
       GCS_BUCKET_NAME: ${GCS_BUCKET_NAME:-studed-uploads-local}
-      STORAGE_EMULATOR_HOST: http://floci-gcp:4588
-      FLOCI_GCP_BASE_URL: http://floci-gcp:4588
+      # Points at the GCS emulator below. The service auto-creates the bucket on
+      # startup in emulator mode, so no seeding step is needed. Unset both this
+      # and GCS_BUCKET_NAME to fall back to plain disk storage.
+      STORAGE_EMULATOR_HOST: http://gcs-emulator:4443
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
+      UPLOAD_MAX_BYTES: ${UPLOAD_MAX_BYTES:-10485760}
     ports:
       - "127.0.0.1:8093:8093"
+    depends_on:
+      gcs-emulator:
+        condition: service_started
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8093/health"]
       interval: 5s
       timeout: 3s
       retries: 10
+
+  # Google Cloud Storage emulator for local development. fake-gcs-server speaks
+  # the real GCS JSON API, so upload-service runs the exact same code path here
+  # as it does against production GCS - only the endpoint differs.
+  gcs-emulator:
+    image: fsouza/fake-gcs-server:1.52.2
+    container_name: studed-gcs-emulator
+    command:
+      [
+        "-scheme",
+        "http",
+        "-port",
+        "4443",
+        "-backend",
+        "filesystem",
+        "-filesystem-root",
+        "/data",
+        # Media downloads are served from public-host, so it must be the address
+        # upload-service actually reaches the emulator on. Left at the default
+        # (0.0.0.0) object reads resolve to an unroutable host and 404.
+        "-public-host",
+        "gcs-emulator:4443",
+      ]
+    volumes:
+      - gcs_emulator_data:/data
+    ports:
+      - "127.0.0.1:4443:4443"
 
   api-gateway:
     build:
@@ -241,6 +274,7 @@ services:
       GAMIFICATION_SERVICE_ADDR: gamification-service:8088
       AI_SERVICE_URL: http://ai-service:8090
       PAYMENT_SERVICE_URL: http://payment-service:8091
+      UPLOAD_SERVICE_URL: http://upload-service:8093
       REDIS_ADDR: redis:6379
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-local-dev-access-secret-min-32-bytes}
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
@@ -376,3 +410,4 @@ volumes:
   grafana_data:
   tempo_data:
   floci_gcp_data:
+  gcs_emulator_data:

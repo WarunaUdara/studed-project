@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"math"
+	"math/rand/v2"
 	"time"
 )
 
@@ -48,18 +49,33 @@ func Do(ctx context.Context, cfg Config, fn func(ctx context.Context) error) err
 		}
 
 		if attempt < cfg.MaxAttempts-1 {
-			delay := time.Duration(math.Pow(2, float64(attempt))) * cfg.BaseDelay
-			if delay > cfg.MaxDelay {
-				delay = cfg.MaxDelay
-			}
 			select {
 			case <-ctx.Done():
 				return ctx.Err()
-			case <-time.After(delay):
+			case <-time.After(backoff(attempt, cfg)):
 			}
 		}
 	}
 	return lastErr
+}
+
+// backoff returns the wait before the given retry attempt using exponential
+// backoff with FULL jitter: a uniform random draw from [0, capped delay).
+//
+// The jitter is the part that matters in this cluster. When a shared dependency
+// (Neon, Redis, a restarting pod) blips, every caller fails at the same instant;
+// with a deterministic delay they would all retry at the same instant too and
+// re-stampede the service just as it recovers. Spreading retries across the
+// window is what breaks that synchronization.
+func backoff(attempt int, cfg Config) time.Duration {
+	delay := time.Duration(math.Pow(2, float64(attempt))) * cfg.BaseDelay
+	if delay > cfg.MaxDelay {
+		delay = cfg.MaxDelay
+	}
+	if delay <= 0 {
+		return 0
+	}
+	return time.Duration(rand.Int64N(int64(delay)))
 }
 
 // PermanentError wraps an error to signal that it must not be retried.

@@ -133,6 +133,7 @@ jobs:
           - notification-service
           - payment-service
           - progress-service
+          - upload-service
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/studed-${{ matrix.service }}

@@ -84,3 +84,41 @@ func TestDoRespectsContextCancellation(t *testing.T) {
 		t.Fatalf("expected 0 calls with cancelled ctx, got %d", calls)
 	}
 }
+
+// Full jitter must actually randomize the wait: identical retry sequences that
+// always slept the same amount would re-synchronize every caller onto the same
+// instant, which is the stampede the backoff exists to prevent.
+func TestDoAppliesJitterToBackoff(t *testing.T) {
+	cfg := retry.Config{MaxAttempts: 4, BaseDelay: 20 * time.Millisecond, MaxDelay: 200 * time.Millisecond}
+
+	durations := make(map[time.Duration]bool)
+	for run := 0; run < 8; run++ {
+		start := time.Now()
+		_ = retry.Do(context.Background(), cfg, func(_ context.Context) error {
+			return errors.New("always fails")
+		})
+		// Round to the nearest millisecond so scheduling noise alone cannot
+		// manufacture the variation this test is looking for.
+		durations[time.Since(start).Round(time.Millisecond)] = true
+	}
+
+	if len(durations) < 2 {
+		t.Fatalf("expected jittered backoff to vary across runs, saw a single duration: %v", durations)
+	}
+}
+
+// The jittered delay must still respect MaxDelay: 3 retries capped at 30ms can
+// never exceed 90ms of sleeping, with generous slack for CI scheduling.
+func TestDoRespectsMaxDelayWithJitter(t *testing.T) {
+	cfg := retry.Config{MaxAttempts: 4, BaseDelay: 10 * time.Millisecond, MaxDelay: 30 * time.Millisecond}
+
+	start := time.Now()
+	_ = retry.Do(context.Background(), cfg, func(_ context.Context) error {
+		return errors.New("always fails")
+	})
+	elapsed := time.Since(start)
+
+	if elapsed > 90*time.Millisecond+500*time.Millisecond {
+		t.Fatalf("backoff exceeded the capped ceiling: %v", elapsed)
+	}
+}

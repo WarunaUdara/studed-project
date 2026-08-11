@@ -1,8 +1,17 @@
-# Local/dev overlay for upload-service (kind, minikube, k8s-dev.sh).
+# upload-service: course image and attachment storage backed by GCS.
 #
-# The production manifest lives in infra/k8s/production/services/upload-service.yaml
-# and is the one ArgoCD syncs. This one runs against the in-cluster GCS emulator
-# instead of real GCS, so it needs no Workload Identity binding.
+# Authentication to GCS is via Workload Identity - the ServiceAccount below is
+# bound to the studed-upload GSA created in infra/gcp/terraform/storage.tf, so
+# no service account key ever exists. If project_id is changed from the default
+# "studed-prod", update the annotation to match.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: upload-service-sa
+  namespace: studed
+  annotations:
+    iam.gke.io/gcp-service-account: studed-upload@studed-prod.iam.gserviceaccount.com
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -11,7 +20,7 @@ metadata:
   labels:
     app: upload-service
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -25,7 +34,11 @@ spec:
       labels:
         app: upload-service
     spec:
-      automountServiceAccountToken: false
+      serviceAccountName: upload-service-sa
+      # Unlike the other services this MUST stay true: the projected token is
+      # how Workload Identity authenticates the pod to GCS.
+      automountServiceAccountToken: true
+      terminationGracePeriodSeconds: 45
       securityContext:
         runAsNonRoot: true
         runAsUser: 10001
@@ -36,7 +49,7 @@ spec:
       containers:
         - name: upload-service
           image: ghcr.io/warunaudara/studed-upload-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
             privileged: false
@@ -47,29 +60,37 @@ spec:
           ports:
             - containerPort: 8093
           env:
-            - name: UPLOAD_SERVICE_ADDR
-              value: ":8093"
-            - name: GCS_BUCKET_NAME
-              value: "studed-uploads-local"
-            - name: STORAGE_EMULATOR_HOST
-              value: "http://gcs-emulator:4443"
+            - name: GOMEMLIMIT
+              value: "220MiB"
           envFrom:
             - configMapRef:
                 name: studed-config
-                optional: true
             - secretRef:
                 name: studed-secrets
-                optional: true
           resources:
             requests:
               memory: "48Mi"
-              cpu: "15m"
+              cpu: "25m"
             limits:
+              # Uploads stream rather than buffer, but multipart parsing still
+              # spills to /tmp, so this sits above the other services.
               memory: "256Mi"
-              cpu: "250m"
+              cpu: "300m"
           volumeMounts:
+            # Root filesystem is read-only; multipart spillover needs a writable
+            # scratch path.
             - name: tmp
               mountPath: /tmp
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "10"]
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8093
+            failureThreshold: 30
+            periodSeconds: 2
           readinessProbe:
             httpGet:
               path: /ready
@@ -87,6 +108,17 @@ spec:
         - name: tmp
           emptyDir:
             sizeLimit: 512Mi
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: upload-service-pdb
+  namespace: studed
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: upload-service
 ---
 apiVersion: v1
 kind: Service
