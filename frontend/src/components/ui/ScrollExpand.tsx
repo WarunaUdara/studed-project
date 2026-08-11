@@ -133,7 +133,7 @@ export function ScrollExpand({
 
     media.style.transform = `scale(${c.mediaZoom + (1 - c.mediaZoom) * e})`;
 
-    if (scrimRef.current) scrimRef.current.style.opacity = `${c.overlayScrim * e}`;
+    if (scrimRef.current) scrimRef.current.style.opacity = `${0.45 + (c.overlayScrim - 0.45) * e}`;
 
     if (titleRef.current) {
       const out = smoothstep(0.3, 0.75, p);
@@ -280,17 +280,17 @@ export function ScrollExpand({
           <div ref={frameRef} className="scroll-expand__frame">
             {media}
             <div ref={scrimRef} className="scroll-expand__scrim" />
+            {title ? (
+              <div ref={titleRef} className="scroll-expand__title font-serif tracking-tight">
+                {title}
+              </div>
+            ) : null}
             {children ? (
               <div ref={overlayRef} className="scroll-expand__overlay">
                 {children}
               </div>
             ) : null}
           </div>
-          {title ? (
-            <div ref={titleRef} className="scroll-expand__title">
-              {title}
-            </div>
-          ) : null}
           {scrollHint ? (
             <div ref={hintRef} className="scroll-expand__hint">
               {scrollHint}

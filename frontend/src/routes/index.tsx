@@ -36,7 +36,6 @@ import { ScrollXpMeter } from "@/components/public/ScrollXpMeter";
 import { WaveMapHero } from "@/components/public/WaveMapHero";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/Card";
-import { PixelBlast } from "@/components/ui/PixelBlast";
 import { ScrollExpand } from "@/components/ui/ScrollExpand";
 import { SplitText } from "@/components/ui/SplitText";
 import { TextLoop } from "@/components/ui/TextLoop";
@@ -960,66 +959,57 @@ function Testimonials() {
 
 function FinalCta({ authed }: { authed: boolean }) {
   const { t } = usePublicI18n();
-  const reduce = useReducedMotion();
 
   return (
-    <section className="relative px-4 pb-16 pt-8 sm:px-6">
-      <div className="relative mx-auto max-w-6xl rounded-[2.5rem] border border-primary/30 bg-slate-950 shadow-2xl overflow-hidden">
-        {/* PixelBlast interactive WebGL shader background */}
-        {!reduce && (
-          <div className="absolute inset-0 z-0 opacity-80 pointer-events-auto">
-            <PixelBlast
-              variant="circle"
-              color="#34d399"
-              pixelSize={5}
-              patternScale={2.5}
-              patternDensity={1.5}
-              liquid
-              liquidStrength={0.15}
-              liquidWobbleSpeed={4.5}
-              enableRipples
-              rippleSpeed={0.35}
-              speed={0.5}
-              edgeFade={0.25}
-            />
-          </div>
-        )}
+    <section className="relative px-4 pb-16 pt-6 sm:px-6">
+      <div className="relative mx-auto max-w-5xl rounded-[2rem] border border-border/40 bg-background shadow-xl overflow-hidden">
+        {/* Lightweight zero-lag ambient dot paper wash */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 select-none opacity-60">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: "radial-gradient(oklch(0.484 0.164 145 / 0.1) 1.2px, transparent 1.2px)",
+              backgroundSize: "24px 24px",
+            }}
+          />
+          <div className="absolute -top-24 left-1/2 -translate-x-1/2 h-[320px] w-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,oklch(0.484_0.164_145_/_0.15),transparent_70%)] blur-3xl" />
+        </div>
 
-        <div className="relative z-10 p-4 sm:p-8">
+        <div className="relative z-10 p-2 sm:p-4">
           <ScrollExpand
             useWindowScroll
-            startWidth={48}
-            startHeight={54}
-            maxWidth={88}
-            maxHeight={82}
-            startRadius={24}
-            endRadius={18}
-            mediaZoom={1.3}
-            scrollDistance={1.0}
-            holdDistance={0.3}
-            smoothing={0.02}
-            overlayScrim={0.88}
+            startWidth={52}
+            startHeight={60}
+            maxWidth={92}
+            maxHeight={88}
+            startRadius={20}
+            endRadius={16}
+            mediaZoom={1.25}
+            scrollDistance={0.85}
+            holdDistance={0.25}
+            smoothing={0.0}
+            overlayScrim={0.82}
             title={t("finalCtaHeading")}
             scrollHint="Scroll to Expand"
-            className="w-full h-[500px] sm:h-[580px]"
+            className="w-full h-[420px] sm:h-[480px]"
             src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop"
             alt="StudEd Platform"
           >
-            <div className="relative space-y-6 max-w-xl mx-auto text-center px-4">
-              <p className="inline-flex items-center gap-2 rounded-full bg-emerald-500/25 backdrop-blur-md px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-emerald-200 ring-1 ring-emerald-400/40 shadow-sm">
+            <div className="relative space-y-5 max-w-xl mx-auto text-center px-4">
+              <p className="inline-flex items-center gap-2 rounded-full bg-primary/20 backdrop-blur-md px-4 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-white ring-1 ring-primary/40 shadow-xs">
                 <Zap className="h-3.5 w-3.5 fill-gold text-gold" />
                 +250 XP
               </p>
-              <h2 className="font-serif text-3xl font-bold text-white sm:text-5xl drop-shadow-lg">
+              <h2 className="font-serif text-3xl font-normal tracking-tight text-white sm:text-5xl drop-shadow-md">
                 {t("finalCtaHeading")}
               </h2>
-              <p className="mx-auto max-w-lg text-pretty text-sm text-emerald-100/90 sm:text-base drop-shadow-md">
+              <p className="mx-auto max-w-md text-pretty text-sm leading-relaxed text-white/90 sm:text-base drop-shadow-xs">
                 {t("finalCtaSubhead")}
               </p>
-              <div className="flex flex-wrap justify-center gap-3 pt-2">
+              <div className="flex flex-wrap justify-center gap-3 pt-1">
                 {authed ? (
                   <Link to="/dashboard">
-                    <Button size="lg" className="rounded-full bg-emerald-400 text-slate-950 hover:bg-emerald-300 shadow-xl font-bold">
+                    <Button size="lg" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md font-semibold px-6">
                       {t("ctaPortal")}
                     </Button>
                   </Link>
@@ -1028,7 +1018,7 @@ function FinalCta({ authed }: { authed: boolean }) {
                     <Link to="/register">
                       <Button
                         size="lg"
-                        className="rounded-full bg-emerald-400 text-slate-950 hover:bg-emerald-300 shadow-xl font-bold"
+                        className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md font-semibold px-6"
                         onClick={() => playSuccessSound()}
                       >
                         {t("finalCtaCreate")}
@@ -1038,7 +1028,7 @@ function FinalCta({ authed }: { authed: boolean }) {
                       <Button
                         size="lg"
                         variant="outline"
-                        className="rounded-full border-white/40 bg-white/10 text-white backdrop-blur-md hover:bg-white/20 font-semibold"
+                        className="rounded-full border-white/30 bg-white/10 text-white backdrop-blur-md hover:bg-white/20 font-semibold px-6"
                       >
                         {t("finalCtaSignin")}
                       </Button>
