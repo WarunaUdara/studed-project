@@ -66,6 +66,14 @@ resource "google_storage_bucket_iam_member" "upload_object_admin" {
   member = "serviceAccount:${google_service_account.upload_sa.email}"
 }
 
+# objectAdmin covers object read/write but NOT storage.buckets.get, which the
+# upload-service readiness check needs to verify the bucket exists.
+resource "google_storage_bucket_iam_member" "upload_object_viewer" {
+  bucket = google_storage_bucket.studed_uploads.name
+  role   = "roles/storage.objectViewer"
+  member = "serviceAccount:${google_service_account.upload_sa.email}"
+}
+
 resource "google_service_account_iam_binding" "upload_wi_binding" {
   service_account_id = google_service_account.upload_sa.name
   role               = "roles/iam.workloadIdentityUser"
