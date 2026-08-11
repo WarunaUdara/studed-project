@@ -32,6 +32,20 @@ export function CTAAuroraMesh() {
         }}
       />
 
+      {/* Abstract Shape SVGs cut off by screen borders */}
+      <img
+        src="/abstract-shapes/Union.svg"
+        alt=""
+        aria-hidden
+        className="absolute -top-28 -left-28 w-[480px] h-[480px] opacity-[0.14] pointer-events-none select-none rotate-12"
+      />
+      <img
+        src="/abstract-shapes/Group 216.svg"
+        alt=""
+        aria-hidden
+        className="absolute -bottom-32 -right-32 w-[520px] h-[520px] opacity-[0.15] pointer-events-none select-none -rotate-12"
+      />
+
       {/* Ambient Floating Gamification Sparkles */}
       {particles.map((p) => (
         <span

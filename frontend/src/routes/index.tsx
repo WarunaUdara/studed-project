@@ -104,6 +104,20 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
         />
         <div className="absolute -top-40 left-[-15%] h-[560px] w-[70vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.484_0.164_145_/_0.12)_0%,transparent_70%)] blur-[100px]" />
         <div className="absolute -top-32 right-[-15%] h-[520px] w-[60vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.571_0.181_145_/_0.1)_0%,transparent_70%)] blur-[100px]" />
+        
+        {/* Editorial Abstract Shape Overlay — scaled & cropped by screen borders */}
+        <img
+          src="/abstract-shapes/Union.svg"
+          alt=""
+          aria-hidden
+          className="absolute -top-32 -left-32 w-[540px] h-[540px] opacity-[0.10] dark:opacity-[0.05] pointer-events-none select-none rotate-12"
+        />
+        <img
+          src="/abstract-shapes/Group 211.svg"
+          alt=""
+          aria-hidden
+          className="absolute top-1/4 -right-48 w-[640px] h-[640px] opacity-[0.09] dark:opacity-[0.04] pointer-events-none select-none -rotate-45"
+        />
       </div>
 
       <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
@@ -413,7 +427,20 @@ function GamificationShowcase() {
   };
 
   return (
-    <section className="px-4 py-24 sm:px-6">
+    <section className="relative overflow-hidden px-4 py-24 sm:px-6">
+      {/* Background Abstract Shapes */}
+      <img
+        src="/abstract-shapes/Group 212.svg"
+        alt=""
+        aria-hidden
+        className="absolute -top-24 -right-36 w-[480px] h-[480px] opacity-[0.08] dark:opacity-[0.04] pointer-events-none select-none rotate-45"
+      />
+      <img
+        src="/abstract-shapes/Group 213.svg"
+        alt=""
+        aria-hidden
+        className="absolute -bottom-24 -left-32 w-[440px] h-[440px] opacity-[0.08] dark:opacity-[0.04] pointer-events-none select-none -rotate-12"
+      />
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("gamificationHeading")} subhead={t("gamificationSubhead")} />
 
@@ -713,7 +740,14 @@ function AudienceSegments() {
   ];
 
   return (
-    <section className="px-4 py-24 sm:px-6">
+    <section className="relative overflow-hidden px-4 py-24 sm:px-6">
+      {/* Background Abstract Shape */}
+      <img
+        src="/abstract-shapes/Group 214.svg"
+        alt=""
+        aria-hidden
+        className="absolute top-10 -right-28 w-[420px] h-[420px] opacity-[0.08] dark:opacity-[0.04] pointer-events-none select-none rotate-180"
+      />
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("audienceHeading")} />
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -806,7 +840,14 @@ function PricingPreview({ authed }: { authed: boolean }) {
   const { t } = usePublicI18n();
 
   return (
-    <section id="pricing" className="scroll-mt-20 border-y bg-card/30 px-4 py-24 sm:px-6">
+    <section id="pricing" className="relative overflow-hidden scroll-mt-20 border-y bg-card/30 px-4 py-24 sm:px-6">
+      {/* Background Abstract Shape */}
+      <img
+        src="/abstract-shapes/Group 215.svg"
+        alt=""
+        aria-hidden
+        className="absolute -top-28 -left-36 w-[480px] h-[480px] opacity-[0.08] dark:opacity-[0.04] pointer-events-none select-none -rotate-45"
+      />
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("pricingHeading")} subhead={t("pricingSubhead")} />
 
