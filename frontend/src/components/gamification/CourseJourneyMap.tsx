@@ -68,6 +68,59 @@ interface Point {
 
 const VIEW_W = 480;
 
+function TravelingMascot({
+  pathRef,
+  viewWidth,
+  viewHeight,
+}: {
+  pathRef: React.RefObject<SVGPathElement | null>;
+  viewWidth: number;
+  viewHeight: number;
+}) {
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    let animId: number;
+    const duration = 10000;
+    const startTime = performance.now();
+
+    const loop = (now: number) => {
+      const path = pathRef.current;
+      if (path) {
+        try {
+          const len = path.getTotalLength();
+          if (len > 0) {
+            const elapsed = (now - startTime) % duration;
+            const progress = elapsed / duration;
+            const p = path.getPointAtLength(progress * len);
+            setPos({
+              x: (p.x / viewWidth) * 100,
+              y: (p.y / viewHeight) * 100,
+            });
+          }
+        } catch {
+          // ignore measurement error before SVG path mounts
+        }
+      }
+      animId = requestAnimationFrame(loop);
+    };
+
+    animId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animId);
+  }, [pathRef, viewWidth, viewHeight]);
+
+  if (!pos) return null;
+
+  return (
+    <div
+      className="absolute pointer-events-none z-30 -translate-x-1/2 -translate-y-1/2"
+      style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+    >
+      <HelmetCompanion size="sm" mood="happy" className="h-10 w-10 drop-shadow-lg" />
+    </div>
+  );
+}
+
 export function CourseJourneyMap({
   courseTitle,
   gradeLevel,
@@ -318,19 +371,13 @@ export function CourseJourneyMap({
                 transition={{ duration: 1.5, ease: "easeOut" }}
               />
 
-              {/* Travelling Mascot Companion */}
-              {!reduce && (
-                <g className="pointer-events-none">
-                  <foreignObject width={48} height={48} x={-24} y={-24} className="overflow-visible">
-                    <HelmetCompanion size="sm" mood="happy" className="h-12 w-12 drop-shadow-md" />
-                    <animateMotion dur="10s" repeatCount="indefinite" path={pathD} />
-                  </foreignObject>
-                </g>
-              )}
             </svg>
 
-            {/* Render Node Buttons along Path */}
+            {/* Render Traveling Mascot & Node Buttons along Path */}
             <div className="absolute inset-0">
+              {!reduce && (
+                <TravelingMascot pathRef={pathRef} viewWidth={VIEW_W} viewHeight={viewH} />
+              )}
               {points.map((p, idx) => {
                 const wave = flattenedWaves[idx];
                 if (!wave) return null;

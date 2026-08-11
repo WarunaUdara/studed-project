@@ -31,6 +31,59 @@ interface WaveNodeDef {
   state: NodeState;
 }
 
+function TravelingMascot({
+  pathRef,
+  viewWidth,
+  viewHeight,
+}: {
+  pathRef: React.RefObject<SVGPathElement | null>;
+  viewWidth: number;
+  viewHeight: number;
+}) {
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    let animId: number;
+    const duration = 11000;
+    const startTime = performance.now();
+
+    const loop = (now: number) => {
+      const path = pathRef.current;
+      if (path) {
+        try {
+          const len = path.getTotalLength();
+          if (len > 0) {
+            const elapsed = (now - startTime) % duration;
+            const progress = elapsed / duration;
+            const p = path.getPointAtLength(progress * len);
+            setPos({
+              x: (p.x / viewWidth) * 100,
+              y: (p.y / viewHeight) * 100,
+            });
+          }
+        } catch {
+          // ignore measurement error before SVG path mounts
+        }
+      }
+      animId = requestAnimationFrame(loop);
+    };
+
+    animId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animId);
+  }, [pathRef, viewWidth, viewHeight]);
+
+  if (!pos) return null;
+
+  return (
+    <div
+      className="absolute pointer-events-none z-30 -translate-x-1/2 -translate-y-1/2"
+      style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+    >
+      <HelmetCompanion size="sm" mood="happy" className="h-10 w-10 drop-shadow-lg" />
+    </div>
+  );
+}
+
 /** Node positions along the path as fractions of its total length. */
 const NODE_FRACTIONS = [0.03, 0.185, 0.34, 0.5, 0.66, 0.815, 0.965];
 
@@ -160,20 +213,14 @@ export function WaveMapHero() {
               transition={{ duration: 1.8, ease: "easeOut", delay: 0.4 }}
             />
 
-            {/* Travelling Mascot Companion */}
-            {!reduce && (
-              <g className="pointer-events-none">
-                <foreignObject width={48} height={48} x={-24} y={-24} className="overflow-visible">
-                  <HelmetCompanion size="sm" mood="happy" className="h-12 w-12 drop-shadow-md" />
-                  <animateMotion dur="11s" repeatCount="indefinite" path={PATH_D} />
-                </foreignObject>
-              </g>
-            )}
-          </svg>
+            </svg>
 
-          {/* Node buttons overlay */}
-          <div className="absolute inset-0">
-            {points.map((p, i) => {
+            {/* Render Traveling Mascot & Node buttons overlay */}
+            <div className="absolute inset-0">
+              {!reduce && (
+                <TravelingMascot pathRef={pathRef} viewWidth={VIEW_W} viewHeight={VIEW_H} />
+              )}
+              {points.map((p, i) => {
               const node = NODES[i];
               if (!node) return null;
               const left = `${(p.x / VIEW_W) * 100}%`;
