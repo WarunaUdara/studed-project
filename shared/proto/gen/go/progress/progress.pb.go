@@ -1045,6 +1045,22 @@ func (x *ResetWaveAttemptsRequest) String() string {
 
 func (*ResetWaveAttemptsRequest) ProtoMessage() {}
 
+func (x *ResetWaveAttemptsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_progress_progress_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (*ResetWaveAttemptsRequest) Descriptor() ([]byte, []int) {
+	return file_progress_progress_proto_rawDescGZIP(), []int{16}
+}
+
 func (x *ResetWaveAttemptsRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
@@ -1079,6 +1095,22 @@ func (x *ResetWaveAttemptsResponse) String() string {
 }
 
 func (*ResetWaveAttemptsResponse) ProtoMessage() {}
+
+func (x *ResetWaveAttemptsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_progress_progress_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (*ResetWaveAttemptsResponse) Descriptor() ([]byte, []int) {
+	return file_progress_progress_proto_rawDescGZIP(), []int{17}
+}
 
 func (x *ResetWaveAttemptsResponse) GetSuccess() bool {
 	if x != nil {

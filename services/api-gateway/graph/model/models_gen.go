@@ -420,20 +420,24 @@ func (e Grade) MarshalJSON() ([]byte, error) {
 type LeaderboardScope string
 
 const (
-	LeaderboardScopeGlobal LeaderboardScope = "GLOBAL"
-	LeaderboardScopeCourse LeaderboardScope = "COURSE"
-	LeaderboardScopeGrade  LeaderboardScope = "GRADE"
+	LeaderboardScopeGlobal  LeaderboardScope = "GLOBAL"
+	LeaderboardScopeCourse  LeaderboardScope = "COURSE"
+	LeaderboardScopeGrade   LeaderboardScope = "GRADE"
+	LeaderboardScopeWeekly  LeaderboardScope = "WEEKLY"
+	LeaderboardScopeFriends LeaderboardScope = "FRIENDS"
 )
 
 var AllLeaderboardScope = []LeaderboardScope{
 	LeaderboardScopeGlobal,
 	LeaderboardScopeCourse,
 	LeaderboardScopeGrade,
+	LeaderboardScopeWeekly,
+	LeaderboardScopeFriends,
 }
 
 func (e LeaderboardScope) IsValid() bool {
 	switch e {
-	case LeaderboardScopeGlobal, LeaderboardScopeCourse, LeaderboardScopeGrade:
+	case LeaderboardScopeGlobal, LeaderboardScopeCourse, LeaderboardScopeGrade, LeaderboardScopeWeekly, LeaderboardScopeFriends:
 		return true
 	}
 	return false
