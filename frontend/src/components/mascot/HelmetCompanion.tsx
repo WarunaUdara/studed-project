@@ -1,6 +1,8 @@
-import { BlobSpeech, JellyBlobMascot, type JellyBlobMood } from "feral-blob";
+import { AnimatePresence, motion } from "framer-motion";
+import { JellyBlobMascot, type JellyBlobMood } from "feral-blob";
 import "feral-blob/blob.css";
 import { useCallback, useRef, useState } from "react";
+import { playClickSound } from "@/lib/sounds";
 import { cn } from "@/lib/utils";
 
 export interface HelmetCompanionProps {
@@ -41,9 +43,10 @@ export function HelmetCompanion({
   const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const activeMood = pokeMood ?? externalMood;
-  const activeSpeech = pokeSpeech ?? externalSpeech;
+  const activeSpeech = pokeSpeech ?? externalSpeech ?? (showSpeech ? "Hi there!" : undefined);
 
   const handlePoke = useCallback(() => {
+    playClickSound();
     setPokeCount((prev) => {
       const next = prev + 1;
       const dialogIdx = Math.min(next - 1, POKE_DIALOGS.length - 1);
@@ -88,14 +91,48 @@ export function HelmetCompanion({
         className,
       )}
     >
-      {(showSpeech || activeSpeech) && (
-        <div className="absolute -top-11 left-1/2 -translate-x-1/2 whitespace-nowrap z-50 pointer-events-none">
-          <BlobSpeech
-            mood={activeMood}
-            messages={{ [activeMood]: activeSpeech ?? "Going somewhere?" }}
-          />
-        </div>
-      )}
+      <div className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap z-50 pointer-events-none">
+        <AnimatePresence mode="wait">
+          {activeSpeech && (
+            <motion.div
+              key={activeSpeech}
+              initial={{ opacity: 0, y: 4, scale: 0.92 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -4, scale: 0.92 }}
+              transition={{ type: "spring", stiffness: 350, damping: 25 }}
+              className="relative inline-block"
+            >
+              <div
+                className={cn(
+                  "rounded-2xl border px-3.5 py-1.5 text-xs font-bold shadow-md transition-colors duration-300 backdrop-blur-md",
+                  activeMood === "angry"
+                    ? "border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-300 shadow-rose-500/10"
+                    : activeMood === "sideEye" || activeMood === "hmm"
+                      ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-300 shadow-amber-500/10"
+                      : (activeMood as string) === "happy" || (activeMood as string) === "excited"
+                        ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 shadow-emerald-500/10"
+                        : "border-border bg-card/95 text-foreground shadow-xs",
+                )}
+              >
+                {activeSpeech}
+              </div>
+              {/* Downward triangle tail */}
+              <div
+                className={cn(
+                  "absolute left-1/2 -bottom-1 h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-r border-b transition-colors duration-300",
+                  activeMood === "angry"
+                    ? "border-rose-500/40 bg-rose-500/10"
+                    : activeMood === "sideEye" || activeMood === "hmm"
+                      ? "border-amber-500/40 bg-amber-500/10"
+                      : (activeMood as string) === "happy" || (activeMood as string) === "excited"
+                        ? "border-emerald-500/40 bg-emerald-500/10"
+                        : "border-border bg-card/95",
+                )}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
       <JellyBlobMascot
         mood={activeMood}
         gaze={gaze}
