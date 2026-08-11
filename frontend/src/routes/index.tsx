@@ -40,6 +40,7 @@ import { CardContent } from "@/components/ui/Card";
 import { ScrollExpand } from "@/components/ui/ScrollExpand";
 import { SplitText } from "@/components/ui/SplitText";
 import { TextLoop } from "@/components/ui/TextLoop";
+import { MagicBento, MagicBentoCard } from "@/components/ui/MagicBento";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { FEATURED_COURSES, type FeaturedCourse } from "@/lib/demoData";
 import { type ProficiencyLevel, proficiencyMeta } from "@/lib/gamification";
@@ -457,44 +458,96 @@ function GamificationShowcase() {
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("gamificationHeading")} subhead={t("gamificationSubhead")} />
 
-        <div className="mt-12 grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {/* XP & Levels */}
-          <ShowcaseCard
-            icon={Zap}
-            title={t("mechanicXpTitle")}
-            copy={t("mechanicXpCopy")}
+        <MagicBento className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+          {/* Live Leaderboard — Tall 1x2 Hero Card on the Left */}
+          <MagicBentoCard
+            enableStars={true}
+            enableTilt={true}
+            enableMagnetism={true}
+            clickEffect={true}
+            className="lg:col-span-1 lg:row-span-2 flex flex-col justify-between"
+          >
+            <div className="flex flex-col gap-4">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                <Trophy className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold">{t("mechanicLeaderboardTitle")}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("mechanicLeaderboardCopy")}</p>
+              </div>
+            </div>
+            <div className="pt-4">
+              <LiveLeaderboard />
+            </div>
+          </MagicBentoCard>
+
+          {/* XP & Levels — Top Middle */}
+          <MagicBentoCard
+            enableStars={true}
+            enableTilt={true}
+            enableMagnetism={true}
+            clickEffect={true}
             onMouseEnter={handleXpCardHover}
+            className="lg:col-span-1 lg:row-span-1 flex flex-col justify-between"
           >
-            <XPBar totalXp={1750} />
-          </ShowcaseCard>
+            <div className="flex flex-col gap-4">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                <Zap className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold">{t("mechanicXpTitle")}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("mechanicXpCopy")}</p>
+              </div>
+            </div>
+            <div className="pt-4">
+              <XPBar totalXp={1750} />
+            </div>
+          </MagicBentoCard>
 
-          {/* Live leaderboard */}
-          <ShowcaseCard
-            icon={Trophy}
-            title={t("mechanicLeaderboardTitle")}
-            copy={t("mechanicLeaderboardCopy")}
+          {/* Daily Streaks — Top Right */}
+          <MagicBentoCard
+            enableStars={true}
+            enableTilt={true}
+            enableMagnetism={true}
+            clickEffect={true}
+            className="lg:col-span-1 lg:row-span-1 flex flex-col justify-between"
           >
-            <LiveLeaderboard />
-          </ShowcaseCard>
+            <div className="flex flex-col gap-4">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                <Gamepad2 className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold">{t("mechanicStreakTitle")}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("mechanicStreakCopy")}</p>
+              </div>
+            </div>
+            <div className="pt-4">
+              <StreakWeek />
+            </div>
+          </MagicBentoCard>
 
-          {/* Proficiency ladder */}
-          <ShowcaseCard
-            icon={LineChart}
-            title={t("mechanicProficiencyTitle")}
-            copy={t("mechanicProficiencyCopy")}
+          {/* Proficiency Ladder — Wide 2x1 Hero Card at Bottom Right */}
+          <MagicBentoCard
+            enableStars={true}
+            enableTilt={true}
+            enableMagnetism={true}
+            clickEffect={true}
+            className="lg:col-span-2 lg:row-span-1 flex flex-col justify-between"
           >
-            <ProficiencyLadder />
-          </ShowcaseCard>
-
-          {/* Streaks */}
-          <ShowcaseCard
-            icon={Gamepad2}
-            title={t("mechanicStreakTitle")}
-            copy={t("mechanicStreakCopy")}
-          >
-            <StreakWeek />
-          </ShowcaseCard>
-        </div>
+            <div className="flex flex-col gap-4">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                <LineChart className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold">{t("mechanicProficiencyTitle")}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("mechanicProficiencyCopy")}</p>
+              </div>
+            </div>
+            <div className="pt-4">
+              <ProficiencyLadder />
+            </div>
+          </MagicBentoCard>
+        </MagicBento>
       </div>
 
       <XPToast
@@ -585,40 +638,6 @@ function StreakWeek() {
   );
 }
 
-function ShowcaseCard({
-  icon: Icon,
-  title,
-  copy,
-  children,
-  onMouseEnter,
-}: {
-  icon: LucideIcon;
-  title: string;
-  copy: string;
-  children: React.ReactNode;
-  onMouseEnter?: () => void;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.45 }}
-      whileHover={{ y: -4 }}
-      onMouseEnter={onMouseEnter}
-      className="group flex flex-col gap-4 rounded-3xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
-    >
-      <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
-        <Icon className="h-5 w-5" />
-      </div>
-      <div>
-        <h3 className="text-base font-semibold">{title}</h3>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{copy}</p>
-      </div>
-      <div className="mt-auto pt-2">{children}</div>
-    </motion.div>
-  );
-}
 
 /* ---------------------------- Catalog preview ----------------------------- */
 
