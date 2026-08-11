@@ -454,4 +454,20 @@
   .ibm-plex-serif-medium-italic { font-family: "IBM Plex Serif", serif; font-weight: 500; font-style: italic; }
   .ibm-plex-serif-semibold-italic { font-family: "IBM Plex Serif", serif; font-weight: 600; font-style: italic; }
   .ibm-plex-serif-bold-italic { font-family: "IBM Plex Serif", serif; font-weight: 700; font-style: italic; }
+
+  /* Ripple Button animation */
+  @keyframes rippling {
+    0% {
+      transform: scale(0);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(2.5);
+      opacity: 0;
+    }
+  }
+
+  .animate-rippling {
+    animation: rippling var(--duration, 600ms) ease-out forwards;
+  }
 }
