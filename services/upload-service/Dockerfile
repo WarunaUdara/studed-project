@@ -6,6 +6,7 @@ ENV CGO_ENABLED=0
 WORKDIR /build
 
 COPY services/upload-service/go.mod services/upload-service/go.sum ./services/upload-service/
+COPY shared/go/go.mod ./shared/go/go.mod
 
 WORKDIR /build/services/upload-service
 RUN --mount=type=cache,target=/go/pkg/mod \
@@ -13,6 +14,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 WORKDIR /build
 COPY services/upload-service ./services/upload-service
+COPY shared/go ./shared/go
 
 WORKDIR /build/services/upload-service
 RUN --mount=type=cache,target=/go/pkg/mod \
@@ -22,8 +24,9 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 FROM alpine:3.21.2
 
 RUN apk --no-cache add ca-certificates
+
 COPY --from=builder /app/service /app/service
 
-EXPOSE 8092
+EXPOSE 8093
 
 ENTRYPOINT ["/app/service"]
