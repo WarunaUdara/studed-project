@@ -280,12 +280,12 @@ export function PlayableWave() {
                         {t("playCorrectCopy")}
                       </p>
                       <div className="mt-4 flex flex-wrap gap-2">
-                        <Link to="/register">
-                          <Button size="sm" className="gap-2 rounded-full">
+                        <Button asChild size="sm" className="gap-2 rounded-full">
+                          <Link to="/register">
                             <Zap className="h-4 w-4" />
                             {t("playCta")}
-                          </Button>
-                        </Link>
+                          </Link>
+                        </Button>
                         <Button
                           size="sm"
                           variant="ghost"
