@@ -209,6 +209,25 @@ services:
       timeout: 3s
       retries: 10
 
+  upload-service:
+    build:
+      context: .
+      dockerfile: services/upload-service/Dockerfile
+    container_name: studed-upload-service
+    environment:
+      UPLOAD_SERVICE_ADDR: :8093
+      GCS_BUCKET_NAME: ${GCS_BUCKET_NAME:-studed-uploads-local}
+      STORAGE_EMULATOR_HOST: http://floci-gcp:4588
+      FLOCI_GCP_BASE_URL: http://floci-gcp:4588
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
+    ports:
+      - "127.0.0.1:8093:8093"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8093/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   api-gateway:
     build:
       context: .
