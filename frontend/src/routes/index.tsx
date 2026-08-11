@@ -961,40 +961,27 @@ function FinalCta({ authed }: { authed: boolean }) {
   const { t } = usePublicI18n();
 
   return (
-    <section className="relative px-4 pb-16 pt-6 sm:px-6">
-      <div className="relative mx-auto max-w-5xl rounded-[2rem] border border-border/40 bg-background shadow-xl overflow-hidden">
-        {/* Lightweight zero-lag ambient dot paper wash */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 select-none opacity-60">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: "radial-gradient(oklch(0.484 0.164 145 / 0.1) 1.2px, transparent 1.2px)",
-              backgroundSize: "24px 24px",
-            }}
-          />
-          <div className="absolute -top-24 left-1/2 -translate-x-1/2 h-[320px] w-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,oklch(0.484_0.164_145_/_0.15),transparent_70%)] blur-3xl" />
-        </div>
-
-        <div className="relative z-10 p-2 sm:p-4">
-          <ScrollExpand
-            useWindowScroll
-            startWidth={52}
-            startHeight={60}
-            maxWidth={92}
-            maxHeight={88}
-            startRadius={20}
-            endRadius={16}
-            mediaZoom={1.25}
-            scrollDistance={0.85}
-            holdDistance={0.25}
-            smoothing={0.0}
-            overlayScrim={0.82}
-            title={t("finalCtaHeading")}
-            scrollHint="Scroll to Expand"
-            className="w-full h-[420px] sm:h-[480px]"
-            src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop"
-            alt="StudEd Platform"
-          >
+    <section className="relative px-4 pb-12 pt-4 sm:px-6">
+      <div className="relative mx-auto max-w-5xl">
+        <ScrollExpand
+          useWindowScroll
+          startWidth={48}
+          startHeight={58}
+          maxWidth={92}
+          maxHeight={88}
+          startRadius={20}
+          endRadius={16}
+          mediaZoom={1.25}
+          scrollDistance={0.55}
+          holdDistance={0.0}
+          smoothing={0.0}
+          overlayScrim={0.82}
+          title={t("finalCtaHeading")}
+          scrollHint="Scroll to Expand"
+          className="w-full min-h-[460px] sm:min-h-[520px]"
+          src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop"
+          alt="StudEd Platform"
+        >
             <div className="relative space-y-5 max-w-xl mx-auto text-center px-4">
               <p className="inline-flex items-center gap-2 rounded-full bg-primary/20 backdrop-blur-md px-4 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-white ring-1 ring-primary/40 shadow-xs">
                 <Zap className="h-3.5 w-3.5 fill-gold text-gold" />
@@ -1038,7 +1025,6 @@ function FinalCta({ authed }: { authed: boolean }) {
               </div>
             </div>
           </ScrollExpand>
-        </div>
       </div>
     </section>
   );

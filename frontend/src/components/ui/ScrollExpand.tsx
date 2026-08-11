@@ -172,23 +172,32 @@ export function ScrollExpand({
 
     const measure = () => {
       const c = propsRef.current;
-      stageH = c.useWindowScroll ? window.innerHeight : root.clientHeight;
+      const vh = typeof window !== "undefined" ? window.innerHeight : 600;
+      stageH = c.useWindowScroll ? Math.min(520, Math.round(vh * 0.7)) : root.clientHeight;
       if (stageH <= 0) return;
       stage.style.height = `${stageH}px`;
-      track.style.height = `${stageH * (1 + Math.max(0, c.scrollDistance) + Math.max(0, c.holdDistance))}px`;
 
-      const w = root.clientWidth || stageH;
-      stage.style.setProperty("--se-title-size", `${clamp(w * 0.075, 20, 84)}px`);
+      if (c.useWindowScroll) {
+        const topOffset = Math.max(16, Math.round((vh - stageH) / 2));
+        stage.style.top = `${topOffset}px`;
+        const travel = Math.round(vh * Math.max(0.15, c.scrollDistance));
+        track.style.height = `${stageH + travel}px`;
+      } else {
+        track.style.height = `${stageH * (1 + Math.max(0, c.scrollDistance))}px`;
+      }
     };
 
     const readProgress = () => {
       const c = propsRef.current;
       if (!c.enabled) return 1;
-      const span = stageH * Math.max(0.01, c.scrollDistance);
       if (c.useWindowScroll) {
-        const top = track.getBoundingClientRect().top;
-        return clamp(-top / span, 0, 1);
+        const vh = typeof window !== "undefined" ? window.innerHeight : 600;
+        const topOffset = Math.max(16, Math.round((vh - stageH) / 2));
+        const trackTop = track.getBoundingClientRect().top;
+        const travel = Math.round(vh * Math.max(0.15, c.scrollDistance));
+        return clamp((topOffset - trackTop) / (travel || 1), 0, 1);
       }
+      const span = stageH * Math.max(0.01, c.scrollDistance);
       return clamp(root.scrollTop / span, 0, 1);
     };
 
