@@ -346,11 +346,11 @@ export function CourseJourneyMap({
           </div>
         )}
 
-        {/* 3D Floating Background Islands */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl z-0">
-          {/* Top Right: Flag Island with Wind Swaying Effect */}
+        {/* 3D Floating Background Islands & Interactive Companion */}
+        <div className="absolute inset-0 overflow-hidden rounded-3xl z-0 pointer-events-none">
+          {/* Top Right: Custom Flag Island with Wind Swaying Effect */}
           <motion.div
-            className="absolute -top-4 -right-12 sm:right-2 w-44 sm:w-56 opacity-85 select-none"
+            className="absolute -top-6 -right-10 sm:right-0 w-48 sm:w-60 opacity-90 select-none pointer-events-none"
             animate={{
               y: [-6, 6, -6],
               rotate: [-1.2, 1.2, -1.2],
@@ -362,9 +362,9 @@ export function CourseJourneyMap({
             }}
           >
             <motion.img
-              src="/images/islands/flag-island.png"
+              src="/images/islands/flag-island-custom.png"
               alt="Floating Flag Island"
-              className="w-full h-auto drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)]"
+              className="w-full h-auto drop-shadow-[0_18px_30px_rgba(0,0,0,0.7)]"
               style={{ transformOrigin: "bottom center" }}
               animate={{
                 skewX: [-2.5, 2.5, -2.5],
@@ -377,30 +377,43 @@ export function CourseJourneyMap({
             />
           </motion.div>
 
-          {/* Mid Left: Mascot Island */}
+          {/* Mid Left: Custom Trophy Island with Interactive Touchable Mascot Character */}
           <motion.div
-            className="absolute top-1/3 -left-12 sm:-left-4 w-40 sm:w-52 opacity-80 select-none"
+            className="absolute top-[28%] -left-10 sm:-left-2 w-44 sm:w-56 select-none pointer-events-auto z-20"
             animate={{
-              y: [8, -8, 8],
-              rotate: [1.5, -1.5, 1.5],
+              y: [7, -7, 7],
+              rotate: [1.2, -1.2, 1.2],
             }}
             transition={{
               duration: 7,
               repeat: Number.POSITIVE_INFINITY,
               ease: "easeInOut",
-              delay: 1,
+              delay: 0.5,
             }}
           >
-            <img
-              src="/images/islands/mascot-island.png"
-              alt="Floating Mascot Island"
-              className="w-full h-auto drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)]"
-            />
+            <div className="relative">
+              {/* Island Base */}
+              <img
+                src="/images/islands/trophy-island-custom.png"
+                alt="Victory Trophy Island"
+                className="w-full h-auto drop-shadow-[0_18px_30px_rgba(0,0,0,0.75)]"
+              />
+              {/* Interactive Touchable Mascot sitting on the Island */}
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-30">
+                <HelmetCompanion
+                  size="sm"
+                  mood="happy"
+                  showSpeech
+                  speech="Ready to learn today?"
+                  className="h-16 w-16 drop-shadow-xl"
+                />
+              </div>
+            </div>
           </motion.div>
 
-          {/* Bottom Right: Stepping Stones Empty Island */}
+          {/* Bottom Right: Custom Magical Emerald Crystal Gem Island */}
           <motion.div
-            className="absolute bottom-8 -right-10 sm:-right-2 w-40 sm:w-52 opacity-75 select-none"
+            className="absolute bottom-6 -right-8 sm:right-2 w-44 sm:w-56 opacity-85 select-none pointer-events-none"
             animate={{
               y: [-7, 7, -7],
               rotate: [-1, 1, -1],
@@ -409,13 +422,25 @@ export function CourseJourneyMap({
               duration: 8,
               repeat: Number.POSITIVE_INFINITY,
               ease: "easeInOut",
-              delay: 2,
+              delay: 1.5,
             }}
           >
-            <img
-              src="/images/islands/empty-island.png"
-              alt="Floating Island"
-              className="w-full h-auto drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)]"
+            <motion.img
+              src="/images/islands/crystal-island-custom.png"
+              alt="Magical Crystal Gem Island"
+              className="w-full h-auto drop-shadow-[0_18px_30px_rgba(0,0,0,0.7)]"
+              animate={{
+                filter: [
+                  "drop-shadow(0 15px 25px rgba(0,0,0,0.6)) brightness(1)",
+                  "drop-shadow(0 15px 30px rgba(16,185,129,0.5)) brightness(1.15)",
+                  "drop-shadow(0 15px 25px rgba(0,0,0,0.6)) brightness(1)",
+                ],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Number.POSITIVE_INFINITY,
+                ease: "easeInOut",
+              }}
             />
           </motion.div>
         </div>

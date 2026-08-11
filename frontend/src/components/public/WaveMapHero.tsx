@@ -195,11 +195,11 @@ export function WaveMapHero() {
           </div>
         )}
 
-        {/* 3D Floating Background Islands */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl z-0">
-          {/* Top Right: Flag Island with Wind Swaying Effect */}
+        {/* 3D Floating Background Islands & Interactive Companion */}
+        <div className="absolute inset-0 overflow-hidden rounded-3xl z-0 pointer-events-none">
+          {/* Top Right: Custom Flag Island with Wind Swaying Effect */}
           <motion.div
-            className="absolute -top-2 -right-8 w-36 sm:w-44 opacity-80 select-none"
+            className="absolute -top-4 -right-6 w-36 sm:w-44 opacity-85 select-none pointer-events-none"
             animate={{
               y: [-5, 5, -5],
               rotate: [-1.2, 1.2, -1.2],
@@ -211,7 +211,7 @@ export function WaveMapHero() {
             }}
           >
             <motion.img
-              src="/images/islands/flag-island.png"
+              src="/images/islands/flag-island-custom.png"
               alt="Floating Flag Island"
               className="w-full h-auto drop-shadow-[0_12px_20px_rgba(0,0,0,0.6)]"
               style={{ transformOrigin: "bottom center" }}
@@ -226,9 +226,9 @@ export function WaveMapHero() {
             />
           </motion.div>
 
-          {/* Bottom Left: Mascot Island */}
+          {/* Bottom Left: Custom Trophy Island with Interactive Touchable Mascot */}
           <motion.div
-            className="absolute bottom-12 -left-8 w-36 sm:w-44 opacity-75 select-none"
+            className="absolute bottom-10 -left-6 w-36 sm:w-44 select-none pointer-events-auto z-20"
             animate={{
               y: [7, -7, 7],
               rotate: [1.5, -1.5, 1.5],
@@ -237,14 +237,25 @@ export function WaveMapHero() {
               duration: 7,
               repeat: Number.POSITIVE_INFINITY,
               ease: "easeInOut",
-              delay: 1,
+              delay: 0.8,
             }}
           >
-            <img
-              src="/images/islands/mascot-island.png"
-              alt="Floating Mascot Island"
-              className="w-full h-auto drop-shadow-[0_12px_20px_rgba(0,0,0,0.6)]"
-            />
+            <div className="relative">
+              <img
+                src="/images/islands/trophy-island-custom.png"
+                alt="Victory Trophy Island"
+                className="w-full h-auto drop-shadow-[0_12px_20px_rgba(0,0,0,0.7)]"
+              />
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-30">
+                <HelmetCompanion
+                  size="sm"
+                  mood="happy"
+                  showSpeech
+                  speech="Ready to level up?"
+                  className="h-14 w-14 drop-shadow-lg"
+                />
+              </div>
+            </div>
           </motion.div>
         </div>
 
