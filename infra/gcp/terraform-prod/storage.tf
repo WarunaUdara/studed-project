@@ -67,10 +67,12 @@ resource "google_storage_bucket_iam_member" "upload_object_admin" {
 }
 
 # objectAdmin covers object read/write but NOT storage.buckets.get, which the
-# upload-service readiness check needs to verify the bucket exists.
-resource "google_storage_bucket_iam_member" "upload_object_viewer" {
+# upload-service readiness check needs to verify the bucket exists. Neither
+# objectViewer nor objectAdmin include storage.buckets.get in the current IAM
+# definitions, so grant legacyBucketReader (the minimal role carrying it).
+resource "google_storage_bucket_iam_member" "upload_legacy_reader" {
   bucket = google_storage_bucket.studed_uploads.name
-  role   = "roles/storage.objectViewer"
+  role   = "roles/storage.legacyBucketReader"
   member = "serviceAccount:${google_service_account.upload_sa.email}"
 }
 
