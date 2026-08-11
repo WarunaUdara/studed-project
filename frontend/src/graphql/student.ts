@@ -109,9 +109,19 @@ export const WAVE_PLAYER_QUERY = `
       lesson {
         id
         title
+        sequenceOrder
         course {
           id
           title
+          lessons {
+            id
+            sequenceOrder
+            waves {
+              id
+              title
+              sequenceOrder
+            }
+          }
         }
       }
     }

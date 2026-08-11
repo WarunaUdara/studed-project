@@ -266,6 +266,10 @@ function CoursePlayerPage() {
                     const isCompleted = wave.myProgress?.status === "COMPLETED";
                     const isStarted = wave.myProgress?.status === "STARTED";
                     const isLocked = !isEnrolled || wave.myProgress?.status === "LOCKED";
+                    const isExhausted =
+                      !isCompleted &&
+                      wave.maxReattempts > 0 &&
+                      (wave.myProgress?.attemptsCount ?? 0) >= wave.maxReattempts;
 
                     const content = (
                       <div
@@ -325,7 +329,7 @@ function CoursePlayerPage() {
                             variant="outline"
                             className="group-hover:bg-primary group-hover:text-primary-foreground"
                           >
-                            Start
+                            {isExhausted ? "Review" : "Start"}
                           </Button>
                         )}
                       </div>

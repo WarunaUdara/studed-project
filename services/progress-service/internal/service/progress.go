@@ -419,19 +419,22 @@ func (s *progressService) GetWaveProgress(ctx context.Context, userID, waveID st
 
 	// 6. Check if locked by previous wave completion
 	if currentIndex > 0 {
-		prevWaveID := courseWaves[currentIndex-1].Id
-		prevAttempts, err := s.repo.GetAttemptsByWave(ctx, userID, prevWaveID)
+		prevWave := courseWaves[currentIndex-1]
+		prevAttempts, err := s.repo.GetAttemptsByWave(ctx, userID, prevWave.Id)
 		if err != nil {
 			return nil, fmt.Errorf("failed to fetch previous wave attempts: %w", err)
 		}
-		prevCompleted := false
+		prevUnlockedNext := false
 		for _, a := range prevAttempts {
 			if a.Passed {
-				prevCompleted = true
+				prevUnlockedNext = true
 				break
 			}
 		}
-		if !prevCompleted {
+		if !prevUnlockedNext && prevWave.MaxReattempts > 0 && int32(len(prevAttempts)) >= prevWave.MaxReattempts {
+			prevUnlockedNext = true
+		}
+		if !prevUnlockedNext {
 			return &progresspb.WaveProgressResponse{
 				Status:        string(model.ProgressStatusLocked),
 				AttemptsCount: 0,

@@ -680,6 +680,35 @@ func TestGetWaveProgress_LockedWithoutPriorWaveCompletion(t *testing.T) {
 	}
 }
 
+func TestGetWaveProgress_UnlockedWhenPriorWaveAttemptsExhausted(t *testing.T) {
+	svc, repo, course, _ := newTestProgressService()
+
+	// Wave 1 has MaxReattempts = 3
+	course.waves["wave-1"].MaxReattempts = 3
+
+	// Add 3 failed attempts to wave 1
+	for i := 1; i <= 3; i++ {
+		repo.attempts = append(repo.attempts, model.WaveAttempt{
+			ID:            fmt.Sprintf("att-%d", i),
+			UserID:        "u1",
+			WaveID:        "wave-1",
+			LessonID:      "l1",
+			CourseID:      "c1",
+			AttemptNumber: int32(i),
+			Passed:        false,
+			Score:         30,
+		})
+	}
+
+	resp, err := svc.GetWaveProgress(context.Background(), "u1", "wave-2")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if resp.Status != string(model.ProgressStatusAvailable) {
+		t.Fatalf("expected AVAILABLE for wave-2 when wave-1 attempts are exhausted, got %s", resp.Status)
+	}
+}
+
 func TestGetCourseProgress_AggregatesAcrossMultipleLessons(t *testing.T) {
 	repo := &fakeProgressRepo{}
 	course := &fakeCourseClient{
