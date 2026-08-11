@@ -87,6 +87,19 @@ register_or_login() {
   if [ -n "${role}" ] && [ "${role}" != "STUDENT" ] && [ "${registered_role}" != "${role}" ] && [ -n "${db_conn}" ]; then
     echo "[mock] promoting ${email} to ${role} via provision-educator.sh"
     STUDED_DATABASE_URL="${db_conn}" "${REPO_ROOT}/scripts/provision-educator.sh" "${email}" "${role}"
+
+    # The gateway authorizes by the role claim baked into the JWT at login time,
+    # not by the DB row, so re-login after promotion to mint a token carrying the
+    # elevated role (otherwise educator-only mutations fail with 403).
+    response=$(graphql "${jar}" \
+      'mutation Login($input: LoginInput!) { login(input: $input) { user { id email role } } }' \
+      "{\"input\":{\"email\":\"${email}\",\"password\":\"${password}\"}}")
+    if echo "${response}" | jq -e '.errors' >/dev/null 2>&1; then
+      echo "[mock] failed to refresh ${email} session after promotion:"
+      echo "${response}" | jq .
+      exit 1
+    fi
+    user_id=$(echo "${response}" | jq -r '.data.login.user.id')
   fi
 
   echo "${user_id}"
