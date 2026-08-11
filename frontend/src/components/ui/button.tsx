@@ -1,11 +1,12 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import type * as React from "react";
+import * as React from "react";
+import { useEffect, useState } from "react";
 import { Slot } from "@/components/ui/slot";
 import { playClickSound } from "@/lib/sounds";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-full text-[13px] font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:-translate-y-[1px] active:scale-[0.98] duration-150 ease-out",
+  "relative overflow-hidden inline-flex shrink-0 items-center justify-center gap-2 rounded-full text-[13px] font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:-translate-y-[1px] active:scale-[0.98] duration-150 ease-out",
   {
     variants: {
       variant: {
@@ -46,18 +47,71 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
+  rippleColor,
   onClick,
+  children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    rippleColor?: string;
   }) {
   const Comp = asChild ? Slot : "button";
+  const [buttonRipples, setButtonRipples] = useState<
+    Array<{ x: number; y: number; size: number; key: number }>
+  >([]);
+
+  const defaultRippleColor =
+    rippleColor ||
+    (variant === "outline" || variant === "ghost" || variant === "secondary"
+      ? "rgba(16, 185, 129, 0.25)"
+      : "rgba(255, 255, 255, 0.4)");
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!props.disabled) playClickSound();
+    if (!props.disabled && !asChild) {
+      playClickSound();
+      const button = e.currentTarget;
+      const rect = button.getBoundingClientRect();
+      const sizePx = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - sizePx / 2;
+      const y = e.clientY - rect.top - sizePx / 2;
+      setButtonRipples((prev: Array<{ x: number; y: number; size: number; key: number }>) => [
+        ...prev,
+        { x, y, size: sizePx, key: Date.now() + Math.random() },
+      ]);
+    }
     onClick?.(e);
   };
+
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    if (buttonRipples.length > 0) {
+      const lastRipple = buttonRipples[buttonRipples.length - 1];
+      timeout = setTimeout(() => {
+        setButtonRipples((prev: Array<{ x: number; y: number; size: number; key: number }>) =>
+          prev.filter((r: { key: number }) => r.key !== lastRipple.key),
+        );
+      }, 600);
+    }
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [buttonRipples]);
+
+  if (asChild) {
+    return (
+      <Comp
+        data-slot="button"
+        data-variant={variant}
+        data-size={size}
+        className={cn(buttonVariants({ variant, size, className }))}
+        onClick={handleClick}
+        {...props}
+      >
+        {children}
+      </Comp>
+    );
+  }
 
   return (
     <Comp
@@ -67,7 +121,28 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       onClick={handleClick}
       {...props}
-    />
+    >
+      <span className="relative z-10 flex items-center justify-center gap-2">{children}</span>
+      <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+        {buttonRipples.map((ripple: { x: number; y: number; size: number; key: number }) => (
+          <span
+            className="animate-rippling absolute rounded-full pointer-events-none"
+            key={ripple.key}
+            style={
+              {
+                width: `${ripple.size}px`,
+                height: `${ripple.size}px`,
+                top: `${ripple.y}px`,
+                left: `${ripple.x}px`,
+                backgroundColor: defaultRippleColor,
+                transform: "scale(0)",
+                "--duration": "600ms",
+              } as React.CSSProperties
+            }
+          />
+        ))}
+      </span>
+    </Comp>
   );
 }
 
