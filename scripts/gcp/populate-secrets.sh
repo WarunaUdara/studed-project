@@ -74,5 +74,6 @@ put_secret "studed-payhere-notify-url" "${PAYHERE_NOTIFY_URL:-}"
 # across rotations unless SERVICE_TOKEN is explicitly regenerated in .env.
 SERVICE_TOKEN="${SERVICE_TOKEN:-$(openssl rand -base64 32 | tr -d '\n')}"
 put_secret "studed-service-token" "$SERVICE_TOKEN"
+put_secret "studed-gcs-bucket-name" "${GCS_BUCKET_NAME:-studed-uploads-${PROJECT_ID}}"
 
 echo "done. Secrets stored in Secret Manager ($PROJECT_ID)."
