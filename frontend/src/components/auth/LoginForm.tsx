@@ -69,7 +69,7 @@ export function LoginForm({ onSuccess }: LoginFormProps = {}) {
         : "neutral";
 
   const mascotGaze =
-    focusedField === "email" ? { x: 16, y: -4 } : { x: 0, y: 0 };
+    focusedField === "email" ? { x: 16, y: -4 } : undefined;
 
   const emailReg = register("email");
   const passReg = register("password");

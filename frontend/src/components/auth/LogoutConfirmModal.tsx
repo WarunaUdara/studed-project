@@ -93,7 +93,7 @@ export function LogoutConfirmModal({
 
           {/* Modal Card */}
           <motion.div
-            className="relative z-10 my-auto w-full max-w-[340px] sm:max-w-[360px] overflow-hidden rounded-[32px] border border-white/10 bg-[#16171a]/95 p-7 shadow-2xl backdrop-blur-2xl text-center"
+            className="relative z-10 my-auto w-full max-w-[340px] sm:max-w-[360px] overflow-hidden rounded-[32px] border border-border bg-card/95 p-7 shadow-2xl backdrop-blur-2xl text-center text-card-foreground"
             initial={{ scale: 0.9, opacity: 0, y: 16 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 16 }}
@@ -109,7 +109,7 @@ export function LogoutConfirmModal({
                     ? "rgba(16, 185, 129, 0.25)"
                     : hoverTarget === "confirm"
                       ? "rgba(244, 63, 94, 0.25)"
-                      : "rgba(255, 255, 255, 0.08)",
+                      : "rgba(16, 185, 129, 0.08)",
               }}
             />
 
@@ -120,7 +120,7 @@ export function LogoutConfirmModal({
                 playClickSound();
                 onClose();
               }}
-              className="absolute top-4 right-4 flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-white/70 transition-all hover:bg-white/20 hover:text-white hover:scale-105 active:scale-95 z-20"
+              className="absolute top-4 right-4 flex h-7 w-7 items-center justify-center rounded-full bg-muted/80 text-muted-foreground transition-all hover:bg-muted hover:text-foreground hover:scale-105 active:scale-95 z-20"
               aria-label="Close dialog"
             >
               <X className="h-4 w-4" />
@@ -138,23 +138,25 @@ export function LogoutConfirmModal({
                   className="relative inline-block"
                 >
                   <div
-                    className={`rounded-2xl border px-4 py-1.5 text-xs font-bold shadow-lg transition-colors duration-300 ${hoverTarget === "cancel"
-                        ? "border-emerald-500/40 bg-emerald-950/80 text-emerald-300 shadow-emerald-900/30"
+                    className={`rounded-2xl border px-4 py-1.5 text-xs font-bold shadow-md transition-colors duration-300 ${
+                      hoverTarget === "cancel"
+                        ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 shadow-emerald-500/10"
                         : hoverTarget === "confirm"
-                          ? "border-rose-500/40 bg-rose-950/80 text-rose-300 shadow-rose-900/30"
-                          : "border-white/15 bg-[#252730] text-white shadow-black/40"
-                      }`}
+                          ? "border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-300 shadow-rose-500/10"
+                          : "border-border bg-muted/90 text-foreground shadow-xs"
+                    }`}
                   >
                     {speech}
                   </div>
                   {/* Downward triangle tail */}
                   <div
-                    className={`absolute left-1/2 -bottom-1 h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-r border-b transition-colors duration-300 ${hoverTarget === "cancel"
-                        ? "border-emerald-500/40 bg-emerald-950/80"
+                    className={`absolute left-1/2 -bottom-1 h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-r border-b transition-colors duration-300 ${
+                      hoverTarget === "cancel"
+                        ? "border-emerald-500/40 bg-emerald-500/10"
                         : hoverTarget === "confirm"
-                          ? "border-rose-500/40 bg-rose-950/80"
-                          : "border-white/15 bg-[#252730]"
-                      }`}
+                          ? "border-rose-500/40 bg-rose-500/10"
+                          : "border-border bg-muted/90"
+                    }`}
                   />
                 </motion.div>
               </AnimatePresence>
@@ -176,10 +178,10 @@ export function LogoutConfirmModal({
 
             {/* Title & Description */}
             <div className="mt-1 space-y-1">
-              <h2 className="text-2xl font-bold tracking-tight text-white font-sans">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground font-sans">
                 Log Out?
               </h2>
-              <p className="text-xs text-white/60 leading-relaxed px-2">
+              <p className="text-xs text-muted-foreground leading-relaxed px-2">
                 You'll need to sign in again to access your account.
               </p>
             </div>
@@ -200,8 +202,8 @@ export function LogoutConfirmModal({
                 onMouseLeave={() => setHoverTarget(null)}
                 className={`flex-1 rounded-2xl h-11 text-sm font-bold transition-all duration-200 border ${
                   hoverTarget === "cancel"
-                    ? "bg-emerald-600 border-emerald-400 text-white shadow-lg shadow-emerald-600/30"
-                    : "bg-[#252730] border-white/10 text-white/90 hover:bg-[#2f313d]"
+                    ? "bg-emerald-600 border-emerald-500 text-white shadow-lg shadow-emerald-600/30"
+                    : "bg-muted border-border text-foreground hover:bg-muted/80"
                 }`}
               >
                 Cancel
@@ -221,8 +223,8 @@ export function LogoutConfirmModal({
                 onMouseLeave={() => setHoverTarget(null)}
                 className={`flex-1 rounded-2xl h-11 text-sm font-bold transition-all duration-200 border ${
                   hoverTarget === "confirm"
-                    ? "bg-rose-600 border-rose-400 text-white shadow-lg shadow-rose-600/30"
-                    : "bg-[#2f1b1d] border-rose-900/40 text-rose-400 hover:bg-rose-600 hover:text-white"
+                    ? "bg-rose-600 border-rose-500 text-white shadow-lg shadow-rose-600/30"
+                    : "bg-destructive/10 border-destructive/30 text-destructive hover:bg-destructive hover:text-white"
                 }`}
               >
                 {isSubmitting ? "Logging out..." : "Log Out"}
