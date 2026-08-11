@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
+import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/Card";
 import { ProgressRing } from "@/components/ui/ProgressRing";
@@ -317,16 +318,14 @@ export function CourseJourneyMap({
                 transition={{ duration: 1.5, ease: "easeOut" }}
               />
 
-              {/* Travelling Glow Orb */}
+              {/* Travelling Mascot Companion */}
               {!reduce && (
-                <>
-                  <circle r={12} fill="var(--primary)" opacity={0.25}>
-                    <animateMotion dur="8s" repeatCount="indefinite" path={pathD} />
-                  </circle>
-                  <circle r={5} fill="var(--primary)">
-                    <animateMotion dur="8s" repeatCount="indefinite" path={pathD} />
-                  </circle>
-                </>
+                <g className="pointer-events-none">
+                  <foreignObject width={48} height={48} x={-24} y={-24} className="overflow-visible">
+                    <HelmetCompanion size="sm" mood="happy" className="h-12 w-12 drop-shadow-md" />
+                    <animateMotion dur="10s" repeatCount="indefinite" path={pathD} />
+                  </foreignObject>
+                </g>
               )}
             </svg>
 

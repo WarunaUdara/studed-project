@@ -3,6 +3,7 @@ import { Check, Lock, Trophy, Zap } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { XPBar } from "@/components/gamification/XPBar";
+import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
 import { type PublicStringKey, usePublicI18n } from "@/lib/i18n";
 import { playClickSound } from "@/lib/sounds";
 import { cn } from "@/lib/utils";
@@ -159,16 +160,14 @@ export function WaveMapHero() {
               transition={{ duration: 1.8, ease: "easeOut", delay: 0.4 }}
             />
 
-            {/* Travelling glow orb */}
+            {/* Travelling Mascot Companion */}
             {!reduce && (
-              <>
-                <circle r={10} fill="var(--primary)" opacity={0.28}>
-                  <animateMotion dur="9s" repeatCount="indefinite" path={PATH_D} />
-                </circle>
-                <circle r={4} fill="var(--primary)">
-                  <animateMotion dur="9s" repeatCount="indefinite" path={PATH_D} />
-                </circle>
-              </>
+              <g className="pointer-events-none">
+                <foreignObject width={48} height={48} x={-24} y={-24} className="overflow-visible">
+                  <HelmetCompanion size="sm" mood="happy" className="h-12 w-12 drop-shadow-md" />
+                  <animateMotion dur="11s" repeatCount="indefinite" path={PATH_D} />
+                </foreignObject>
+              </g>
             )}
           </svg>
 
