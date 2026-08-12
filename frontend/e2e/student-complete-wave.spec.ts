@@ -57,14 +57,17 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
     await viewBtn.click();
     await expect(page).toHaveURL(/\/courses\/[a-f0-9-]+/);
 
-    // 3. Open the Newton's Laws wave
-    const waveLink = page
-      .locator("a[href*='/waves/']")
-      .filter({ hasText: "Newton's Laws" })
-      .first();
-    await expect(waveLink).toBeVisible({ timeout: 10000 });
-    await waveLink.click();
+    // 3. Open the Newton's Laws wave via the journey map's Continue Journey
+    // link (wave nodes render as buttons, not anchors, in the map)
+    const continueJourney = page.getByRole("link", { name: "Continue Journey" });
+    await expect(continueJourney).toBeVisible({ timeout: 10000 });
+    await continueJourney.click();
     await expect(page).toHaveURL(/\/waves\/[a-f0-9-]+/);
+
+    // Verify the wave player opened Newton's Laws
+    await expect(page.getByRole("heading", { name: "Newton's Laws" })).toBeVisible({
+      timeout: 15000,
+    });
 
     // 4. In Wave Player, check Learn block and proceed to Evaluation
     await expect(page.getByRole("tablist").first()).toBeVisible({ timeout: 15000 });

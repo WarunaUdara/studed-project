@@ -31,12 +31,14 @@ test.describe("Student Course Journey Flow", () => {
     await courseCard.click();
 
     const enrollButton = page.getByRole("button", { name: /Enroll Free/i });
+    const viewLink = page.getByRole("link", { name: "Continue Learning" });
+    await expect(enrollButton.or(viewLink)).toBeVisible({ timeout: 10000 });
+
     if (await enrollButton.isVisible()) {
       await enrollButton.click();
       await expect(page.getByText("Enrolled!")).toBeVisible({ timeout: 10000 });
     }
 
-    const viewLink = page.getByRole("link", { name: "Continue Learning" });
     await expect(viewLink).toBeVisible({ timeout: 10000 });
     await viewLink.click();
     await expect(page).toHaveURL(/\/courses\/[a-f0-9-]+/);
@@ -46,8 +48,8 @@ test.describe("Student Course Journey Flow", () => {
       timeout: 15000,
     });
 
-    // The course progress ring shows 'complete' text inside it
-    await expect(page.getByText("complete", { exact: true }).first()).toBeVisible();
+    // The course progress journey map shows mastery and a Continue link
+    await expect(page.getByText(/Mastery/).first()).toBeVisible();
 
     // 3. Find first wave link (may be a Start button or a link) - click the wave card directly
     // Use the first Link pointing to /waves/ on this page

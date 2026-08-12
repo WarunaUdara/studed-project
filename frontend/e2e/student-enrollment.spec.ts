@@ -75,16 +75,17 @@ test.describe("Student Course Search, Filter, and Enrollment Flow", () => {
     await expect(targetCard).toBeVisible({ timeout: 10000 });
     await targetCard.click();
 
-    // The detail sheet shows Enroll Free when not enrolled, else Continue Learning
+    // The detail sheet shows Enroll Free when not enrolled, else Continue
+    // Learning. Wait for the sheet to settle into one of the two states
+    // before branching (isVisible() alone is a non-waiting check).
     const enrollBtn = page.getByRole("button", { name: /Enroll Free/i });
     const continueLink = page.getByRole("link", { name: "Continue Learning" });
+    await expect(enrollBtn.or(continueLink)).toBeVisible({ timeout: 10000 });
 
     if (await enrollBtn.isVisible()) {
       await enrollBtn.click();
       // Verify Enrolled success toast
       await expect(page.getByText("Enrolled!")).toBeVisible({ timeout: 15000 });
-      await expect(continueLink).toBeVisible({ timeout: 10000 });
-    } else {
       await expect(continueLink).toBeVisible({ timeout: 10000 });
     }
 
