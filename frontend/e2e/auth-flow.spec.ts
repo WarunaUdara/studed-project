@@ -19,9 +19,9 @@ test.describe("Authentication and Authorization Flow", () => {
     await page.getByRole("button", { name: "Sign in" }).click();
 
     await expect(page).toHaveURL(/\/dashboard/);
-    await expect(page.getByRole("heading", { name: "Continue Learning" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "My Courses" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Gamification Hub" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Leaderboard" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Leaderboard Peek" })).toBeVisible();
     await expect(page.getByRole("banner").getByRole("button", { name: "Log out" })).toBeVisible();
   });
 

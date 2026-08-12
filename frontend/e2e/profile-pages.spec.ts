@@ -16,7 +16,7 @@ test.describe("Achievements Page", () => {
     await expect(page).toHaveURL(/\/achievements/);
 
     // Page heading
-    await expect(page.getByRole("heading", { name: /achievements/i })).toBeVisible({
+    await expect(page.getByRole("heading", { name: /What you've earned/i })).toBeVisible({
       timeout: 10000,
     });
 

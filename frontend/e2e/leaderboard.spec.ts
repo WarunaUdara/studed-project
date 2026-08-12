@@ -16,7 +16,7 @@ test.describe("Leaderboard Page", () => {
     await expect(page).toHaveURL(/\/leaderboard/);
 
     // Page heading
-    await expect(page.getByRole("heading", { name: /leaderboard/i })).toBeVisible({
+    await expect(page.getByRole("heading", { name: /Where you stand/i })).toBeVisible({
       timeout: 10000,
     });
 
@@ -35,11 +35,11 @@ test.describe("Leaderboard Page", () => {
     await page.goto("/leaderboard");
 
     // Click Grade tab
-    const gradeTab = page.getByRole("button", { name: "Grade" });
+    const gradeTab = page.getByRole("button", { name: "Grade-wide", exact: true });
     await expect(gradeTab).toBeVisible({ timeout: 10000 });
     await gradeTab.click();
 
     // Page should not error
-    await expect(page.getByRole("heading", { name: /leaderboard/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Where you stand/i })).toBeVisible();
   });
 });

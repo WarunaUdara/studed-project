@@ -13,7 +13,9 @@ test.describe("Negative & Boundary Flow Simulations", () => {
 
     // Verify user remains on login page and error toast or message is shown
     await expect(page).toHaveURL(/\/login/);
-    await expect(page.getByText("Invalid email or password")).toBeVisible();
+    await expect(
+      page.getByText("That email or password doesn't match our records."),
+    ).toBeVisible();
   });
 
   test("should enforce client-side validation on empty registration form", async ({ page }) => {
@@ -37,7 +39,7 @@ test.describe("Negative & Boundary Flow Simulations", () => {
     // 1. Log in as student
     await page.goto("/login");
     await page.locator("#email").fill("demo.student@studed.lk");
-    await page.locator("#password").fill("password123");
+    await page.locator("#password").fill("password1234");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page).toHaveURL(/\/dashboard/);
 

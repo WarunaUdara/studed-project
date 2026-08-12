@@ -12,7 +12,7 @@ export class LoginPage {
     await this.page.goto("/login");
   }
 
-  async login(email = "demo.student@studed.lk", password = "password123") {
+  async login(email = "demo.student@studed.lk", password = "password1234") {
     await this.locatorEmail().fill(email);
     await this.locatorPassword().fill(password);
     await this.buttonSignIn().click();
