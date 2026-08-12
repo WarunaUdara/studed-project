@@ -21,7 +21,7 @@ type GamificationClient struct {
 func NewGamificationClient(addr, serviceToken string) (*GamificationClient, error) {
 	interceptors := []grpc.UnaryClientInterceptor{
 		grpcauth.UnaryClientTraceInterceptor(),
-		grpcauth.UnaryClientTimeoutInterceptor(5 * time.Second),
+		grpcauth.UnaryClientTimeoutInterceptor(60 * time.Second),
 	}
 	if serviceToken != "" {
 		interceptors = append(interceptors, grpcauth.UnaryClientInterceptor(serviceToken))

@@ -110,7 +110,7 @@ func main() {
 
 	dialInterceptors := []grpc.UnaryClientInterceptor{
 		grpcauth.UnaryClientTraceInterceptor(),
-		grpcauth.UnaryClientTimeoutInterceptor(5 * time.Second),
+		grpcauth.UnaryClientTimeoutInterceptor(60 * time.Second),
 	}
 	if cfg.ServiceToken != "" {
 		dialInterceptors = append(dialInterceptors, grpcauth.UnaryClientInterceptor(cfg.ServiceToken))
