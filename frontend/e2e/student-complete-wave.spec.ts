@@ -41,8 +41,11 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
       .first();
     await expect(physicsCard).toBeVisible({ timeout: 5000 });
 
-    // Enroll in the course
-    const enrollBtn = physicsCard.getByRole("button", { name: /Enroll Free/i });
+    // Open the detail sheet and enroll
+    await physicsCard.click();
+
+    // Enroll in the course (sheet shows Enroll Free when not enrolled)
+    const enrollBtn = page.getByRole("button", { name: /Enroll Free/i });
     await expect(enrollBtn).toBeVisible({ timeout: 5000 });
     await enrollBtn.click();
 
@@ -50,7 +53,7 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
     await expect(page.getByText("Enrolled!")).toBeVisible({ timeout: 10000 });
 
     // Click View/Continue
-    const viewBtn = physicsCard.getByRole("link", { name: /View|Continue/i });
+    const viewBtn = page.getByRole("link", { name: "Continue Learning" });
     await viewBtn.click();
     await expect(page).toHaveURL(/\/courses\/[a-f0-9-]+/);
 

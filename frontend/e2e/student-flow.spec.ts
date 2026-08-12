@@ -25,18 +25,18 @@ test.describe("Student Course Journey Flow", () => {
       .first();
     await expect(courseCard).toBeVisible({ timeout: 15000 });
 
-    // Wait for the View button to be visible to ensure card actions are fully loaded
-    await expect(courseCard.getByRole("link", { name: "View" })).toBeVisible({ timeout: 15000 });
+    // 2. Open the detail sheet by clicking the card. Enroll if the sheet
+    // shows the Enroll Free button (not enrolled yet), otherwise go straight
+    // to the Continue Learning link.
+    await courseCard.click();
 
-    // Click Enroll if the button is visible (not enrolled yet)
-    const enrollButton = courseCard.getByRole("button", { name: /Enroll/i });
+    const enrollButton = page.getByRole("button", { name: /Enroll Free/i });
     if (await enrollButton.isVisible()) {
       await enrollButton.click();
       await expect(page.getByText("Enrolled!")).toBeVisible({ timeout: 10000 });
     }
 
-    // 2. Click "View" or "Continue" on the course card
-    const viewLink = courseCard.getByRole("link", { name: /View|Continue/i });
+    const viewLink = page.getByRole("link", { name: "Continue Learning" });
     await expect(viewLink).toBeVisible({ timeout: 10000 });
     await viewLink.click();
     await expect(page).toHaveURL(/\/courses\/[a-f0-9-]+/);

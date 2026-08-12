@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowUp, Crown, Minus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useQuery } from "urql";
+import { useQuery, useSubscription } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { StudentShell } from "@/components/layout/StudentShell";
 import { Card, CardContent } from "@/components/ui/Card";
@@ -59,10 +59,26 @@ function LeaderboardPage() {
   const [period, setPeriod] = useState<Period>("THIS_WEEK");
   const [query, setQuery] = useState("");
 
-  const [{ data, fetching, error }] = useQuery({
+  const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: LEADERBOARD_QUERY,
     variables: { scope },
   });
+
+  useSubscription(
+    {
+      query: `
+        subscription LeaderboardUpdated($scope: LeaderboardScope!) {
+          leaderboardUpdated(scope: $scope) {
+            rank
+            totalXp
+            user { id fullName }
+          }
+        }
+      `,
+      variables: { scope },
+    },
+    () => reexecuteQuery({ requestPolicy: "network-only" }),
+  );
 
   const leaderboard: LeaderboardEntry[] = useMemo(
     () => (data?.leaderboard ?? []) as LeaderboardEntry[],

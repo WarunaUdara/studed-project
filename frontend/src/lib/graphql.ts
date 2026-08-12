@@ -1,5 +1,12 @@
+import { createClient as createWsClient } from "graphql-ws";
 import { authExchange } from "@urql/exchange-auth";
-import { cacheExchange, createClient, fetchExchange } from "urql";
+import {
+  cacheExchange,
+  createClient,
+  fetchExchange,
+  subscriptionExchange,
+  type OperationResult,
+} from "urql";
 
 const REFRESH_TOKEN_MUTATION = `
   mutation RefreshToken($refreshToken: String!) {
@@ -12,6 +19,33 @@ const REFRESH_TOKEN_MUTATION = `
 const GRAPHQL_URL =
   import.meta.env.VITE_GRAPHQL_URL ||
   (import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/graphql` : "/graphql");
+
+const WS_URL = GRAPHQL_URL.replace(/^http/, "ws");
+
+const subscriptionForwarder = (request: {
+  query?: string;
+  variables?: Record<string, unknown>;
+}) => ({
+  subscribe(sink: {
+    next: (value: OperationResult) => void;
+    error: (error: Error) => void;
+    complete: () => void;
+  }) {
+    const client = createWsClient({
+      url: WS_URL,
+      lazy: true,
+    });
+    const dispose = client.subscribe(
+      { query: request.query ?? "", variables: request.variables },
+      {
+        next: (result) => sink.next(result as OperationResult),
+        error: (err) => sink.error(err instanceof Error ? err : new Error(String(err))),
+        complete: () => sink.complete(),
+      },
+    );
+    return { unsubscribe: dispose };
+  },
+});
 
 export const graphqlClient = createClient({
   url: GRAPHQL_URL,
@@ -52,6 +86,9 @@ export const graphqlClient = createClient({
           }
         },
       };
+    }),
+    subscriptionExchange({
+      forwardSubscription: (operation) => subscriptionForwarder(operation),
     }),
     fetchExchange,
   ],

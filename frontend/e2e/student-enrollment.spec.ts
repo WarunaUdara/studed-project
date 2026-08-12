@@ -67,32 +67,29 @@ test.describe("Student Course Search, Filter, and Enrollment Flow", () => {
     const enrollableG10Card = page
       .locator("[data-testid='course-card']")
       .filter({ hasText: "G10" })
-      .filter({ has: page.getByRole("button", { name: /Enroll Free/i }) })
       .first();
 
-    const enrolledG10Card = page
-      .locator("[data-testid='course-card']")
-      .filter({ hasText: "G10" })
-      .filter({ has: page.getByRole("link", { name: /View|Continue/i }) })
-      .first();
+    let targetCard = enrollableG10Card;
 
-    let targetCard = enrolledG10Card;
+    // Open the detail sheet for the G10 course
+    await expect(targetCard).toBeVisible({ timeout: 10000 });
+    await targetCard.click();
 
-    if (await enrollableG10Card.isVisible()) {
-      targetCard = enrollableG10Card;
-      const enrollBtn = enrollableG10Card.getByRole("button", { name: /Enroll Free/i });
+    // The detail sheet shows Enroll Free when not enrolled, else Continue Learning
+    const enrollBtn = page.getByRole("button", { name: /Enroll Free/i });
+    const continueLink = page.getByRole("link", { name: "Continue Learning" });
+
+    if (await enrollBtn.isVisible()) {
       await enrollBtn.click();
-
       // Verify Enrolled success toast
       await expect(page.getByText("Enrolled!")).toBeVisible({ timeout: 15000 });
+      await expect(continueLink).toBeVisible({ timeout: 10000 });
     } else {
-      console.log("No new G10 courses to enroll. Using an already enrolled G10 course.");
+      await expect(continueLink).toBeVisible({ timeout: 10000 });
     }
 
     // 5. Navigate to Course Details (Syllabus)
-    const viewBtn = targetCard.getByRole("link", { name: /View|Continue/i });
-    await expect(viewBtn).toBeVisible({ timeout: 10000 });
-    await viewBtn.click();
+    await continueLink.click();
 
     // Verify redirected to course detail page
     await expect(page).toHaveURL(/\/courses\/[a-f0-9-]+/);

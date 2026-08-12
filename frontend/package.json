@@ -28,6 +28,7 @@
     "clsx": "^2.1.1",
     "feral-blob": "^0.1.0",
     "framer-motion": "^12.42.2",
+    "graphql-ws": "^6.2.1",
     "gsap": "^3.15.0",
     "katex": "^0.18.0",
     "lucide-react": "^1.23.0",

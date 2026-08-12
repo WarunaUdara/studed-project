@@ -76,6 +76,6 @@ test.describe("Educator Portal Course Lifecycle Flow", () => {
     // editor chunk has mounted — confirms both the nested route and the
     // dynamic import resolved.
     await expect(page.getByText("TextBlock").first()).toBeVisible({ timeout: 15000 });
-    await expect(page.getByRole("button", { name: "Save Content" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Save" })).toBeVisible();
   });
 });

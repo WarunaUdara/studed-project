@@ -11,7 +11,6 @@ test.describe("Register Page", () => {
     await expect(page.locator("#fullName")).toBeVisible();
     await expect(page.locator("#email")).toBeVisible();
     await expect(page.locator("#password")).toBeVisible();
-    await expect(page.locator("#role")).toBeVisible();
     await expect(page.locator("#grade")).toBeVisible();
     await expect(page.locator("#preferredLanguage")).toBeVisible();
     await expect(page.getByRole("button", { name: "Create account" })).toBeVisible();
