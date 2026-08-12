@@ -110,12 +110,15 @@ Reference documentation lives in the Obsidian folders at the repo root:
 │   ├── prompts/                 # system prompts
 │   ├── manim-pipeline/          # Math-To-Manim integration
 │   └── evals/                   # model evaluation suites
-└── submodules/                  # Git submodules (pinned)
-    ├── math-to-manim/
-    ├── 3dmol-js/
-    ├── tscircuit/
-    └── matter-js/
+└── docs/research/               # research references (no git submodules)
 ```
+<!--
+Note: the repo previously pinned research repos (math-to-manim, 3Dmol.js,
+tscircuit, matter-js) as git submodules. They were removed because the 3Dmol.js
+submodule alone (~1 GB) pushed the recursive clone past Cloudflare Pages'
+limits, failing every git-triggered deploy in clone_repo. Do not re-add git
+submodules without checking the recursive-clone impact on Pages.
+-->
 
 ## Git Workflow (Branch & Feature Workflow)
 
