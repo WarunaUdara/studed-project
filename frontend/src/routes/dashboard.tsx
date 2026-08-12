@@ -535,6 +535,7 @@ function DashboardPage() {
                       <button
                         key={t}
                         type="button"
+                        data-testid={`tab-${t}`}
                         onClick={() => setGamifyTab(t)}
                         className={cn(
                           "flex-1 pb-2 text-xs font-medium border-b-2 capitalize transition-all",
@@ -620,6 +621,7 @@ function DashboardPage() {
                   <div className="flex rounded-lg bg-muted p-1">
                     <button
                       type="button"
+                      data-testid="curriculum-local"
                       onClick={() => setCurriculum("LOCAL")}
                       className={cn(
                         "flex flex-1 items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-semibold transition-all",
@@ -633,6 +635,7 @@ function DashboardPage() {
                     </button>
                     <button
                       type="button"
+                      data-testid="curriculum-global"
                       onClick={() => setCurriculum("GLOBAL")}
                       className={cn(
                         "flex flex-1 items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-semibold transition-all",
@@ -645,6 +648,10 @@ function DashboardPage() {
                       Global
                     </button>
                   </div>
+
+                  <p className="text-xs font-semibold text-foreground">
+                    Target: {curriculum === "LOCAL" ? "SL Syllabus" : "UK Pearson/Edexcel"}
+                  </p>
 
                   <div className="rounded-xl border bg-muted/40 p-3.5 text-center">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
