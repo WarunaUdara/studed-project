@@ -1,9 +1,12 @@
 import type { PagesFunction } from "@cloudflare/workers-types";
 
-const API_ORIGIN = "https://api.34.149.224.124.sslip.io";
+interface Env {
+  API_ORIGIN?: string;
+}
 
-export const onRequest: PagesFunction = async (context) => {
+export const onRequest: PagesFunction<Env> = async (context) => {
   const url = new URL(context.request.url);
+  const apiOrigin = context.env.API_ORIGIN || "https://api.8.233.11.14.sslip.io";
 
   if (url.pathname !== "/graphql") {
     return new Response("Not found", { status: 404 });
@@ -29,5 +32,5 @@ export const onRequest: PagesFunction = async (context) => {
     init.body = await context.request.arrayBuffer();
   }
 
-  return fetch(API_ORIGIN + url.pathname + url.search, init);
+  return fetch(apiOrigin + url.pathname + url.search, init);
 };
