@@ -9,9 +9,10 @@ import {
   Trophy as TrophyIcon,
   Zap,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { DailySparkModal } from "@/components/daily-spark/DailySparkModal";
 import { PomodoroTimer } from "@/components/gamification/PomodoroTimer";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { StudentShell } from "@/components/layout/StudentShell";
@@ -105,6 +106,22 @@ function DashboardPage() {
 
   const [curriculum, setCurriculum] = useState<"LOCAL" | "GLOBAL">("LOCAL");
   const [gamifyTab, setGamifyTab] = useState<"stats" | "badges" | "timeline">("stats");
+  const [dailySparkOpen, setDailySparkOpen] = useState(false);
+
+  // Check if daily warmup has been completed today
+  useEffect(() => {
+    try {
+      const todayStr = new Date().toISOString().slice(0, 10);
+      const isCompleted = localStorage.getItem(`daily_spark_${user?.id ?? "guest"}_${todayStr}`);
+      if (!isCompleted) {
+        // Automatically present the Daily Spark micro-warmup
+        const timer = setTimeout(() => setDailySparkOpen(true), 600);
+        return () => clearTimeout(timer);
+      }
+    } catch {
+      // Ignore
+    }
+  }, [user?.id]);
 
   // Dynamic Exam countdown based on student grade level
   const examInfo = useMemo(() => {
@@ -184,6 +201,36 @@ function DashboardPage() {
                 above already states progress to the next level in words. */}
             <div className="flex items-center gap-3 shrink-0">
               <StreakFlame dayCount={user?.streak ?? 0} size="md" />
+            </div>
+          </div>
+
+          {/* Daily Spark Micro-Warmup Banner */}
+          <div className="relative overflow-hidden rounded-[24px] border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-transparent p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm">
+            <div className="flex items-center gap-3.5">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-500 shadow-sm border border-amber-500/30">
+                <Zap className="size-6 fill-amber-500 text-amber-500" />
+              </div>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-extrabold uppercase tracking-widest text-amber-500">
+                    Daily Spark Warmup
+                  </span>
+                  <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
+                    +55 XP Available
+                  </span>
+                </div>
+                <p className="text-sm font-semibold text-foreground">
+                  3-minute interactive fraction &amp; geometry challenges to fuel your streak!
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Button
+                onClick={() => setDailySparkOpen(true)}
+                className="rounded-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-6 shadow-md shadow-emerald-500/20"
+              >
+                <Zap className="size-4 fill-white mr-1.5" /> Start Warmup
+              </Button>
             </div>
           </div>
 
@@ -670,6 +717,12 @@ function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* Daily Spark Interactive Warmup Modal */}
+        <DailySparkModal
+          isOpen={dailySparkOpen}
+          onClose={() => setDailySparkOpen(false)}
+        />
       </StudentShell>
     </ProtectedRoute>
   );
