@@ -10,6 +10,7 @@ import (
 	"github.com/studed/api-gateway/graph/model"
 	"github.com/studed/api-gateway/internal/events"
 	"github.com/studed/api-gateway/internal/middleware"
+	"golang.org/x/sync/errgroup"
 )
 
 func requireUser(ctx context.Context) (middleware.UserContext, error) {
@@ -75,24 +76,50 @@ func (r *Resolver) populateLessons(ctx context.Context, course *model.Course) {
 	course.Educator = full.Educator
 }
 
-func (r *Resolver) populateWavesProgress(ctx context.Context, userID string, course *model.Course) {
-	if course == nil {
-		return
+// populateLessonsParallel attaches lessons (and their waves) to many courses
+// concurrently. Serializing this makes a catalog page pay one gRPC round-trip
+// per course; with bounded concurrency the page pays roughly one round-trip.
+func (r *Resolver) populateLessonsParallel(ctx context.Context, courses []*model.Course) {
+	g, ctx := errgroup.WithContext(ctx)
+	g.SetLimit(8)
+	for _, course := range courses {
+		course := course
+		g.Go(func() error {
+			r.populateLessons(ctx, course)
+			return nil
+		})
 	}
-	for _, lesson := range course.Lessons {
-		if lesson == nil {
-			continue
-		}
-		for _, wave := range lesson.Waves {
-			if wave == nil {
+	_ = g.Wait()
+}
+
+// populateWavesProgressParallel resolves per-wave progress concurrently.
+// The serial form is one gRPC round-trip per wave across the whole catalog —
+// the N+1 hot path behind slow course/enrollment pages.
+func (r *Resolver) populateWavesProgressParallel(ctx context.Context, userID string, courses []*model.Course) {
+	g, ctx := errgroup.WithContext(ctx)
+	g.SetLimit(16)
+	for _, course := range courses {
+		course := course
+		for _, lesson := range course.Lessons {
+			if lesson == nil {
 				continue
 			}
-			progress, err := r.ProgressClient.GetWaveProgress(ctx, userID, wave.ID)
-			if err == nil {
-				wave.MyProgress = progress
+			for _, wave := range lesson.Waves {
+				if wave == nil {
+					continue
+				}
+				wave := wave
+				g.Go(func() error {
+					progress, err := r.ProgressClient.GetWaveProgress(ctx, userID, wave.ID)
+					if err == nil {
+						wave.MyProgress = progress
+					}
+					return nil
+				})
 			}
 		}
 	}
+	_ = g.Wait()
 }
 
 // publishWaveEvents emits real-time wave/leaderboard events; publish
