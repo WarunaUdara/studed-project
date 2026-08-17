@@ -123,21 +123,32 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
                 collapsed ? "justify-center px-0" : "px-1",
               )}
             >
-              <span
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 font-bold text-primary-foreground"
-                aria-hidden
+              <Link
+                to="/educator/settings"
+                title="View Profile & Settings"
+                className={cn(
+                  "flex items-center gap-3 pb-3 transition-opacity hover:opacity-80 group",
+                  collapsed ? "justify-center px-0" : "px-1",
+                )}
               >
-                {user?.fullName?.charAt(0).toUpperCase() ?? "E"}
-              </span>
-              {!collapsed && (
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold">{user?.fullName ?? "Educator"}</p>
-                  <p className="truncate text-xs text-muted-foreground">
-                    {user?.role === "HEAD_EDUCATOR" ? "Head Educator" : "Educator"} ·{" "}
-                    {user?.preferredLanguage?.toUpperCase() ?? "EN"}
-                  </p>
-                </div>
-              )}
+                <span
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 font-bold text-primary-foreground group-hover:scale-105 transition-transform"
+                  aria-hidden
+                >
+                  {user?.fullName?.charAt(0).toUpperCase() ?? "E"}
+                </span>
+                {!collapsed && (
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold group-hover:text-primary transition-colors">
+                      {user?.fullName ?? "Educator"}
+                    </p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {user?.role === "HEAD_EDUCATOR" ? "Head Educator" : "Educator"} ·{" "}
+                      {user?.preferredLanguage?.toUpperCase() ?? "EN"}
+                    </p>
+                  </div>
+                )}
+              </Link>
               <button
                 onClick={() => setCollapsed((c) => !c)}
                 className={cn(

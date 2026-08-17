@@ -72,20 +72,26 @@ export function StudentShell({ children, banner, className }: StudentShellProps)
             {/* Peeking Helmet Companion */}
             <HelmetCompanion peeking size="sm" mood="neutral" className="right-3 -top-10 z-50" />
 
-            <div className="flex items-center gap-3 px-1 pb-3 pt-1 border-b border-border/40">
+            <Link
+              to="/settings"
+              title="View Profile & Settings"
+              className="flex items-center gap-3 px-1 pb-3 pt-1 border-b border-border/40 transition-opacity hover:opacity-80 group"
+            >
               <span
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 font-bold text-xs text-primary-foreground shadow-xs"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 font-bold text-xs text-primary-foreground shadow-xs group-hover:scale-105 transition-transform"
                 aria-hidden
               >
                 {user?.fullName?.charAt(0).toUpperCase() ?? "S"}
               </span>
               <div className="min-w-0">
-                <p className="truncate text-xs font-bold text-foreground">{user?.fullName ?? "Learner"}</p>
+                <p className="truncate text-xs font-bold text-foreground group-hover:text-primary transition-colors">
+                  {user?.fullName ?? "Learner"}
+                </p>
                 <p className="truncate text-[10px] text-muted-foreground font-mono">
                   {user?.grade ?? "—"} · {user?.preferredLanguage.toUpperCase() ?? "EN"}
                 </p>
               </div>
-            </div>
+            </Link>
 
             <nav className="space-y-1 mt-2">
               {NAV_ITEMS.map((item) => {
