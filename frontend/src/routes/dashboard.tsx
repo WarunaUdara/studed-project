@@ -13,6 +13,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { DailySparkModal } from "@/components/daily-spark/DailySparkModal";
+import { CourseDepthDeck } from "@/components/gamification/CourseDepthDeck";
 import { PomodoroTimer } from "@/components/gamification/PomodoroTimer";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { StudentShell } from "@/components/layout/StudentShell";
@@ -254,6 +255,9 @@ function DashboardPage() {
               </Button>
             </div>
           </div>
+
+          {/* 3D Swappable Course Depth Deck */}
+          <CourseDepthDeck />
 
           {/* 2. Continue Learning — Hero Card spanning full width */}
           <Card className="relative rounded-[24px] overflow-visible">
