@@ -14,6 +14,7 @@ config:
   postgresDb: "studed"
   redisAddr: "redis:6379"
   elasticsearchUrl: "http://elasticsearch:9200"
+  otlpEndpoint: "http://tempo:4318"
 
 secrets:
   postgresUser: "studed_user"

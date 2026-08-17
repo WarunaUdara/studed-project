@@ -5,6 +5,11 @@ metadata:
   namespace: studed
   labels:
     app: notification-service
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: notification=ghcr.io/warunaudara/studed-notification-service
+    argocd-image-updater.argoproj.io/notification.update-strategy: latest
+    argocd-image-updater.argoproj.io/notification.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/notification.ignore-tags: regexp:^latest$
 spec:
   replicas: 1
   strategy:

@@ -53,6 +53,7 @@ services:
       JWT_ACCESS_TTL: 15m
       JWT_REFRESH_TTL: 168h
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
     ports:
       - "127.0.0.1:8081:8081"
       - "127.0.0.1:8085:8085"
@@ -76,6 +77,7 @@ services:
       AUTH_SERVICE_ADDR: auth-service:8081
       ELASTICSEARCH_URL: http://elasticsearch:9200
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
     ports:
       - "127.0.0.1:8083:8083"
       - "127.0.0.1:8084:8084"
@@ -103,6 +105,7 @@ services:
       COURSE_SERVICE_ADDR: course-service:8083
       GAMIFICATION_SERVICE_ADDR: gamification-service:8088
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
     ports:
       - "127.0.0.1:8086:8086"
       - "127.0.0.1:8087:8087"
@@ -129,6 +132,7 @@ services:
       DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
       REDIS_ADDR: redis:6379
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
     ports:
       - "127.0.0.1:8088:8088"
       - "127.0.0.1:8089:8089"
@@ -158,6 +162,7 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
     ports:
       - "127.0.0.1:8090:8090"
     healthcheck:
@@ -178,6 +183,7 @@ services:
       PAYHERE_MERCHANT_SECRET: ${PAYHERE_MERCHANT_SECRET:-}
       PAYHERE_NOTIFY_URL: ${PAYHERE_NOTIFY_URL:-}
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
     ports:
       - "127.0.0.1:8091:8091"
     depends_on:
@@ -198,6 +204,7 @@ services:
       NOTIFICATION_SERVICE_ADDR: :8092
       DATABASE_URL: postgres://studed:studed@postgres:5432/studed?sslmode=disable
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
     ports:
       - "127.0.0.1:8092:8092"
     depends_on:
@@ -223,6 +230,7 @@ services:
       STORAGE_EMULATOR_HOST: http://gcs-emulator:4443
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
       UPLOAD_MAX_BYTES: ${UPLOAD_MAX_BYTES:-10485760}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
     ports:
       - "127.0.0.1:8093:8093"
     depends_on:
@@ -278,6 +286,7 @@ services:
       REDIS_ADDR: redis:6379
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-local-dev-access-secret-min-32-bytes}
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
       GRAPHQL_PLAYGROUND: "true"
       # Local dev: raise rate limits well above the production defaults so
       # the frontend retry/polling patterns never trip 429s on localhost.
@@ -372,7 +381,6 @@ services:
         condition: service_started
 
   tempo:
-    profiles: ["monitoring"]
     image: grafana/tempo:2.7.1
     container_name: studed-tempo
     command: ["-config.file=/etc/tempo.yaml"]

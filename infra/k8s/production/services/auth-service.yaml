@@ -5,6 +5,11 @@ metadata:
   namespace: studed
   labels:
     app: auth-service
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: auth=ghcr.io/warunaudara/studed-auth-service
+    argocd-image-updater.argoproj.io/auth.update-strategy: latest
+    argocd-image-updater.argoproj.io/auth.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/auth.ignore-tags: regexp:^latest$
 spec:
   replicas: 2
   strategy:

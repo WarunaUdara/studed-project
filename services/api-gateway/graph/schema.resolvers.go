@@ -556,11 +556,13 @@ func (r *queryResolver) Courses(ctx context.Context, filter *model.CourseFilter,
 	if err != nil {
 		return nil, err
 	}
+	courses := make([]*model.Course, 0, len(conn.Edges))
 	for _, edge := range conn.Edges {
 		if edge != nil {
-			r.populateLessons(ctx, edge.Node)
+			courses = append(courses, edge.Node)
 		}
 	}
+	r.populateLessonsParallel(ctx, courses)
 	return conn, nil
 }
 
@@ -576,12 +578,12 @@ func (r *queryResolver) MyEnrollments(ctx context.Context) ([]*model.Course, err
 		return nil, err
 	}
 
+	r.populateLessonsParallel(ctx, courses)
 	for _, course := range courses {
-		r.populateLessons(ctx, course)
 		progress, _ := r.ProgressClient.GetCourseProgressSummary(ctx, userCtx.UserID, course.ID)
 		course.MyProgress = progress
-		r.populateWavesProgress(ctx, userCtx.UserID, course)
 	}
+	r.populateWavesProgressParallel(ctx, userCtx.UserID, courses)
 
 	return courses, nil
 }
@@ -626,7 +628,7 @@ func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, e
 		}
 		course.Lessons = publishedLessons
 		if ok {
-			r.populateWavesProgress(ctx, userCtx.UserID, course)
+			r.populateWavesProgressParallel(ctx, userCtx.UserID, []*model.Course{course})
 		}
 	}
 

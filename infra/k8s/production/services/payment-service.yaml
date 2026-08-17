@@ -5,6 +5,11 @@ metadata:
   namespace: studed
   labels:
     app: payment-service
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: payment=ghcr.io/warunaudara/studed-payment-service
+    argocd-image-updater.argoproj.io/payment.update-strategy: latest
+    argocd-image-updater.argoproj.io/payment.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/payment.ignore-tags: regexp:^latest$
 spec:
   replicas: 1
   strategy:
