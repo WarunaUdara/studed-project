@@ -1,0 +1,130 @@
+import { motion } from "framer-motion";
+import { CheckCircle2, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
+import type { CourseNode } from "./types";
+
+const KNOWN_COVERS: Record<string, string> = {
+  "coordinate-geometry": "/covers/coordinate-geometry.jpg",
+  "g10-mathematics": "/covers/g10-mathematics.jpg",
+  "thinking-in-python": "/covers/thinking-in-python.jpg",
+  "python-10-challenges": "/covers/python-10-challenges.jpg",
+  "al-physics": "/covers/al-physics.jpg",
+  "g10-science": "/covers/g10-science.jpg",
+  "ol-english": "/covers/ol-english.jpg",
+};
+
+interface CourseMilestoneCardProps {
+  course: CourseNode;
+  onClick: () => void;
+  index: number;
+}
+
+export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneCardProps) {
+  const isEnrolled = course.myProgress !== null && course.myProgress !== undefined;
+  const completed = course.myProgress?.completedWaves ?? 0;
+  const total = course.myProgress?.totalWaves ?? 0;
+  const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const coverUrl = KNOWN_COVERS[course.slug];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+      onClick={onClick}
+      className="group relative flex flex-col items-center cursor-pointer shrink-0 w-[170px] sm:w-[190px]"
+    >
+      {/* Squircle Card Container */}
+      <div
+        className={cn(
+          "relative flex h-[190px] w-full flex-col justify-between rounded-3xl border bg-card/90 p-3.5 shadow-sm transition-all duration-300 backdrop-blur-sm",
+          "hover:-translate-y-2 hover:shadow-xl hover:border-primary/40 group-hover:bg-card",
+          isEnrolled && "border-primary/30 ring-1 ring-primary/20",
+        )}
+      >
+        {/* Top Strip */}
+        <div className="flex items-center justify-between w-full">
+          <span className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase bg-muted/60 px-2 py-0.5 rounded-full">
+            {formatGrade(course.gradeLevel)}
+          </span>
+
+          {course.isNew ? (
+            <span className="flex items-center gap-0.5 rounded-full bg-emerald-500/20 px-2 py-0.5 text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400">
+              <Sparkles className="size-2.5" /> NEW
+            </span>
+          ) : isEnrolled ? (
+            <span className="flex items-center gap-0.5 rounded-full bg-primary/20 px-2 py-0.5 text-[9px] font-extrabold text-primary">
+              <CheckCircle2 className="size-2.5" /> {percent}%
+            </span>
+          ) : null}
+        </div>
+
+        {/* Center 3D Icon / Cover */}
+        <div className="relative my-auto flex size-24 items-center justify-center overflow-hidden rounded-2xl bg-muted/40 shadow-inner group-hover:scale-105 transition-transform duration-300">
+          {coverUrl ? (
+            <img
+              src={coverUrl}
+              alt={course.title}
+              className="size-full object-cover rounded-2xl"
+              loading="lazy"
+            />
+          ) : (
+            <div className="flex size-full items-center justify-center p-3">
+              <DefaultSubjectIcon title={course.title} />
+            </div>
+          )}
+        </div>
+
+        {/* Bottom Progress Bar */}
+        <div className="w-full">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+            <div
+              className="h-full rounded-full bg-primary transition-all duration-500"
+              style={{ width: `${isEnrolled ? Math.max(8, percent) : 0}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Course Title Below Card */}
+      <h3 className="mt-2.5 w-full text-center text-xs font-bold text-foreground transition-colors group-hover:text-primary line-clamp-2 px-1">
+        {course.title}
+      </h3>
+    </motion.div>
+  );
+}
+
+function formatGrade(grade: string): string {
+  if (grade.startsWith("GRADE_")) {
+    return `GR ${grade.replace("GRADE_", "")}`;
+  }
+  if (grade === "OL") return "O/L";
+  if (grade === "AL") return "A/L";
+  return grade;
+}
+
+function DefaultSubjectIcon({ title }: { title: string }) {
+  const t = title.toLowerCase();
+  if (t.includes("math") || t.includes("geometry") || t.includes("algebra")) {
+    return (
+      <svg viewBox="0 0 64 64" className="size-full">
+        <rect x="12" y="12" width="40" height="40" rx="10" fill="#3b82f6" opacity="0.2" />
+        <path d="M 22,44 L 42,20 M 24,24 L 28,24 M 36,40 L 40,40" stroke="#3b82f6" strokeWidth="4" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (t.includes("python") || t.includes("code") || t.includes("cs")) {
+    return (
+      <svg viewBox="0 0 64 64" className="size-full">
+        <rect x="12" y="12" width="40" height="40" rx="10" fill="#a855f7" opacity="0.2" />
+        <path d="M 24,26 L 16,32 L 24,38 M 40,26 L 48,32 L 40,38" stroke="#a855f7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 64 64" className="size-full">
+      <rect x="12" y="12" width="40" height="40" rx="10" fill="#10b981" opacity="0.2" />
+      <circle cx="32" cy="32" r="12" fill="#10b981" />
+    </svg>
+  );
+}
