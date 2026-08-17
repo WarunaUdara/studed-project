@@ -2,6 +2,9 @@ FROM golang:1.26.2-alpine3.22 AS builder
 
 ENV GOTOOLCHAIN=auto
 ENV CGO_ENABLED=0
+# Cap compile parallelism so 9 concurrent `docker compose build`s cannot
+# exhaust dev-laptop RAM (Go defaults to GOMAXPROCS workers per build).
+ENV GOFLAGS=-p=2
 
 WORKDIR /build
 
