@@ -15,3 +15,4 @@ data:
   COURSE_SERVICE_ADDR: "course-service:{{ .Values.services.courseService.grpcPort }}"
   PROGRESS_SERVICE_ADDR: "progress-service:{{ .Values.services.progressService.grpcPort }}"
   GAMIFICATION_SERVICE_ADDR: "gamification-service:{{ .Values.services.gamificationService.grpcPort }}"
+  OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.config.otlpEndpoint | default "http://tempo:4318" | quote }}

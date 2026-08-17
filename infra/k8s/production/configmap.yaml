@@ -28,3 +28,5 @@ data:
   JWT_REFRESH_TTL: "168h"
   # AI
   GEMINI_MODEL: "gemini-2.5-flash"
+  # OpenTelemetry OTLP trace export (Tempo runs in-cluster; see tempo.yaml).
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://tempo:4318"
