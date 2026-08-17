@@ -19,6 +19,11 @@ metadata:
   namespace: studed
   labels:
     app: upload-service
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: upload=ghcr.io/warunaudara/studed-upload-service
+    argocd-image-updater.argoproj.io/upload.update-strategy: latest
+    argocd-image-updater.argoproj.io/upload.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/upload.ignore-tags: regexp:^latest$
 spec:
   replicas: 2
   strategy:

@@ -5,6 +5,11 @@ metadata:
   namespace: studed
   labels:
     app: progress-service
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: progress=ghcr.io/warunaudara/studed-progress-service
+    argocd-image-updater.argoproj.io/progress.update-strategy: latest
+    argocd-image-updater.argoproj.io/progress.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/progress.ignore-tags: regexp:^latest$
 spec:
   replicas: 1
   strategy:

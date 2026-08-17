@@ -11,6 +11,11 @@ metadata:
   namespace: studed
   labels:
     app: api-gateway
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: gateway=ghcr.io/warunaudara/studed-api-gateway
+    argocd-image-updater.argoproj.io/gateway.update-strategy: latest
+    argocd-image-updater.argoproj.io/gateway.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/gateway.ignore-tags: regexp:^latest$
 spec:
   replicas: 2
   strategy:
