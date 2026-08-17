@@ -9,9 +9,11 @@ go-build-linux:
 		fi \
 	done
 
-dev-up: go-build-linux
+dev-up: docker-mem-check
 	@docker info >/dev/null 2>&1 || podman info >/dev/null 2>&1 || (echo "Container engine (Docker or Podman) is not running. Please start it and try again." && exit 1)
-	docker compose -f docker-compose.yml up --build -d --remove-orphans
+	# COMPOSE_PARALLEL_LIMIT=2 caps concurrent builds so 9 Go Dockerfiles cannot
+	# OOM a 16GB dev laptop (each build already runs with GOFLAGS=-p=2).
+	COMPOSE_PARALLEL_LIMIT=2 docker compose -f docker-compose.yml up --build -d --remove-orphans
 
  launch:
 	bun run scripts/launch.ts
@@ -50,6 +52,17 @@ dev-up: go-build-linux
  k8s-status:
 	./scripts/k8s-dev.sh status
 
+# One-time GitOps controller install for Phase 1 progressive delivery:
+#   - Argo CD Image Updater: tracks the immutable sha-* image tags CI publishes
+#     and updates the Deployment manifests (rollback-safe, no mutable :latest).
+#   - Argo Rollouts: BlueGreen/canary rollouts with manual promote + abort.
+# Requires the argocd namespace (ArgoCD) to exist first.
+ gitops-controllers:
+	@kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/stable/manifests/install.yaml
+	@kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-rollouts/stable/manifests/install.yaml
+	@echo "Installed Argo CD Image Updater + Argo Rollouts controllers into namespace 'argocd'."
+	@echo "Enable per-service Rollouts via infra/k8s/argocd/rollouts/api-gateway-rollout.yaml"
+
  iac-init:
 	cd infra/gcp/terraform-prod && tofu init
 
@@ -83,6 +96,23 @@ dev-up: go-build-linux
 	@bun --version
 	@(docker --version || podman --version) 2>/dev/null
 	@echo "Environment doctor check passed!"
+
+# Fails fast when the container VM is too small to build/run the StudEd stack.
+# The full stack (Elasticsearch + Postgres + Redis + 9 Go services) needs >= 6 GiB.
+ docker-mem-check:
+	@UNIT=$$(docker info 2>/dev/null | grep "Total Memory"); \
+	MEM=$$(echo "$$UNIT" | awk -F': ' '{print $$2}' | tr -dc '0-9.'); \
+	IS_MIB=$$(echo "$$UNIT" | grep -q MiB && echo 1 || echo 0); \
+	if [ -z "$$MEM" ]; then echo "error: cannot read Docker Total Memory (is the engine running?)"; exit 1; fi; \
+	if [ "$$IS_MIB" = "1" ]; then MEM_GB=$$(echo "scale=3; $$MEM/1024" | bc 2>/dev/null || echo 1); else MEM_GB=$$MEM; fi; \
+	FITS=$$(echo "$$MEM_GB >= 6" | bc 2>/dev/null || echo 0); \
+	if [ "$$FITS" != "1" ]; then \
+		echo "error: Docker Desktop VM has only $$MEM_GB GiB (Total Memory: $$(echo "$$UNIT" | awk -F': ' '{print $$2}'))."; \
+		echo "The StudEd stack needs >= 6 GiB. Fix: Docker Desktop > Settings > Resources > Advanced >"; \
+		echo "Memory (set 8192 MB) > Apply & Restart. Or use Colima: 'colima start --cpu 4 --memory 8'."; \
+		exit 1; \
+	fi; \
+	echo "ok: Docker VM memory ($$MEM_GB GiB) is sufficient."
 
 # The observability stack sits behind the `monitoring` compose profile so a bad
 # host bind-mount cannot abort `dev-up` before the api-gateway starts. On macOS
