@@ -1,56 +1,94 @@
-import { Link } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, useNavigate } from "@tanstack/react-router";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  GraduationCap,
+  Languages,
+  Lock,
+  Mail,
+  Sparkles,
+  User,
+} from "lucide-react";
 import { useState } from "react";
-import { useLoginForm } from "@/components/auth/useLoginForm";
+import { useForm } from "react-hook-form";
+import { useMutation } from "urql";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Progress } from "@/components/ui/Progress";
+import { REGISTER_MUTATION } from "@/graphql/auth";
+import { sanitizeError } from "@/lib/errors";
+import { type Grade, useAuthStore } from "@/stores/auth";
 
-/**
- * Full-page login card.
- *
- * Like `LoginBrandPanel`, all colour comes from the theme-aware `login-*` token
- * pairs in index.css, so there is no light/dark branching here. Green *text* and
- * the CTA fill use `login-accent` / `login-cta` rather than `brand-green`, which
- * is too light to carry text or a white label on a light background.
- * Auth behaviour lives in `useLoginForm` and is shared with the navbar modal.
- */
+const registerSchema = z.object({
+  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  grade: z
+    .enum(["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "OL", "AL"])
+    .optional(),
+  preferredLanguage: z.string(),
+});
 
-/** Hexagon mask for the level badge, matching the comp's beveled badge. */
+type RegisterFormData = z.infer<typeof registerSchema>;
+
+/** Hexagon mask for the level badge, matching LoginAuthCard. */
 const HEX_CLIP = "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)";
 
-const LEVEL = 12;
-const XP_CURRENT = 350;
-const XP_TARGET = 500;
-
-/**
- * Shared field chrome: dark fill, hairline border, room for the leading icon.
- * Placeholders are /60 rather than /40 — they are read as content, so they are
- * held to the same 4.5:1 bar as body copy on this dark fill.
- */
 const FIELD_CLASSNAME =
   "h-12 rounded-2xl border-login-field-border bg-login-field pl-11 text-login-ink placeholder:text-login-ink-soft focus-visible:ring-2 focus-visible:ring-login-accent focus-visible:ring-offset-2 focus-visible:ring-offset-transparent";
 
-/** Green, offset focus ring for controls sitting on the dark card. */
 const FOCUS_RING =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-login-accent focus-visible:ring-offset-2 focus-visible:ring-offset-transparent";
 
-export function LoginAuthCard() {
+export function RegisterAuthCard() {
+  const navigate = useNavigate();
+  const setUser = useAuthStore((s) => s.setUser);
   const [showPassword, setShowPassword] = useState(false);
-  const { registerField, submit, errors, isSubmitting, error } = useLoginForm();
+  const [error, setError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      preferredLanguage: "en",
+      grade: "G1",
+    },
+  });
+
+  const [, registerMutation] = useMutation(REGISTER_MUTATION);
+
+  const onSubmit = async (data: RegisterFormData) => {
+    setError(null);
+    const input = {
+      ...data,
+      grade: data.grade as Grade | undefined,
+    };
+    const result = await registerMutation({ input });
+    if (result.error) {
+      setError(sanitizeError(result.error).message);
+      return;
+    }
+    if (result.data?.register?.user) {
+      const user = result.data.register.user;
+      setUser(user);
+      navigate({ to: "/dashboard" });
+    }
+  };
 
   return (
-    // Tighter gutters below sm: at 375px the full-width Google button's label
-    // plus its "Coming soon" suffix overflows an 8-unit inset.
     <div className="relative rounded-lg border border-login-card-border bg-login-card p-6 pt-14 shadow-login-card backdrop-blur-xl sm:p-8 sm:pt-16 short:p-6 short:pt-12 sm:short:p-6 sm:short:pt-12">
-      {/* Peeking mascot. Anchored to the card, and deliberately not inside any
-          overflow-hidden ancestor so it can break the top edge. Sized against
-          the tight-cropped art: roughly a third of it overlaps the card, which
-          is what makes it read as leaning rather than hovering. */}
+      {/* Peeking mascot anchored to top of card */}
       <img
         src="/covers/mascot/mascot-peek.png"
-        alt=""
+        alt="StudEd Mascot"
         aria-hidden="true"
         width={1536}
         height={1024}
@@ -68,16 +106,37 @@ export function LoginAuthCard() {
 
       <div className="text-center">
         <h1 className="text-3xl font-extrabold tracking-tight text-login-ink">
-          Welcome <span className="text-login-accent">back!</span>
+          Create your <span className="text-login-accent">account!</span>
         </h1>
         <p className="mt-1.5 text-sm text-login-ink-muted">
-          Sign in to continue your learning journey
+          Start your learning journey and claim your starter rewards
         </p>
       </div>
 
-      <LevelStrip />
+      <StarterRewardStrip />
 
-      <form onSubmit={submit} className="mt-6 space-y-4 short:mt-4 short:space-y-3" noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4 short:mt-4 short:space-y-3" noValidate>
+        {/* Full Name */}
+        <div className="space-y-2">
+          <Label htmlFor="fullName" className="text-sm font-semibold text-login-ink">
+            Full name
+          </Label>
+          <div className="relative">
+            <User
+              aria-hidden="true"
+              className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-login-ink-faint"
+            />
+            <Input
+              id="fullName"
+              placeholder="John Doe"
+              className={FIELD_CLASSNAME}
+              {...register("fullName")}
+            />
+          </div>
+          {errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
+        </div>
+
+        {/* Email */}
         <div className="space-y-2">
           <Label htmlFor="email" className="text-sm font-semibold text-login-ink">
             Email
@@ -92,12 +151,13 @@ export function LoginAuthCard() {
               type="email"
               placeholder="you@example.com"
               className={FIELD_CLASSNAME}
-              {...registerField("email")}
+              {...register("email")}
             />
           </div>
           {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
         </div>
 
+        {/* Password */}
         <div className="space-y-2">
           <Label htmlFor="password" className="text-sm font-semibold text-login-ink">
             Password
@@ -112,7 +172,7 @@ export function LoginAuthCard() {
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               className={`${FIELD_CLASSNAME} pr-12`}
-              {...registerField("password")}
+              {...register("password")}
             />
             <button
               type="button"
@@ -131,15 +191,67 @@ export function LoginAuthCard() {
           {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
         </div>
 
-        <div className="flex justify-end">
-          <button
-            type="button"
-            disabled
-            title="Password reset is coming soon"
-            className="cursor-not-allowed text-xs font-semibold text-login-accent/70"
-          >
-            Forgot password? <span className="font-normal text-login-ink-soft">· Coming soon</span>
-          </button>
+        {/* Grade & Language 2-column sub-grid */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {/* Grade Select */}
+          <div className="space-y-2">
+            <Label htmlFor="grade" className="text-sm font-semibold text-login-ink">
+              Grade
+            </Label>
+            <div className="relative">
+              <GraduationCap
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-login-ink-faint"
+              />
+              <select
+                id="grade"
+                className={`h-12 w-full appearance-none rounded-2xl border border-login-field-border bg-login-field pl-11 pr-8 text-sm font-medium text-login-ink ${FOCUS_RING}`}
+                {...register("grade")}
+              >
+                <option value="G1">Grade 1</option>
+                <option value="G2">Grade 2</option>
+                <option value="G3">Grade 3</option>
+                <option value="G4">Grade 4</option>
+                <option value="G5">Grade 5</option>
+                <option value="G6">Grade 6</option>
+                <option value="G7">Grade 7</option>
+                <option value="G8">Grade 8</option>
+                <option value="G9">Grade 9</option>
+                <option value="G10">Grade 10</option>
+                <option value="G11">Grade 11</option>
+                <option value="OL">O/L (Ordinary Level)</option>
+                <option value="AL">A/L (Advanced Level)</option>
+              </select>
+              <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-xs text-login-ink-faint">
+                ▼
+              </span>
+            </div>
+          </div>
+
+          {/* Language Select */}
+          <div className="space-y-2">
+            <Label htmlFor="preferredLanguage" className="text-sm font-semibold text-login-ink">
+              Language
+            </Label>
+            <div className="relative">
+              <Languages
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-login-ink-faint"
+              />
+              <select
+                id="preferredLanguage"
+                className={`h-12 w-full appearance-none rounded-2xl border border-login-field-border bg-login-field pl-11 pr-8 text-sm font-medium text-login-ink ${FOCUS_RING}`}
+                {...register("preferredLanguage")}
+              >
+                <option value="en">English (EN)</option>
+                <option value="si">සිංහල (Sinhala)</option>
+                <option value="ta">தமிழ் (Tamil)</option>
+              </select>
+              <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-xs text-login-ink-faint">
+                ▼
+              </span>
+            </div>
+          </div>
         </div>
 
         {error && (
@@ -148,16 +260,13 @@ export function LoginAuthCard() {
           </div>
         )}
 
-        {/* Button wraps its children in a content-width span, so the arrow would
-            anchor to the label rather than the button edge. Stretching that
-            wrapper to full width gives the arrow the button's right edge to sit
-            against, and keeps it inside the press animation. */}
+        {/* Submit CTA Button matching login */}
         <Button
           type="submit"
           disabled={isSubmitting}
           className={`h-13 w-full border-login-cta-border bg-login-cta text-base text-login-cta-ink shadow-none hover:bg-login-cta-hover [&>span:first-child]:w-full ${FOCUS_RING}`}
         >
-          {isSubmitting ? "Signing in..." : "Sign in"}
+          {isSubmitting ? "Creating account..." : "Create account"}
           <span
             aria-hidden="true"
             className="absolute top-1/2 right-0 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-login-cta-pip"
@@ -177,12 +286,11 @@ export function LoginAuthCard() {
         type="button"
         variant="outline"
         disabled
-        title="Google sign-in is coming soon"
+        title="Google sign-up is coming soon"
         className={`h-12 w-full border-login-line bg-login-field text-sm text-login-ink shadow-none ${FOCUS_RING}`}
       >
         <GoogleMark />
         Continue with Google
-        {/* Abbreviated below sm, where the full suffix overflows the button. */}
         <span className="text-xs font-normal text-login-ink-soft">
           <span className="sm:hidden">· Soon</span>
           <span className="hidden sm:inline">· Coming soon</span>
@@ -190,22 +298,22 @@ export function LoginAuthCard() {
       </Button>
 
       <p className="mt-6 text-center text-sm text-login-ink-muted short:mt-4">
-        Don't have an account?{" "}
+        Already have an account?{" "}
         <Link
-          to="/register"
+          to="/login"
           className={`rounded-sm font-semibold text-login-accent hover:underline ${FOCUS_RING}`}
         >
-          Create one
+          Sign in
         </Link>
       </p>
     </div>
   );
 }
 
-function LevelStrip() {
+function StarterRewardStrip() {
   return (
     <div className="mt-6 flex items-center gap-3 rounded-2xl border border-login-inset-border bg-login-inset p-3 short:mt-4">
-      {/* Green rim + dark core, both hexagons. */}
+      {/* Green rim + dark core hexagon */}
       <span
         aria-hidden="true"
         className="flex size-12 shrink-0 items-center justify-center bg-login-hex-rim"
@@ -215,29 +323,29 @@ function LevelStrip() {
           className="flex size-11 items-center justify-center bg-login-hex-core text-base font-extrabold text-login-hex-ink"
           style={{ clipPath: HEX_CLIP }}
         >
-          {LEVEL}
+          1
         </span>
       </span>
 
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-2">
-          <span className="text-sm font-semibold text-login-ink">Keep going!</span>
-          <span className="text-xs font-medium text-login-ink-muted">
-            {XP_CURRENT} / {XP_TARGET} XP
+          <span className="flex items-center gap-1 text-sm font-semibold text-login-ink">
+            Level 1 Starter
+            <Sparkles className="size-3.5 text-login-accent" />
           </span>
+          <span className="text-xs font-medium text-login-ink-muted">+100 Welcome XP</span>
         </div>
         <Progress
-          value={XP_CURRENT}
-          max={XP_TARGET}
+          value={100}
+          max={100}
           className="mt-2 h-2 bg-login-line [&>div]:bg-login-accent"
-          aria-label={`Level ${LEVEL} progress: ${XP_CURRENT} of ${XP_TARGET} XP`}
+          aria-label="Starter bonus ready to claim"
         />
       </div>
     </div>
   );
 }
 
-/** Google's mark is a fixed brand asset, so its colours are literal by nature. */
 function GoogleMark() {
   return (
     <svg viewBox="0 0 24 24" className="size-4" aria-hidden="true" focusable="false">
