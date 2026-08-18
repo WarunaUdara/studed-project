@@ -81,7 +81,7 @@ export function solveGearDirections(
 }
 
 /**
- * Unique Science Curated Puzzles (from simple 2-gear adjacent up to complex 7-gear cluster & pinwheel)
+ * Unique Science Curated Puzzles (including the advanced 7-gear cluster, curved arches, and linear chains)
  */
 export const SCIENCE_GEAR_PUZZLES: GearNetworkPuzzle[] = [
   // Puzzle 0: Learn Demo — 3-Gear Rotating Intro
@@ -214,21 +214,21 @@ export const SCIENCE_GEAR_PUZZLES: GearNetworkPuzzle[] = [
     },
   },
 
-  // Puzzle 4: 7-Gear Tree Cluster (Branching Network)
+  // Puzzle 4: Advanced 7-Gear Branched Cluster (Screenshot 1)
   {
-    id: "seven-gear-cluster",
-    title: "7-Gear Branched Cluster",
-    subtitle: "Which gears turn in the same direction as the yellow gear? Tap all matching gears.",
+    id: "seven-gear-branched-cluster",
+    title: "7-Gear Cluster Challenge",
+    subtitle: "Select all the gears that will turn in the same direction as the yellow gear.",
     type: "tap_to_select",
     driverId: "g0",
     nodes: [
-      { id: "g0", x: 70, y: 180, radius: 32, teeth: 12, color: "#eab308", shadowColor: "#ca8a04", isDriver: true },
-      { id: "g1", x: 95, y: 130, radius: 32, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g2", x: 50, y: 90, radius: 32, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g3", x: 145, y: 110, radius: 32, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g4", x: 145, y: 55, radius: 32, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g5", x: 195, y: 105, radius: 32, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g6", x: 235, y: 145, radius: 32, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g0", x: 190, y: 210, radius: 36, teeth: 12, color: "#eab308", shadowColor: "#ca8a04", isDriver: true },
+      { id: "g1", x: 130, y: 175, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g2", x: 70, y: 175, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g3", x: 130, y: 115, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g4", x: 190, y: 115, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g5", x: 130, y: 55, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g6", x: 225, y: 60, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
     ],
     edges: [
       { from: "g0", to: "g1" },
@@ -236,61 +236,18 @@ export const SCIENCE_GEAR_PUZZLES: GearNetworkPuzzle[] = [
       { from: "g1", to: "g3" },
       { from: "g3", to: "g4" },
       { from: "g3", to: "g5" },
-      { from: "g5", to: "g6" },
+      { from: "g4", to: "g6" },
     ],
     explanation: {
-      title: "Branching Network Rule",
+      title: "7-Gear Cluster Solution",
       steps: [
-        "In a branching tree, find the step distance (depth) from the yellow driver.",
-        "Depth 0 (g0): Driver (↺ Same)",
-        "Depth 1 (g1): ↻ Opposite",
-        "Depth 2 (g2, g3): ↺ Same (Selected ✓)",
-        "Depth 3 (g4, g5): ↻ Opposite",
-        "Depth 4 (g6): ↺ Same (Selected ✓)",
+        "Driver (Yellow, g0) rotates Counter-Clockwise (↺, Depth 0).",
+        "• g1 is at Depth 1 (Clockwise, ↻).",
+        "• g2 and g3 are at Depth 2 (Counter-Clockwise, ↺ ✓).",
+        "• g4 and g5 are at Depth 3 (Clockwise, ↻).",
+        "• g6 is at Depth 4 (Counter-Clockwise, ↺ ✓).",
       ],
-      rule: "Any gear at an EVEN depth (0, 2, 4...) rotates in the SAME direction as the driver gear!",
-    },
-  },
-
-  // Puzzle 5: Pinwheel Cross Mechanism (Master Kinetic Engine)
-  {
-    id: "pinwheel-cross",
-    title: "Master Pinwheel Mechanism",
-    subtitle: "Sometimes simple rules predict the behavior of complex mechanical systems.",
-    type: "learn_demo",
-    driverId: "center",
-    nodes: [
-      { id: "center", x: 150, y: 150, radius: 36, teeth: 12, color: "#eab308", shadowColor: "#ca8a04", isDriver: true },
-      // North Branch
-      { id: "n1", x: 150, y: 92, radius: 32, teeth: 12, color: "#14b8a6", shadowColor: "#0f766e" },
-      { id: "n2", x: 150, y: 40, radius: 32, teeth: 12, color: "#eab308", shadowColor: "#ca8a04" },
-      // South Branch
-      { id: "s1", x: 150, y: 208, radius: 32, teeth: 12, color: "#14b8a6", shadowColor: "#0f766e" },
-      { id: "s2", x: 150, y: 260, radius: 32, teeth: 12, color: "#eab308", shadowColor: "#ca8a04" },
-      // West Branch
-      { id: "w1", x: 92, y: 150, radius: 32, teeth: 12, color: "#14b8a6", shadowColor: "#0f766e" },
-      { id: "w2", x: 40, y: 150, radius: 32, teeth: 12, color: "#eab308", shadowColor: "#ca8a04" },
-      // East Branch
-      { id: "e1", x: 208, y: 150, radius: 32, teeth: 12, color: "#14b8a6", shadowColor: "#0f766e" },
-      { id: "e2", x: 260, y: 150, radius: 32, teeth: 12, color: "#eab308", shadowColor: "#ca8a04" },
-    ],
-    edges: [
-      { from: "center", to: "n1" },
-      { from: "n1", to: "n2" },
-      { from: "center", to: "s1" },
-      { from: "s1", to: "s2" },
-      { from: "center", to: "w1" },
-      { from: "w1", to: "w2" },
-      { from: "center", to: "e1" },
-      { from: "e1", to: "e2" },
-    ],
-    explanation: {
-      title: "Symmetric Pinwheel Symmetry",
-      steps: [
-        "The central yellow gear drives all four intermediate teal gears simultaneously.",
-        "Each outer yellow gear spins in the same direction as the central core!",
-      ],
-      rule: "Mechanisms with central drive distribute synchronized torque evenly across all arms.",
+      rule: "All gears at even depths (Depth 2: bottom-left & center, Depth 4: top-right) rotate in the SAME direction as the driver!",
     },
   },
 ];

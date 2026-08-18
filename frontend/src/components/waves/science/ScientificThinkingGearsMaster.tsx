@@ -1,12 +1,14 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Sparkles, X, XCircle } from "lucide-react";
 import { useState } from "react";
+import { DailyLessonLimitGate } from "./DailyLessonLimitGate";
 import { GearGraphSvg } from "./GearGraphSvg";
 import {
   GearNetworkPuzzle,
   SCIENCE_GEAR_PUZZLES,
   solveGearDirections,
 } from "./gear-network-engine";
+import { LessonCompleteCelebration } from "./LessonCompleteCelebration";
 import { Button } from "@/components/ui/button";
 
 export interface ScientificThinkingGearsMasterProps {
@@ -22,6 +24,7 @@ export function ScientificThinkingGearsMaster({
   onClose,
   className = "",
 }: ScientificThinkingGearsMasterProps) {
+  const [stage, setStage] = useState<"playing" | "celebrating" | "limit_gate">("playing");
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
@@ -95,12 +98,38 @@ export function ScientificThinkingGearsMaster({
       setEvalState("idle");
       setWrongNodeIds([]);
     } else {
-      onComplete?.(45);
+      onComplete?.(140);
+      setStage("celebrating");
     }
   };
 
   const isLastPuzzle = currentPuzzleIndex === puzzles.length - 1;
   const isLearnDemo = puzzle.type === "learn_demo";
+
+  if (stage === "celebrating") {
+    return (
+      <LessonCompleteCelebration
+        totalXp={140}
+        onContinue={() => setStage("limit_gate")}
+        className={className}
+      />
+    );
+  }
+
+  if (stage === "limit_gate") {
+    return (
+      <DailyLessonLimitGate
+        onWaitTomorrow={() => {
+          if (onClose) onClose();
+          else window.location.assign("/dashboard");
+        }}
+        onKeepLearning={() => {
+          window.location.assign("/dashboard");
+        }}
+        className={className}
+      />
+    );
+  }
 
   return (
     <div
@@ -140,7 +169,7 @@ export function ScientificThinkingGearsMaster({
 
         {/* XP Counter */}
         <div className="flex items-center gap-1 text-emerald-400 font-bold text-xs">
-          <span>{currentPuzzleIndex * 15 + (evalState === "correct" ? 15 : 0)}</span>
+          <span>{currentPuzzleIndex * 30 + (evalState === "correct" ? 30 : 0)}</span>
           <Sparkles className="size-3.5 fill-current" />
         </div>
       </div>
@@ -261,7 +290,7 @@ export function ScientificThinkingGearsMaster({
               onClick={handleAdvance}
               className="rounded-full bg-white hover:bg-neutral-200 text-black font-bold text-xs sm:text-sm px-7 h-11 shadow-sm"
             >
-              {isLastPuzzle ? "Complete Wave" : "Continue"}
+              {isLastPuzzle ? "Finish" : "Continue"}
             </Button>
           )}
 
@@ -293,7 +322,7 @@ export function ScientificThinkingGearsMaster({
                 onClick={handleAdvance}
                 className="rounded-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs sm:text-sm px-7 h-11 shadow-sm"
               >
-                {isLastPuzzle ? "Finish Wave" : "Continue"}
+                {isLastPuzzle ? "Finish" : "Continue"}
               </Button>
             </div>
           )}
