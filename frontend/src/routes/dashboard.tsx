@@ -8,6 +8,7 @@ import { DashboardPremiumCard } from "@/components/dashboard/DashboardPremiumCar
 import { DashboardStreakWidget } from "@/components/dashboard/DashboardStreakWidget";
 import { BilateralCardDeck } from "@/components/gamification/BilateralCardDeck";
 import { StudentShell } from "@/components/layout/StudentShell";
+import { SearchAskModal } from "@/components/search/SearchAskModal";
 import { useAuthStore } from "@/stores/auth";
 
 export const Route = createFileRoute("/dashboard")({
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/dashboard")({
 function DashboardPage() {
   const { user } = useAuthStore();
   const [dailySparkOpen, setDailySparkOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Auto-prompt daily spark if not completed today
@@ -35,9 +37,7 @@ function DashboardPage() {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.assign(`/courses?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
+    setSearchModalOpen(true);
   };
 
   return (
@@ -90,6 +90,13 @@ function DashboardPage() {
         <DailySparkModal
           isOpen={dailySparkOpen}
           onClose={() => setDailySparkOpen(false)}
+        />
+
+        {/* Smart Search & AI Ask Modal */}
+        <SearchAskModal
+          isOpen={searchModalOpen}
+          onClose={() => setSearchModalOpen(false)}
+          initialQuery={searchQuery}
         />
       </StudentShell>
     </ProtectedRoute>

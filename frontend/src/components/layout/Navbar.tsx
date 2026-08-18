@@ -1,27 +1,33 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   Award,
+  BookOpen,
   Brain,
   Code,
   Compass,
   Crown,
   Flame,
   GraduationCap,
+  Home,
   Info,
   Key,
+  LayoutDashboard,
   LayoutGrid,
   Moon,
+  Search,
   Settings,
+  Sparkles,
   Sun,
   Trophy,
   Users,
   Zap,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoginModal } from "@/components/auth/LoginModal";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { Button } from "@/components/ui/button";
 import { FloatingCardNav, type MegaMenuItem } from "@/components/ui/CardNav";
+import { SearchAskModal } from "@/components/search/SearchAskModal";
 import { levelFromXp } from "@/lib/gamification";
 import { useAuthStore } from "@/stores/auth";
 import { useUiPrefs } from "@/stores/uiPrefs";
@@ -31,6 +37,7 @@ export function Navbar() {
   const theme = useUiPrefs((s) => s.theme);
   const toggleTheme = useUiPrefs((s) => s.toggleTheme);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   const pathname = useRouterState().location.pathname;
   const streak = Math.max(1, user?.streak ?? 1);
@@ -38,7 +45,78 @@ export function Navbar() {
   const totalXp = Math.max(0, user?.totalXp ?? 140);
   const levelInfo = levelFromXp(totalXp);
 
+  // Global Cmd+K / Ctrl+K keyboard shortcut for Search & Ask
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchModalOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const NAV_ITEMS: MegaMenuItem[] = [
+    ...(isAuthenticated
+      ? [
+          {
+            id: "dashboard",
+            label: "Dashboard",
+            href: "/dashboard",
+            links: [
+              {
+                label: "Student Overview",
+                href: "/dashboard",
+                description: "Continue where you left off and complete daily waves",
+                icon: <LayoutDashboard className="size-4 text-primary" />,
+                badge: "Active",
+              },
+              {
+                label: "Daily Spark Warmup",
+                href: "/dashboard",
+                description: "Quick 2-minute daily cognitive booster (+15 XP)",
+                icon: <Zap className="size-4 text-lime-500" />,
+              },
+              {
+                label: "Course Progress Map",
+                href: "/courses",
+                description: "View all enrolled tracks and pedagogical milestones",
+                icon: <BookOpen className="size-4 text-amber-500" />,
+              },
+            ],
+            previewCards: [
+              {
+                title: "Student Dashboard",
+                subtitle: "Resume your active learning track, solve kinetic gear puzzles, and protect your 7-day streak.",
+                href: "/dashboard",
+                gradient: "bg-gradient-to-tr from-primary/30 via-emerald-500/20 to-teal-400/20",
+                icon: <Sparkles className="size-6 text-primary" />,
+              },
+            ],
+          },
+        ]
+      : [
+          {
+            id: "home",
+            label: "Home",
+            href: "/",
+            links: [
+              {
+                label: "Overview",
+                href: "/",
+                description: "School, rewritten as a game you can win",
+                icon: <Home className="size-4 text-primary" />,
+              },
+              {
+                label: "Explore Curriculum",
+                href: "/courses",
+                description: "Browse interactive STEM and language courses",
+                icon: <BookOpen className="size-4 text-amber-500" />,
+              },
+            ],
+          },
+        ]),
     {
       id: "courses",
       label: "Courses",
@@ -209,8 +287,30 @@ export function Navbar() {
       <FloatingCardNav
         activePath={pathname}
         items={NAV_ITEMS}
+        logoNode={
+          <Link
+            to={isAuthenticated ? "/dashboard" : "/"}
+            className="flex items-center gap-1 font-serif text-2xl font-bold tracking-tight text-foreground hover:opacity-90 transition-opacity"
+          >
+            Stud<span className="italic text-primary">Ed</span>
+          </Link>
+        }
         rightNode={
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Instant Search & AI Ask Trigger Button */}
+            <button
+              type="button"
+              onClick={() => setSearchModalOpen(true)}
+              className="flex items-center gap-2 rounded-full border border-border/80 bg-card/60 hover:bg-muted px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-all shadow-2xs"
+              title="Search topics & waves (⌘K)"
+            >
+              <Search className="size-3.5 text-primary" />
+              <span className="hidden md:inline font-medium">Search / Ask</span>
+              <kbd className="hidden lg:inline-flex rounded bg-muted px-1.5 py-0.5 text-[10px] font-bold border border-border/80 text-muted-foreground">
+                ⌘K
+              </kbd>
+            </button>
+
             {/* Go Premium CTA Pill */}
             <Link to="/subscription">
               <button
@@ -292,7 +392,9 @@ export function Navbar() {
         }
       />
 
+      {/* Modals */}
       <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
+      <SearchAskModal isOpen={searchModalOpen} onClose={() => setSearchModalOpen(false)} />
     </>
   );
 }

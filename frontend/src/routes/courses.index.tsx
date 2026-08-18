@@ -34,7 +34,12 @@ const CATEGORY_TABS: { id: PathCategory; label: string; icon: string }[] = [
 ];
 
 function CoursesCatalogPage() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(() => {
+    if (typeof window !== "undefined") {
+      return new URLSearchParams(window.location.search).get("search") || "";
+    }
+    return "";
+  });
   const [activeCategory, setActiveCategory] = useState<PathCategory>("ALL");
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 
