@@ -26,5 +26,6 @@ submodules
 99-Meta
 *.md
 *.base
+.DS_Store
 services/content-service
 services/user-service

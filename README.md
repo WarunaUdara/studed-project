@@ -144,7 +144,7 @@ graph TB
 ### Prerequisites
 * **Go**: `1.24+`
 * **Node & Bun**: `Node 22+` / `Bun 1.2+`
-* **Container Runtime**: Docker Desktop or Podman
+* **Container Runtime**: Docker (Colima recommended on macOS)
 * **OpenTofu**: `v1.8+` *(optional for IaC)*
 
 ### 1. Launch Complete Stack Locally
@@ -169,8 +169,17 @@ The frontend will be available at **`http://localhost:5173`** and the GraphQL AP
 
 | Role | Email | Password | Scope |
 | :--- | :--- | :--- | :--- |
-| **Student** | `demo.student@studed.lk` | `password123` | Interactive Wave Player, Quests, Pomodoro, XP & Leaderboard |
-| **Educator** | `demo.educator@studed.lk` | `password123` | Puck Wave Authoring, Course Publishing & Analytics |
+| **Student** | `demo.student@studed.lk` | `password1234` | Interactive Wave Player, Quests, Pomodoro, XP & Leaderboard |
+| **Educator** | `demo.educator@studed.lk` | `password1234` | Puck Wave Authoring, Course Publishing & Analytics |
+
+### 3. Single-Command Live Public Demo (Ngrok Tunnel)
+Expose the full platform on a secure, public HTTPS URL for reviewers and external stakeholders:
+```bash
+make demo-public
+```
+> **Live Demo URL**: [`https://mumps-lapel-rinsing.ngrok-free.dev`](https://mumps-lapel-rinsing.ngrok-free.dev)  
+> **Demo Student Credentials**: `demo.student@studed.lk` / `password1234`  
+> **Demo Educator Credentials**: `demo.educator@studed.lk` / `password1234`
 
 ---
 

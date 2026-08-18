@@ -162,8 +162,8 @@ main() {
   echo "Deployment complete."
   echo "  Backend:  https://api.${ip}.sslip.io/graphql"
   echo "  Frontend: https://studed-project-frontend.pages.dev"
-  echo "  Educator: demo.educator@studed.lk / password123"
-  echo "  Student:  demo.student@studed.lk / password123"
+  echo "  Educator: demo.educator@studed.lk / password1234"
+  echo "  Student:  demo.student@studed.lk / password1234"
   echo "  Stop costs: make prod-stop   |  Wake up: make prod-start   |  Full teardown: make prod-destroy"
 }
 

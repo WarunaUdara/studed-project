@@ -24,8 +24,8 @@ const VIEWPORTS: Record<string, { width: number; height: number }> = {
 const vp = VIEWPORTS[vpArg ?? "desktop"] ?? VIEWPORTS.desktop;
 
 const CREDENTIALS = {
-  student: { email: "demo.student@studed.lk", password: "password123" },
-  educator: { email: "demo.educator@studed.lk", password: "password123" },
+  student: { email: "demo.student@studed.lk", password: "password1234" },
+  educator: { email: "demo.educator@studed.lk", password: "password1234" },
 };
 
 // Real IDs from the seeded demo database.

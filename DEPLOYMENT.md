@@ -130,8 +130,8 @@ make prod-seed    # idempotent: registers/logs in demo accounts, creates
                   # subscription, enrolls, completes one wave for XP
 ```
 
-Accounts: `demo.educator@studed.lk` / `password123` and
-`demo.student@studed.lk` / `password123`.
+Accounts: `demo.educator@studed.lk` / `password1234` and
+`demo.student@studed.lk` / `password1234`.
 
 ## Teardown (stop ALL billing)
 
