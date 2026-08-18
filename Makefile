@@ -9,8 +9,8 @@ go-build-linux:
 		fi \
 	done
 
-dev-up: docker-mem-check
-	@docker info >/dev/null 2>&1 || podman info >/dev/null 2>&1 || (echo "Container engine (Docker or Podman) is not running. Please start it and try again." && exit 1)
+dev-up: docker-mem-check docker-buildx-check
+	@docker info >/dev/null 2>&1 || (echo "Container engine (Docker) is not running. Start it with 'colima start' and try again." && exit 1)
 	# COMPOSE_PARALLEL_LIMIT=2 caps concurrent builds so 9 Go Dockerfiles cannot
 	# OOM a 16GB dev laptop (each build already runs with GOFLAGS=-p=2).
 	COMPOSE_PARALLEL_LIMIT=2 docker compose -f docker-compose.yml up --build -d --remove-orphans
@@ -25,7 +25,7 @@ dev-up: docker-mem-check
 	docker compose logs -f
 
  floci-gcp-up:
-	@docker info >/dev/null 2>&1 || podman info >/dev/null 2>&1 || (echo "Container engine (Docker or Podman) is not running. Please start it and try again." && exit 1)
+	@docker info >/dev/null 2>&1 || (echo "Container engine (Docker) is not running. Start it with 'colima start' and try again." && exit 1)
 	docker compose -f docker-compose.yml up -d floci-gcp
 
  floci-gcp-down:
@@ -94,7 +94,7 @@ dev-up: docker-mem-check
 	@echo "Checking development environment toolchain..."
 	@go version
 	@bun --version
-	@(docker --version || podman --version) 2>/dev/null
+	@docker --version
 	@echo "Environment doctor check passed!"
 
 # Fails fast when the container VM is too small to build/run the StudEd stack.
@@ -107,12 +107,19 @@ dev-up: docker-mem-check
 	if [ "$$IS_MIB" = "1" ]; then MEM_GB=$$(echo "scale=3; $$MEM/1024" | bc 2>/dev/null || echo 1); else MEM_GB=$$MEM; fi; \
 	FITS=$$(echo "$$MEM_GB >= 6" | bc 2>/dev/null || echo 0); \
 	if [ "$$FITS" != "1" ]; then \
-		echo "error: Docker Desktop VM has only $$MEM_GB GiB (Total Memory: $$(echo "$$UNIT" | awk -F': ' '{print $$2}'))."; \
-		echo "The StudEd stack needs >= 6 GiB. Fix: Docker Desktop > Settings > Resources > Advanced >"; \
-		echo "Memory (set 8192 MB) > Apply & Restart. Or use Colima: 'colima start --cpu 4 --memory 8'."; \
+		echo "error: Docker VM has only $$MEM_GB GiB (Total Memory: $$(echo "$$UNIT" | awk -F': ' '{print $$2}'))."; \
+		echo "The StudEd stack needs >= 6 GiB. Fix: 'colima start --cpu 4 --memory 8'."; \
 		exit 1; \
 	fi; \
 	echo "ok: Docker VM memory ($$MEM_GB GiB) is sufficient."
+
+# The Go Dockerfiles use BuildKit mounts (RUN --mount=type=cache) which require
+# the docker buildx plugin. Docker Desktop bundles buildx; Colima/brew users
+# need 'brew install docker-buildx'. Fail early with a clear hint instead of the
+# cryptic 'the --mount option requires BuildKit' build error.
+ docker-buildx-check:
+	@docker buildx version >/dev/null 2>&1 || { echo "error: docker buildx plugin is required (Dockerfiles use BuildKit --mount)."; echo "Docker Desktop bundles it. Colima users: 'brew install docker-buildx'."; exit 1; }
+	@echo "ok: docker buildx (BuildKit) is available."
 
 # The observability stack sits behind the `monitoring` compose profile so a bad
 # host bind-mount cannot abort `dev-up` before the api-gateway starts. On macOS
@@ -125,7 +132,7 @@ dev-up: docker-mem-check
 	docker compose --profile monitoring stop prometheus grafana tempo postgres-exporter redis-exporter
 
  promtool-check:
-	@if docker info >/dev/null 2>&1 || podman info >/dev/null 2>&1; then \
+	@if docker info >/dev/null 2>&1; then \
 		docker run --rm --entrypoint promtool -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 check config /etc/prometheus/prometheus.yml && \
 		docker run --rm --entrypoint promtool -v $(PWD)/infra/monitoring/prometheus:/etc/prometheus prom/prometheus:v3.2.1 check rules /etc/prometheus/rules/studed.rules.yml; \
 	else \
