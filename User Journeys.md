@@ -74,7 +74,7 @@ graph TD
 - **State Mutation**: Issues Access Token & Refresh Token; stores user session in Auth Context.
 - **🧪 Test Plan Specification (`test-002-auth-login.spec.ts`)**:
   1. Navigate to `/login`.
-  2. Input email `demo.student@studed.lk` and password `password123`.
+  2. Input email `demo.student@studed.lk` and password `password1234`.
   3. Click Submit button.
   4. Assert response contains `accessToken` and redirects to `/dashboard`.
   5. Repeat test for invalid credentials and assert error alert message appears.
@@ -195,4 +195,4 @@ graph TD
 When generating automated test cases (Playwright E2E or Vitest unit tests):
 1. **Target Directory**: Place Playwright E2E scripts in `frontend/e2e/specs/`.
 2. **Selector Convention**: Use `data-testid` attributes or semantic labels (e.g. `page.getByRole('button', { name: 'Submit' })`).
-3. **Mock Data**: Use seeded mock accounts (`demo.student@studed.lk` / `password123`) or mock network handlers via Playwright `page.route()`.
+3. **Mock Data**: Use seeded mock accounts (`demo.student@studed.lk` / `password1234`) or mock network handlers via Playwright `page.route()`.

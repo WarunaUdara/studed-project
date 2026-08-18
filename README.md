@@ -143,8 +143,8 @@ Expose the full platform on a secure, public HTTPS URL for reviewers and externa
 make demo-public
 ```
 > **Live Demo URL**: [`https://mumps-lapel-rinsing.ngrok-free.dev`](https://mumps-lapel-rinsing.ngrok-free.dev)  
-> **Demo Student Credentials**: `demo.student@studed.lk` / `password123`  
-> **Demo Educator Credentials**: `demo.educator@studed.lk` / `password123`
+> **Demo Student Credentials**: `demo.student@studed.lk` / `password1234`  
+> **Demo Educator Credentials**: `demo.educator@studed.lk` / `password1234`
 
 ### 2. Docker Compose Local Backend
 Launch PostgreSQL, Redis, Elasticsearch, and all Go microservices locally:

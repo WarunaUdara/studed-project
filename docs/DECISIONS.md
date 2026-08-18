@@ -99,8 +99,8 @@ new `infra/k8s/production` automatically.
 - Backend GraphQL: `https://api.34.149.224.124.sslip.io/graphql`
 - Backend health: `https://api.34.149.224.124.sslip.io/health`
 - Frontend: `https://studed-project-frontend.pages.dev`
-- Educator: `demo.educator@studed.lk` / `password123`
-- Student: `demo.student@studed.lk` / `password123`
+- Educator: `demo.educator@studed.lk` / `password1234`
+- Student: `demo.student@studed.lk` / `password1234`
 - ArgoCD: `kubectl -n argocd port-forward svc/argocd-server 8080:443`
   password: `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 
