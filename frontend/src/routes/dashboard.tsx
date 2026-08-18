@@ -6,7 +6,7 @@ import { DailySparkModal } from "@/components/daily-spark/DailySparkModal";
 import { DashboardAITutorNudge } from "@/components/dashboard/DashboardAITutorNudge";
 import { DashboardLeagueWidget } from "@/components/dashboard/DashboardLeagueWidget";
 import { DashboardStreakWidget } from "@/components/dashboard/DashboardStreakWidget";
-import { CourseDepthDeck } from "@/components/gamification/CourseDepthDeck";
+import { BilateralCardDeck } from "@/components/gamification/BilateralCardDeck";
 import { StudentShell } from "@/components/layout/StudentShell";
 import { Button } from "@/components/ui/button";
 import { levelFromXp } from "@/lib/gamification";
@@ -81,8 +81,8 @@ function DashboardPage() {
               {/* AI Tutor Nudge Prompt */}
               <DashboardAITutorNudge />
 
-              {/* 3D Swappable Focus Course Deck */}
-              <CourseDepthDeck />
+              {/* Bilateral Swappable Course Card Stack */}
+              <BilateralCardDeck />
             </div>
           </div>
         </div>
