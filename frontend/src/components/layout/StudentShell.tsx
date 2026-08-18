@@ -15,6 +15,7 @@ import { XPBar } from "@/components/gamification/XPBar";
 import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
 import { StreakCelebrationModal } from "@/components/scenes/StreakCelebrationModal";
 import { Button } from "@/components/ui/button";
+import { CardNav, type CardNavItem } from "@/components/ui/CardNav";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
 
@@ -40,6 +41,31 @@ const MOBILE_TABS: NavItem[] = [
   { to: "/leaderboard", label: "Ranks", icon: Crown, matchPrefix: "/leaderboard" },
   { to: "/achievements", label: "Stats", icon: TrendingUp, matchPrefix: "/achievements" },
   { to: "/settings", label: "Profile", icon: SettingsIcon, matchPrefix: "/settings" },
+];
+
+const STUDENT_CARD_NAV_ITEMS: CardNavItem[] = [
+  {
+    label: "Learning Paths",
+    links: [
+      { label: "Math Foundations", href: "/courses", ariaLabel: "Math" },
+      { label: "Python & Coding", href: "/courses", ariaLabel: "Coding" },
+      { label: "All Curriculums", href: "/courses", ariaLabel: "All Courses" },
+    ],
+  },
+  {
+    label: "Leagues & Ranks",
+    links: [
+      { label: "Hydrogen League", href: "/leaderboard", ariaLabel: "League" },
+      { label: "Global Leaderboard", href: "/leaderboard", ariaLabel: "Global" },
+    ],
+  },
+  {
+    label: "Quests & Stats",
+    links: [
+      { label: "Daily Spark Warmup", href: "/dashboard", ariaLabel: "Daily Spark" },
+      { label: "Achievements & Badges", href: "/achievements", ariaLabel: "Achievements" },
+    ],
+  },
 ];
 
 export interface StudentShellProps {
@@ -138,6 +164,19 @@ export function StudentShell({ children, banner, className }: StudentShellProps)
 
       {/* Content */}
       <div className="min-w-0 flex-1 space-y-6 pb-28 sm:pb-24 lg:pb-0">
+        {/* Expandable Quick Nav */}
+        <div className="mb-4 flex justify-center w-full">
+          <CardNav
+            items={STUDENT_CARD_NAV_ITEMS}
+            logoNode={
+              <span className="font-serif font-bold text-base sm:text-lg text-primary tracking-tight">
+                Stud<span className="italic text-foreground">Ed</span> Hub
+              </span>
+            }
+            ctaLabel="All Paths"
+            onCtaClick={() => window.location.assign("/courses")}
+          />
+        </div>
         {banner}
         {children}
       </div>
