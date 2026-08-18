@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Award,
   BookOpen,
@@ -8,23 +9,20 @@ import {
   Crown,
   Flame,
   GraduationCap,
-  Home,
-  Info,
   Key,
   LayoutDashboard,
   LayoutGrid,
+  LogOut,
   Moon,
   Search,
   Settings,
-  Sparkles,
   Sun,
   Trophy,
   Users,
   Zap,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LoginModal } from "@/components/auth/LoginModal";
-import { LogoutButton } from "@/components/auth/LogoutButton";
 import { Button } from "@/components/ui/button";
 import { FloatingCardNav, type MegaMenuItem } from "@/components/ui/CardNav";
 import { SearchAskModal } from "@/components/search/SearchAskModal";
@@ -33,17 +31,32 @@ import { useAuthStore } from "@/stores/auth";
 import { useUiPrefs } from "@/stores/uiPrefs";
 
 export function Navbar() {
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, logout } = useAuthStore();
   const theme = useUiPrefs((s) => s.theme);
   const toggleTheme = useUiPrefs((s) => s.toggleTheme);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const pathname = useRouterState().location.pathname;
   const streak = Math.max(1, user?.streak ?? 1);
   const keys = 2;
   const totalXp = Math.max(0, user?.totalXp ?? 140);
   const levelInfo = levelFromXp(totalXp);
+
+  // Close user dropdown on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    if (userDropdownOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    }
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [userDropdownOpen]);
 
   // Global Cmd+K / Ctrl+K keyboard shortcut for Search & Ask
   useEffect(() => {
@@ -57,95 +70,37 @@ export function Navbar() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Clean, focused navigation categories
   const NAV_ITEMS: MegaMenuItem[] = [
-    ...(isAuthenticated
-      ? [
-          {
-            id: "dashboard",
-            label: "Dashboard",
-            href: "/dashboard",
-            links: [
-              {
-                label: "Student Overview",
-                href: "/dashboard",
-                description: "Continue where you left off and complete daily waves",
-                icon: <LayoutDashboard className="size-4 text-primary" />,
-                badge: "Active",
-              },
-              {
-                label: "Daily Spark Warmup",
-                href: "/dashboard",
-                description: "Quick 2-minute daily cognitive booster (+15 XP)",
-                icon: <Zap className="size-4 text-lime-500" />,
-              },
-              {
-                label: "Course Progress Map",
-                href: "/courses",
-                description: "View all enrolled tracks and pedagogical milestones",
-                icon: <BookOpen className="size-4 text-amber-500" />,
-              },
-            ],
-            previewCards: [
-              {
-                title: "Student Dashboard",
-                subtitle: "Resume your active learning track, solve kinetic gear puzzles, and protect your 7-day streak.",
-                href: "/dashboard",
-                gradient: "bg-gradient-to-tr from-primary/30 via-emerald-500/20 to-teal-400/20",
-                icon: <Sparkles className="size-6 text-primary" />,
-              },
-            ],
-          },
-        ]
-      : [
-          {
-            id: "home",
-            label: "Home",
-            href: "/",
-            links: [
-              {
-                label: "Overview",
-                href: "/",
-                description: "School, rewritten as a game you can win",
-                icon: <Home className="size-4 text-primary" />,
-              },
-              {
-                label: "Explore Curriculum",
-                href: "/courses",
-                description: "Browse interactive STEM and language courses",
-                icon: <BookOpen className="size-4 text-amber-500" />,
-              },
-            ],
-          },
-        ]),
     {
       id: "courses",
       label: "Courses",
       href: "/courses",
       links: [
         {
-          label: "Scientific Thinking",
-          href: "/courses",
-          description: "Interactive 3D gears, physics & mechanics",
+          label: "Scientific Thinking (Gears)",
+          href: "/courses/science-thinking",
+          description: "Interactive 3D gears, mechanical physics & parity",
           icon: <Brain className="size-4 text-amber-500" />,
-          badge: "Popular",
+          badge: "Science",
         },
         {
-          label: "Thinking in Python",
+          label: "Thinking in Python & Coding",
           href: "/courses",
-          description: "Code logic, algorithms & grid mazes",
+          description: "Algorithmic logic mazes & Blob mascot",
           icon: <Code className="size-4 text-emerald-500" />,
-          badge: "New",
+          badge: "Coding",
         },
         {
           label: "Mathematics Foundations",
           href: "/courses",
-          description: "Visual fractions, algebra & geometry",
+          description: "Visual fractions, geometry & coordinate proofs",
           icon: <Compass className="size-4 text-blue-500" />,
         },
         {
           label: "All Learning Paths",
           href: "/courses",
-          description: "Explore the full curriculum library",
+          description: "Browse the full catalog across all grade levels",
           icon: <LayoutGrid className="size-4 text-purple-500" />,
         },
       ],
@@ -153,7 +108,7 @@ export function Navbar() {
         {
           title: "Scientific Thinking",
           subtitle: "Explore gear train physics, angular velocity, and mechanical parity with interactive 3D simulations.",
-          href: "/courses",
+          href: "/courses/science-thinking",
           gradient: "bg-gradient-to-tr from-amber-600/30 via-orange-500/20 to-yellow-400/20",
           icon: <span className="text-xl">💡⚙️</span>,
         },
@@ -176,6 +131,7 @@ export function Navbar() {
           href: "/leaderboard",
           description: "Weekly competitive league standings",
           icon: <Trophy className="size-4 text-amber-500" />,
+          badge: "Top 5",
         },
         {
           label: "Global Leaderboard",
@@ -219,9 +175,9 @@ export function Navbar() {
           icon: <Key className="size-4 text-amber-400" />,
         },
         {
-          label: "Streak Protection",
+          label: "Streak Momentum",
           href: "/dashboard",
-          description: "Keep your daily learning momentum alive",
+          description: "Maintain your continuous daily learning streak",
           icon: <Flame className="size-4 text-orange-500" />,
         },
       ],
@@ -232,51 +188,6 @@ export function Navbar() {
           href: "/dashboard",
           gradient: "bg-gradient-to-tr from-lime-600/30 via-emerald-500/20 to-teal-400/20",
           icon: <Zap className="size-6 text-lime-400" />,
-        },
-      ],
-    },
-    {
-      id: "portal",
-      label: "Platform",
-      links: [
-        {
-          label: "About StudEd",
-          href: "/",
-          description: "School, rewritten as a game you can win",
-          icon: <Info className="size-4 text-blue-500" />,
-        },
-        {
-          label: "Subscription & Pro",
-          href: "/subscription",
-          description: "Unlimited keys, offline waves & analytics",
-          icon: <Crown className="size-4 text-amber-500" />,
-        },
-        ...(user?.role === "EDUCATOR" ||
-        user?.role === "HEAD_EDUCATOR" ||
-        user?.role === "ADMIN"
-          ? [
-              {
-                label: "Educator Portal",
-                href: "/educator",
-                description: "Curriculum authoring & class telemetry",
-                icon: <GraduationCap className="size-4 text-emerald-500" />,
-              },
-            ]
-          : []),
-        {
-          label: "Profile & Settings",
-          href: "/settings",
-          description: "Manage avatar, notifications & language",
-          icon: <Settings className="size-4 text-neutral-400" />,
-        },
-      ],
-      previewCards: [
-        {
-          title: "StudEd Pro Membership",
-          subtitle: "Unlock unlimited daily keys, deep performance insights, and custom wave challenges.",
-          href: "/subscription",
-          gradient: "bg-gradient-to-tr from-amber-600/30 via-purple-500/20 to-pink-500/20",
-          icon: <Crown className="size-6 text-amber-400" />,
         },
       ],
     },
@@ -296,88 +207,200 @@ export function Navbar() {
           </Link>
         }
         rightNode={
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Instant Search & AI Ask Trigger Button */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Search Trigger Icon Button */}
             <button
               type="button"
               onClick={() => setSearchModalOpen(true)}
-              className="flex items-center gap-2 rounded-full border border-border/80 bg-card/60 hover:bg-muted px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-all shadow-2xs"
+              className="flex size-9 items-center justify-center rounded-full border border-border/80 bg-card/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-all shadow-2xs"
               title="Search topics & waves (⌘K)"
+              aria-label="Search topics and lessons"
             >
-              <Search className="size-3.5 text-primary" />
-              <span className="hidden md:inline font-medium">Search / Ask</span>
-              <kbd className="hidden lg:inline-flex rounded bg-muted px-1.5 py-0.5 text-[10px] font-bold border border-border/80 text-muted-foreground">
-                ⌘K
-              </kbd>
+              <Search className="size-4 text-foreground/80" />
             </button>
 
-            {/* Go Premium CTA Pill */}
-            <Link to="/subscription">
+            {/* Combined Compact Gamification Stats Pill */}
+            {isAuthenticated && (
+              <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-border/70 bg-card/70 px-2.5 py-1 text-xs font-bold shadow-2xs">
+                {/* XP Level */}
+                <Link
+                  to="/achievements"
+                  className="flex items-center gap-1 text-emerald-600 dark:text-emerald-300 hover:opacity-80 transition-opacity"
+                  title={`Level ${levelInfo.level} · ${totalXp} XP`}
+                >
+                  <span className="rounded-full bg-emerald-500/20 px-1.5 py-0.2 text-[10px] font-black uppercase">
+                    LVL {levelInfo.level}
+                  </span>
+                  <span>{totalXp}</span>
+                  <span className="text-[10px]">✦</span>
+                </Link>
+
+                <span className="text-border">|</span>
+
+                {/* Keys Balance */}
+                <Link
+                  to="/subscription"
+                  className="flex items-center gap-0.5 text-amber-600 dark:text-amber-300 hover:opacity-80 transition-opacity"
+                  title={`${keys} Keys Available`}
+                >
+                  <span>{keys}</span>
+                  <span className="text-xs">🗝️</span>
+                </Link>
+
+                <span className="text-border">|</span>
+
+                {/* Streak */}
+                <Link
+                  to="/dashboard"
+                  className="flex items-center gap-0.5 text-orange-600 dark:text-orange-300 hover:opacity-80 transition-opacity"
+                  title={`${streak} Day Streak`}
+                >
+                  <span>{streak}</span>
+                  <span className="text-xs">⚡</span>
+                </Link>
+              </div>
+            )}
+
+            {/* Go Premium CTA */}
+            <Link to="/subscription" className="hidden md:inline-flex">
               <button
                 type="button"
-                className="hidden sm:inline-flex rounded-full border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 font-bold text-xs px-3.5 py-1.5 transition-all shadow-2xs"
+                className="rounded-full border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 font-bold text-xs px-3 py-1.5 transition-all shadow-2xs"
               >
                 Go Premium
               </button>
             </Link>
 
-            {/* XP & Level Badge Pill */}
-            <Link to="/achievements">
-              <div
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 text-xs font-bold transition-transform hover:scale-105"
-                title={`Level ${levelInfo.level} · ${totalXp} XP (${Math.round(levelInfo.progress * 100)}% to Level ${levelInfo.level + 1})`}
-              >
-                <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 px-1.5 py-0.5 rounded-full text-emerald-700 dark:text-emerald-300">
-                  LVL {levelInfo.level}
-                </span>
-                <span>{totalXp}</span>
-                <span className="text-emerald-500 text-xs">✦</span>
-              </div>
-            </Link>
-
-            {/* Keys Balance Pill */}
-            <Link to="/subscription">
-              <div
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-300 text-xs font-bold transition-transform hover:scale-105"
-                title={`${keys} Keys Available`}
-              >
-                <span>{keys}</span>
-                <span>🗝️</span>
-              </div>
-            </Link>
-
-            {/* Streak Counter Pill */}
-            <Link to="/dashboard">
-              <div
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-orange-500/30 bg-orange-500/10 text-orange-600 dark:text-orange-300 text-xs font-bold transition-transform hover:scale-105"
-                title={`${streak} Day Streak`}
-              >
-                <span>{streak}</span>
-                <span>⚡</span>
-              </div>
-            </Link>
-
-            {/* Theme Toggle */}
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="flex size-8 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4" />}
-            </button>
-
-            {/* User Profile / Auth Actions */}
+            {/* User Profile Avatar with Comprehensive Dropdown */}
             {isAuthenticated ? (
-              <div className="flex items-center gap-2">
-                <Link to="/settings">
-                  <div className="flex size-8 items-center justify-center rounded-full bg-primary/20 text-primary font-bold text-xs border border-primary/40 hover:scale-105 transition-transform">
-                    {user?.fullName?.slice(0, 1).toUpperCase() || "S"}
-                  </div>
-                </Link>
-                <div className="hidden lg:block">
-                  <LogoutButton />
-                </div>
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="flex size-9 items-center justify-center rounded-full bg-primary/20 text-primary font-bold text-xs border border-primary/40 hover:scale-105 transition-transform"
+                  aria-label="User profile menu"
+                >
+                  {user?.fullName?.slice(0, 1).toUpperCase() || "S"}
+                </button>
+
+                {/* Profile Menu Dropdown */}
+                <AnimatePresence>
+                  {userDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 top-11 z-50 w-56 overflow-hidden rounded-2xl border border-border/80 bg-card p-2 shadow-2xl backdrop-blur-xl"
+                    >
+                      {/* User Info Header */}
+                      <div className="border-b border-border/50 px-3 py-2.5">
+                        <p className="text-xs font-bold text-foreground truncate">
+                          {user?.fullName || "Student"}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground truncate">
+                          {user?.email || "student@studed.lk"}
+                        </p>
+                      </div>
+
+                      {/* Navigation Links */}
+                      <div className="py-1 space-y-0.5">
+                        <Link
+                          to="/dashboard"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
+                        >
+                          <LayoutDashboard className="size-3.5 text-primary" />
+                          <span>Dashboard</span>
+                        </Link>
+                        <Link
+                          to="/courses"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
+                        >
+                          <BookOpen className="size-3.5 text-amber-500" />
+                          <span>My Courses</span>
+                        </Link>
+                        <Link
+                          to="/achievements"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
+                        >
+                          <Award className="size-3.5 text-rose-500" />
+                          <span>Achievements</span>
+                        </Link>
+                        <Link
+                          to="/subscription"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
+                        >
+                          <Crown className="size-3.5 text-amber-400" />
+                          <span>Subscription &amp; Keys</span>
+                        </Link>
+                        <Link
+                          to="/settings"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
+                        >
+                          <Settings className="size-3.5 text-neutral-400" />
+                          <span>Settings &amp; Profile</span>
+                        </Link>
+
+                        {(user?.role === "EDUCATOR" ||
+                          user?.role === "HEAD_EDUCATOR" ||
+                          user?.role === "ADMIN") && (
+                          <Link
+                            to="/educator"
+                            onClick={() => setUserDropdownOpen(false)}
+                            className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
+                          >
+                            <GraduationCap className="size-3.5 text-emerald-500" />
+                            <span>Educator Portal</span>
+                          </Link>
+                        )}
+                      </div>
+
+                      {/* Theme Toggle in Dropdown */}
+                      <div className="border-t border-border/50 pt-1 pb-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            toggleTheme();
+                          }}
+                          className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
+                        >
+                          <span className="flex items-center gap-2.5">
+                            {theme === "dark" ? (
+                              <Sun className="size-3.5 text-amber-400" />
+                            ) : (
+                              <Moon className="size-3.5 text-muted-foreground" />
+                            )}
+                            <span>Appearance</span>
+                          </span>
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                            {theme}
+                          </span>
+                        </button>
+                      </div>
+
+                      {/* Log Out */}
+                      <div className="border-t border-border/50 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserDropdownOpen(false);
+                            logout();
+                            window.location.assign("/");
+                          }}
+                          className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition-colors"
+                        >
+                          <LogOut className="size-3.5" />
+                          <span>Log Out</span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ) : (
               <Button

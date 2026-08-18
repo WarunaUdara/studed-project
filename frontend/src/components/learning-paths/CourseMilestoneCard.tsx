@@ -121,6 +121,16 @@ function DefaultSubjectIcon({ title }: { title: string }) {
       </svg>
     );
   }
+  if (t.includes("science") || t.includes("gear") || t.includes("physic")) {
+    return (
+      <svg viewBox="0 0 64 64" className="size-full">
+        <rect x="12" y="12" width="40" height="40" rx="10" fill="#f59e0b" opacity="0.2" />
+        <circle cx="32" cy="32" r="14" fill="#f59e0b" fillOpacity="0.3" stroke="#f59e0b" strokeWidth="3" />
+        <circle cx="32" cy="32" r="5" fill="#f59e0b" />
+        <path d="M 32,14 L 32,18 M 32,46 L 32,50 M 14,32 L 18,32 M 46,32 L 50,32 M 19,19 L 22,22 M 42,42 L 45,45 M 19,45 L 22,42 M 42,22 L 45,19" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round" />
+      </svg>
+    );
+  }
   return (
     <svg viewBox="0 0 64 64" className="size-full">
       <rect x="12" y="12" width="40" height="40" rx="10" fill="#10b981" opacity="0.2" />
