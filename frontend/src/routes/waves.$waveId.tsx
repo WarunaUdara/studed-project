@@ -11,6 +11,7 @@ import { LearnBlockRenderer } from "@/components/learn/LearnBlockRenderer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { BlobProgramMaze } from "@/components/waves/BlobProgramMaze";
+import { ScientificThinkingGearsMaster } from "@/components/waves/science/ScientificThinkingGearsMaster";
 import { PointsBadge } from "@/components/ui/points-badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
@@ -304,7 +305,20 @@ function WavePlayerPage() {
           </TabsContent>
 
           <TabsContent value="evaluate" className="mt-5 space-y-6">
-            {evaluateBlocks.length === 0 ? (
+            {wave?.title?.toLowerCase().includes("gear") || wave?.title?.toLowerCase().includes("science") ? (
+              <div className="py-4">
+                <ScientificThinkingGearsMaster
+                  onComplete={(xp) => {
+                    updateTotalXp(user ? user.totalXp + xp : xp);
+                    setShowConfetti(true);
+                    playSuccessSound();
+                    if (nextWave) {
+                      setTimeout(() => window.location.assign(`/waves/${nextWave.id}`), 1200);
+                    }
+                  }}
+                />
+              </div>
+            ) : evaluateBlocks.length === 0 ? (
               <div className="py-4">
                 <BlobProgramMaze
                   onSuccess={(xp) => {
