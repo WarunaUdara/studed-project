@@ -1,275 +1,298 @@
-import { ArrowUpRight } from "lucide-react";
-import React, { useLayoutEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
+import { Link } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, ChevronDown, Menu, Sparkles, X } from "lucide-react";
+import { useState } from "react";
 
-export type CardNavLink = {
+export interface MegaMenuSubLink {
   label: string;
   href: string;
-  ariaLabel?: string;
+  description?: string;
   icon?: React.ReactNode;
-};
-
-export type CardNavItem = {
-  label: string;
-  bgColor?: string;
-  textColor?: string;
-  links: CardNavLink[];
-};
-
-export interface CardNavProps {
-  logoNode?: React.ReactNode;
-  centerNode?: React.ReactNode;
-  rightNode?: React.ReactNode;
-  items: CardNavItem[];
-  className?: string;
-  ease?: string;
-  baseColor?: string;
-  menuColor?: string;
-  ctaLabel?: string;
-  onCtaClick?: () => void;
+  badge?: string;
 }
 
-export const CardNav: React.FC<CardNavProps> = ({
+export interface MegaMenuPreviewCard {
+  title: string;
+  subtitle: string;
+  href: string;
+  badge?: string;
+  gradient?: string;
+  icon?: React.ReactNode;
+}
+
+export interface MegaMenuItem {
+  id: string;
+  label: string;
+  href?: string;
+  links: MegaMenuSubLink[];
+  previewCards?: MegaMenuPreviewCard[];
+}
+
+export interface FloatingCardNavProps {
+  logoNode?: React.ReactNode;
+  rightNode?: React.ReactNode;
+  items: MegaMenuItem[];
+  activePath?: string;
+  className?: string;
+}
+
+export function FloatingCardNav({
   logoNode,
-  centerNode,
   rightNode,
   items,
+  activePath = "/",
   className = "",
-  ease = "power3.out",
-  baseColor,
-  menuColor,
-  ctaLabel,
-  onCtaClick,
-}) => {
-  const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const navRef = useRef<HTMLDivElement | null>(null);
-  const cardsRef = useRef<HTMLDivElement[]>([]);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
+}: FloatingCardNavProps) {
+  const [activeTabId, setActiveTabId] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hoverTimeout, setHoverTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
 
-  const calculateHeight = () => {
-    const navEl = navRef.current;
-    if (!navEl) return 240;
+  const activeItem = items.find((item) => item.id === activeTabId);
 
-    const isMobile =
-      typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
-    if (isMobile) {
-      const contentEl = navEl.querySelector(".card-nav-content") as HTMLElement;
-      if (contentEl) {
-        const wasVisible = contentEl.style.visibility;
-        const wasPointerEvents = contentEl.style.pointerEvents;
-        const wasPosition = contentEl.style.position;
-        const wasHeight = contentEl.style.height;
-
-        contentEl.style.visibility = "visible";
-        contentEl.style.pointerEvents = "auto";
-        contentEl.style.position = "static";
-        contentEl.style.height = "auto";
-
-        const topBar = 64;
-        const padding = 16;
-        const contentHeight = contentEl.scrollHeight;
-
-        contentEl.style.visibility = wasVisible;
-        contentEl.style.pointerEvents = wasPointerEvents;
-        contentEl.style.position = wasPosition;
-        contentEl.style.height = wasHeight;
-
-        return topBar + contentHeight + padding;
-      }
-    }
-    return 240;
+  const handleMouseEnterTab = (id: string) => {
+    if (hoverTimeout) clearTimeout(hoverTimeout);
+    setActiveTabId(id);
   };
 
-  const createTimeline = () => {
-    const navEl = navRef.current;
-    if (!navEl) return null;
-
-    gsap.set(navEl, { height: 64, overflow: "hidden" });
-    gsap.set(cardsRef.current, { y: 30, opacity: 0 });
-
-    const tl = gsap.timeline({ paused: true });
-
-    tl.to(navEl, {
-      height: calculateHeight,
-      duration: 0.35,
-      ease,
-    });
-
-    tl.to(
-      cardsRef.current,
-      { y: 0, opacity: 1, duration: 0.3, ease, stagger: 0.05 },
-      "-=0.1",
-    );
-
-    return tl;
+  const handleMouseLeaveNav = () => {
+    const timeout = setTimeout(() => {
+      setActiveTabId(null);
+    }, 150);
+    setHoverTimeout(timeout);
   };
 
-  useLayoutEffect(() => {
-    const tl = createTimeline();
-    tlRef.current = tl;
-
-    return () => {
-      tl?.kill();
-      tlRef.current = null;
-    };
-  }, [ease, items]);
-
-  useLayoutEffect(() => {
-    const handleResize = () => {
-      if (!tlRef.current) return;
-
-      if (isExpanded) {
-        const newHeight = calculateHeight();
-        gsap.set(navRef.current, { height: newHeight });
-
-        tlRef.current.kill();
-        const newTl = createTimeline();
-        if (newTl) {
-          newTl.progress(1);
-          tlRef.current = newTl;
-        }
-      } else {
-        tlRef.current.kill();
-        const newTl = createTimeline();
-        if (newTl) {
-          tlRef.current = newTl;
-        }
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [isExpanded]);
-
-  const toggleMenu = () => {
-    const tl = tlRef.current;
-    if (!tl) return;
-    if (!isExpanded) {
-      setIsHamburgerOpen(true);
-      setIsExpanded(true);
-      tl.play(0);
-    } else {
-      setIsHamburgerOpen(false);
-      tl.eventCallback("onReverseComplete", () => setIsExpanded(false));
-      tl.reverse();
-    }
-  };
-
-  const setCardRef = (i: number) => (el: HTMLDivElement | null) => {
-    if (el) cardsRef.current[i] = el;
+  const handleMouseEnterDropdown = () => {
+    if (hoverTimeout) clearTimeout(hoverTimeout);
   };
 
   return (
-    <div className={`card-nav-container relative w-full ${className}`.trim()}>
-      <nav
-        ref={navRef}
-        className={`card-nav ${isExpanded ? "open" : ""} block h-[64px] p-0 border-b border-border/40 bg-background/95 backdrop-blur-md relative overflow-hidden will-change-[height]`}
-        style={baseColor ? { backgroundColor: baseColor } : undefined}
-      >
-        {/* Top Header Bar */}
-        <div className="card-nav-top mx-auto flex h-[64px] max-w-7xl items-center justify-between px-4 sm:px-6 z-[2] relative">
-          {/* Left: Logo & Direct Tab Pills */}
-          <div className="flex items-center gap-6">
-            <div className="logo-container flex items-center">
+    <div
+      className={`relative w-full select-none ${className}`.trim()}
+      onMouseLeave={handleMouseLeaveNav}
+    >
+      {/* Fixed-Height Top Header (Zero Layout Shift) */}
+      <header className="relative z-50 h-16 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl transition-colors">
+        <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6">
+          {/* Left: Brand Logo & Navigation Links */}
+          <div className="flex items-center gap-8">
+            {/* Logo */}
+            <div className="flex items-center">
               {logoNode ? (
                 logoNode
               ) : (
-                <span className="font-serif font-bold text-2xl text-foreground tracking-tight">
-                  Stud<span className="text-primary italic">Ed</span>
-                </span>
+                <Link
+                  to="/"
+                  className="flex items-center gap-1 font-serif text-2xl font-bold tracking-tight text-foreground"
+                >
+                  Stud<span className="italic text-primary">Ed</span>
+                </Link>
               )}
             </div>
 
-            {centerNode && <div className="hidden md:flex items-center">{centerNode}</div>}
+            {/* Desktop Navigation Tabs with Hover Triggers */}
+            <nav className="hidden md:flex items-center gap-1">
+              {items.map((item) => {
+                const isActive = activeTabId === item.id;
+                const isCurrentRoute = item.href && activePath.startsWith(item.href);
+
+                return (
+                  <div
+                    key={item.id}
+                    onMouseEnter={() => handleMouseEnterTab(item.id)}
+                    className="relative"
+                  >
+                    {item.href ? (
+                      <Link
+                        to={item.href as any}
+                        className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
+                          isActive || isCurrentRoute
+                            ? "bg-primary/10 text-primary"
+                            : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+                        }`}
+                      >
+                        <span>{item.label}</span>
+                        {item.links.length > 0 && (
+                          <ChevronDown
+                            className={`size-3 transition-transform duration-200 ${
+                              isActive ? "rotate-180 text-primary" : "text-muted-foreground"
+                            }`}
+                          />
+                        )}
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
+                          isActive
+                            ? "bg-primary/10 text-primary"
+                            : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+                        }`}
+                      >
+                        <span>{item.label}</span>
+                        {item.links.length > 0 && (
+                          <ChevronDown
+                            className={`size-3 transition-transform duration-200 ${
+                              isActive ? "rotate-180 text-primary" : "text-muted-foreground"
+                            }`}
+                          />
+                        )}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </nav>
           </div>
 
-          {/* Right Action Icons & Hamburger Drawer Trigger */}
+          {/* Right Action Icons & User Menu */}
           <div className="flex items-center gap-3">
             {rightNode}
 
-            {ctaLabel && (
-              <button
-                type="button"
-                onClick={onCtaClick}
-                className="hidden sm:inline-flex rounded-full px-4 py-1.5 items-center font-bold text-xs cursor-pointer transition-all duration-200 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm active:scale-95"
-              >
-                {ctaLabel}
-              </button>
-            )}
-
-            {/* Hamburger Button */}
-            <div
-              className={`hamburger-menu ${isHamburgerOpen ? "open" : ""} group size-9 flex flex-col items-center justify-center cursor-pointer gap-[5px] rounded-full hover:bg-muted transition-colors`}
-              onClick={toggleMenu}
-              onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  toggleMenu();
-                }
-              }}
-              role="button"
-              aria-label={isExpanded ? "Close menu" : "Open menu"}
-              aria-expanded={isExpanded}
-              tabIndex={0}
-              style={{ color: menuColor || "currentColor" }}
+            {/* Mobile Hamburger Toggle */}
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="flex md:hidden size-9 items-center justify-center rounded-full border border-border bg-card text-foreground hover:bg-muted"
+              aria-label="Toggle menu"
             >
-              <div
-                className={`hamburger-line w-[20px] h-[2px] bg-current rounded-full transition-transform duration-300 ease-out [transform-origin:50%_50%] ${
-                  isHamburgerOpen ? "translate-y-[3.5px] rotate-45" : ""
-                }`}
-              />
-              <div
-                className={`hamburger-line w-[20px] h-[2px] bg-current rounded-full transition-transform duration-300 ease-out [transform-origin:50%_50%] ${
-                  isHamburgerOpen ? "-translate-y-[3.5px] -rotate-45" : ""
-                }`}
-              />
-            </div>
+              {isMobileMenuOpen ? <X className="size-4" /> : <Menu className="size-4" />}
+            </button>
           </div>
         </div>
+      </header>
 
-        {/* Expandable Navigation Cards */}
-        <div
-          className={`card-nav-content mx-auto max-w-7xl p-4 flex flex-col items-stretch gap-3 justify-start z-[1] ${
-            isExpanded ? "visible pointer-events-auto" : "invisible pointer-events-none"
-          } md:flex-row md:items-stretch md:gap-4`}
-          aria-hidden={!isExpanded}
-        >
-          {(items || []).slice(0, 3).map((item, idx) => (
-            <div
-              key={`${item.label}-${idx}`}
-              className="nav-card select-none relative flex flex-col gap-2.5 p-4 rounded-2xl border border-border/60 bg-card/90 shadow-sm min-w-0 flex-[1_1_auto] md:flex-[1_1_0%] transition-all hover:border-primary/40 hover:shadow-md"
-              ref={setCardRef(idx)}
-              style={
-                item.bgColor || item.textColor
-                  ? { backgroundColor: item.bgColor, color: item.textColor }
-                  : undefined
-              }
-            >
-              <div className="nav-card-label font-bold text-sm sm:text-base text-foreground flex items-center justify-between border-b border-border/40 pb-2">
-                <span>{item.label}</span>
-              </div>
-              <div className="nav-card-links flex flex-col gap-2 pt-1">
-                {item.links?.map((lnk, i) => (
-                  <a
-                    key={`${lnk.label}-${i}`}
-                    className="nav-card-link inline-flex items-center gap-2 no-underline cursor-pointer text-xs sm:text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-                    href={lnk.href}
-                    aria-label={lnk.ariaLabel || lnk.label}
-                  >
-                    {lnk.icon || (
-                      <ArrowUpRight className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
-                    )}
-                    {lnk.label}
-                  </a>
-                ))}
+      {/* Floating Mega-Menu Dropdown Card (Absolute Overlay - Zero Layout Shift) */}
+      <AnimatePresence>
+        {activeItem && activeItem.links.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            onMouseEnter={handleMouseEnterDropdown}
+            className="absolute left-0 right-0 top-16 z-40 mx-auto w-full max-w-5xl px-4 pt-2 pointer-events-auto"
+          >
+            <div className="relative rounded-3xl border border-border/80 bg-card/95 p-6 shadow-2xl backdrop-blur-2xl">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+                {/* Left Column: Categorized Navigation Links */}
+                <div className="lg:col-span-5 space-y-1.5">
+                  <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    {activeItem.label}
+                  </div>
+                  {activeItem.links.map((subLink, idx) => (
+                    <Link
+                      key={idx}
+                      to={subLink.href as any}
+                      onClick={() => setActiveTabId(null)}
+                      className="group flex items-center justify-between rounded-2xl p-3 transition-colors hover:bg-muted/80"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div className="flex size-9 items-center justify-center rounded-xl bg-muted group-hover:bg-primary/15 transition-colors">
+                          {subLink.icon}
+                        </div>
+                        <div>
+                          <div className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {subLink.label}
+                          </div>
+                          {subLink.description && (
+                            <div className="text-[11px] text-muted-foreground font-normal">
+                              {subLink.description}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {subLink.badge ? (
+                        <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold text-primary">
+                          {subLink.badge}
+                        </span>
+                      ) : (
+                        <ArrowRight className="size-3.5 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                      )}
+                    </Link>
+                  ))}
+                </div>
+
+                {/* Right Column: Visual Preview Cards (Sarvam AI style) */}
+                {activeItem.previewCards && activeItem.previewCards.length > 0 && (
+                  <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 border-t lg:border-t-0 lg:border-l border-border/60 pt-4 lg:pt-0 lg:pl-6">
+                    {activeItem.previewCards.map((card, idx) => (
+                      <Link
+                        key={idx}
+                        to={card.href as any}
+                        onClick={() => setActiveTabId(null)}
+                        className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-muted/50 to-muted/20 p-4 transition-all hover:border-primary/50 hover:shadow-lg"
+                      >
+                        {/* Thumbnail / Gradient Header */}
+                        <div
+                          className={`relative mb-3 flex h-28 w-full items-center justify-center rounded-xl overflow-hidden shadow-inner ${
+                            card.gradient || "bg-gradient-to-tr from-amber-500/20 via-primary/20 to-purple-500/20"
+                          }`}
+                        >
+                          <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px]" />
+                          <div className="relative z-10 flex size-12 items-center justify-center rounded-2xl bg-card/80 backdrop-blur-md shadow-md border border-white/20 group-hover:scale-110 transition-transform">
+                            {card.icon || <Sparkles className="size-6 text-primary" />}
+                          </div>
+                        </div>
+
+                        {/* Card Info */}
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">
+                              {card.title}
+                            </span>
+                            <ArrowRight className="size-3 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                          </div>
+                          <p className="text-[11px] text-muted-foreground line-clamp-2">
+                            {card.subtitle}
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
-          ))}
-        </div>
-      </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Slide-down Drawer */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden border-b border-border bg-card/95 backdrop-blur-xl px-4 py-6 shadow-2xl"
+          >
+            <div className="space-y-6">
+              {items.map((item) => (
+                <div key={item.id} className="space-y-2">
+                  <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    {item.label}
+                  </div>
+                  <div className="space-y-1">
+                    {item.links.map((subLink, idx) => (
+                      <Link
+                        key={idx}
+                        to={subLink.href as any}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex items-center gap-3 rounded-xl p-2.5 text-xs font-semibold text-foreground hover:bg-muted"
+                      >
+                        {subLink.icon}
+                        <span>{subLink.label}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
-};
+}
 
-export default CardNav;
+export const CardNav = FloatingCardNav;
