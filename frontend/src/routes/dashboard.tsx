@@ -1,15 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Zap } from "lucide-react";
+import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { DailySparkModal } from "@/components/daily-spark/DailySparkModal";
-import { DashboardAITutorNudge } from "@/components/dashboard/DashboardAITutorNudge";
 import { DashboardLeagueWidget } from "@/components/dashboard/DashboardLeagueWidget";
+import { DashboardPremiumCard } from "@/components/dashboard/DashboardPremiumCard";
 import { DashboardStreakWidget } from "@/components/dashboard/DashboardStreakWidget";
 import { BilateralCardDeck } from "@/components/gamification/BilateralCardDeck";
 import { StudentShell } from "@/components/layout/StudentShell";
-import { Button } from "@/components/ui/button";
-import { levelFromXp } from "@/lib/gamification";
 import { useAuthStore } from "@/stores/auth";
 
 export const Route = createFileRoute("/dashboard")({
@@ -19,10 +17,7 @@ export const Route = createFileRoute("/dashboard")({
 function DashboardPage() {
   const { user } = useAuthStore();
   const [dailySparkOpen, setDailySparkOpen] = useState(false);
-
-  const totalXp = user?.totalXp ?? 0;
-  const { level, xpIntoLevel, xpForNextLevel } = levelFromXp(totalXp);
-  const xpToNextLevel = xpForNextLevel - xpIntoLevel;
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Auto-prompt daily spark if not completed today
   useEffect(() => {
@@ -38,50 +33,54 @@ function DashboardPage() {
     }
   }, [user?.id]);
 
-  const firstName = user?.fullName?.split(" ")[0] ?? "Learner";
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      window.location.assign(`/courses?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   return (
     <ProtectedRoute allowedRoles={["STUDENT"]}>
       <StudentShell>
-        <div className="space-y-6 pb-12">
-          {/* Main 2-Column Responsive Dashboard Layout */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-            {/* Left Sidebar Column (Widgets: Streak, League Standing) */}
-            <div className="space-y-5 lg:col-span-4">
-              {/* Daily Streak Widget */}
+        <div className="mx-auto max-w-6xl py-2 pb-16">
+          {/* 2-Column Clean Grid Layout */}
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-12 items-start">
+            {/* Left Rail: Search & Widgets */}
+            <div className="space-y-4 md:col-span-5 lg:col-span-5">
+              {/* Search Bar Input */}
+              <form
+                onSubmit={handleSearchSubmit}
+                className="relative flex items-center rounded-full border border-border/70 bg-card px-4 py-2 shadow-xs transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+              >
+                <Search className="size-4 text-muted-foreground mr-2 shrink-0" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="What do you want to learn?"
+                  className="w-full bg-transparent text-xs sm:text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                />
+                <button
+                  type="submit"
+                  className="rounded-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground px-3 py-1 text-xs font-bold transition-colors ml-1 shrink-0"
+                >
+                  Ask
+                </button>
+              </form>
+
+              {/* 1. Streak Tracker Widget */}
               <DashboardStreakWidget />
 
-              {/* League Standing Widget */}
+              {/* 2. Unlock Premium Showcase Card */}
+              <DashboardPremiumCard />
+
+              {/* 3. Hydrogen League Standings Widget */}
               <DashboardLeagueWidget />
             </div>
 
-            {/* Right Main Column (Focus & 3D Depth Deck) */}
-            <div className="space-y-6 lg:col-span-8">
-              {/* Clean Greeting & Warmup Banner */}
-              <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-card p-6 shadow-sm backdrop-blur-sm transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <h1 className="text-2xl sm:text-3xl font-normal font-serif text-foreground">
-                    Good evening, {firstName}.
-                  </h1>
-                  <p className="text-xs sm:text-sm text-muted-foreground font-medium">
-                    You're <span className="font-bold text-foreground">{xpToNextLevel} XP</span> from Level {level + 1}. ({totalXp.toLocaleString()} XP total)
-                  </p>
-                </div>
-
-                <div className="shrink-0">
-                  <Button
-                    onClick={() => setDailySparkOpen(true)}
-                    className="rounded-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-5 shadow-sm"
-                  >
-                    <Zap className="size-4 fill-white mr-1.5" /> Start Warmup (+55 XP)
-                  </Button>
-                </div>
-              </div>
-
-              {/* AI Tutor Nudge Prompt */}
-              <DashboardAITutorNudge />
-
-              {/* Bilateral Swappable Course Card Stack */}
+            {/* Right Main Rail: 3D Bilateral Swappable Card Deck */}
+            <div className="md:col-span-7 lg:col-span-7 flex flex-col items-center justify-center">
               <BilateralCardDeck />
             </div>
           </div>

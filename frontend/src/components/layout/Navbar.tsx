@@ -1,206 +1,229 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, Moon, Sun, X, Zap } from "lucide-react";
+import {
+  Award,
+  BookOpen,
+  Compass,
+  Crown,
+  GraduationCap,
+  Home,
+  LayoutGrid,
+  Moon,
+  Settings,
+  Sun,
+  Trophy,
+  Users,
+  Zap,
+} from "lucide-react";
 import { useState } from "react";
 import { LoginModal } from "@/components/auth/LoginModal";
 import { LogoutButton } from "@/components/auth/LogoutButton";
-import { XPBar } from "@/components/gamification/XPBar";
 import { Button } from "@/components/ui/button";
-import { PointsBadge } from "@/components/ui/points-badge";
-import { cn } from "@/lib/utils";
+import { CardNav, type CardNavItem } from "@/components/ui/CardNav";
 import { useAuthStore } from "@/stores/auth";
 import { useUiPrefs } from "@/stores/uiPrefs";
 
 export function Navbar() {
   const { user, isAuthenticated } = useAuthStore();
-  const isStudent = isAuthenticated && user?.role === "STUDENT";
   const theme = useUiPrefs((s) => s.theme);
   const toggleTheme = useUiPrefs((s) => s.toggleTheme);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   const pathname = useRouterState().location.pathname;
-  const isHome = pathname === "/";
+  const isHome = pathname === "/" || pathname === "/dashboard";
+  const isCourses = pathname.startsWith("/courses");
+
+  const streak = Math.max(1, user?.streak ?? 1);
+
+  const CARD_NAV_ITEMS: CardNavItem[] = [
+    {
+      label: "Learning Paths & Curriculums",
+      links: [
+        {
+          label: "Mathematics Foundations",
+          href: "/courses",
+          icon: <BookOpen className="size-4 text-emerald-500" />,
+        },
+        {
+          label: "Thinking in Python & Coding",
+          href: "/courses",
+          icon: <Compass className="size-4 text-purple-500" />,
+        },
+        {
+          label: "All Learning Paths",
+          href: "/courses",
+          icon: <LayoutGrid className="size-4 text-blue-500" />,
+        },
+      ],
+    },
+    {
+      label: "Leagues & Competition",
+      links: [
+        {
+          label: "Hydrogen League",
+          href: "/leaderboard",
+          icon: <Trophy className="size-4 text-amber-500" />,
+        },
+        {
+          label: "Global Leaderboard",
+          href: "/leaderboard",
+          icon: <Users className="size-4 text-indigo-500" />,
+        },
+        {
+          label: "Achievements & Badges",
+          href: "/achievements",
+          icon: <Award className="size-4 text-rose-500" />,
+        },
+      ],
+    },
+    {
+      label: "Quests, Stats & Portal",
+      links: [
+        {
+          label: "Daily Spark Warmup",
+          href: "/dashboard",
+          icon: <Zap className="size-4 text-lime-500" />,
+        },
+        {
+          label: "Subscription & Premium",
+          href: "/subscription",
+          icon: <Crown className="size-4 text-amber-400" />,
+        },
+        {
+          label: "Profile & Settings",
+          href: "/settings",
+          icon: <Settings className="size-4 text-neutral-400" />,
+        },
+        ...(user?.role === "EDUCATOR" ||
+        user?.role === "HEAD_EDUCATOR" ||
+        user?.role === "ADMIN"
+          ? [
+              {
+                label: "Educator Portal",
+                href: "/educator",
+                icon: <GraduationCap className="size-4 text-primary" />,
+              },
+            ]
+          : []),
+      ],
+    },
+  ];
 
   return (
-    <header
-      className={cn(
-        "z-40 transition-all border-b border-border/20 dark:border-border/10",
-        isHome
-          ? "absolute top-0 left-0 right-0 bg-transparent border-none shadow-none"
-          : "sticky top-0 glass",
-      )}
-    >
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 sm:px-6">
-        <Link
-          to="/"
-          className="text-2xl font-serif font-normal tracking-tight hover:text-primary shrink-0"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          Stud<span className="text-primary italic">Ed</span>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-2 lg:gap-4">
-          <Button asChild variant="ghost" size="sm">
-            <Link to="/courses">Courses</Link>
-          </Button>
-
-          {isAuthenticated && user?.role === "STUDENT" && (
-            <>
-              <Button asChild variant="ghost" size="sm">
-                <Link to="/dashboard">Dashboard</Link>
-              </Button>
-              <Button asChild variant="ghost" size="sm">
-                <Link to="/leaderboard">Leaderboard</Link>
-              </Button>
-            </>
-          )}
-
-          {isAuthenticated &&
-            (user?.role === "EDUCATOR" ||
-              user?.role === "HEAD_EDUCATOR" ||
-              user?.role === "ADMIN") && (
-              <Button asChild variant="ghost" size="sm">
-                <Link to="/educator">Educator Portal</Link>
-              </Button>
-            )}
-
-          {isStudent && user && (
-            <div className="flex items-center gap-3">
-              <PointsBadge name="XP" total={user.totalXp} size="sm" icon={Zap} />
-              <div className="hidden lg:block min-w-[140px]">
-                <XPBar totalXp={user.totalXp} compact />
-              </div>
-            </div>
-          )}
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-            className="rounded-full shrink-0"
+    <header className="sticky top-0 z-40 w-full">
+      <CardNav
+        logoNode={
+          <Link
+            to="/"
+            className="text-2xl font-serif font-bold tracking-tight hover:text-primary transition-colors flex items-center gap-1 text-foreground"
           >
-            {theme === "dark" ? (
-              <Sun className="h-4 w-4 text-warning" />
-            ) : (
-              <Moon className="h-4 w-4 text-primary" />
-            )}
-          </Button>
-
-          {!isAuthenticated ? (
-            <>
-              <Button variant="ghost" size="sm" onClick={() => setLoginModalOpen(true)}>
-                Log in
-              </Button>
-              <Button asChild size="sm">
-                <Link to="/register">Sign up</Link>
-              </Button>
-              <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
-            </>
-          ) : (
-            <div className="flex items-center gap-2">
-              <span className="hidden lg:inline text-sm text-muted-foreground truncate max-w-[120px]">
-                {user?.fullName}
-              </span>
-              <LogoutButton size="sm" />
-            </div>
-          )}
-        </nav>
-
-        {/* Mobile Navigation Controls */}
-        <div className="flex items-center gap-2 md:hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-            className="rounded-full"
-          >
-            {theme === "dark" ? (
-              <Sun className="h-4 w-4 text-warning" />
-            ) : (
-              <Moon className="h-4 w-4 text-primary" />
-            )}
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle mobile menu"
-            className="rounded-full"
-          >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
-        </div>
-      </div>
-
-      {/* Mobile Menu Dropdown */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-b border-border/80 bg-background/95 backdrop-blur-md px-4 py-4 shadow-lg animate-in slide-in-from-top-2 duration-200">
-          <div className="flex flex-col gap-2">
+            Stud<span className="text-primary italic">Ed</span>
+          </Link>
+        }
+        centerNode={
+          <div className="flex items-center gap-1 ml-4">
             <Link
-              to="/courses"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted transition-colors"
+              to={isAuthenticated ? "/dashboard" : "/"}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
+                isHome
+                  ? "bg-primary/15 text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              }`}
             >
-              Courses
+              <Home className="size-3.5" />
+              <span>Home</span>
             </Link>
 
-            {isAuthenticated && user?.role === "STUDENT" && (
-              <>
-                <Link
-                  to="/dashboard"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted transition-colors"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  to="/leaderboard"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted transition-colors"
-                >
-                  Leaderboard
-                </Link>
-              </>
+            <Link
+              to="/courses"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
+                isCourses
+                  ? "bg-primary/15 text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              }`}
+            >
+              <BookOpen className="size-3.5" />
+              <span>Courses</span>
+            </Link>
+          </div>
+        }
+        rightNode={
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Go Premium CTA Pill */}
+            <Link to="/subscription">
+              <button
+                type="button"
+                className="hidden sm:inline-flex rounded-full border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 font-bold text-xs px-3.5 py-1.5 transition-all shadow-2xs"
+              >
+                Go Premium
+              </button>
+            </Link>
+
+            {/* XP Points Pill */}
+            {isAuthenticated && (
+              <div className="flex items-center gap-1 rounded-full border border-border/60 bg-muted/60 px-2.5 py-1 text-xs font-bold text-foreground">
+                <span className="font-extrabold text-amber-500">2</span>
+                <span className="text-amber-500">🗝️</span>
+              </div>
             )}
 
-            {isAuthenticated &&
-              (user?.role === "EDUCATOR" ||
-                user?.role === "HEAD_EDUCATOR" ||
-                user?.role === "ADMIN") && (
-                <Link
-                  to="/educator"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted transition-colors"
-                >
-                  Educator Portal
-                </Link>
-              )}
-
-            <div className="my-1 border-t border-border/60" />
-
-            {!isAuthenticated ? (
-              <div className="grid grid-cols-2 gap-2 pt-1">
-                <Button asChild variant="outline" className="w-full justify-center">
-                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>Log in</Link>
-                </Button>
-                <Button asChild className="w-full justify-center">
-                  <Link to="/register" onClick={() => setMobileMenuOpen(false)}>Sign up</Link>
-                </Button>
+            {/* Streak & Battery Indicator */}
+            {isAuthenticated && (
+              <div className="flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/60 px-2.5 py-1 text-xs font-bold text-foreground">
+                <span className="font-extrabold">{streak}</span>
+                <Zap className="size-3.5 fill-amber-400 text-amber-400" />
               </div>
+            )}
+
+            {/* Theme Toggle Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              className="size-8 rounded-full"
+            >
+              {theme === "dark" ? (
+                <Sun className="size-4 text-warning" />
+              ) : (
+                <Moon className="size-4 text-primary" />
+              )}
+            </Button>
+
+            {/* Auth Buttons / Profile Avatar */}
+            {!isAuthenticated ? (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setLoginModalOpen(true)}
+                  className="rounded-full text-xs font-bold"
+                >
+                  Log in
+                </Button>
+                <Link to="/register">
+                  <Button size="sm" className="rounded-full text-xs font-bold px-4">
+                    Sign up
+                  </Button>
+                </Link>
+                <LoginModal
+                  isOpen={loginModalOpen}
+                  onClose={() => setLoginModalOpen(false)}
+                />
+              </>
             ) : (
-              <div className="flex items-center justify-between px-2 pt-1">
-                <span className="text-xs text-muted-foreground font-medium truncate max-w-[180px]">
-                  Signed in as {user?.fullName}
-                </span>
-                <LogoutButton size="sm" />
+              <div className="flex items-center gap-2">
+                <Link to="/settings" title="Profile Settings">
+                  <div className="flex size-8 items-center justify-center rounded-full bg-primary font-bold text-xs text-primary-foreground shadow-xs hover:scale-105 transition-transform">
+                    {user?.fullName?.charAt(0).toUpperCase() ?? "S"}
+                  </div>
+                </Link>
+                <LogoutButton size="sm" variant="ghost" className="hidden lg:inline-flex" />
               </div>
             )}
           </div>
-        </div>
-      )}
+        }
+        items={CARD_NAV_ITEMS}
+      />
     </header>
   );
 }
