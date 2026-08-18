@@ -22,12 +22,12 @@ export interface TrackLesson {
 }
 
 export interface StudEdCourseTrackMapProps {
-  courseId: string;
-  courseTitle: string;
-  courseDescription: string;
+  courseId?: string;
+  courseTitle?: string;
+  courseDescription?: string;
   totalLessons?: number;
   totalWaves?: number;
-  lessons: TrackLesson[];
+  lessons?: TrackLesson[];
   activeLessonId?: string;
   keysAvailable?: number;
   className?: string;
@@ -38,7 +38,7 @@ export function StudEdCourseTrackMap({
   courseDescription = "Open your eyes to the world around you by solving puzzles with science.",
   totalLessons = 40,
   totalWaves = 487,
-  lessons,
+  lessons = [],
   activeLessonId,
   keysAvailable = 0,
   className = "",
@@ -47,7 +47,7 @@ export function StudEdCourseTrackMap({
 
   // Active lesson
   const currentLesson =
-    lessons.find((l) => l.id === activeLessonId) || lessons[0] || {
+    lessons?.find((l) => l.id === activeLessonId) || lessons?.[0] || {
       id: "lesson-1",
       title: "Gears",
       levelNumber: 1,

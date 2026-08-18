@@ -96,7 +96,7 @@ function CoursesCatalogPage() {
     );
 
     // Science & Physics Courses
-    const scienceCourses = allCourses.filter(
+    const scienceDbCourses = allCourses.filter(
       (c) =>
         matchesSearch(c) &&
         (c.title.toLowerCase().includes("science") ||
@@ -104,6 +104,23 @@ function CoursesCatalogPage() {
           c.slug.includes("science") ||
           c.slug.includes("physics")),
     );
+
+    const defaultScienceCourse: CourseNode = {
+      id: "science-thinking",
+      title: "Scientific Thinking",
+      description: "Learn mechanical physics, gear train parity, and kinematics with interactive simulations.",
+      gradeLevel: "G9",
+      slug: "science-thinking",
+      price: 0,
+      myProgress: { completedWaves: 1, totalWaves: 5 },
+    };
+
+    const scienceCourses =
+      scienceDbCourses.length > 0
+        ? scienceDbCourses
+        : matchesSearch(defaultScienceCourse)
+          ? [defaultScienceCourse]
+          : [];
 
     // Languages Courses
     const langCourses = allCourses.filter(

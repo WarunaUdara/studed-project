@@ -4,6 +4,7 @@ import { ArrowLeft, BookOpen, CheckCircle, Clock, Compass, Layers, Lock, PlayCir
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { CourseJourneyMap } from "@/components/gamification/CourseJourneyMap";
+import { StudEdCourseTrackMap } from "@/components/gamification/StudEdCourseTrackMap";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ProgressRing } from "@/components/ui/ProgressRing";
@@ -94,6 +95,23 @@ function CoursePlayerPage() {
       reexecuteQuery({ requestPolicy: "network-only" });
     }
   };
+
+  const isScienceCourse = courseId.startsWith("science") || courseId.startsWith("demo-sci") || courseId.includes("gear");
+
+  if (isScienceCourse) {
+    return (
+      <div className="mx-auto max-w-6xl p-4 pt-6 sm:p-6 sm:pt-8">
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <Link to="/courses">
+            <Button variant="ghost" size="sm" className="gap-1">
+              <ArrowLeft className="h-4 w-4" /> Back to Courses
+            </Button>
+          </Link>
+        </div>
+        <StudEdCourseTrackMap />
+      </div>
+    );
+  }
 
   if (fetching) {
     return (
