@@ -10,6 +10,7 @@ import { XPToast } from "@/components/gamification/XPToast";
 import { LearnBlockRenderer } from "@/components/learn/LearnBlockRenderer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { BlobProgramMaze } from "@/components/waves/BlobProgramMaze";
 import { PointsBadge } from "@/components/ui/points-badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
@@ -304,7 +305,20 @@ function WavePlayerPage() {
 
           <TabsContent value="evaluate" className="mt-5 space-y-6">
             {evaluateBlocks.length === 0 ? (
-              <p className="text-muted-foreground">No evaluation questions yet.</p>
+              <div className="py-4">
+                <BlobProgramMaze
+                  onSuccess={(xp) => {
+                    updateTotalXp(user ? user.totalXp + xp : xp);
+                    setShowConfetti(true);
+                    playSuccessSound();
+                  }}
+                  onFinish={() => {
+                    if (nextWave) {
+                      window.location.assign(`/waves/${nextWave.id}`);
+                    }
+                  }}
+                />
+              </div>
             ) : (
               <>
                 {evaluateBlocks.map((block, index) => (
