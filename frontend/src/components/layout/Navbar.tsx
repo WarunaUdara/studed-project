@@ -22,6 +22,7 @@ import { LoginModal } from "@/components/auth/LoginModal";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { Button } from "@/components/ui/button";
 import { FloatingCardNav, type MegaMenuItem } from "@/components/ui/CardNav";
+import { levelFromXp } from "@/lib/gamification";
 import { useAuthStore } from "@/stores/auth";
 import { useUiPrefs } from "@/stores/uiPrefs";
 
@@ -34,6 +35,8 @@ export function Navbar() {
   const pathname = useRouterState().location.pathname;
   const streak = Math.max(1, user?.streak ?? 1);
   const keys = 2;
+  const totalXp = Math.max(0, user?.totalXp ?? 140);
+  const levelInfo = levelFromXp(totalXp);
 
   const NAV_ITEMS: MegaMenuItem[] = [
     {
@@ -216,6 +219,20 @@ export function Navbar() {
               >
                 Go Premium
               </button>
+            </Link>
+
+            {/* XP & Level Badge Pill */}
+            <Link to="/achievements">
+              <div
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 text-xs font-bold transition-transform hover:scale-105"
+                title={`Level ${levelInfo.level} · ${totalXp} XP (${Math.round(levelInfo.progress * 100)}% to Level ${levelInfo.level + 1})`}
+              >
+                <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 px-1.5 py-0.5 rounded-full text-emerald-700 dark:text-emerald-300">
+                  LVL {levelInfo.level}
+                </span>
+                <span>{totalXp}</span>
+                <span className="text-emerald-500 text-xs">✦</span>
+              </div>
             </Link>
 
             {/* Keys Balance Pill */}
