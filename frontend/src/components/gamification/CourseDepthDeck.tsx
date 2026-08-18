@@ -11,9 +11,8 @@ export interface DeckCourseItem {
   badge: string;
   badgeType?: "recommended" | "popular" | "level";
   levelName: string;
-  accentColor: string; // e.g. from-purple-500 to-indigo-600
+  accentColor: string;
   illustrationUrl?: string;
-  illustrationSvg?: React.ReactNode;
   waves: {
     title: string;
     isCompleted?: boolean;
@@ -32,7 +31,7 @@ const SAMPLE_DECK_COURSES: DeckCourseItem[] = [
     badge: "RECOMMENDED",
     badgeType: "recommended",
     levelName: "LEVEL 1",
-    accentColor: "from-purple-600 to-indigo-700",
+    accentColor: "from-purple-600/20 to-indigo-600/20",
     illustrationUrl: "/covers/thinking-in-python.jpg",
     waves: [
       { title: "Warm Up", isCompleted: true, xp: 15 },
@@ -48,7 +47,7 @@ const SAMPLE_DECK_COURSES: DeckCourseItem[] = [
     badge: "LEVEL 1",
     badgeType: "level",
     levelName: "LEVEL 1",
-    accentColor: "from-blue-600 to-cyan-700",
+    accentColor: "from-blue-600/20 to-cyan-600/20",
     illustrationUrl: "/covers/coordinate-geometry.jpg",
     waves: [
       { title: "Warm Up", isCompleted: true, xp: 15 },
@@ -64,7 +63,7 @@ const SAMPLE_DECK_COURSES: DeckCourseItem[] = [
     badge: "POPULAR",
     badgeType: "popular",
     levelName: "LEVEL 1",
-    accentColor: "from-violet-600 to-purple-800",
+    accentColor: "from-violet-600/20 to-purple-600/20",
     illustrationUrl: "/covers/python-10-challenges.jpg",
     waves: [
       { title: "Writing Programs", isCompleted: false, isActive: true, xp: 20 },
@@ -80,7 +79,7 @@ const SAMPLE_DECK_COURSES: DeckCourseItem[] = [
     badge: "GRADE 10 · O/L",
     badgeType: "level",
     levelName: "LEVEL 2",
-    accentColor: "from-emerald-600 to-teal-800",
+    accentColor: "from-emerald-600/20 to-teal-600/20",
     illustrationUrl: "/covers/g10-mathematics.jpg",
     waves: [
       { title: "Plotting Points in 2D", isCompleted: true, xp: 15 },
@@ -96,7 +95,7 @@ const SAMPLE_DECK_COURSES: DeckCourseItem[] = [
     badge: "ADVANCED · A/L",
     badgeType: "recommended",
     levelName: "LEVEL 3",
-    accentColor: "from-amber-600 to-orange-800",
+    accentColor: "from-amber-600/20 to-orange-600/20",
     illustrationUrl: "/covers/al-physics.jpg",
     waves: [
       { title: "2D Kinematics Vectors", isCompleted: false, isActive: true, xp: 25 },
@@ -112,34 +111,34 @@ export function CourseDepthDeck() {
 
   const carouselItems = SAMPLE_DECK_COURSES.map((course) => ({
     content: (
-      <div className="relative flex size-full flex-col justify-between overflow-hidden rounded-3xl border border-white/15 bg-[#12141a] p-6 text-white shadow-2xl backdrop-blur-md">
-        {/* Ambient Top Glow */}
+      <div className="relative flex size-full flex-col justify-between overflow-hidden rounded-3xl border border-border/70 bg-card p-6 text-foreground shadow-xl backdrop-blur-md">
+        {/* Subtle Ambient Top Radial Glow */}
         <div
-          className={`pointer-events-none absolute -top-12 -inset-x-12 h-36 bg-gradient-to-b ${course.accentColor} opacity-25 blur-2xl`}
+          className={`pointer-events-none absolute -top-12 -inset-x-12 h-36 bg-gradient-to-b ${course.accentColor} opacity-40 blur-2xl`}
         />
 
         {/* Top Header Badge Row */}
         <div className="relative z-10 flex flex-col items-center space-y-1">
           {course.badgeType === "recommended" ? (
-            <span className="flex items-center gap-1 rounded-full bg-purple-500/25 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-purple-300 border border-purple-400/30">
+            <span className="flex items-center gap-1 rounded-full bg-purple-500/15 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-purple-600 dark:text-purple-300 border border-purple-400/30">
               <Sparkles className="size-2.5" /> {course.badge}
             </span>
           ) : (
-            <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-neutral-300">
+            <span className="rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground border border-border/40">
               {course.badge}
             </span>
           )}
 
-          <h3 className="text-xl font-bold tracking-tight text-white sm:text-2xl text-center line-clamp-1">
+          <h3 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl text-center line-clamp-1">
             {course.title}
           </h3>
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-400">
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">
             {course.levelName}
           </span>
         </div>
 
         {/* Center Illustration Artwork */}
-        <div className="relative z-10 my-auto flex size-28 mx-auto items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-inner">
+        <div className="relative z-10 my-auto flex size-28 mx-auto items-center justify-center overflow-hidden rounded-2xl border border-border/50 bg-muted/40 shadow-inner">
           {course.illustrationUrl ? (
             <img
               src={course.illustrationUrl}
@@ -152,28 +151,28 @@ export function CourseDepthDeck() {
         </div>
 
         {/* Interactive Waves Checklist */}
-        <div className="relative z-10 space-y-2 rounded-2xl border border-white/10 bg-black/30 p-3.5 backdrop-blur-xs">
+        <div className="relative z-10 space-y-2 rounded-2xl border border-border/50 bg-muted/30 p-3.5 backdrop-blur-xs">
           {course.waves.map((w, idx) => (
             <div key={idx} className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
                 {w.isCompleted ? (
-                  <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="size-4 text-emerald-500 shrink-0" />
                 ) : w.isActive ? (
-                  <div className="size-4 rounded-full border-2 border-purple-400 flex items-center justify-center">
-                    <div className="size-1.5 rounded-full bg-purple-400 animate-pulse" />
+                  <div className="size-4 rounded-full border-2 border-primary flex items-center justify-center">
+                    <div className="size-1.5 rounded-full bg-primary animate-pulse" />
                   </div>
                 ) : (
-                  <div className="size-4 rounded-full border border-neutral-600" />
+                  <div className="size-4 rounded-full border border-muted-foreground/40" />
                 )}
                 <span
                   className={`font-semibold ${
-                    w.isActive ? "text-white font-bold" : "text-neutral-400"
+                    w.isActive ? "text-foreground font-bold" : "text-muted-foreground"
                   }`}
                 >
                   {w.title}
                 </span>
               </div>
-              <span className="text-[10px] font-bold text-neutral-400">+{w.xp} XP</span>
+              <span className="text-[10px] font-bold text-muted-foreground">+{w.xp} XP</span>
             </div>
           ))}
         </div>
@@ -181,10 +180,8 @@ export function CourseDepthDeck() {
         {/* Primary CTA Start Button */}
         <div className="relative z-10 pt-3">
           <Link to="/courses/$courseId" params={{ courseId: course.id }}>
-            <Button
-              className="w-full rounded-full h-11 font-bold text-sm bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-900/30"
-            >
-              <Play className="size-3.5 fill-white mr-1.5" /> Start Wave ({course.duration})
+            <Button className="w-full rounded-full h-11 font-bold text-sm bg-primary hover:bg-primary/90 text-primary-foreground shadow-md">
+              <Play className="size-3.5 fill-current mr-1.5" /> Start Wave ({course.duration})
             </Button>
           </Link>
         </div>
@@ -193,7 +190,7 @@ export function CourseDepthDeck() {
   }));
 
   return (
-    <div className="relative w-full overflow-hidden rounded-[32px] border border-border/60 bg-gradient-to-b from-card/90 via-card/60 to-card/90 p-6 sm:p-8 backdrop-blur-md shadow-lg">
+    <div className="relative w-full overflow-hidden rounded-[32px] border border-border/60 bg-card p-6 sm:p-8 backdrop-blur-md shadow-sm">
       {/* Hero Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="space-y-0.5">
@@ -212,7 +209,7 @@ export function CourseDepthDeck() {
 
         <div className="hidden sm:flex items-center gap-2 text-xs font-bold text-muted-foreground bg-muted/40 px-3 py-1.5 rounded-full border border-border/40">
           <Zap className="size-3.5 fill-amber-400 text-amber-400" />
-          <span>Swipe or click cards to swap</span>
+          <span>Swipe or click to swap</span>
         </div>
       </div>
 
@@ -228,8 +225,8 @@ export function CourseDepthDeck() {
           tiltDirection="right"
           perspective={1300}
           visibleCards={3}
-          falloff={0.2}
-          blur={4}
+          falloff={0.15}
+          blur={2}
           showControls={true}
           showIndicators={false}
           activeIndex={activeIndex}
