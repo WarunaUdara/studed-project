@@ -124,7 +124,6 @@ export function DepthCarousel({
   const onChangeRef = useRef(onChange);
 
   const dragRef = useRef<DragState | null>(null);
-  const wheelTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const reducedRef = useRef(false);
 
@@ -269,30 +268,6 @@ export function DepthCarousel({
     return () => ro.disconnect();
   }, [layout]);
 
-  useEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
-    const onWheel = (e: WheelEvent) => {
-      const cfg = cfgRef.current;
-      if (cfg.count < 2) return;
-      if (Math.abs(e.deltaX) < 10 && Math.abs(e.deltaY) < 10) return;
-      e.preventDefault();
-      tweenRef.current?.kill();
-      const raw = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      const delta = e.deltaMode === 1 ? raw * 24 : raw;
-      const step = clamp(delta / (cfg.cardWidth * 0.9), -0.6, 0.6);
-      posRef.current += step;
-      layout(posRef.current);
-      if (wheelTimerRef.current) clearTimeout(wheelTimerRef.current);
-      wheelTimerRef.current = setTimeout(() => setFocus(Math.round(posRef.current), true), 130);
-    };
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => {
-      el.removeEventListener("wheel", onWheel);
-      if (wheelTimerRef.current) clearTimeout(wheelTimerRef.current);
-    };
-  }, [layout, setFocus]);
-
   const onPointerDown = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
     const cfg = cfgRef.current;
     if (cfg.count < 2) return;
@@ -429,7 +404,6 @@ export function DepthCarousel({
   useEffect(
     () => () => {
       tweenRef.current?.kill();
-      if (wheelTimerRef.current) clearTimeout(wheelTimerRef.current);
       if (autoTimerRef.current) clearInterval(autoTimerRef.current);
     },
     [],
