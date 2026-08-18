@@ -18,6 +18,7 @@ import { useToast } from "@/components/ui/Toast";
 import { COURSES_QUERY } from "@/graphql/courses";
 import { COURSE_PLAYER_QUERY, ENROLL_IN_COURSE_MUTATION } from "@/graphql/student";
 import { sanitizeGraphQLError } from "@/lib/errors";
+import { isScienceCourseId, SCIENCE_COURSE_NODE, SCIENCE_COURSE_DETAIL } from "@/lib/scienceCourse";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
 
@@ -105,15 +106,7 @@ function CoursesCatalogPage() {
           c.slug.includes("physics")),
     );
 
-    const defaultScienceCourse: CourseNode = {
-      id: "science-thinking",
-      title: "Scientific Thinking",
-      description: "Learn mechanical physics, gear train parity, and kinematics with interactive simulations.",
-      gradeLevel: "G9",
-      slug: "science-thinking",
-      price: 0,
-      myProgress: { completedWaves: 1, totalWaves: 5 },
-    };
+    const defaultScienceCourse: CourseNode = SCIENCE_COURSE_NODE;
 
     const scienceCourses =
       scienceDbCourses.length > 0
@@ -372,29 +365,9 @@ function CourseDetailSheet({
     variables: { id: courseId },
   });
   const [enrollResult, enroll] = useMutation(ENROLL_IN_COURSE_MUTATION);
-  const isScienceCourse =
-    courseId.startsWith("science") || courseId.startsWith("demo-sci") || courseId.includes("gear");
+  const isScienceCourse = isScienceCourseId(courseId);
 
-  const fallbackScienceCourse = {
-    id: "science-thinking",
-    title: "Scientific Thinking",
-    description: "Learn mechanical physics, gear train parity, and kinematics with interactive simulations.",
-    gradeLevel: "G9",
-    myProgress: { completedWaves: 1, totalWaves: 5 },
-    lessons: [
-      {
-        id: "lesson-gears",
-        title: "Gears & Mechanical Parity",
-        waves: [
-          { id: "science-gears-1", title: "Connecting Gears", xpReward: 30, myProgress: { status: "COMPLETED" } },
-          { id: "science-gears-2", title: "Gear Speeds & Tooth Counts", xpReward: 30, myProgress: null },
-          { id: "science-gears-3", title: "Direction Inversion in 5-Gear Linear Trains", xpReward: 30, myProgress: null },
-          { id: "science-gears-4", title: "6-Gear Curved Arch Mechanism", xpReward: 30, myProgress: null },
-          { id: "science-gears-5", title: "7-Gear Branched Cluster Network", xpReward: 30, myProgress: null },
-        ],
-      },
-    ],
-  };
+  const fallbackScienceCourse = SCIENCE_COURSE_DETAIL;
 
   const course = data?.course || (isScienceCourse ? fallbackScienceCourse : undefined);
   const isEnrolled = course?.myProgress !== null && course?.myProgress !== undefined;

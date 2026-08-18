@@ -163,9 +163,13 @@ function WavePlayerPage() {
               <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary">
                 Level 1 · Kinetic Science
               </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-bold text-amber-500">
-                <Zap className="size-3" /> +30 XP
-              </span>
+              <PointsBadge
+                name="XP Reward"
+                total={30}
+                size="sm"
+                icon={Zap}
+                className="border-0 p-0"
+              />
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Connecting Gears & Mechanical Parity

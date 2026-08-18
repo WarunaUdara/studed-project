@@ -4,7 +4,6 @@ import { ArrowLeft, BookOpen, CheckCircle, Clock, Compass, Layers, Lock, PlayCir
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { CourseJourneyMap } from "@/components/gamification/CourseJourneyMap";
-import { StudEdCourseTrackMap } from "@/components/gamification/StudEdCourseTrackMap";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ProgressRing } from "@/components/ui/ProgressRing";
@@ -12,6 +11,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
 import { COURSE_PLAYER_QUERY, ENROLL_IN_COURSE_MUTATION, RESET_WAVE_ATTEMPTS_MUTATION } from "@/graphql/student";
 import { sanitizeGraphQLError } from "@/lib/errors";
+import { isScienceCourseId, SCIENCE_COURSE_DETAIL } from "@/lib/scienceCourse";
 import { cn } from "@/lib/utils";
 
 interface Wave {
@@ -96,7 +96,7 @@ function CoursePlayerPage() {
     }
   };
 
-  const isScienceCourse = courseId.startsWith("science") || courseId.startsWith("demo-sci") || courseId.includes("gear");
+  const isScienceCourse = isScienceCourseId(courseId);
 
   if (isScienceCourse) {
     return (
@@ -108,7 +108,13 @@ function CoursePlayerPage() {
             </Button>
           </Link>
         </div>
-        <StudEdCourseTrackMap />
+        <CourseJourneyMap
+          courseId={SCIENCE_COURSE_DETAIL.id}
+          courseTitle={SCIENCE_COURSE_DETAIL.title}
+          gradeLevel={SCIENCE_COURSE_DETAIL.gradeLevel}
+          lessons={SCIENCE_COURSE_DETAIL.lessons}
+          isEnrolled={true}
+        />
       </div>
     );
   }
