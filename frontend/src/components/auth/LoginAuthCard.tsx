@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import { useLoginForm } from "@/components/auth/useLoginForm";
 import { Button } from "@/components/ui/button";
@@ -56,6 +56,15 @@ export function LoginAuthCard() {
         height={1024}
         className="animate-float-slow pointer-events-none absolute -top-12 left-1/2 w-28 -translate-x-1/2 select-none lg:-top-16 lg:w-36"
       />
+
+      <div className="mb-2 flex items-center justify-between">
+        <Link
+          to="/"
+          className={`inline-flex items-center gap-1 text-xs font-semibold text-login-ink-muted transition-colors hover:text-login-accent ${FOCUS_RING}`}
+        >
+          <ArrowLeft className="size-3.5" /> Back to home
+        </Link>
+      </div>
 
       <div className="text-center">
         <h1 className="text-3xl font-extrabold tracking-tight text-login-ink">

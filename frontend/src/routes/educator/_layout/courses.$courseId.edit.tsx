@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "urql";
@@ -151,7 +152,15 @@ function EditCoursePage() {
   }
 
   return (
-    <div className="mx-auto max-w-xl">
+    <div className="mx-auto max-w-xl space-y-4">
+      <div>
+        <Link to="/educator/courses/$courseId" params={{ courseId }}>
+          <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="h-4 w-4" /> Back to Course
+          </Button>
+        </Link>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>Edit Course</CardTitle>

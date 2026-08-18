@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import { BookOpen, Gift, Sparkles, Star, Trophy, Zap } from "lucide-react";
 import { Progress } from "@/components/ui/Progress";
@@ -114,17 +115,22 @@ export function LoginBrandPanel() {
 
 function Wordmark() {
   return (
-    <div className="relative inline-flex items-start">
+    <Link
+      to="/"
+      title="Back to home"
+      aria-label="StudEd Home"
+      className="group relative inline-flex items-start transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-login-accent focus-visible:ring-offset-2 rounded-md"
+    >
       <span className="text-4xl font-extrabold tracking-tight text-login-ink">
         Stud<span className="text-login-accent">Ed</span>
       </span>
       <span
         aria-hidden="true"
-        className="-mt-1 ml-1 flex size-5 shrink-0 items-center justify-center rounded-full bg-login-badge"
+        className="-mt-1 ml-1 flex size-5 shrink-0 items-center justify-center rounded-full bg-login-badge transition-transform group-hover:scale-110"
       >
         <Star className="size-3 fill-login-badge-ink text-login-badge-ink" />
       </span>
-    </div>
+    </Link>
   );
 }
 
