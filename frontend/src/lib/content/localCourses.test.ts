@@ -190,8 +190,10 @@ describe("every shipped course", () => {
 
   it("covers a ladder of grade levels rather than one band", () => {
     const grades = new Set(localCourseNodes().map((course) => course.gradeLevel));
-    expect(grades.size).toBeGreaterThanOrEqual(4);
+    expect(grades.size).toBeGreaterThanOrEqual(5);
+    // The ladder has to reach both exam years, not stop at middle school.
     expect(grades.has("OL")).toBe(true);
+    expect(grades.has("AL")).toBe(true);
   });
 
   it("gives each course a distinct slug and a non-empty syllabus", () => {

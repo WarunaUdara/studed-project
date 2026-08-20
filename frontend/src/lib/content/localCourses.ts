@@ -3,6 +3,7 @@ import mathFoundation from "@content/courses/math-foundation/course.json";
 import physicsGrade45 from "@content/courses/physics-grade-4-5/course.json";
 import physicsGrade68 from "@content/courses/physics-grade-6-8/course.json";
 import physicsGrade911 from "@content/courses/physics-grade-9-11/course.json";
+import physicsAL from "@content/courses/physics-al/course.json";
 import physicsOL from "@content/courses/physics-ol/course.json";
 import type { CourseManifest } from "./manifest";
 import { manifestWaveId, toCourseDetail, toCourseNode, toPlayerWave } from "./manifest";
@@ -22,6 +23,7 @@ const LOCAL_MANIFESTS: CourseManifest[] = [
   physicsGrade68 as CourseManifest,
   physicsGrade911 as CourseManifest,
   physicsOL as CourseManifest,
+  physicsAL as CourseManifest,
 ];
 
 export function findLocalCourse(courseId: string): CourseManifest | null {
