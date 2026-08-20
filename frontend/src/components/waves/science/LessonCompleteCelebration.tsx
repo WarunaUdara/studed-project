@@ -1,6 +1,8 @@
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
 import { Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { prefersReducedMotion } from "@/lib/motion";
 
 export interface LessonCompleteCelebrationProps {
   totalXp?: number;
@@ -13,11 +15,38 @@ export function LessonCompleteCelebration({
   onContinue,
   className = "",
 }: LessonCompleteCelebrationProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const blobRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!rootRef.current) return;
+    const root = rootRef.current;
+    const tweens: gsap.core.Tween[] = [];
+    if (!prefersReducedMotion()) {
+      tweens.push(gsap.fromTo(root, { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }));
+      if (blobRef.current) {
+        tweens.push(
+          gsap.to(blobRef.current, {
+            keyframes: { y: [-6, 6, -6], rotate: [-2, 2, -2] },
+            repeat: -1,
+            duration: 3,
+            ease: "easeInOut",
+          }),
+        );
+      }
+    } else {
+      gsap.set(root, { opacity: 1, scale: 1 });
+    }
+    return () => {
+      tweens.forEach((t) => {
+        t.kill();
+      });
+    };
+  }, []);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+    <div
+      ref={rootRef}
       className={`relative mx-auto flex w-full max-w-2xl flex-col items-center justify-between rounded-3xl border border-border/80 bg-[#0c0f17] text-white p-8 sm:p-12 shadow-2xl min-h-[540px] text-center ${className}`.trim()}
     >
       <div className="w-full flex justify-end">
@@ -35,20 +64,20 @@ export function LessonCompleteCelebration({
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-40 rounded-full bg-emerald-500/20 blur-2xl" />
 
           {/* Floating Blob Mascot */}
-          <motion.div
-            animate={{ y: [-6, 6, -6], rotate: [-2, 2, -2] }}
-            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          <div
+            ref={blobRef}
             className="relative z-20 flex size-20 items-center justify-center drop-shadow-[0_10px_25px_rgba(34,197,94,0.5)]"
           >
-            <svg viewBox="0 0 100 100" className="size-full">
-              <rect x="18" y="18" width="64" height="64" rx="28" fill="#22c55e" />
-              <ellipse cx="50" cy="74" rx="22" ry="6" fill="#15803d" opacity="0.35" />
+            <svg viewBox="0 0 100 100" className="size-full" role="img" aria-label="Happy blob mascot">
+              <title>Happy blob mascot</title>
+              <rect x="18" y="18" width="64" height="64" rx="28" fill="oklch(0.72 0.19 146)" />
+              <ellipse cx="50" cy="74" rx="22" ry="6" fill="oklch(0.53 0.15 148)" opacity="0.35" />
               {/* Cute Smiling Face with Eye Visor */}
-              <rect x="36" y="36" width="28" height="28" rx="8" fill="#0f172a" />
-              <rect x="42" y="42" width="16" height="16" rx="4" fill="#ffffff" />
-              <rect x="47" y="47" width="6" height="6" rx="1.5" fill="#22c55e" />
+              <rect x="36" y="36" width="28" height="28" rx="8" fill="oklch(0.21 0.04 265)" />
+              <rect x="42" y="42" width="16" height="16" rx="4" fill="oklch(0.99 0 0)" />
+              <rect x="47" y="47" width="6" height="6" rx="1.5" fill="oklch(0.72 0.19 146)" />
             </svg>
-          </motion.div>
+          </div>
 
           {/* Golden Circular Pedestal Platform */}
           <div className="absolute -bottom-8 z-10 flex flex-col items-center">
@@ -89,6 +118,6 @@ export function LessonCompleteCelebration({
           Continue
         </Button>
       </div>
-    </motion.div>
+    </div>
   );
 }
