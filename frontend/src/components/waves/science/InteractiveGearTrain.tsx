@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Check, RotateCcw, X as XIcon } from "lucide-react";
 import { generateGearPath } from "./GearTrainSvg";
 
@@ -25,6 +25,7 @@ export function InteractiveGearTrain({
   wrongIndices = [],
   className = "",
 }: InteractiveGearTrainProps) {
+  const reduce = useReducedMotion();
   const radius = 38;
   const teeth = 14;
   const gearSize = (radius + radius * 0.22) * 2;
@@ -115,7 +116,7 @@ export function InteractiveGearTrain({
                     : { rotate: 0 }
                 }
                 transition={
-                  isRotating
+                  isRotating && !reduce
                     ? { repeat: Infinity, duration: 4, ease: "linear" }
                     : { duration: 0.3 }
                 }

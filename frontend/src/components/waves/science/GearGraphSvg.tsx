@@ -1,7 +1,7 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { RotateCcw } from "lucide-react";
 import {
-  GearNetworkPuzzle,
+  type GearNetworkPuzzle,
   solveGearDirections,
 } from "./gear-network-engine";
 import { generateGearPath } from "./GearTrainSvg";
@@ -27,6 +27,7 @@ export function GearGraphSvg({
   wrongIds = [],
   className = "",
 }: GearGraphSvgProps) {
+  const reduce = useReducedMotion();
   const { directions } = solveGearDirections(
     puzzle.nodes,
     puzzle.edges,
@@ -88,7 +89,10 @@ export function GearGraphSvg({
           viewBox={`${minX} ${minY} ${width} ${height}`}
           className="overflow-visible max-w-full drop-shadow-2xl"
           style={{ width: `${Math.min(480, width * 1.3)}px`, height: `${Math.min(320, height * 1.2)}px` }}
+          role="img"
+          aria-label="Gear puzzle diagram"
         >
+          <title>Gear puzzle diagram</title>
           {/* Render Gears */}
           {puzzle.nodes.map((node) => {
             const { fill, shadow } = getGearColors(node.id);
@@ -104,7 +108,20 @@ export function GearGraphSvg({
                 key={node.id}
                 transform={`translate(${node.x}, ${node.y})`}
                 className={`transition-opacity ${isInteractive ? "cursor-pointer" : "cursor-default"}`}
+                role={isInteractive ? "button" : undefined}
+                tabIndex={isInteractive ? 0 : undefined}
                 onClick={() => isInteractive && onToggleNode?.(node.id)}
+                onKeyDown={
+                  isInteractive
+                    ? (e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          onToggleNode?.(node.id);
+                        }
+                      }
+                    : undefined
+                }
+                aria-label={isInteractive ? `${node.id} gear` : undefined}
               >
                 {/* Rotating SVG Gear Group centered at local (0, 0) */}
                 <motion.g
@@ -114,7 +131,7 @@ export function GearGraphSvg({
                       : { rotate: 0 }
                   }
                   transition={
-                    isRotating
+                    isRotating && !reduce
                       ? { repeat: Infinity, duration: 4, ease: "linear" }
                       : { duration: 0.3 }
                   }

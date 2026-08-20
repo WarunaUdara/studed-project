@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -13,6 +13,9 @@ export function DailyLessonLimitGate({
   onKeepLearning,
   className = "",
 }: DailyLessonLimitGateProps) {
+  const reduce = useReducedMotion();
+  const float = reduce ? undefined : { y: [-4, 4, -4], rotate: [-4, 4, -4] };
+  const floatReverse = reduce ? undefined : { y: [4, -4, 4], rotate: [3, -3, 3] };
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -32,11 +35,12 @@ export function DailyLessonLimitGate({
           <div className="relative z-20 flex items-center justify-center gap-3">
             {/* Blob Mascot */}
             <motion.div
-              animate={{ y: [-4, 4, -4], rotate: [-4, 4, -4] }}
+              animate={float}
               transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
               className="flex size-16 items-center justify-center drop-shadow-xl"
             >
-              <svg viewBox="0 0 100 100" className="size-full">
+              <svg viewBox="0 0 100 100" className="size-full" role="img" aria-label="Curious blob mascot">
+                <title>Curious blob mascot</title>
                 <rect x="18" y="18" width="64" height="64" rx="28" fill="#22c55e" />
                 <ellipse cx="50" cy="74" rx="22" ry="6" fill="#15803d" opacity="0.35" />
                 {/* Curious Face */}
@@ -48,7 +52,7 @@ export function DailyLessonLimitGate({
 
             {/* 3D Rainbow Gradient Padlock */}
             <motion.div
-              animate={{ y: [4, -4, 4], rotate: [3, -3, 3] }}
+              animate={floatReverse}
               transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
               className="relative flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-600 p-3 shadow-[0_10px_30px_rgba(236,72,153,0.5)] border-2 border-white/30"
             >

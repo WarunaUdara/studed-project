@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 export interface GearProps {
   teeth?: number;
@@ -70,6 +70,7 @@ export function SingleGear({
   showRotationArrow = false,
   className = "",
 }: GearProps) {
+  const reduce = useReducedMotion();
   const size = (radius + radius * 0.22) * 2;
   const center = size / 2;
   const gearPath = generateGearPath(teeth, radius);
@@ -84,7 +85,10 @@ export function SingleGear({
         <svg
           viewBox={`0 0 ${size} ${size}`}
           className="pointer-events-none absolute inset-0 size-full z-20"
+          role="img"
+          aria-label="Gear rotation direction"
         >
+          <title>Gear rotation direction</title>
           {direction === -1 ? (
             // Counter-Clockwise Arrow
             <g className="text-white drop-shadow-md">
@@ -129,7 +133,7 @@ export function SingleGear({
             : { rotate: 0 }
         }
         transition={
-          isRotating
+          isRotating && !reduce
             ? { repeat: Infinity, duration: speed, ease: "linear" }
             : { duration: 0.3 }
         }
@@ -269,7 +273,10 @@ export function GearTrainSvg({
         <svg
           viewBox="0 0 100 100"
           className="absolute -left-12 -bottom-4 size-20 z-30 drop-shadow-lg"
+          role="img"
+          aria-label="Hand on gear"
         >
+          <title>Hand on gear</title>
           <rect x="15" y="45" width="45" height="35" rx="10" fill="#eab308" />
           <path
             d="M 50,45 C 55,30 75,32 75,48 C 75,60 55,68 50,75 Z"

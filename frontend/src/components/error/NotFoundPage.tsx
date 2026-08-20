@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { BookOpen, Home } from "lucide-react";
 import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ export const Route = createFileRoute("/_notFound" as never)({
 });
 
 export function NotFoundPage() {
+  const reduce = useReducedMotion();
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center px-4 text-center">
       <motion.div
@@ -22,7 +23,7 @@ export function NotFoundPage() {
           <p className="text-[9rem] font-black leading-none text-muted/30 select-none">404</p>
           <motion.div
             className="absolute inset-0 flex items-center justify-center"
-            animate={{ y: [0, -6, 0] }}
+            animate={reduce ? undefined : { y: [0, -6, 0] }}
             transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
           >
             <HelmetCompanion size="lg" mood="hmm" gaze={{ x: 8, y: -6 }} />
