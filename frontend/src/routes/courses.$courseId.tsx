@@ -56,14 +56,18 @@ function CoursePlayerPage() {
   const { courseId } = Route.useParams();
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
 
+  // Manifest-backed courses ship with the app, so skip the query for them
+  // rather than letting a backend error hide a course we already hold.
+  const localCourse = useMemo(() => localCourseDetail(courseId), [courseId]);
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: COURSE_PLAYER_QUERY,
     variables: { id: courseId },
+    pause: Boolean(localCourse),
   });
 
   // Manifest-backed courses render through the same journey components as
   // every database course; only the source of the data differs.
-  const course: Course | undefined = data?.course ?? localCourseDetail(courseId) ?? undefined;
+  const course: Course | undefined = localCourse ?? data?.course ?? undefined;
 
   const completedWaves = course?.myProgress?.completedWaves ?? 0;
   const totalWaves = course?.myProgress?.totalWaves ?? 0;
