@@ -449,7 +449,12 @@ export async function captureAllSnapshots(
 
   const snapshots: ScreenSnapshot[] = [];
 
-  // Authenticate first
+  // Authenticate first. The GraphQL mock has to be installed before the login
+  // navigation, not just before each snapshot: without it the sign-in call goes
+  // to a backend that is not running during an offline audit, and every
+  // protected screen is then captured as a logged-out redirect.
+  await setupMockGraphQL(page);
+
   try {
     await page.goto(`${BASE_URL}/login`, { waitUntil: "domcontentloaded", timeout: 15000 });
     await page.waitForSelector("#email", { timeout: 8000 });
