@@ -4,6 +4,7 @@ import { BlobDialogBlock } from "@/components/learn/interactive/BlobDialogBlock"
 import { CircuitLabBlock } from "@/components/learn/interactive/CircuitLabBlock";
 import { ForceLabBlock } from "@/components/learn/interactive/ForceLabBlock";
 import { FractionLabBlock } from "@/components/learn/interactive/FractionLabBlock";
+import { PythonRunnerBlock } from "@/components/learn/interactive/PythonRunnerBlock";
 import { WaterFlowBlock } from "@/components/learn/interactive/WaterFlowBlock";
 import { CodeBlock } from "@/components/learn/visualizations/CodeBlock";
 import { CoordinatePlaneBlock } from "@/components/learn/visualizations/CoordinatePlaneBlock";
@@ -135,6 +136,9 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
 
     case "water_flow":
       return <WaterFlowBlock content={block.content} metadata={block.metadata} />;
+
+    case "python_runner":
+      return <PythonRunnerBlock content={block.content} metadata={block.metadata} />;
 
     case "animation":
       return <AnimationBlock content={block.content} metadata={block.metadata} />;

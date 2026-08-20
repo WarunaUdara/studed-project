@@ -23,6 +23,9 @@ type Config struct {
 	// Agent loop bounds.
 	MaxAgentIterations int
 	MaxBodyBytes       int64
+
+	// Wall-clock limit for one student program.
+	CodeRunTimeoutSeconds int
 }
 
 func Load() (*Config, error) {
@@ -37,6 +40,8 @@ func Load() (*Config, error) {
 		GeminiModel:         getEnv("GEMINI_MODEL", "gemini-2.5-flash"),
 		MaxAgentIterations:  getEnvInt("MAX_AGENT_ITERATIONS", 6),
 		MaxBodyBytes:        int64(getEnvInt("MAX_BODY_BYTES", 15<<20)),
+
+		CodeRunTimeoutSeconds: getEnvInt("CODE_RUN_TIMEOUT_SECONDS", 5),
 	}, nil
 }
 

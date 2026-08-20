@@ -9,6 +9,7 @@ import { BlobDialogBlock } from "@/components/learn/interactive/BlobDialogBlock"
 import { CircuitLabBlock } from "@/components/learn/interactive/CircuitLabBlock";
 import { ForceLabBlock } from "@/components/learn/interactive/ForceLabBlock";
 import { FractionLabBlock } from "@/components/learn/interactive/FractionLabBlock";
+import { PythonRunnerBlock } from "@/components/learn/interactive/PythonRunnerBlock";
 import { WaterFlowBlock } from "@/components/learn/interactive/WaterFlowBlock";
 import { SCENE_IDS } from "@/components/learn/interactive/animationRegistry";
 import { EvaluateBlockRenderer } from "@/components/evaluate/EvaluateBlockRenderer";
@@ -375,6 +376,28 @@ export const puckConfig: Config = {
           ) : (
             <ForceLabBlock content={content} metadata={metadata} />
           )}
+        </div>
+      ),
+    },
+
+    // A Python exercise a student runs against the server sandbox.
+    PythonRunnerBlock: {
+      fields: {
+        content: { type: "textarea", label: "Starter code" },
+        metadata: { type: "textarea", label: "Exercise JSON (title, instruction, stdin, hint)" },
+      },
+      defaultProps: {
+        content: "score = 100\nprint(score)",
+        metadata: JSON.stringify({
+          version: 1,
+          title: "Try it yourself",
+          instruction: "Change the number and run it again.",
+        }),
+      },
+      render: ({ content, metadata }) => (
+        <div className="space-y-2">
+          <LearnBadge label="Python Exercise" />
+          <PythonRunnerBlock content={content} metadata={metadata} />
         </div>
       ),
     },
@@ -859,6 +882,8 @@ function learnBlockToItem(lb: LearnBlockRaw): PuckData["content"][number] {
       return { type: "PhysicsLabBlock", props: { ...common, labType: type, content: lb.content, metadata: lb.metadata || "{}" } };
     case "blob_dialog":
       return { type: "BlobDialogBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
+    case "python_runner":
+      return { type: "PythonRunnerBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
     case "animation":
       return { type: "AnimationBlock", props: { ...common, scene: sceneFrom(lb), metadata: lb.metadata || "{}" } };
     default:
@@ -1089,6 +1114,14 @@ export function puckToWaveData(puckData: PuckData) {
         learnBlocks.push({
           id,
           type: str(block.props.labType) || "force_lab",
+          content: str(block.props.content),
+          metadata: str(block.props.metadata) || null,
+        });
+        break;
+      case "PythonRunnerBlock":
+        learnBlocks.push({
+          id,
+          type: "python_runner",
           content: str(block.props.content),
           metadata: str(block.props.metadata) || null,
         });

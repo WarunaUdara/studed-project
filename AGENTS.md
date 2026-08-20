@@ -263,6 +263,20 @@ All color tokens in the StudEd frontend use **OKLCH** (`oklch(L C H)`), the mode
 3. Register the Tailwind utility in `@theme inline` as `--color-name: var(--name)`.
 4. Use in components as `bg-name`, `text-name`, `border-name`, etc.
 
+## Student REST Endpoints
+
+Two student-facing REST routes sit beside GraphQL (see
+[API Specifications](07-Technical-Specs/API-Specifications.md) for the full
+contract):
+
+- `POST /ai/ask` — the lesson tutor. Streams SSE from ai-service `/v1/ask` with
+  no tools attached. Any signed-in learner. Do not point student UI at
+  `/ai/chat`; that route is educator-only and drives the authoring agent.
+- `POST /code/run` — the Python sandbox for coding waves. Student code runs
+  server side in the ai-service container, never in the browser. A crashing
+  program is a 200 with a traceback, because the student is meant to read the
+  real error.
+
 ## UI Sound System
 
 The frontend uses the **Web Audio API** (no audio files) for subtle UI sounds:

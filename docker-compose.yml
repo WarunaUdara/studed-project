@@ -163,8 +163,18 @@ services:
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
       OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
+      CODE_RUN_TIMEOUT_SECONDS: ${CODE_RUN_TIMEOUT_SECONDS:-5}
     ports:
       - "127.0.0.1:8090:8090"
+    # Student code runs inside this container, so the container is the sandbox
+    # wall. Dropping privileges and capping memory limits what a hostile or
+    # runaway program can reach even after the in-process limits are passed.
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 256
+    mem_limit: 1g
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8090/health"]
       interval: 5s

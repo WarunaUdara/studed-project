@@ -31,7 +31,16 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 FROM alpine:3.21.2
 
-RUN apk --no-cache add ca-certificates
+# python3 powers the student code sandbox (/v1/run-code); util-linux provides
+# prlimit, which caps a student program's memory and CPU. Without prlimit the
+# runner still enforces its deadline, so the image stays functional either way.
+RUN apk --no-cache add ca-certificates python3 util-linux-misc
+
+# Student code runs as a child of this process, so the service must not be
+# root: the container boundary is the real sandbox wall.
+RUN adduser -D -u 10001 studed
+USER studed
+
 COPY --from=builder /app/service /app/service
 
 EXPOSE 8090

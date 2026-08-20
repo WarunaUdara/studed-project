@@ -31,6 +31,7 @@ export const INTERACTIVE_LEARN_TYPES = [
   "circuit_lab",
   "water_flow",
   "fraction_lab",
+  "python_runner",
   "animation",
 ] as const;
 
@@ -120,6 +121,18 @@ export interface FractionLabConfig {
   maxParts?: number;
   label?: string;
   caption?: string;
+}
+
+export interface PythonRunnerConfig {
+  version: number;
+  title?: string;
+  /** What the student is asked to make the program do. */
+  instruction?: string;
+  /** Code the editor opens with; falls back to the block content. */
+  starterCode?: string;
+  /** Text piped to the program's input(), for exercises that read input. */
+  stdin?: string;
+  hint?: string;
 }
 
 /* ----------------------------- Evaluate blocks ----------------------------- */

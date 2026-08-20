@@ -53,6 +53,10 @@ export default defineConfig(({ mode }) => {
           target,
           changeOrigin: true,
         },
+        "/code": {
+          target,
+          changeOrigin: true,
+        },
       },
       warmup: {
         clientFiles: [

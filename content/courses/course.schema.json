@@ -106,6 +106,7 @@
             "circuit_lab",
             "water_flow",
             "fraction_lab",
+            "python_runner",
             "animation"
           ]
         },
