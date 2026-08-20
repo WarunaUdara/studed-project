@@ -10,10 +10,10 @@ export const Route = createFileRoute("/register")({
 function RegisterPage() {
   return (
     <div className="flex min-h-screen">
-      {/* Left panel — branding */}
+      {/* Left panel - branding */}
       <RegisterBrandPanel />
 
-      {/* Right panel — form */}
+      {/* Right panel - form */}
       <div className="bg-login-panel-sky relative flex w-full items-start justify-center px-6 pt-20 pb-6 lg:w-1/2">
         {/* Two textures, swapped by theme */}
         <img

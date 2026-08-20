@@ -107,7 +107,7 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
 
   return (
     <div className={cn("mx-auto max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:flex", className)}>
-      {/* Sidebar — desktop */}
+      {/* Sidebar - desktop */}
       <aside
         className={cn(
           "hidden shrink-0 lg:block transition-[width] duration-200 ease-out",

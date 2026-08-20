@@ -33,7 +33,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
             onClick={onClose}
           />
 
-          {/* Modal Dialog Card — 100% Centered in Screen */}
+          {/* Modal Dialog Card - 100% Centered in Screen */}
           <motion.div
             className="relative z-10 my-auto w-full max-w-sm sm:max-w-md overflow-hidden rounded-[32px] border border-border/50 bg-card/95 p-7 shadow-2xl backdrop-blur-2xl"
             initial={{ scale: 0.9, opacity: 0, y: 16 }}

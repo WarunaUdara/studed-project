@@ -95,7 +95,7 @@ export function ScrollXpMeter() {
               <p className="mt-2 hidden text-[11px] leading-snug text-muted-foreground sm:block">
                 {awarded ? (
                   <>
-                    <span className="font-semibold text-gold">{t("explorerUnlocked")}</span> —{" "}
+                    <span className="font-semibold text-gold">{t("explorerUnlocked")}</span> -{" "}
                     {t("explorerUnlockedBody")}
                   </>
                 ) : (

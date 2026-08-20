@@ -187,7 +187,7 @@ export function AIAssistantPanel({
                 <Bot className="h-4 w-4" /> I can build this wave&apos;s content with you.
               </p>
               <p>
-                Ask me to create any content — text, formulas, images, videos, callouts,
+                Ask me to create any content: text, formulas, images, videos, callouts,
                 examples, interactive visualizations, MCQs, fill-in-the-blank, true/false,
                 numeric, and drag-and-drop. Generated blocks appear in your editor instantly.
                 You can also ask me to edit or remove blocks already in the editor, and I
@@ -253,7 +253,7 @@ export function AIAssistantPanel({
 
             {m.role === "assistant" && (
               <>
-                {/* Model thoughts (reasoning) — agentic-style: a distinct,
+                {/* Model thoughts (reasoning) - agentic-style: a distinct,
                     muted, italic block that reads like Claude/Codex thinking
                     (NOT a chat bubble). Collapsed by default with a chevron;
                     expands inline. */}

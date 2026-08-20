@@ -92,7 +92,7 @@ export const FEATURED_COURSES: FeaturedCourse[] = [
   {
     id: "demo-sin-al",
     title: "Sinhala",
-    description: "සාහිත්‍යය, ව්‍යාකරණ සහ රචනා අත්පොත — A/L සඳහා සම්පූර්ණ අධ්‍යයන ඒකක.",
+    description: "සාහිත්‍යය, ව්‍යාකරණ සහ රචනා අත්පොත: A/L සඳහා සම්පූර්ණ අධ්‍යයන ඒකක.",
     gradeLevel: "AL",
     subjectIcon: "sinhala",
     totalWaves: 22,

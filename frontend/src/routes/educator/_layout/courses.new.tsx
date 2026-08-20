@@ -162,7 +162,7 @@ function CreateCoursePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="price">Price (Rs.) — leave blank for free</Label>
+              <Label htmlFor="price">Price (Rs.) - leave blank for free</Label>
               <Input
                 id="price"
                 type="number"

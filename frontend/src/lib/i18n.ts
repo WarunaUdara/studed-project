@@ -89,13 +89,13 @@ export const PUBLIC_STRINGS = {
     SI: "StudEd මඟින් ඉගෙනුම සිදුවන ආකාරය",
   },
   howSubhead: {
-    EN: "Every subject is broken into Courses, Lessons and Waves — small, focused units with a Learn phase and an Evaluate phase.",
-    SI: "සෑම විෂයයක්ම Courses, Lessons සහ Waves ලෙස බෙදා ඇත — Learn සහ Evaluate අදියර සහිත කෙටි පාඩම් ඒකක.",
+    EN: "Every subject is broken into Courses, Lessons and Waves: small, focused units with a Learn phase and an Evaluate phase.",
+    SI: "සෑම විෂයයක්ම Courses, Lessons සහ Waves ලෙස බෙදා ඇත: Learn සහ Evaluate අදියර සහිත කෙටි පාඩම් ඒකක.",
   },
   howStep1: { EN: "Course", SI: "Course එක" },
   howStep1Copy: {
-    EN: "A full subject mapped to your grade — Mathematics, Science, Sinhala and more.",
-    SI: "ඔබේ ශ්‍රේණියට අදාළ සම්පූර්ණ විෂයය — ගණිතය, විද්‍යාව, ඉංග්‍රීසි සහ තවත් බොහෝ දේ.",
+    EN: "A full subject mapped to your grade: Mathematics, Science, Sinhala and more.",
+    SI: "ඔබේ ශ්‍රේණියට අදාළ සම්පූර්ණ විෂයය: ගණිතය, විද්‍යාව, ඉංග්‍රීසි සහ තවත් බොහෝ දේ.",
   },
   howStep2: { EN: "Lesson", SI: "Lesson එක" },
   howStep2Copy: {
@@ -104,7 +104,7 @@ export const PUBLIC_STRINGS = {
   },
   howStep3: { EN: "Wave", SI: "Wave එක" },
   howStep3Copy: {
-    EN: "A Learn phase teaches the concept, then an Evaluate phase tests mastery — and awards XP.",
+    EN: "A Learn phase teaches the concept, then an Evaluate phase tests mastery, and awards XP.",
     SI: "Learn phase එකෙන් සංකල්ප ඉගෙන ගෙන, Evaluate phase එකෙන් දැනුම මැන බලා XP උපයාගන්න.",
   },
 
@@ -132,15 +132,15 @@ export const PUBLIC_STRINGS = {
     SI: "දැන්ම Wave එකක් අත්හදා බලන්න.",
   },
   playSubhead: {
-    EN: "Every wave pairs a Learn phase with an Evaluate phase. Here is a real one — no account needed.",
+    EN: "Every wave pairs a Learn phase with an Evaluate phase. Here is a real one, no account needed.",
     SI: "සෑම Wave එකකම Learn phase එකක් සහ Evaluate phase එකක් ඇත. ගිණුමක් නොමැතිවම අත්හදා බලන්න.",
   },
   playWaveTag: { EN: "Wave 4 of 6 · Circle Theorems", SI: "Wave 4 of 6 · වෘත්ත ප්‍රමේයයන්" },
   playLearnLabel: { EN: "Learn phase", SI: "Learn phase" },
   playLearnTitle: { EN: "Areas scale with the square", SI: "වර්ගඵලය අරයේ වර්ගයට අනුලෝමව සමානුපාතික වේ" },
   playLearnCopy: {
-    EN: "Double a circle's radius and its area does not double — it quadruples. Area always scales with r².",
-    SI: "වෘත්තයක අරය දෙගුණ කළ විට වර්ගඵලය දෙගුණ නොවේ — එය සිව්ගුණ වේ (r² අනුව).",
+    EN: "Double a circle's radius and its area does not double, it quadruples. Area always scales with r².",
+    SI: "වෘත්තයක අරය දෙගුණ කළ විට වර්ගඵලය දෙගුණ නොවේ, එය සිව්ගුණ වේ (r² අනුව).",
   },
   playEvaluateLabel: { EN: "Evaluate phase", SI: "Evaluate phase" },
   playQuestion: {
@@ -152,14 +152,14 @@ export const PUBLIC_STRINGS = {
   playOptC: { EN: "It triples", SI: "තුන්ගුණ වේ" },
   playOptD: { EN: "It quadruples", SI: "සිව්ගුණ වේ" },
   playHint: {
-    EN: "Area scales with r² — so what is (2r)²?",
-    SI: "වර්ගඵලය r² අනුව වෙනස් වේ — එසේ නම් (2r)² යනු කුමක්ද?",
+    EN: "Area scales with r². So what is (2r)²?",
+    SI: "වර්ගඵලය r² අනුව වෙනස් වේ. එසේ නම් (2r)² යනු කුමක්ද?",
   },
   playHintLabel: { EN: "AI tutor hint", SI: "AI Tutor ඉඟිය" },
   playCorrectTitle: { EN: "Wave complete.", SI: "Wave එක සම්පූර්ණයි!" },
   playCorrectCopy: {
-    EN: "That is the whole loop — learn, answer, earn. Courses hold hundreds of waves like this one.",
-    SI: "මෙයයි සම්පූර්ණ ක්‍රියාවලිය — ඉගෙන ගන්න, පිළිතුරු දෙන්න, XP උපයන්න.",
+    EN: "That is the whole loop: learn, answer, earn. Courses hold hundreds of waves like this one.",
+    SI: "මෙයයි සම්පූර්ණ ක්‍රියාවලිය: ඉගෙන ගන්න, පිළිතුරු දෙන්න, XP උපයන්න.",
   },
   playCta: { EN: "Start your real journey", SI: "ඔබගේ ඉගෙනුම් ගමන ආරම්භ කරන්න" },
   playReplay: { EN: "Replay wave", SI: "Wave එක නැවත Play කරන්න" },
@@ -201,13 +201,13 @@ export const PUBLIC_STRINGS = {
   },
   mechanicProficiencyTitle: { EN: "Proficiency ladder", SI: "ප්‍රාඵල්‍යතා පඩිපෙළ" },
   mechanicProficiencyCopy: {
-    EN: "Climb Not Started → Expert as your average score grows — gold and purple earn badges.",
-    SI: "Not Started → Expert දක්වා නඟින්න — රන් සහ දම් පටි අත්පත් කරගන්න.",
+    EN: "Climb Not Started → Expert as your average score grows. Gold and purple earn badges.",
+    SI: "Not Started → Expert දක්වා නඟින්න. රන් සහ දම් පටි අත්පත් කරගන්න.",
   },
   mechanicStreakTitle: { EN: "Daily streaks", SI: "දෛනික දිගට" },
   mechanicStreakCopy: {
-    EN: "Practice every day to keep your flame alive — bonus XP when you hit 7 days.",
-    SI: "දිනපතා පුහුණු වීමෙන් ඔබගේ ගිනි දලවා තබාගන්න — 7 දිනක් වූ විට bonus XP.",
+    EN: "Practice every day to keep your flame alive. Bonus XP when you hit 7 days.",
+    SI: "දිනපතා පුහුණු වීමෙන් ඔබගේ ගිනි දලවා තබාගන්න. 7 දිනක් වූ විට bonus XP.",
   },
 
   catalogHeading: {

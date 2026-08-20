@@ -328,7 +328,7 @@ function EducatorSettingsPage() {
                 <div className="space-y-1.5">
                   <Label className="text-muted-foreground">Unique User Identifier (ID)</Label>
                   <Input
-                    value={user?.id ?? "—"}
+                    value={user?.id ?? "-"}
                     disabled
                     className="bg-muted/50 font-mono text-xs text-muted-foreground cursor-not-allowed"
                   />

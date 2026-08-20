@@ -82,7 +82,7 @@ export function PublicFooter() {
 
   return (
     <footer className="relative overflow-hidden border-t bg-background">
-      {/* Scroll-reactive bottom glow — intensifies when reader reaches rock bottom */}
+      {/* Scroll-reactive bottom glow - intensifies when reader reaches rock bottom */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 transition-opacity duration-200"
@@ -92,7 +92,7 @@ export function PublicFooter() {
             "radial-gradient(ellipse 120% 80% at 50% 120%, rgba(249,115,22,0.35) 0%, rgba(147,197,253,0.3) 45%, transparent 75%)",
         }}
       />
-      {/* Ambient footer glow — always visible, subtle */}
+      {/* Ambient footer glow - always visible, subtle */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-40"

@@ -191,7 +191,7 @@ export function WaveMapHero() {
               </linearGradient>
             </defs>
 
-            {/* Base trail — dotted game-map feel */}
+            {/* Base trail - dotted game-map feel */}
             <path
               ref={pathRef}
               d={PATH_D}
@@ -255,7 +255,7 @@ export function WaveMapHero() {
                       playClickSound();
                       setActiveIdx(isActive ? null : i);
                     }}
-                    aria-label={`${t(node.titleKey)} — ${statusLabel(node.state)}`}
+                    aria-label={`${t(node.titleKey)}, ${statusLabel(node.state)}`}
                     className={cn(
                       "relative flex items-center justify-center rounded-full transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                       node.state === "done" &&

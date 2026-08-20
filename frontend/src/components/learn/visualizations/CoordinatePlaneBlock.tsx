@@ -524,7 +524,7 @@ export function CoordinatePlaneBlock({ metadata }: CoordinatePlaneBlockProps) {
               <CheckCircle2 className="h-6 w-6 text-emerald-500 shrink-0" />
               <div>
                 <p className="font-bold text-sm">
-                  {isVectorDemo ? "Got it — see the displacement!" : "You got it!"}
+                  {isVectorDemo ? "Got it, see the displacement!" : "You got it!"}
                 </p>
                 <p className="text-xs text-emerald-600/80 dark:text-emerald-400/80">
                   {isVectorDemo

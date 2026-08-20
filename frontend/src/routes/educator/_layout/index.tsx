@@ -109,7 +109,7 @@ function EducatorDashboardPage() {
       value:
         courses.length > 0
           ? `${Math.round((stats.published.length / courses.length) * 100)}%`
-          : "—",
+          : "-",
       icon: TrendingUp,
       color: "text-info",
       bg: "bg-info/10",

@@ -285,7 +285,7 @@ function WaveEditorPage() {
             {wave.isPublished ? "Published" : "Draft"}
           </span>
 
-          {/* Edit / Preview toggle — segmented shadcn button group */}
+          {/* Edit / Preview toggle - segmented shadcn button group */}
           <ButtonGroup size="sm">
             <Button
               size="sm"

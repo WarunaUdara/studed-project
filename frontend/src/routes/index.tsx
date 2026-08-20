@@ -313,7 +313,7 @@ function HowItWorks() {
 
   return (
     <section className="relative overflow-hidden px-4 py-24 sm:px-6">
-      {/* Upper Right Abstract Shape — slow decorative rotation */}
+      {/* Upper Right Abstract Shape - slow decorative rotation */}
       <motion.img
         src="/abstract-shapes/Group 215.svg"
         alt=""
@@ -426,7 +426,7 @@ function GamificationShowcase() {
         <SectionHeading title={t("gamificationHeading")} subhead={t("gamificationSubhead")} />
 
         <MagicBento className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-          {/* Live Leaderboard — Tall 1x2 Hero Card on the Left */}
+          {/* Live Leaderboard - Tall 1x2 Hero Card on the Left */}
           <MagicBentoCard
             enableStars={true}
             enableTilt={true}
@@ -448,7 +448,7 @@ function GamificationShowcase() {
             </div>
           </MagicBentoCard>
 
-          {/* XP & Levels — Top Middle */}
+          {/* XP & Levels - Top Middle */}
           <MagicBentoCard
             enableStars={true}
             enableTilt={true}
@@ -471,7 +471,7 @@ function GamificationShowcase() {
             </div>
           </MagicBentoCard>
 
-          {/* Daily Streaks — Top Right */}
+          {/* Daily Streaks - Top Right */}
           <MagicBentoCard
             enableStars={true}
             enableTilt={true}
@@ -493,7 +493,7 @@ function GamificationShowcase() {
             </div>
           </MagicBentoCard>
 
-          {/* Proficiency Ladder — Wide 2x1 Hero Card at Bottom Right */}
+          {/* Proficiency Ladder - Wide 2x1 Hero Card at Bottom Right */}
           <MagicBentoCard
             enableStars={true}
             enableTilt={true}
@@ -801,7 +801,7 @@ const PRICING_TIERS: PricingTier[] = [
     id: "free",
     name: "Free Preview",
     price: "LKR 0",
-    description: "Explore the first wave of every course — no card required.",
+    description: "Explore the first wave of every course, no card required.",
     features: ["Browse full catalog", "Sample Wave 1 of any course", "Daily streak tracking"],
     cta: "Get started free",
   },
@@ -810,7 +810,7 @@ const PRICING_TIERS: PricingTier[] = [
     name: "Student (Standard)",
     price: "LKR 1,200",
     period: "/month",
-    description: "Everything for one grade — full waves, leaderboards and proficiency.",
+    description: "Everything for one grade: full waves, leaderboards and proficiency.",
     features: [
       "Unlimited waves in your grade",
       "Global & course leaderboards",

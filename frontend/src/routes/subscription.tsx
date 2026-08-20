@@ -50,7 +50,7 @@ const TIER_PLANS: TierPlan[] = [
     icon: Shield,
     price: "LKR 690",
     period: "/month",
-    description: "One grade, full syllabus coverage — a solid start for steady revision.",
+    description: "One grade, full syllabus coverage, a solid start for steady revision.",
     features: [
       "Unlimited waves in your grade",
       "Daily streak & XP tracking",
@@ -64,7 +64,7 @@ const TIER_PLANS: TierPlan[] = [
     icon: Sparkles,
     price: "LKR 1,200",
     period: "/month",
-    description: "Everything for one grade — full waves, leaderboards and proficiency.",
+    description: "Everything for one grade: full waves, leaderboards and proficiency.",
     features: [
       "Everything in Basic",
       "Global & course leaderboards",
@@ -134,7 +134,7 @@ function getStatusMeta(status?: string | null) {
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
+  if (Number.isNaN(d.getTime())) return "-";
   return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 }
 
@@ -202,7 +202,7 @@ function SubscriptionPage() {
             </h1>
             <p className="text-muted-foreground text-sm max-w-2xl">
               Every plan includes the free preview wave of any course. Upgrade for unlimited waves,
-              leaderboards, and priority AI tutoring — activated instantly.
+              leaderboards, and priority AI tutoring, activated instantly.
             </p>
           </div>
 

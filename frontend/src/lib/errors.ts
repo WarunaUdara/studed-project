@@ -32,7 +32,7 @@ const FRIENDLY_MAP: Array<{ test: RegExp; title: string; message: string }> = [
   {
     test: /server error|500|502|503/i,
     title: "Server issue",
-    message: "Something went wrong on our end. We're on it — try again shortly.",
+    message: "Something went wrong on our end. We're on it. Try again shortly.",
   },
   {
     test: /timeout/i,

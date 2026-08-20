@@ -603,7 +603,7 @@ function ResultCard({
             </>
           ) : (
             <>
-              <RotateCcw className="h-5 w-5" /> Not quite — try again
+              <RotateCcw className="h-5 w-5" /> Not quite, try again
             </>
           )}
         </CardTitle>
@@ -615,7 +615,7 @@ function ResultCard({
           <div className="flex items-center gap-2 rounded-lg bg-gold/10 px-3 py-2">
             <Trophy className="h-5 w-5 text-gold" />
             <p className="text-sm font-semibold text-gold">
-              {justEarnedXp ? `+${xpEarned} XP earned!` : "Already completed — no additional XP."}
+              {justEarnedXp ? `+${xpEarned} XP earned!` : "Already completed, no additional XP."}
             </p>
           </div>
         )}
