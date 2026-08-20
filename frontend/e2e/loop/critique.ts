@@ -9,9 +9,10 @@ import type {
   ScreenSnapshot,
 } from "./types";
 
-const AUDIT_FILE = path.resolve(import.meta.dir, "audit.json");
-const SNAPSHOTS_DIR = path.resolve(import.meta.dir, "snapshots");
-const CRITIQUE_OUTPUT_FILE = path.resolve(import.meta.dir, "critique.json");
+const LOOP_DIR = path.resolve(__dirname);
+const AUDIT_FILE = path.resolve(LOOP_DIR, "audit.json");
+const SNAPSHOTS_DIR = path.resolve(LOOP_DIR, "snapshots");
+const CRITIQUE_OUTPUT_FILE = path.resolve(LOOP_DIR, "critique.json");
 
 export class CritiqueRunner {
   private auditData: AuditOutput | null = null;
@@ -68,7 +69,7 @@ export class CritiqueRunner {
   }
 
   private writeMarkdownReport(critique: CritiqueOutput): void {
-    const reportPath = path.resolve(import.meta.dir, "REPORT.md");
+    const reportPath = path.resolve(LOOP_DIR, "REPORT.md");
     const p0s = critique.passA.filter((d) => d.severity === "P0");
     const p1s = critique.passA.filter((d) => d.severity === "P1");
     const p2s = critique.passA.filter((d) => d.severity === "P2");

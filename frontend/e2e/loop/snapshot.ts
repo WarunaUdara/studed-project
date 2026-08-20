@@ -476,3 +476,54 @@ export async function captureAllSnapshots(
   await context.close();
   return snapshots;
 }
+
+/**
+ * High-level engine runner that reads discovery.json and captures snapshots for all roles.
+ */
+export async function runSnapshotEngine(viewports: ViewportMode[] = ["desktop", "mobile"]): Promise<ScreenSnapshot[]> {
+  const { chromium } = await import("@playwright/test");
+  const DISCOVERY_FILE = path.resolve(__dirname, "discovery.json");
+
+  if (!fs.existsSync(DISCOVERY_FILE)) {
+    console.warn(`[snapshot] discovery.json not found. Run discovery first.`);
+    return [];
+  }
+
+  const discovery = JSON.parse(fs.readFileSync(DISCOVERY_FILE, "utf-8"));
+  const browser = await chromium.launch({ headless: true });
+  const allSnapshots: ScreenSnapshot[] = [];
+
+  try {
+    // 1. Student Journey
+    if (discovery.roles?.student?.screens?.length) {
+      console.log(`[snapshot] Capturing ${discovery.roles.student.screens.length} Student screens...`);
+      const studentSnaps = await captureAllSnapshots(
+        browser,
+        "student",
+        { email: "demo.student@studed.lk", pass: "password1234" },
+        discovery.roles.student.screens,
+        viewports
+      );
+      allSnapshots.push(...studentSnaps);
+    }
+
+    // 2. Educator Journey
+    if (discovery.roles?.educator?.screens?.length) {
+      console.log(`[snapshot] Capturing ${discovery.roles.educator.screens.length} Educator screens...`);
+      const educatorSnaps = await captureAllSnapshots(
+        browser,
+        "educator",
+        { email: "demo.educator@studed.lk", pass: "password1234" },
+        discovery.roles.educator.screens,
+        viewports
+      );
+      allSnapshots.push(...educatorSnaps);
+    }
+  } finally {
+    await browser.close();
+  }
+
+  console.log(`[snapshot] Finished capturing ${allSnapshots.length} total snapshots.`);
+  return allSnapshots;
+}
+

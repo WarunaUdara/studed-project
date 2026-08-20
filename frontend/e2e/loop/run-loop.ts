@@ -3,10 +3,11 @@ import path from "node:path";
 import { DeterministicAuditor } from "./audit";
 import { CritiqueRunner } from "./critique";
 import { runDiscovery } from "./discover";
-import { captureScreenSnapshots } from "./snapshot";
+import { runSnapshotEngine } from "./snapshot";
 import type { CritiqueOutput } from "./types";
 
-const REPORT_FILE = path.resolve(import.meta.dir, "REPORT.md");
+const LOOP_DIR = path.resolve(__dirname);
+const REPORT_FILE = path.resolve(LOOP_DIR, "REPORT.md");
 
 export async function executeLoop(iteration = 1, maxIterations = 3): Promise<void> {
   console.log(`\n======================================================`);
@@ -19,7 +20,7 @@ export async function executeLoop(iteration = 1, maxIterations = 3): Promise<voi
 
   // PHASE 1: SNAPSHOT
   console.log(`[Phase 1] Capturing Structured Fingerprints...`);
-  await captureScreenSnapshots();
+  await runSnapshotEngine();
 
   // PHASE 2: AUDIT
   console.log(`[Phase 2] Executing Deterministic Rule Auditor...`);
@@ -42,10 +43,6 @@ export async function executeLoop(iteration = 1, maxIterations = 3): Promise<voi
 }
 
 function generateReport(iteration: number, audit: any, critique: CritiqueOutput): void {
-  const p0s = critique.passA.filter((d) => d.severity === "P0");
-  const p1s = critique.passA.filter((d) => d.severity === "P1");
-  const p2s = critique.passA.filter((d) => d.severity === "P2");
-
   const md = `# StudEd UI/UX Self-Evaluating Loop — Iteration ${iteration} Report
 
 **Generated At**: ${new Date().toISOString()}  

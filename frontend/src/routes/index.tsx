@@ -32,11 +32,10 @@ import { LiveLeaderboard } from "@/components/public/LiveLeaderboard";
 import { PlayableWave } from "@/components/public/PlayableWave";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { ScrollXpMeter } from "@/components/public/ScrollXpMeter";
-import { CTAAuroraMesh } from "@/components/public/CTAAuroraMesh";
+import { CTASection } from "@/components/ui/hero-dithering-card";
 import { InteractiveHeroCard } from "@/components/public/InteractiveHeroCard";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/Card";
-import { ScrollExpand } from "@/components/ui/ScrollExpand";
 import { SplitText } from "@/components/ui/SplitText";
 import { TextLoop } from "@/components/ui/TextLoop";
 import { MagicBento, MagicBentoCard } from "@/components/ui/MagicBento";
@@ -998,77 +997,7 @@ function Testimonials() {
 /* -------------------------------- Final CTA ------------------------------- */
 
 function FinalCta({ authed }: { authed: boolean }) {
-  const { t } = usePublicI18n();
-
-  return (
-    <section className="relative px-4 pb-12 pt-4 sm:px-6">
-      <div className="relative mx-auto max-w-5xl">
-        <ScrollExpand
-          useWindowScroll
-          startWidth={48}
-          startHeight={58}
-          maxWidth={92}
-          maxHeight={88}
-          startRadius={20}
-          endRadius={16}
-          mediaZoom={1.25}
-          scrollDistance={0.55}
-          holdDistance={0.0}
-          smoothing={0.0}
-          overlayScrim={0.82}
-          title={t("finalCtaHeading")}
-          scrollHint="Scroll to Expand"
-          className="w-full min-h-[460px] sm:min-h-[520px]"
-          backgroundComponent={<CTAAuroraMesh />}
-        >
-            <div className="relative space-y-5 max-w-xl mx-auto text-center px-4">
-              <p className="inline-flex items-center gap-2 rounded-full bg-primary/20 backdrop-blur-md px-4 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-white ring-1 ring-primary/40 shadow-xs">
-                <Zap className="h-3.5 w-3.5 fill-gold text-gold" />
-                +250 XP
-              </p>
-              <h2 className="font-serif text-3xl font-normal tracking-tight text-white sm:text-5xl drop-shadow-md whitespace-pre-line">
-                {t("finalCtaHeading")}
-              </h2>
-              <p className="mx-auto max-w-md text-pretty text-sm leading-relaxed text-white/90 sm:text-base drop-shadow-xs">
-                {t("finalCtaSubhead")}
-              </p>
-              <div className="flex flex-wrap justify-center gap-3 pt-1">
-                {authed ? (
-                  <Button asChild size="lg" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md font-semibold px-6">
-                    <Link to="/dashboard">
-                      {t("ctaPortal")}
-                    </Link>
-                  </Button>
-                ) : (
-                  <>
-                    <Button
-                      asChild
-                      size="lg"
-                      className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md font-semibold px-6"
-                      onClick={() => playSuccessSound()}
-                    >
-                      <Link to="/register">
-                        {t("finalCtaCreate")}
-                      </Link>
-                    </Button>
-                    <Button
-                      asChild
-                      size="lg"
-                      variant="outline"
-                      className="rounded-full border-white/30 bg-white/10 text-white backdrop-blur-md hover:bg-white/20 font-semibold px-6"
-                    >
-                      <Link to="/login">
-                        {t("finalCtaSignin")}
-                      </Link>
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          </ScrollExpand>
-      </div>
-    </section>
-  );
+  return <CTASection authed={authed} />;
 }
 
 /* ------------------------------ Section header ---------------------------- */
