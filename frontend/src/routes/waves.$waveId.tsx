@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, CheckCircle, Clock, Lock, RotateCcw, Trophy, Zap
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { QuizBlock } from "@/components/evaluate/QuizBlock";
+import { EvaluateBlockRenderer } from "@/components/evaluate/EvaluateBlockRenderer";
 import { Confetti } from "@/components/gamification/Confetti";
 import { ProficiencyBadge } from "@/components/gamification/ProficiencyBadge";
 import { XPToast } from "@/components/gamification/XPToast";
@@ -445,12 +445,13 @@ function WavePlayerPage() {
             ) : (
               <>
                 {evaluateBlocks.map((block, index) => (
-                  <QuizBlock
+                  <EvaluateBlockRenderer
                     key={block.id}
                     block={block}
                     index={index}
                     answer={answers[block.id] ?? ""}
                     onAnswerChange={(answer) => handleAnswerChange(block.id, answer)}
+                    disabled={Boolean(result)}
                     feedback={
                       result
                         ? {
