@@ -23,7 +23,13 @@ export function LessonCompleteCelebration({
     const root = rootRef.current;
     const tweens: gsap.core.Tween[] = [];
     if (!prefersReducedMotion()) {
-      tweens.push(gsap.fromTo(root, { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }));
+      tweens.push(
+        gsap.fromTo(
+          root,
+          { opacity: 0, scale: 0.95 },
+          { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" },
+        ),
+      );
       if (blobRef.current) {
         tweens.push(
           gsap.to(blobRef.current, {
@@ -68,14 +74,54 @@ export function LessonCompleteCelebration({
             ref={blobRef}
             className="relative z-20 flex size-20 items-center justify-center drop-shadow-[0_10px_25px_rgba(34,197,94,0.5)]"
           >
-            <svg viewBox="0 0 100 100" className="size-full" role="img" aria-label="Happy blob mascot">
+            <svg
+              viewBox="0 0 100 100"
+              className="size-full"
+              role="img"
+              aria-label="Happy blob mascot"
+            >
               <title>Happy blob mascot</title>
-              <rect x="18" y="18" width="64" height="64" rx="28" fill="oklch(0.72 0.19 146)" />
-              <ellipse cx="50" cy="74" rx="22" ry="6" fill="oklch(0.53 0.15 148)" opacity="0.35" />
+              <rect
+                x="18"
+                y="18"
+                width="64"
+                height="64"
+                rx="28"
+                fill="oklch(0.72 0.19 146)"
+              />
+              <ellipse
+                cx="50"
+                cy="74"
+                rx="22"
+                ry="6"
+                fill="oklch(0.53 0.15 148)"
+                opacity="0.35"
+              />
               {/* Cute Smiling Face with Eye Visor */}
-              <rect x="36" y="36" width="28" height="28" rx="8" fill="oklch(0.21 0.04 265)" />
-              <rect x="42" y="42" width="16" height="16" rx="4" fill="oklch(0.99 0 0)" />
-              <rect x="47" y="47" width="6" height="6" rx="1.5" fill="oklch(0.72 0.19 146)" />
+              <rect
+                x="36"
+                y="36"
+                width="28"
+                height="28"
+                rx="8"
+                fill="oklch(0.21 0.04 265)"
+              />
+              <rect
+                x="42"
+                y="42"
+                width="16"
+                height="16"
+                rx="4"
+                fill="oklch(0.99 0 0)"
+              />
+              <rect
+                x="47"
+                y="47"
+                width="6"
+                height="6"
+                rx="1.5"
+                fill="oklch(0.72 0.19 146)"
+              />
             </svg>
           </div>
 
@@ -103,7 +149,9 @@ export function LessonCompleteCelebration({
             </div>
             <div className="text-4xl sm:text-5xl font-black text-white flex items-center justify-center gap-1.5">
               <span>{totalXp}</span>
-              <span className="text-emerald-400 text-2xl font-bold">✦ <Zap className="inline size-6" fill="currentColor" /></span>
+              <span className="text-emerald-400 text-2xl font-bold">
+                ✦ <Zap className="inline size-6" fill="currentColor" />
+              </span>
             </div>
           </div>
         </div>

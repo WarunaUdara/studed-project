@@ -72,7 +72,10 @@ export function StreakFlame({
       {isActive && (
         <span ref={pulseRef} className="inline-block">
           <Flame
-            className={cn(dim, isActive ? "fill-orange/30 text-orange" : "text-muted-foreground")}
+            className={cn(
+              dim,
+              isActive ? "fill-orange/30 text-orange" : "text-muted-foreground",
+            )}
           />
         </span>
       )}
@@ -81,7 +84,11 @@ export function StreakFlame({
         <span
           className={cn(
             "tabular-nums",
-            size === "sm" ? "text-[10px]" : size === "lg" ? "text-sm" : "text-xs",
+            size === "sm"
+              ? "text-[10px]"
+              : size === "lg"
+                ? "text-sm"
+                : "text-xs",
           )}
         >
           {label}
