@@ -1,16 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Code, Send } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
 import { LanguageToggle } from "@/components/public/LanguageToggle";
-import { MaskedHeading } from "@/components/ui/MaskedHeading";
+import { RuixenGradientFooter } from "@/components/ui/ruixen-gradient-footer";
 import { usePublicI18n } from "@/lib/i18n";
-
-const FOOTER_IMAGES = [
-  "/footer/footer-1.jpg",
-  "/footer/footer-2.jpg",
-  "/footer/footer-3.jpg",
-  "/footer/footer-4.jpg",
-];
 
 interface FooterColumn {
   heading: string;
@@ -19,39 +11,10 @@ interface FooterColumn {
 
 /**
  * PublicFooter — multi-column site footer on public pages.
- * Features a large MaskedHeading "STUDED" showcasing imagery from /public/footer.
+ * Features RuixenGradientFooter rainbow glow pinned to the bottom of the viewport.
  */
 export function PublicFooter() {
   const { t } = usePublicI18n();
-  const [bottomGlow, setBottomGlow] = useState(0);
-  const [currentImageIdx, setCurrentImageIdx] = useState(0);
-
-  const nextFooterImage = useCallback(() => {
-    setCurrentImageIdx((prev) => (prev + 1) % FOOTER_IMAGES.length);
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      nextFooterImage();
-    }, 6000);
-    return () => clearInterval(timer);
-  }, [nextFooterImage]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const docHeight = document.documentElement.scrollHeight;
-      const winHeight = window.innerHeight;
-      const scrollTop = window.scrollY;
-      const maxScroll = docHeight - winHeight;
-      if (maxScroll <= 0) return;
-      const diff = maxScroll - scrollTop;
-      const intensity = diff < 180 ? Math.max(0, Math.min(1, (180 - diff) / 180)) : 0;
-      setBottomGlow(intensity);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const columns: FooterColumn[] = [
     {
@@ -81,32 +44,12 @@ export function PublicFooter() {
   ];
 
   return (
-    <footer className="relative overflow-hidden border-t bg-background">
-      {/* Scroll-reactive bottom glow — intensifies when reader reaches rock bottom */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 transition-opacity duration-200"
-        style={{
-          opacity: bottomGlow,
-          background:
-            "radial-gradient(ellipse 120% 80% at 50% 120%, rgba(249,115,22,0.35) 0%, rgba(147,197,253,0.3) 45%, transparent 75%)",
-        }}
-      />
-      {/* Ambient footer glow — always visible, subtle */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-40"
-        style={{
-          background:
-            "radial-gradient(ellipse 100% 60% at 50% 130%, rgba(249,115,22,0.15) 0%, rgba(147,197,253,0.12) 55%, transparent 85%)",
-        }}
-      />
-
+    <RuixenGradientFooter gradientHeight="45vh" className="border-t border-border/60 bg-background/90">
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-3">
-            <Link to="/" className="text-2xl font-extrabold tracking-tight hover:text-primary">
-              Stud<span className="text-primary">Ed</span>
+            <Link to="/" className="text-2xl font-serif font-bold tracking-tight hover:opacity-90">
+              Stud<span className="italic text-primary">Ed</span>
             </Link>
             <p className="max-w-xs text-sm text-muted-foreground">{t("footerTagline")}</p>
             <div className="flex items-center gap-2 pt-2">
@@ -153,32 +96,17 @@ export function PublicFooter() {
           ))}
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t pt-6 text-xs text-muted-foreground sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-border/40 pt-6 text-xs text-muted-foreground sm:flex-row">
           <span>
             © {new Date().getFullYear()} StudEd. {t("footerRights")}
           </span>
-          <span>Grade 1–11 · O/L · A/L</span>
-        </div>
-
-        {/* Large Masked Heading "STUDED" at the bottom of the footer */}
-        <div className="mt-12 pt-6 border-t border-border/40 overflow-hidden flex flex-col items-center justify-center">
-          <MaskedHeading
-            text="STUDED"
-            src={FOOTER_IMAGES[currentImageIdx]}
-            fillScale={1.35}
-            parallax={45}
-            drift={22}
-            textScale={0.22}
-            weight={900}
-            tracking={0.06}
-            reveal="rise"
-            trigger="scroll"
-            duration={1.2}
-            className="w-full text-center select-none font-black tracking-widest uppercase cursor-pointer"
-            onClick={nextFooterImage}
-          />
+          <span className="flex items-center gap-2">
+            <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            All systems operational
+          </span>
+          <span>Grade 1–11 · O/L · A/L · Cambridge</span>
         </div>
       </div>
-    </footer>
+    </RuixenGradientFooter>
   );
 }
