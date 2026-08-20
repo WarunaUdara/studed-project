@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   BookOpen,
   CheckCircle,
-  Compass,
   FlaskConical,
   MonitorSmartphone,
   Play,
