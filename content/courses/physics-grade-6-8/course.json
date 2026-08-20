@@ -1,0 +1,962 @@
+{
+  "slug": "physics-grade-6-8",
+  "title": "Forces, Energy and Machines",
+  "description": "Grades 6 to 8 meet turning effects, simple machines and energy by balancing a see-saw and pushing carts, not by memorising formulas.",
+  "gradeLevel": "G7",
+  "subject": "Physics",
+  "price": 0,
+  "version": 1,
+  "lessons": [
+    {
+      "title": "Lesson 1: Turning Effects and Levers",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. The See-saw Rule",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 45,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "p68-1-1",
+              "type": "blob_dialog",
+              "content": "You already know this one. A small child can lift a big adult on a see-saw.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "You already know this one. A small child can lift a big adult on a see-saw.",
+                    "mood": "happy",
+                    "cta": "How?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "By sitting further out. Distance from the middle counts just as much as weight.",
+                    "mood": "thinking",
+                    "cta": "Really?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Weight times distance is called the turning effect, or the moment.",
+                    "mood": "happy",
+                    "cta": "Show me"
+                  },
+                  {
+                    "id": "l4",
+                    "text": "Balance the beam below. Try a light weight far out against a heavy one close in.",
+                    "mood": "cheer",
+                    "cta": "Let me try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-1-2",
+              "type": "lever_lab",
+              "content": "Pick a weight, then tap a notch to hang it.",
+              "metadata": {
+                "version": 1,
+                "notches": 4,
+                "weights": [
+                  2,
+                  4,
+                  6
+                ],
+                "left": {
+                  "position": -3,
+                  "weight": 4
+                },
+                "right": null,
+                "caption": "Both sides balance when weight times distance is the same on each side."
+              }
+            },
+            {
+              "id": "p68-1-3",
+              "type": "text",
+              "content": "**Turning effect = weight x distance from the pivot.** Double the distance and you halve the weight you need."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "p68-eb-1-1",
+              "type": "tap_target",
+              "question": "A 6 N weight sits 2 notches from the pivot. What is its turning effect?",
+              "correctAnswer": "twelve",
+              "explanation": "Six newtons multiplied by two notches gives a turning effect of 12.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "twelve",
+                    "label": "12"
+                  },
+                  {
+                    "id": "eight",
+                    "label": "8"
+                  },
+                  {
+                    "id": "three",
+                    "label": "3"
+                  },
+                  {
+                    "id": "four",
+                    "label": "4"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-eb-1-2",
+              "type": "drag_drop",
+              "question": "Work out each load's turning effect and put it in the right place.",
+              "correctAnswer": "slot-four:light-near,slot-twelve:heavy-near",
+              "explanation": "Multiply weight by distance: 6 times 2 is 12, and 2 times 2 is 4.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "light-near",
+                    "label": "2 N at 2 notches"
+                  },
+                  {
+                    "id": "heavy-near",
+                    "label": "6 N at 2 notches"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-twelve",
+                    "label": "Turning effect of 12"
+                  },
+                  {
+                    "id": "slot-four",
+                    "label": "Turning effect of 4"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-eb-1-3",
+              "type": "slider_target",
+              "question": "A 4 N weight sits 3 notches out on the left. How far out must a 6 N weight go on the right?",
+              "correctAnswer": "two-notches",
+              "explanation": "Four times three is 12, so the 6 N weight needs exactly 2 notches to reach the same 12.",
+              "metadata": {
+                "version": 1,
+                "min": 1,
+                "max": 6,
+                "step": 1,
+                "bands": [
+                  {
+                    "value": "too-close",
+                    "upTo": 1
+                  },
+                  {
+                    "value": "two-notches",
+                    "upTo": 2
+                  },
+                  {
+                    "value": "too-far"
+                  }
+                ],
+                "unit": "notches"
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Balancing Act",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 45,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "p68-2-1",
+              "type": "blob_dialog",
+              "content": "Here is the trick question. Which side goes down if both turning effects are equal?",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Here is the trick question. Which side goes down if both turning effects are equal?",
+                    "mood": "thinking",
+                    "cta": "The heavy one?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Neither. The beam just stays level. Weight alone does not decide it.",
+                    "mood": "surprised",
+                    "cta": "Oh!"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Only the turning effects matter, and those count distance too.",
+                    "mood": "happy",
+                    "cta": "Got it"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-2-2",
+              "type": "animation",
+              "content": "lever-balance",
+              "metadata": {
+                "version": 1,
+                "scene": "lever-balance",
+                "params": {
+                  "leftWeight": 2,
+                  "leftPosition": 6,
+                  "rightWeight": 6,
+                  "rightPosition": 2,
+                  "notches": 6
+                },
+                "caption": "Two newtons far out balances six newtons close in, because both give a turning effect of 12."
+              }
+            },
+            {
+              "id": "p68-2-3",
+              "type": "lever_lab",
+              "content": "Now make it tip on purpose. Load one side more heavily than the other.",
+              "metadata": {
+                "version": 1,
+                "notches": 5,
+                "weights": [
+                  1,
+                  3,
+                  5
+                ],
+                "left": null,
+                "right": null
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "p68-eb-2-1",
+              "type": "order_steps",
+              "question": "Put these turning effects in order, smallest first.",
+              "correctAnswer": "a>b>c",
+              "explanation": "Multiply each pair: 4, then 9, then 20.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "a",
+                    "label": "2 N at 2 notches"
+                  },
+                  {
+                    "id": "b",
+                    "label": "3 N at 3 notches"
+                  },
+                  {
+                    "id": "c",
+                    "label": "5 N at 4 notches"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-eb-2-2",
+              "type": "tap_target",
+              "question": "The left side has a bigger turning effect. What does the beam do?",
+              "correctAnswer": "left-down",
+              "explanation": "A beam always tips towards the bigger turning effect.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "left-down",
+                    "label": "The left side goes down"
+                  },
+                  {
+                    "id": "right-down",
+                    "label": "The right side goes down"
+                  },
+                  {
+                    "id": "level",
+                    "label": "It stays level"
+                  },
+                  {
+                    "id": "spins",
+                    "label": "It spins around"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-eb-2-3",
+              "type": "toggle_switch",
+              "question": "Switch on everything that increases a load's turning effect.",
+              "correctAnswer": "closer=off,further=on,heavier=on",
+              "explanation": "Turning effect is weight times distance, so more of either raises it. Moving closer lowers it.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "heavier",
+                    "label": "Using a heavier weight",
+                    "onLabel": "increases it",
+                    "offLabel": "no change"
+                  },
+                  {
+                    "id": "further",
+                    "label": "Moving it further from the pivot",
+                    "onLabel": "increases it",
+                    "offLabel": "no change"
+                  },
+                  {
+                    "id": "closer",
+                    "label": "Moving it closer to the pivot",
+                    "onLabel": "increases it",
+                    "offLabel": "no change"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Machines That Multiply Force",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 50,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 9,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "p68-3-1",
+              "type": "blob_dialog",
+              "content": "A crowbar is just a lever. So is a wheelbarrow, and so are scissors.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "A crowbar is just a lever. So is a wheelbarrow, and so are scissors.",
+                    "mood": "happy",
+                    "cta": "All of them?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Each one lets a small push do a big job, by trading distance for force.",
+                    "mood": "thinking",
+                    "cta": "Trading?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "You push a long way with a small force, and the load moves a short way with a big one.",
+                    "mood": "happy",
+                    "cta": "Clever"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-3-2",
+              "type": "animation",
+              "content": "lever-balance",
+              "metadata": {
+                "version": 1,
+                "scene": "lever-balance",
+                "params": {
+                  "leftWeight": 1,
+                  "leftPosition": 6,
+                  "rightWeight": 6,
+                  "rightPosition": 1,
+                  "notches": 6
+                },
+                "caption": "This is what a crowbar does: a small force at the far end lifts a heavy load close to the pivot."
+              }
+            },
+            {
+              "id": "p68-3-3",
+              "type": "text",
+              "content": "A lever never gives you free energy. It gives you a **bigger force over a shorter distance**, which is a trade, not a gift."
+            },
+            {
+              "id": "p68-3-4",
+              "type": "callout",
+              "content": "This is why a longer spanner loosens a stuck bolt. The extra length multiplies your turning effect."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "p68-eb-3-1",
+              "type": "drag_drop",
+              "question": "Where is the pivot in each tool?",
+              "correctAnswer": "slot-barrow:wheel,slot-door:hinge,slot-scissors:screw",
+              "explanation": "Every lever turns about one fixed point: the hinge, the wheel, or the screw holding the blades.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "hinge",
+                    "label": "The hinge"
+                  },
+                  {
+                    "id": "wheel",
+                    "label": "The wheel"
+                  },
+                  {
+                    "id": "screw",
+                    "label": "The centre screw"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-door",
+                    "label": "A door"
+                  },
+                  {
+                    "id": "slot-barrow",
+                    "label": "A wheelbarrow"
+                  },
+                  {
+                    "id": "slot-scissors",
+                    "label": "Scissors"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-eb-3-2",
+              "type": "tap_target",
+              "question": "Why does a longer spanner loosen a tight bolt more easily?",
+              "correctAnswer": "distance",
+              "explanation": "The extra length puts your force further from the pivot, so the same push gives a bigger turning effect.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "distance",
+                    "label": "Your force acts further from the bolt"
+                  },
+                  {
+                    "id": "stronger",
+                    "label": "A long spanner is made of stronger metal"
+                  },
+                  {
+                    "id": "heavier",
+                    "label": "A long spanner is heavier"
+                  },
+                  {
+                    "id": "grip",
+                    "label": "A long spanner grips more tightly"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-eb-3-3",
+              "type": "order_steps",
+              "question": "Put the wheelbarrow in order, from where you push to where the load sits.",
+              "correctAnswer": "handles>load>wheel",
+              "explanation": "You lift the handles at the back, the load sits in the middle, and the wheel at the front is the pivot.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "handles",
+                    "label": "The handles you lift"
+                  },
+                  {
+                    "id": "load",
+                    "label": "The load in the tray"
+                  },
+                  {
+                    "id": "wheel",
+                    "label": "The wheel at the front"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Lesson 2: Energy on the Move",
+      "sequenceOrder": 2,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Energy Changes Form",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 45,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "p68-4-1",
+              "type": "blob_dialog",
+              "content": "Energy is not a thing you can hold. It is what makes changes happen.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Energy is not a thing you can hold. It is what makes changes happen.",
+                    "mood": "thinking",
+                    "cta": "Like what?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "A torch turns chemical energy in the cell into light and a bit of heat.",
+                    "mood": "happy",
+                    "cta": "Okay"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Energy never disappears. It only changes into a different form.",
+                    "mood": "happy",
+                    "cta": "Always?"
+                  },
+                  {
+                    "id": "l4",
+                    "text": "Always. Even when it seems lost, it has turned into heat somewhere.",
+                    "mood": "cheer",
+                    "cta": "Got it"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-4-2",
+              "type": "text",
+              "content": "The forms you will meet most: **movement**, **heat**, **light**, **sound**, **electrical**, and **stored** energy in food, fuel and stretched springs."
+            },
+            {
+              "id": "p68-4-3",
+              "type": "animation",
+              "content": "force-arrows",
+              "metadata": {
+                "version": 1,
+                "scene": "force-arrows",
+                "params": {
+                  "push": 7,
+                  "friction": 0.3,
+                  "label": "Loaded cart"
+                },
+                "caption": "The push puts movement energy into the cart. Friction quietly turns some of it into heat."
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "p68-eb-4-1",
+              "type": "drag_drop",
+              "question": "Match each device to the change it makes.",
+              "correctAnswer": "slot-bulb:light,slot-fan:movement,slot-speaker:sound",
+              "explanation": "Each device takes electrical energy in and gives a different form out.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "light",
+                    "label": "Electrical into light"
+                  },
+                  {
+                    "id": "sound",
+                    "label": "Electrical into sound"
+                  },
+                  {
+                    "id": "movement",
+                    "label": "Electrical into movement"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-bulb",
+                    "label": "A bulb"
+                  },
+                  {
+                    "id": "slot-speaker",
+                    "label": "A speaker"
+                  },
+                  {
+                    "id": "slot-fan",
+                    "label": "A fan"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-eb-4-2",
+              "type": "tap_target",
+              "question": "You stretch a rubber band and hold it. Where is the energy?",
+              "correctAnswer": "stored",
+              "explanation": "A stretched band stores energy, which is why it flies across the room when you let go.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "stored",
+                    "label": "Stored in the stretched band"
+                  },
+                  {
+                    "id": "gone",
+                    "label": "It has disappeared"
+                  },
+                  {
+                    "id": "heat",
+                    "label": "All of it turned into heat"
+                  },
+                  {
+                    "id": "sound",
+                    "label": "It turned into sound"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-eb-4-3",
+              "type": "toggle_switch",
+              "question": "Switch on the true statements about energy.",
+              "correctAnswer": "changes=on,created=off,heat=on",
+              "explanation": "Energy is never created or destroyed. It changes form, and some always spreads out as heat.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "created",
+                    "label": "Energy can be made out of nothing",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "changes",
+                    "label": "Energy changes from one form to another",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "heat",
+                    "label": "Some energy usually ends up as heat",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Friction Turns Movement into Heat",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 50,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 9,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "p68-5-1",
+              "type": "blob_dialog",
+              "content": "Rub your hands together hard. Feel that?",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Rub your hands together hard. Feel that?",
+                    "mood": "happy",
+                    "cta": "They got warm"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "That is movement energy turning into heat, right there on your skin.",
+                    "mood": "thinking",
+                    "cta": "Oh!"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Every rubbing surface does it. That is why brakes get hot.",
+                    "mood": "happy",
+                    "cta": "Makes sense"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-5-2",
+              "type": "force_lab",
+              "content": "Push with the same force on each surface and watch how much movement survives.",
+              "metadata": {
+                "version": 1,
+                "label": "Loaded cart",
+                "surfaces": [
+                  {
+                    "id": "ice",
+                    "label": "Ice",
+                    "friction": 0.05
+                  },
+                  {
+                    "id": "road",
+                    "label": "Road",
+                    "friction": 0.45
+                  },
+                  {
+                    "id": "gravel",
+                    "label": "Gravel",
+                    "friction": 0.9
+                  }
+                ],
+                "caption": "Whatever the orange arrow cancels has become heat in the surface and the wheels."
+              }
+            },
+            {
+              "id": "p68-5-3",
+              "type": "text",
+              "content": "Nothing is lost when friction slows a cart. The missing movement energy is now heat in the ground, the wheels and the air."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "p68-eb-5-1",
+              "type": "slider_target",
+              "question": "A cart is pushed across gravel. How much of the push survives as movement?",
+              "correctAnswer": "almost-none",
+              "explanation": "Gravel has very high friction, so nearly the whole push is turned into heat.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 10,
+                "step": 1,
+                "bands": [
+                  {
+                    "value": "almost-none",
+                    "upTo": 3
+                  },
+                  {
+                    "value": "about-half",
+                    "upTo": 7
+                  },
+                  {
+                    "value": "nearly-all"
+                  }
+                ],
+                "unit": "newtons of movement"
+              }
+            },
+            {
+              "id": "p68-eb-5-2",
+              "type": "tap_target",
+              "question": "A cyclist brakes hard and stops. Where did the movement energy go?",
+              "correctAnswer": "heat",
+              "explanation": "Brakes work by rubbing, and rubbing turns movement energy into heat.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "heat",
+                    "label": "It became heat in the brakes and the road"
+                  },
+                  {
+                    "id": "destroyed",
+                    "label": "It was destroyed"
+                  },
+                  {
+                    "id": "stored",
+                    "label": "It went back into the cyclist"
+                  },
+                  {
+                    "id": "light",
+                    "label": "It became light"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-eb-5-3",
+              "type": "order_steps",
+              "question": "Put the braking bicycle in order.",
+              "correctAnswer": "moving>rub>heat>stop",
+              "explanation": "The movement energy is carried away as heat by the rubbing, which is exactly why the bicycle slows.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "moving",
+                    "label": "The bicycle is moving"
+                  },
+                  {
+                    "id": "rub",
+                    "label": "The brake pads rub the wheel"
+                  },
+                  {
+                    "id": "heat",
+                    "label": "The pads and rim get hot"
+                  },
+                  {
+                    "id": "stop",
+                    "label": "The bicycle stops"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Energy Is Never Lost",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 9,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "p68-6-1",
+              "type": "blob_dialog",
+              "content": "One last idea, and it is the biggest one in physics.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "One last idea, and it is the biggest one in physics.",
+                    "mood": "thinking",
+                    "cta": "Go on"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Add up all the energy before a change and after it. The totals match. Every time.",
+                    "mood": "surprised",
+                    "cta": "Every time?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Every time. That rule is called conservation of energy.",
+                    "mood": "cheer",
+                    "cta": "Gotcha"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-6-2",
+              "type": "text",
+              "content": "A ball dropped from your hand: **stored** height energy becomes **movement**, then **sound and heat** when it lands. Nothing vanishes, it only spreads out."
+            },
+            {
+              "id": "p68-6-3",
+              "type": "callout",
+              "content": "This is why a bouncing ball never returns to the height it was dropped from. Some energy left as sound and heat on the first bounce."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "p68-eb-6-1",
+              "type": "order_steps",
+              "question": "Follow the energy of a dropped ball, in order.",
+              "correctAnswer": "stored>moving>bang",
+              "explanation": "Height energy becomes movement on the way down, and the landing turns that into sound and heat.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "stored",
+                    "label": "Stored energy while you hold it up"
+                  },
+                  {
+                    "id": "moving",
+                    "label": "Movement energy as it falls"
+                  },
+                  {
+                    "id": "bang",
+                    "label": "Sound and heat as it hits the floor"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-eb-6-2",
+              "type": "drag_drop",
+              "question": "Match each moment to the energy the ball has most of.",
+              "correctAnswer": "slot-falling:moving,slot-held:stored,slot-landed:heat",
+              "explanation": "Energy moves through these forms in that order, and the total stays the same throughout.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "stored",
+                    "label": "Stored height energy"
+                  },
+                  {
+                    "id": "moving",
+                    "label": "Movement energy"
+                  },
+                  {
+                    "id": "heat",
+                    "label": "Heat and sound"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-held",
+                    "label": "Held above the floor"
+                  },
+                  {
+                    "id": "slot-falling",
+                    "label": "Halfway down"
+                  },
+                  {
+                    "id": "slot-landed",
+                    "label": "Just after it lands"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p68-eb-6-3",
+              "type": "tap_target",
+              "question": "Why does a bouncing ball get lower every bounce?",
+              "correctAnswer": "spread",
+              "explanation": "The total energy is unchanged, but some of it has spread out as sound and heat, so less is left to lift the ball.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "spread",
+                    "label": "Some energy leaves as sound and heat each bounce"
+                  },
+                  {
+                    "id": "destroyed",
+                    "label": "Energy is destroyed by the floor"
+                  },
+                  {
+                    "id": "gravity",
+                    "label": "Gravity gets stronger each time"
+                  },
+                  {
+                    "id": "lighter",
+                    "label": "The ball becomes lighter"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

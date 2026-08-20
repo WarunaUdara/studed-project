@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { ForceArrowsScene } from "./ForceArrowsScene";
 import { FractionBarScene } from "./FractionBarScene";
+import { LeverBalanceScene } from "./LeverBalanceScene";
 import { ShortCircuitScene } from "./ShortCircuitScene";
 import { WaterFlowScene } from "./WaterFlowScene";
 
@@ -79,6 +80,23 @@ export const ANIMATION_SCENES: Record<string, SceneDefinition> = {
         parts={numberParam(params, "parts", 4)}
         shaded={numberParam(params, "shaded", 1)}
         label={stringParam(params, "label", "")}
+      />
+    ),
+  },
+  "lever-balance": {
+    label: "Lever balance",
+    params: ["leftWeight", "leftPosition", "rightWeight", "rightPosition", "notches"],
+    Component: ({ params }) => (
+      <LeverBalanceScene
+        left={{
+          position: -Math.abs(numberParam(params, "leftPosition", 3)),
+          weight: numberParam(params, "leftWeight", 4),
+        }}
+        right={{
+          position: Math.abs(numberParam(params, "rightPosition", 2)),
+          weight: numberParam(params, "rightWeight", 6),
+        }}
+        notches={numberParam(params, "notches", 4)}
       />
     ),
   },

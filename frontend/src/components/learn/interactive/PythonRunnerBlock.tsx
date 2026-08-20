@@ -1,8 +1,8 @@
 import { Loader2, Play, RotateCcw } from "lucide-react";
 import { useState } from "react";
+import { describeRun, type RunCodeResult, runPython } from "@/lib/code-runner";
 import type { PythonRunnerConfig } from "@/lib/content/interactiveBlocks";
 import { parseBlockConfig } from "@/lib/content/interactiveBlocks";
-import { describeRun, runPython, type RunCodeResult } from "@/lib/code-runner";
 import { playClickSound, playErrorSound, playSuccessSound } from "@/lib/sounds";
 import { cn } from "@/lib/utils";
 
@@ -125,7 +125,8 @@ export function PythonRunnerBlock({ content, metadata }: PythonRunnerBlockProps)
             className={cn(
               "rounded-xl border p-3 text-sm font-medium",
               summary.tone === "success" && "border-success/40 bg-success/10 text-success",
-              summary.tone === "error" && "border-destructive/40 bg-destructive/10 text-destructive",
+              summary.tone === "error" &&
+                "border-destructive/40 bg-destructive/10 text-destructive",
               summary.tone === "warning" && "border-warning/40 bg-warning/10 text-foreground",
             )}
           >

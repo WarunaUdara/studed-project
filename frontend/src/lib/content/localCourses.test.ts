@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { hasInteractiveConfig } from "./interactiveBlocks";
 import {
   findLocalCourse,
   findLocalWave,
@@ -119,7 +120,13 @@ describe("Computers and Code course", () => {
   });
 
   it("keeps every question manipulative here too", () => {
-    const manipulative = new Set(["tap_target", "drag_drop", "order_steps", "toggle_switch", "slider_target"]);
+    const manipulative = new Set([
+      "tap_target",
+      "drag_drop",
+      "order_steps",
+      "toggle_switch",
+      "slider_target",
+    ]);
     const detail = localCourseDetail(ICT);
     for (const lesson of detail?.lessons ?? []) {
       for (const summary of lesson.waves) {
@@ -128,6 +135,47 @@ describe("Computers and Code course", () => {
           expect(manipulative.has(block.type)).toBe(true);
         }
       }
+    }
+  });
+});
+
+describe("every shipped course", () => {
+  const MANIPULATIVE = new Set([
+    "tap_target",
+    "drag_drop",
+    "order_steps",
+    "toggle_switch",
+    "slider_target",
+  ]);
+
+  it("asks only manipulative questions and answers them reachably", () => {
+    for (const node of localCourseNodes()) {
+      const detail = localCourseDetail(node.slug);
+      for (const lesson of detail?.lessons ?? []) {
+        for (const summary of lesson.waves) {
+          const wave = findLocalWave(summary.id);
+          expect(wave, `${summary.id} should resolve`).not.toBeNull();
+          expect(wave?.learnBlocks.length).toBeGreaterThan(0);
+          expect(wave?.evaluateBlocks.length).toBeGreaterThan(0);
+
+          for (const block of wave?.evaluateBlocks ?? []) {
+            expect(MANIPULATIVE.has(block.type)).toBe(true);
+            expect(block.correctAnswer ?? "").not.toBe("");
+            expect(block.explanation ?? "").not.toBe("");
+            // Every manipulative block needs a configuration to manipulate,
+            // otherwise the player falls back to a plain text answer box.
+            expect(hasInteractiveConfig(block.type, block.metadata)).toBe(true);
+          }
+        }
+      }
+    }
+  });
+
+  it("gives each course a distinct slug and a non-empty syllabus", () => {
+    const slugs = localCourseNodes().map((course) => course.slug);
+    expect(new Set(slugs).size).toBe(slugs.length);
+    for (const slug of slugs) {
+      expect(localCourseDetail(slug)?.lessons.length).toBeGreaterThan(0);
     }
   });
 });

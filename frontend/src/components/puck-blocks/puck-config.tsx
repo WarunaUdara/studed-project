@@ -9,6 +9,7 @@ import { BlobDialogBlock } from "@/components/learn/interactive/BlobDialogBlock"
 import { CircuitLabBlock } from "@/components/learn/interactive/CircuitLabBlock";
 import { ForceLabBlock } from "@/components/learn/interactive/ForceLabBlock";
 import { FractionLabBlock } from "@/components/learn/interactive/FractionLabBlock";
+import { LeverLabBlock } from "@/components/learn/interactive/LeverLabBlock";
 import { PythonRunnerBlock } from "@/components/learn/interactive/PythonRunnerBlock";
 import { WaterFlowBlock } from "@/components/learn/interactive/WaterFlowBlock";
 import { SCENE_IDS } from "@/components/learn/interactive/animationRegistry";
@@ -135,6 +136,7 @@ const PHYSICS_LAB_LABELS: Record<string, string> = {
   circuit_lab: "Circuit Lab (wire the bulb)",
   water_flow: "Water Flow (voltage and current)",
   fraction_lab: "Fraction Bar (cut and shade)",
+  lever_lab: "Lever Balance (moments)",
 };
 
 const INTERACTIVE_QUESTION_LABELS: Record<string, string> = {
@@ -373,6 +375,8 @@ export const puckConfig: Config = {
             <WaterFlowBlock content={content} metadata={metadata} />
           ) : labType === "fraction_lab" ? (
             <FractionLabBlock content={content} metadata={metadata} />
+          ) : labType === "lever_lab" ? (
+            <LeverLabBlock content={content} metadata={metadata} />
           ) : (
             <ForceLabBlock content={content} metadata={metadata} />
           )}
@@ -879,6 +883,7 @@ function learnBlockToItem(lb: LearnBlockRaw): PuckData["content"][number] {
     case "circuit_lab":
     case "water_flow":
     case "fraction_lab":
+    case "lever_lab":
       return { type: "PhysicsLabBlock", props: { ...common, labType: type, content: lb.content, metadata: lb.metadata || "{}" } };
     case "blob_dialog":
       return { type: "BlobDialogBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };

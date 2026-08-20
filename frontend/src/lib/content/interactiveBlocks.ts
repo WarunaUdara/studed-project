@@ -31,6 +31,7 @@ export const INTERACTIVE_LEARN_TYPES = [
   "circuit_lab",
   "water_flow",
   "fraction_lab",
+  "lever_lab",
   "python_runner",
   "animation",
 ] as const;
@@ -120,6 +121,18 @@ export interface FractionLabConfig {
   /** Upper limit on the cuts, kept small enough that pieces stay tappable. */
   maxParts?: number;
   label?: string;
+  caption?: string;
+}
+
+export interface LeverLabConfig {
+  version: number;
+  /** Notches available on each side of the pivot. */
+  notches?: number;
+  /** Weights the student can hang, in newtons. */
+  weights?: number[];
+  /** Load the beam starts with on each side. */
+  left?: { position: number; weight: number } | null;
+  right?: { position: number; weight: number } | null;
   caption?: string;
 }
 
