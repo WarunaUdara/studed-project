@@ -11,7 +11,7 @@ echo "========================================================"
 
 # 1. Verify Container Engine daemon (Docker)
 if ! docker info >/dev/null 2>&1; then
-  echo "❌ Error: Container engine (Docker) is not running. Start it with 'colima start' and try again."
+  echo "❌ Error: Container engine (Docker) is not running. Start Docker Desktop (or run 'colima start' if you use Colima) and try again."
   exit 1
 fi
 

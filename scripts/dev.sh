@@ -56,7 +56,7 @@ mkdir -p "${LOG_DIR}"
 rm -f "${PID_FILE}"
 
 if ! docker info >/dev/null 2>&1; then
-  echo "[dev] error: container engine (Docker) is not running. Start it with 'colima start' and try again."
+  echo "[dev] error: container engine (Docker) is not running. Start Docker Desktop (or run 'colima start' if you use Colima) and try again."
   exit 1
 fi
 

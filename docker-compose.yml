@@ -380,7 +380,13 @@ services:
       redis:
         condition: service_started
 
+  # Also behind the `monitoring` profile: tempo bind-mounts host config, and a
+  # mount failure here aborts the whole `compose up` before api-gateway starts.
+  # Services point OTEL_EXPORTER_OTLP_ENDPOINT at it unconditionally, which is
+  # safe - the OTLP exporter connects lazily, so with tempo absent the batcher
+  # just drops spans instead of failing service startup.
   tempo:
+    profiles: ["monitoring"]
     image: grafana/tempo:2.7.1
     container_name: studed-tempo
     command: ["-config.file=/etc/tempo.yaml"]
