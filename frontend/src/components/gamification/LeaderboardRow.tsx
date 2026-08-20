@@ -15,9 +15,9 @@ export interface LeaderboardRowProps {
 }
 
 /**
- * LeaderboardRow — single leaderboard row per the spec. Highlighted when `isYou`
- * with a 👤 indicator (spec: "You are #42"). The top-3 row uses the gold/silver/
- * bronze rank background, and rank ≥ 4 shows the spec glyph (⭐👑💎).
+ * LeaderboardRow - single leaderboard row per the spec. Highlighted when `isYou`
+ * with a user icon indicator (spec: "You are #42"). The top-3 row uses the
+ * gold/silver/bronze rank background, and rank >= 4 shows the spec glyph.
  */
 export function LeaderboardRow({
   entry,
@@ -62,7 +62,8 @@ export function LeaderboardRow({
         {privateLeaderboardName(entry.user.fullName)}
         {isYou && (
           <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-            👤 <span className="text-primary">(You)</span>
+            <UserIcon className="inline size-3.5 align-text-bottom" />{" "}
+            <span className="text-primary">(You)</span>
           </span>
         )}
       </span>

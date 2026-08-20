@@ -40,12 +40,12 @@ export function levelLabel(level: number): string {
 /* ----- Proficiency ----- */
 //
 // Five levels (per 05-Gamification/Proficiency-System.md):
-//   Not Started  ⭕  Gray
-//   In Progress  🟡  Yellow
-//   Completed    ✅  Green
-//   Proficient   🌟  Gold (avg ≥ 80%)
-//   Expert       👑  Purple (avg = 100%)
-// The glyph is part of the spec; we keep it as a stable UI affordance.
+//   Not Started  Gray
+//   In Progress  Yellow
+//   Completed    Green
+//   Proficient   Gold (avg >= 80%)
+//   Expert       Purple (avg = 100%)
+// Icons map to lucide via ProficiencyBadge.
 export type ProficiencyLevel =
   | "NOT_STARTED"
   | "IN_PROGRESS"
@@ -57,7 +57,6 @@ export interface ProficiencyMeta {
   level: ProficiencyLevel;
   label: string;
   icon: string;
-  glyph: string;
   color: string;
   textColor: string;
   bgColor: string;
@@ -69,7 +68,6 @@ const PROFICIENCY_MAP: Record<ProficiencyLevel, Omit<ProficiencyMeta, "level">> 
   NOT_STARTED: {
     label: "Not Started",
     icon: "circle",
-    glyph: "⭕",
     color: "text-muted-foreground",
     textColor: "text-muted-foreground",
     bgColor: "bg-muted",
@@ -79,7 +77,6 @@ const PROFICIENCY_MAP: Record<ProficiencyLevel, Omit<ProficiencyMeta, "level">> 
   IN_PROGRESS: {
     label: "In Progress",
     icon: "clock",
-    glyph: "🟡",
     color: "text-warning",
     textColor: "text-warning-foreground",
     bgColor: "bg-warning/15",
@@ -89,7 +86,6 @@ const PROFICIENCY_MAP: Record<ProficiencyLevel, Omit<ProficiencyMeta, "level">> 
   COMPLETED: {
     label: "Completed",
     icon: "check",
-    glyph: "✅",
     color: "text-success",
     textColor: "text-success-foreground",
     bgColor: "bg-success/15",
@@ -99,7 +95,6 @@ const PROFICIENCY_MAP: Record<ProficiencyLevel, Omit<ProficiencyMeta, "level">> 
   PROFICIENT: {
     label: "Proficient",
     icon: "star",
-    glyph: "🌟",
     color: "text-gold",
     textColor: "text-gold-foreground",
     bgColor: "bg-gold/15",
@@ -109,7 +104,6 @@ const PROFICIENCY_MAP: Record<ProficiencyLevel, Omit<ProficiencyMeta, "level">> 
   EXPERT: {
     label: "Expert",
     icon: "crown",
-    glyph: "👑",
     color: "text-purple",
     textColor: "text-purple-foreground",
     bgColor: "bg-purple/15",
@@ -265,18 +259,19 @@ export function rankBadge(rank: number, total?: number): string | null {
 }
 
 /**
- * Returns the spec-defined leaderboard rank glyph for a given position:
- *   🥇🥈🥉 for top 3, ⭐ for top 10, 👑 for top 1%, 💎 for top 10%.
- * The emoji glyphs are part of the design spec (05-Gamification/Leaderboards.md).
+ * Returns the leaderboard rank glyph key for a given position:
+ *   medal-gold / medal-silver / medal-bronze for top 3,
+ *   star for top 10, crown for top 1%, gem for top 10%.
+ * Callers map the key to a lucide icon. No emoji glyphs per ui-ux-pro-max.
  */
 export function rankBadgeGlyph(rank: number, total?: number): string {
-  if (rank === 1) return "🥇";
-  if (rank === 2) return "🥈";
-  if (rank === 3) return "🥉";
+  if (rank === 1) return "medal-gold";
+  if (rank === 2) return "medal-silver";
+  if (rank === 3) return "medal-bronze";
   const t = total ?? 100;
-  if (rank <= 10) return "⭐";
-  if (rank <= Math.ceil(t * 0.01)) return "👑";
-  if (rank <= Math.ceil(t * 0.1)) return "💎";
+  if (rank <= 10) return "star";
+  if (rank <= Math.ceil(t * 0.01)) return "crown";
+  if (rank <= Math.ceil(t * 0.1)) return "gem";
   return "";
 }
 

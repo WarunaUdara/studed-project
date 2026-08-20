@@ -1,3 +1,4 @@
+import { Crown, Gem, Medal, Star } from "lucide-react";
 import { rankBadgeGlyph } from "@/lib/gamification";
 import { cn } from "@/lib/utils";
 
@@ -10,16 +11,25 @@ export interface RankBadgeProps {
   className?: string;
 }
 
+const GLYPH_ICONS: Record<string, { icon: typeof Medal; className: string }> = {
+  "medal-gold": { icon: Medal, className: "text-gold" },
+  "medal-silver": { icon: Medal, className: "text-muted-foreground" },
+  "medal-bronze": { icon: Medal, className: "text-orange" },
+  star: { icon: Star, className: "text-gold" },
+  crown: { icon: Crown, className: "text-purple" },
+  gem: { icon: Gem, className: "text-purple" },
+};
+
 /**
- * RankBadge — renders the spec-defined glyph (🥇🥈🥉⭐👑💎) for a leaderboard
- * rank, sized appropriately. The glyphs are part of the design spec
- * (05-Gamification/Leaderboards.md) and are the only emojis used in code.
+ * RankBadge - renders the leaderboard rank glyph via lucide icons. Top-3 ranks
+ * show a tinted medal, rank >= 4 shows the spec star/crown/gem per the
+ * leaderboard design (05-Gamification/Leaderboards.md).
  */
 export function RankBadge({ rank, total, size = "md", className }: RankBadgeProps) {
-  const glyph = rankBadgeGlyph(rank, total);
-  const sizeCls = size === "sm" ? "text-sm" : size === "lg" ? "text-2xl" : "text-lg";
+  const glyphKey = rankBadgeGlyph(rank, total);
+  const sizeCls = size === "sm" ? "size-4" : size === "lg" ? "size-7" : "size-5";
 
-  if (!glyph) {
+  if (!glyphKey) {
     return (
       <span className={cn("font-bold tabular-nums text-muted-foreground", sizeCls, className)}>
         #{rank}
@@ -27,13 +37,15 @@ export function RankBadge({ rank, total, size = "md", className }: RankBadgeProp
     );
   }
 
+  const { icon: Icon, className: iconColor } = GLYPH_ICONS[glyphKey] ?? GLYPH_ICONS["star"];
+
   return (
     <span
-      className={cn("inline-block leading-none align-middle", sizeCls, className)}
+      className={cn("inline-block leading-none align-middle", className)}
       role="img"
       aria-label={`Rank ${rank}`}
     >
-      {glyph}
+      <Icon className={cn(sizeCls, iconColor)} fill="currentColor" strokeWidth={0} />
     </span>
   );
 }

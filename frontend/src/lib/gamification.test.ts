@@ -138,22 +138,22 @@ describe("privateLeaderboardName", () => {
 });
 
 describe("rankBadgeGlyph", () => {
-  it("returns the medal glyphs for the top 3 ranks", () => {
-    expect(rankBadgeGlyph(1)).toBe("🥇");
-    expect(rankBadgeGlyph(2)).toBe("🥈");
-    expect(rankBadgeGlyph(3)).toBe("🥉");
+  it("returns the medal glyph keys for the top 3 ranks", () => {
+    expect(rankBadgeGlyph(1)).toBe("medal-gold");
+    expect(rankBadgeGlyph(2)).toBe("medal-silver");
+    expect(rankBadgeGlyph(3)).toBe("medal-bronze");
   });
 
   it("returns a star for top 10 outside the podium", () => {
-    expect(rankBadgeGlyph(10)).toBe("⭐");
+    expect(rankBadgeGlyph(10)).toBe("star");
   });
 
   it("returns a crown for the top 1 percent (beyond the top-10 star cutoff)", () => {
-    expect(rankBadgeGlyph(50, 10000)).toBe("👑");
+    expect(rankBadgeGlyph(50, 10000)).toBe("crown");
   });
 
   it("returns a gem for the top 10 percent (beyond the top 1 percent)", () => {
-    expect(rankBadgeGlyph(500, 10000)).toBe("💎");
+    expect(rankBadgeGlyph(500, 10000)).toBe("gem");
   });
 
   it("returns no glyph outside the top 10 percent", () => {
