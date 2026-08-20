@@ -10,6 +10,7 @@ import { ProgressRing } from "@/components/ui/ProgressRing";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
 import { COURSE_PLAYER_QUERY, ENROLL_IN_COURSE_MUTATION, RESET_WAVE_ATTEMPTS_MUTATION } from "@/graphql/student";
+import { localCourseDetail } from "@/lib/content/localCourses";
 import { sanitizeGraphQLError } from "@/lib/errors";
 import { isScienceCourseId, SCIENCE_COURSE_DETAIL } from "@/lib/scienceCourse";
 import { cn } from "@/lib/utils";
@@ -60,7 +61,9 @@ function CoursePlayerPage() {
     variables: { id: courseId },
   });
 
-  const course: Course | undefined = data?.course;
+  // Manifest-backed courses render through the same journey components as
+  // every database course; only the source of the data differs.
+  const course: Course | undefined = data?.course ?? localCourseDetail(courseId) ?? undefined;
 
   const completedWaves = course?.myProgress?.completedWaves ?? 0;
   const totalWaves = course?.myProgress?.totalWaves ?? 0;

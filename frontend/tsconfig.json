@@ -16,11 +16,12 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@content/*": ["../content/*"]
     },
     "types": ["node"]
   },
-  "include": ["src", "e2e"],
+  "include": ["src", "e2e", "../content/courses/**/*.json"],
   "references": [
     {
       "path": "./tsconfig.node.json"

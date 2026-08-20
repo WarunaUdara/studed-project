@@ -16,6 +16,8 @@ import { PointsBadge } from "@/components/ui/points-badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { SUBMIT_WAVE_ANSWERS_MUTATION, WAVE_PLAYER_QUERY } from "@/graphql/student";
+import { findLocalWave } from "@/lib/content/localCourses";
+import { gradeWaveLocally } from "@/lib/content/localGrading";
 import { sanitizeGraphQLError } from "@/lib/errors";
 import { computeProficiency } from "@/lib/gamification";
 import { playErrorSound, playSuccessSound } from "@/lib/sounds";
@@ -59,9 +61,13 @@ export const Route = createFileRoute("/waves/$waveId")({
 
 function WavePlayerPage() {
   const { waveId } = Route.useParams();
+  // Manifest-backed waves are playable without a backend, so skip the query
+  // entirely when this wave ships with the app.
+  const localWave = useMemo(() => findLocalWave(waveId), [waveId]);
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: WAVE_PLAYER_QUERY,
     variables: { id: waveId },
+    pause: Boolean(localWave),
   });
   const [submitResult, submitAnswers] = useMutation(SUBMIT_WAVE_ANSWERS_MUTATION);
   const { user, updateTotalXp } = useAuthStore();
@@ -74,7 +80,7 @@ function WavePlayerPage() {
   const [showXpToast, setShowXpToast] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  const wave = data?.wave;
+  const wave = localWave ?? data?.wave;
 
   const learnBlocks: LearnBlock[] = useMemo(() => wave?.learnBlocks ?? [], [wave]);
   const evaluateBlocks: EvaluateBlock[] = useMemo(() => wave?.evaluateBlocks ?? [], [wave]);
@@ -104,6 +110,26 @@ function WavePlayerPage() {
 
   const handleSubmit = async () => {
     setSubmitError(null);
+
+    if (localWave) {
+      const graded = gradeWaveLocally(evaluateBlocks, answers, {
+        passingThreshold: localWave.passingThreshold,
+        xpReward: localWave.xpReward,
+        currentTotalXp: user?.totalXp ?? 0,
+      });
+      setResult(graded);
+      updateTotalXp(graded.totalXp);
+      if (graded.passed) {
+        setShowXpToast(true);
+        setShowConfetti(true);
+        playSuccessSound();
+        window.setTimeout(() => setShowConfetti(false), 3200);
+      } else {
+        playErrorSound();
+      }
+      return;
+    }
+
     const answersInput = evaluateBlocks.map((block) => ({
       evaluateBlockId: block.id,
       answer: answers[block.id] ?? "",

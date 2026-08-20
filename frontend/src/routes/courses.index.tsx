@@ -18,6 +18,7 @@ import { useToast } from "@/components/ui/Toast";
 import { COURSES_QUERY } from "@/graphql/courses";
 import { COURSE_PLAYER_QUERY, ENROLL_IN_COURSE_MUTATION } from "@/graphql/student";
 import { sanitizeGraphQLError } from "@/lib/errors";
+import { localCourseNodes } from "@/lib/content/localCourses";
 import { isScienceCourseId, SCIENCE_COURSE_NODE, SCIENCE_COURSE_DETAIL } from "@/lib/scienceCourse";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
@@ -108,12 +109,20 @@ function CoursesCatalogPage() {
 
     const defaultScienceCourse: CourseNode = SCIENCE_COURSE_NODE;
 
-    const scienceCourses =
-      scienceDbCourses.length > 0
+    // Manifest-backed courses are playable before they are synced, so show them
+    // unless the catalog already serves the same slug from the database.
+    const manifestCourses: CourseNode[] = localCourseNodes().filter(
+      (course) => !allCourses.some((dbCourse) => dbCourse.slug === course.slug) && matchesSearch(course),
+    );
+
+    const scienceCourses = [
+      ...manifestCourses,
+      ...(scienceDbCourses.length > 0
         ? scienceDbCourses
         : matchesSearch(defaultScienceCourse)
           ? [defaultScienceCourse]
-          : [];
+          : []),
+    ];
 
     // Languages Courses
     const langCourses = allCourses.filter(
