@@ -95,7 +95,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
   const effectiveHeroTitleB = isSinhala ? t("heroTitleB").replace(/ /g, "\u00A0") : t("heroTitleB");
 
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden px-4 pb-16 pt-28 sm:px-6 sm:pb-20 sm:pt-32 lg:pb-24 lg:pt-36">
+    <section className="relative flex min-h-[90vh] items-center overflow-hidden px-4 pb-12 pt-16 sm:px-6 sm:pb-16 sm:pt-20 lg:pb-20 lg:pt-24">
       {/* Atmosphere: Subtle graph-paper dots */}
       <div aria-hidden className="pointer-events-none absolute inset-0 select-none">
         <div
@@ -126,7 +126,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.06 }}
-            className="text-balance font-serif font-bold text-5xl leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-7xl"
+            className="text-balance font-serif font-bold text-4xl leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl"
           >
             <span>{t("heroTitleA")}</span>
             <br />

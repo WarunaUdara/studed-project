@@ -1,26 +1,91 @@
-import { motion } from "framer-motion";
-import { Brain, CheckCircle2, Code2, Compass, Play, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import { Brain, CheckCircle2, Code2, Compass, Terminal } from "lucide-react";
 
 export function InteractiveHeroCard() {
   const [activeTab, setActiveTab] = useState<"math" | "science" | "code">("math");
-  const [gearSpinning, setGearSpinning] = useState(true);
-  const [codeStep, setCodeStep] = useState(2);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mathRef = useRef<HTMLDivElement>(null);
+  const scienceRef = useRef<HTMLDivElement>(null);
+  const codeRef = useRef<HTMLDivElement>(null);
+
+  // Active line for code interpreter
+  const [codeActiveLine, setCodeActiveLine] = useState(1);
+  const [gemCount, setGemCount] = useState(1);
+  const [characterPos, setCharacterPos] = useState(0);
+  const [terminalLog, setTerminalLog] = useState("Initialized interpreter...");
+
+  // Math Trigonometry Theta value (0 to 4pi mapped to SVG coordinates)
+  const [thetaPercent, setThetaPercent] = useState(0.4);
+
+  // Auto-switch tabs periodically (every 7 seconds)
+  useEffect(() => {
+    const tabs: Array<"math" | "science" | "code"> = ["math", "science", "code"];
+    const interval = setInterval(() => {
+      setActiveTab((curr) => {
+        const nextIdx = (tabs.indexOf(curr) + 1) % tabs.length;
+        return tabs[nextIdx];
+      });
+    }, 7000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // GSAP Math Sine/Cosine Animation
+  useEffect(() => {
+    if (activeTab !== "math") return;
+    const ctx = gsap.context(() => {
+      const obj = { val: 0.1 };
+      gsap.to(obj, {
+        val: 0.9,
+        duration: 3.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        onUpdate: () => {
+          setThetaPercent(obj.val);
+        },
+      });
+    }, mathRef);
+    return () => ctx.revert();
+  }, [activeTab]);
+
+  // GSAP Code Interpreter Line-by-Line Execution Animation
+  useEffect(() => {
+    if (activeTab !== "code") return;
+    let step = 0;
+    const sequence = [
+      { line: 1, pos: 0, gems: 0, log: "Evaluating while condition -> True (gems: 1)" },
+      { line: 2, pos: 1, gems: 0, log: "move_forward() -> Player shifted to tile 1" },
+      { line: 3, pos: 1, gems: 0, log: "if is_at_gem() -> Gem found at tile 1!" },
+      { line: 4, pos: 1, gems: 1, log: "collect_gem() -> Success! +10 XP earned" },
+    ];
+
+    const interval = setInterval(() => {
+      step = (step + 1) % sequence.length;
+      const current = sequence[step];
+      setCodeActiveLine(current.line);
+      setCharacterPos(current.pos);
+      setGemCount(current.gems);
+      setTerminalLog(current.log);
+    }, 1400);
+
+    return () => clearInterval(interval);
+  }, [activeTab]);
 
   return (
-    <div className="relative mx-auto w-full max-w-lg select-none">
-      {/* Glow highlight */}
-      <div className="absolute -inset-1 rounded-[32px] bg-gradient-to-tr from-primary/20 via-emerald-500/10 to-purple-500/20 blur-xl opacity-60 pointer-events-none" />
+    <div ref={containerRef} className="relative mx-auto w-full max-w-lg select-none">
+      {/* Subtle Glow */}
+      <div className="absolute -inset-1 rounded-[32px] bg-gradient-to-tr from-primary/20 via-emerald-500/10 to-teal-500/20 blur-xl opacity-60 pointer-events-none" />
 
       {/* Main Clean Card */}
-      <div className="relative overflow-hidden rounded-[28px] border border-border/80 bg-card p-6 shadow-2xl backdrop-blur-xl">
+      <div className="relative overflow-hidden rounded-[28px] border border-border/80 bg-card p-6 shadow-2xl backdrop-blur-xl transition-all">
         {/* Subject Switcher Header */}
-        <div className="flex items-center justify-between border-b border-border/60 pb-4">
+        <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
           <div className="flex items-center gap-1.5 rounded-full bg-muted/70 p-1">
             <button
               type="button"
               onClick={() => setActiveTab("math")}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+              className={`flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-all ${
                 activeTab === "math"
                   ? "bg-background text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
@@ -32,7 +97,7 @@ export function InteractiveHeroCard() {
             <button
               type="button"
               onClick={() => setActiveTab("science")}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+              className={`flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-all ${
                 activeTab === "science"
                   ? "bg-background text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
@@ -44,7 +109,7 @@ export function InteractiveHeroCard() {
             <button
               type="button"
               onClick={() => setActiveTab("code")}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+              className={`flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-all ${
                 activeTab === "code"
                   ? "bg-background text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
@@ -55,121 +120,108 @@ export function InteractiveHeroCard() {
             </button>
           </div>
 
-          <div className="flex items-center gap-1 text-[11px] font-bold text-primary">
-            <Sparkles className="size-3" />
-            <span>Interactive Demo</span>
+          {/* Progress cycle pill */}
+          <div className="flex items-center gap-1 text-[11px] font-bold text-muted-foreground">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="capitalize">{activeTab} Simulation</span>
           </div>
         </div>
 
         {/* Interactive Canvas Body */}
-        <div className="py-6 min-h-[290px] flex flex-col items-center justify-center">
-          {/* TAB 1: MATH GEOMETRY & SYMMETRY */}
+        <div className="py-5 min-h-[300px] flex flex-col items-center justify-center">
+          {/* TAB 1: MATH TRIGONOMETRIC WAVE & UNIT CIRCLE */}
           {activeTab === "math" && (
-            <motion.div
-              key="math"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="flex flex-col items-center space-y-4 w-full"
-            >
-              <p className="text-xs font-medium text-muted-foreground">
-                Divide the square into equal symmetrical quadrants
-              </p>
+            <div ref={mathRef} className="flex flex-col items-center space-y-4 w-full">
+              {/* Formula Badge */}
+              <div className="rounded-lg border border-border/80 bg-muted/50 px-3 py-1 font-mono text-xs font-bold text-foreground shadow-2xs">
+                f(θ) = cos(θ)
+              </div>
 
-              {/* Interactive Geometric Box */}
-              <div className="relative size-44 rounded-2xl border-2 border-foreground/80 bg-background p-2 shadow-inner flex items-center justify-center overflow-hidden">
-                {/* Quadrants fill */}
-                <div
-                  className="absolute inset-0 bg-primary/20 transition-all duration-300"
-                  style={{
-                    clipPath: `polygon(0 0, 50% 50%, 0 100%)`,
-                  }}
-                />
-                <div
-                  className="absolute inset-0 bg-emerald-500/20 transition-all duration-300"
-                  style={{
-                    clipPath: `polygon(100% 0, 50% 50%, 100% 100%)`,
-                  }}
-                />
+              {/* Trigonometric Wave & Unit Circle Diagram */}
+              <div className="relative w-full max-w-sm h-40 flex items-center justify-center">
+                <svg viewBox="0 0 320 140" className="w-full h-full overflow-visible">
+                  {/* Grid Lines */}
+                  <line x1="20" y1="70" x2="200" y2="70" stroke="currentColor" strokeWidth="1" className="text-border" />
+                  <line x1="30" y1="20" x2="30" y2="120" stroke="currentColor" strokeWidth="1" className="text-border" />
+                  
+                  {/* Cosine Wave Curve */}
+                  <path
+                    d="M 30 30 C 55 30 70 110 95 110 C 120 110 135 30 160 30 C 185 30 195 110 200 110"
+                    fill="none"
+                    stroke="#3b82f6"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  />
 
-                {/* Grid Symmetry Lines */}
-                <svg viewBox="0 0 100 100" className="size-full">
-                  {/* Outer Square */}
-                  <rect x="5" y="5" width="90" height="90" fill="none" stroke="currentColor" strokeWidth="2" className="text-foreground" />
-                  {/* Diagonal and Center Lines */}
-                  <line x1="5" y1="5" x2="95" y2="95" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" className="text-muted-foreground/60" />
-                  <line x1="95" y1="5" x2="5" y2="95" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" className="text-muted-foreground/60" />
-                  <line x1="50" y1="5" x2="50" y2="95" stroke="#10b981" strokeWidth="2.5" />
-                  <line x1="5" y1="50" x2="95" y2="50" stroke="#10b981" strokeWidth="2.5" />
-                  
-                  {/* Inscribed Diamond */}
-                  <polygon points="50,5 95,50 50,95 5,50" fill="none" stroke="currentColor" strokeWidth="2" className="text-foreground" />
-                  
-                  {/* Center Node */}
-                  <circle cx="50" cy="50" r="4" fill="#10b981" />
-                  <circle cx="50" cy="95" r="3.5" fill="#10b981" />
+                  {/* Theta Axis Ticks */}
+                  <text x="30" y="85" textAnchor="middle" className="text-[9px] fill-muted-foreground font-mono">0</text>
+                  <text x="95" y="85" textAnchor="middle" className="text-[9px] fill-muted-foreground font-mono">π</text>
+                  <text x="160" y="85" textAnchor="middle" className="text-[9px] fill-muted-foreground font-mono">2π</text>
+
+                  {/* Slider Indicator along wave */}
+                  {(() => {
+                    const waveX = 30 + thetaPercent * 170;
+                    const normalized = ((waveX - 30) / 130) * Math.PI * 2;
+                    const waveY = 70 - Math.cos(normalized) * 40;
+                    return (
+                      <g transform={`translate(${waveX}, 0)`}>
+                        <line x1="0" y1="20" x2="0" y2="120" stroke="#ec4899" strokeWidth="2" strokeDasharray="3 3" />
+                        <circle cx="0" cy={waveY} r="5" fill="#3b82f6" stroke="#ffffff" strokeWidth="2" />
+                      </g>
+                    );
+                  })()}
+
+                  {/* Unit Circle (Right Side) */}
+                  <g transform="translate(260, 70)">
+                    {/* Circle */}
+                    <circle cx="0" cy="0" r="40" fill="none" stroke="#3b82f6" strokeWidth="2" opacity="0.4" />
+                    <circle cx="0" cy="0" r="22" fill="#3b82f6" opacity="0.1" />
+                    {/* Axes */}
+                    <line x1="-48" y1="0" x2="48" y2="0" stroke="currentColor" strokeWidth="1" className="text-border" />
+                    <line x1="0" y1="-48" x2="0" y2="48" stroke="currentColor" strokeWidth="1" className="text-border" />
+                    
+                    {/* Rotating Radius Arm */}
+                    {(() => {
+                      const angle = thetaPercent * Math.PI * 4;
+                      const armX = Math.cos(angle) * 40;
+                      const armY = -Math.sin(angle) * 40;
+                      return (
+                        <>
+                          <line x1="0" y1="0" x2={armX} y2={armY} stroke="#3b82f6" strokeWidth="2.5" />
+                          <circle cx={armX} cy={armY} r="4" fill="#ec4899" />
+                          <circle cx="0" cy="0" r="3" fill="#1e293b" />
+                        </>
+                      );
+                    })()}
+                  </g>
                 </svg>
-
-                {/* Animated Interactive Mouse Pointer */}
-                <motion.div
-                  animate={{
-                    x: [35, -20, 35],
-                    y: [40, -10, 40],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 3.5,
-                    ease: "easeInOut",
-                  }}
-                  className="pointer-events-none absolute z-20"
-                >
-                  <svg className="size-6 text-foreground drop-shadow-md" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M4 2l16 11-7 1.5 4.5 7.5-2.5 1.5-4.5-7.5L4 20V2z" />
-                  </svg>
-                </motion.div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-semibold text-muted-foreground">Symmetry Ratio:</span>
-                <span className="rounded-md bg-primary/15 px-2 py-0.5 text-xs font-bold text-primary">
-                  1 / 4 (25% Area)
-                </span>
-              </div>
-            </motion.div>
+              <p className="text-xs font-semibold text-muted-foreground">
+                Harmonic motion mapped to angular unit circle rotation.
+              </p>
+            </div>
           )}
 
-          {/* TAB 2: SCIENCE GEAR TRAIN PHYSICS */}
+          {/* TAB 2: SCIENCE INTERACTIVE GEARS & MECHANICAL PARITY */}
           {activeTab === "science" && (
-            <motion.div
-              key="science"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="flex flex-col items-center space-y-4 w-full"
-            >
+            <div ref={scienceRef} className="flex flex-col items-center space-y-4 w-full">
               <p className="text-xs font-medium text-muted-foreground">
-                Adjacent gears spin in opposite directions ($↺ \to ↻$)
+                Adjacent gears in a mechanical train rotate in opposite directions
               </p>
 
               {/* 2 Meshed Rotating Gears */}
-              <div
-                className="relative flex items-center justify-center p-2 cursor-pointer"
-                onClick={() => setGearSpinning(!gearSpinning)}
-              >
-                <svg viewBox="0 0 220 120" className="w-56 h-32 overflow-visible">
-                  {/* Left Gear (Driver, Yellow/Lime: Counter-Clockwise ↺) */}
-                  <g transform="translate(60, 60)">
-                    <motion.g
-                      animate={gearSpinning ? { rotate: -360 } : { rotate: 0 }}
-                      transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-                      style={{ transformOrigin: "0px 0px" }}
-                    >
-                      <circle cx="0" cy="0" r="38" fill="#84cc16" />
+              <div className="relative flex items-center justify-center p-2">
+                <svg viewBox="0 0 240 130" className="w-60 h-32 overflow-visible">
+                  {/* Left Gear (Lime Driver: Counter-Clockwise ↺) */}
+                  <g transform="translate(68, 65)">
+                    <g className="animate-spin" style={{ animationDuration: "5s", animationDirection: "reverse" }}>
+                      <circle cx="0" cy="0" r="42" fill="#84cc16" />
                       {Array.from({ length: 12 }).map((_, i) => (
                         <rect
                           key={i}
                           x="-4"
-                          y="-44"
+                          y="-48"
                           width="8"
                           height="12"
                           rx="2"
@@ -177,26 +229,27 @@ export function InteractiveHeroCard() {
                           transform={`rotate(${(i * 360) / 12})`}
                         />
                       ))}
-                      <circle cx="0" cy="0" r="14" fill="#334155" />
-                      <circle cx="0" cy="0" r="6" fill="#64748b" />
-                    </motion.g>
+                      <circle cx="0" cy="0" r="16" fill="#334155" />
+                      <circle cx="0" cy="0" r="7" fill="#64748b" />
+                    </g>
                     {/* Fixed axle pin */}
-                    <circle cx="0" cy="0" r="3" fill="#0f172a" />
+                    <circle cx="0" cy="0" r="3.5" fill="#0f172a" />
+                    {/* Rotation Arrow */}
+                    <g transform="translate(0, -58)" className="text-white drop-shadow-md">
+                      <path d="M -14 0 A 18 18 0 0 1 14 0" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                      <polygon points="-17,-2 -11,5 -10,-4" fill="currentColor" />
+                    </g>
                   </g>
 
-                  {/* Right Gear (Driven, Cyan: Clockwise ↻) */}
-                  <g transform="translate(138, 60)">
-                    <motion.g
-                      animate={gearSpinning ? { rotate: 360 } : { rotate: 0 }}
-                      transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-                      style={{ transformOrigin: "0px 0px" }}
-                    >
-                      <circle cx="0" cy="0" r="38" fill="#06b6d4" />
+                  {/* Right Gear (Cyan Driven: Clockwise ↻) */}
+                  <g transform="translate(152, 65)">
+                    <g className="animate-spin" style={{ animationDuration: "5s", animationDirection: "normal" }}>
+                      <circle cx="0" cy="0" r="42" fill="#06b6d4" />
                       {Array.from({ length: 12 }).map((_, i) => (
                         <rect
                           key={i}
                           x="-4"
-                          y="-44"
+                          y="-48"
                           width="8"
                           height="12"
                           rx="2"
@@ -204,69 +257,113 @@ export function InteractiveHeroCard() {
                           transform={`rotate(${(i * 360) / 12 + 15})`}
                         />
                       ))}
-                      <circle cx="0" cy="0" r="14" fill="#334155" />
-                      <circle cx="0" cy="0" r="6" fill="#64748b" />
-                    </motion.g>
+                      <circle cx="0" cy="0" r="16" fill="#334155" />
+                      <circle cx="0" cy="0" r="7" fill="#64748b" />
+                    </g>
                     {/* Fixed axle pin */}
-                    <circle cx="0" cy="0" r="3" fill="#0f172a" />
+                    <circle cx="0" cy="0" r="3.5" fill="#0f172a" />
+                    {/* Rotation Arrow */}
+                    <g transform="translate(0, -58)" className="text-white drop-shadow-md">
+                      <path d="M -14 0 A 18 18 0 0 1 14 0" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                      <polygon points="17,-2 11,5 10,-4" fill="currentColor" />
+                    </g>
                   </g>
                 </svg>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                  <CheckCircle2 className="size-3" /> Mechanical Parity Verified
+                <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 shadow-2xs">
+                  <CheckCircle2 className="size-3.5" /> 1:1 Speed Ratio · Mechanical Parity
                 </span>
               </div>
-            </motion.div>
+            </div>
           )}
 
-          {/* TAB 3: CODING ALGORITHMS & MAZE */}
+          {/* TAB 3: CODING ALGORITHM INTERPRETER RUNNING LINE BY LINE */}
           {activeTab === "code" && (
-            <motion.div
-              key="code"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="flex flex-col items-center space-y-3 w-full"
-            >
-              <p className="text-xs font-medium text-muted-foreground">
-                Algorithmic loops & logic blocks
-              </p>
-
-              {/* Code blocks stack */}
-              <div className="w-full max-w-sm rounded-xl border border-border/70 bg-muted/40 p-3.5 space-y-2 font-mono text-xs text-left">
-                <div className="flex items-center gap-2 text-primary font-bold">
-                  <span className="text-muted-foreground font-normal">1</span>
-                  <span className="rounded bg-primary/10 px-1.5 py-0.5">while</span>
+            <div ref={codeRef} className="flex flex-col items-center space-y-3.5 w-full">
+              {/* Code blocks with animated active line indicator */}
+              <div className="w-full rounded-2xl border border-border/80 bg-muted/30 p-3.5 space-y-1.5 font-mono text-xs text-left shadow-inner">
+                {/* Line 1 */}
+                <div
+                  className={`flex items-center gap-2.5 rounded-lg px-2.5 py-1 transition-all duration-300 ${
+                    codeActiveLine === 1
+                      ? "bg-primary/20 text-foreground font-bold border-l-3 border-primary"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  <span className="w-3 text-[10px] opacity-60">1</span>
+                  <span className="text-primary font-bold">while</span>
                   <span>gems_remaining &gt; 0:</span>
                 </div>
-                <div className="flex items-center gap-2 pl-4 text-emerald-600 dark:text-emerald-400">
-                  <span className="text-muted-foreground font-normal">2</span>
-                  <span className="rounded bg-emerald-500/10 px-1.5 py-0.5">move_forward()</span>
+
+                {/* Line 2 */}
+                <div
+                  className={`flex items-center gap-2.5 pl-6 rounded-lg px-2.5 py-1 transition-all duration-300 ${
+                    codeActiveLine === 2
+                      ? "bg-emerald-500/20 text-foreground font-bold border-l-3 border-emerald-500"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  <span className="w-3 text-[10px] opacity-60">2</span>
+                  <span className="text-emerald-500 font-semibold">move_forward()</span>
                 </div>
-                <div className="flex items-center gap-2 pl-4 text-amber-600 dark:text-amber-400">
-                  <span className="text-muted-foreground font-normal">3</span>
-                  <span className="rounded bg-amber-500/10 px-1.5 py-0.5">if</span>
+
+                {/* Line 3 */}
+                <div
+                  className={`flex items-center gap-2.5 pl-6 rounded-lg px-2.5 py-1 transition-all duration-300 ${
+                    codeActiveLine === 3
+                      ? "bg-amber-500/20 text-foreground font-bold border-l-3 border-amber-500"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  <span className="w-3 text-[10px] opacity-60">3</span>
+                  <span className="text-amber-500 font-bold">if</span>
                   <span>is_at_gem():</span>
                 </div>
-                <div className="flex items-center gap-2 pl-8 text-purple-600 dark:text-purple-400">
-                  <span className="text-muted-foreground font-normal">4</span>
-                  <span className="rounded bg-purple-500/10 px-1.5 py-0.5">collect_gem()</span>
+
+                {/* Line 4 */}
+                <div
+                  className={`flex items-center gap-2.5 pl-10 rounded-lg px-2.5 py-1 transition-all duration-300 ${
+                    codeActiveLine === 4
+                      ? "bg-purple-500/20 text-foreground font-bold border-l-3 border-purple-500"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  <span className="w-3 text-[10px] opacity-60">4</span>
+                  <span className="text-purple-500 font-semibold">collect_gem()</span>
                 </div>
               </div>
 
-              {/* Action buttons */}
-              <div className="flex items-center gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setCodeStep((prev) => (prev % 4) + 1)}
-                  className="flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground hover:bg-primary/90 shadow-xs transition-all"
-                >
-                  <Play className="size-3 fill-current" /> Run Step {codeStep}
-                </button>
+              {/* Live Mini Visual Grid Arena */}
+              <div className="w-full flex items-center justify-between gap-2 px-2">
+                {/* 3-Tile Mini Arena */}
+                <div className="flex items-center gap-1.5 rounded-xl bg-background border border-border/70 p-1.5">
+                  {[0, 1, 2].map((idx) => {
+                    const isHero = characterPos === idx;
+                    const hasGem = idx === 1 && gemCount === 0;
+                    return (
+                      <div
+                        key={idx}
+                        className={`size-9 rounded-lg flex items-center justify-center text-sm font-bold transition-all ${
+                          isHero
+                            ? "bg-emerald-500/20 border border-emerald-500 shadow-xs scale-105"
+                            : "bg-muted/40 border border-border/40"
+                        }`}
+                      >
+                        {isHero ? "🤖" : hasGem ? "💎" : "·"}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Live Console Output Bar */}
+                <div className="flex-1 flex items-center gap-1.5 rounded-xl border border-border/70 bg-background/90 px-2.5 py-2 font-mono text-[11px] text-foreground truncate shadow-2xs">
+                  <Terminal className="size-3.5 text-primary shrink-0" />
+                  <span className="truncate text-muted-foreground">{terminalLog}</span>
+                </div>
               </div>
-            </motion.div>
+            </div>
           )}
         </div>
 

@@ -31,12 +31,12 @@ export const PUBLIC_STRINGS = {
     SI: "අන්තර්ක්‍රියාකාරී අධ්‍යාපනික වේදිකාව",
   },
   heroTitleA: {
-    EN: "Your interactive tutor for",
-    SI: "ඔබේ අන්තර්ක්‍රියාකාරී ගුරුවරයා,",
+    EN: "School rewritten as",
+    SI: "පාසල් අධ්‍යාපනය, ජයගත හැකි",
   },
   heroTitleB: {
-    EN: "math, science, & coding",
-    SI: "ගණිතය, විද්‍යාව සහ කේතකරණය සඳහා",
+    EN: "a game you can win",
+    SI: "Game එකක් ලෙසින්",
   },
   heroSubtitle: {
     EN: "Visual, hands-on learning for Sri Lankan students. Build true intuition through interactive simulations, step-by-step guidance, and gamified progress.",
