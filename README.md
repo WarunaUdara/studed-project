@@ -62,6 +62,10 @@ StudEd blends cognitive science with game mechanics: **ADHD-friendly binaural so
 
 ## 🏛️ Master System Architecture
 
+<p align="center">
+  <img src="./docs/architecture-diagram.png" alt="StudEd GCP Production Architecture" style="max-width: 100%; height: auto;" />
+</p>
+
 ```mermaid
 graph TB
     subgraph Client_Tier ["📱 Presentation & Edge Tier"]
