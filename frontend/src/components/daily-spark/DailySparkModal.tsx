@@ -106,7 +106,10 @@ export function DailySparkModal({ isOpen, onClose }: DailySparkModalProps) {
 
     try {
       const todayStr = new Date().toISOString().slice(0, 10);
-      localStorage.setItem(`daily_spark_${user?.id ?? "guest"}_${todayStr}`, "completed");
+      localStorage.setItem(
+        `daily_spark_${user?.id ?? "guest"}_${todayStr}`,
+        "completed",
+      );
     } catch {
       // Ignore in private storage mode
     }
@@ -120,7 +123,7 @@ export function DailySparkModal({ isOpen, onClose }: DailySparkModalProps) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#07080a]/90 p-4 backdrop-blur-xl sm:p-6"
+          className="fixed inset-0 z-[10000] flex items-center justify-center bg-[oklch(0.314_0.012_262.3)]/90 p-4 backdrop-blur-xl sm:p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

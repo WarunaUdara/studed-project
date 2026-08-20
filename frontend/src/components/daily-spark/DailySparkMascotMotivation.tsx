@@ -11,7 +11,7 @@ export function DailySparkMascotMotivation({
   onContinue,
 }: DailySparkMascotMotivationProps) {
   return (
-    <div className="relative flex min-h-[580px] w-full max-w-4xl flex-col items-center justify-between rounded-3xl border border-white/10 bg-[#101114] p-8 text-white shadow-2xl text-center">
+    <div className="relative flex min-h-[580px] w-full max-w-4xl flex-col items-center justify-between rounded-3xl border border-white/10 bg-[oklch(0.406_0.011_270.2)] p-8 text-white shadow-2xl text-center">
       {/* Top spacer */}
       <div className="h-4" />
 
@@ -33,16 +33,27 @@ export function DailySparkMascotMotivation({
             <svg viewBox="0 0 200 200" className="size-full">
               <defs>
                 <linearGradient id="blob-grad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#22c55e" />
-                  <stop offset="50%" stopColor="#16a34a" />
-                  <stop offset="100%" stopColor="#15803d" />
+                  <stop offset="0%" stopColor="oklch(0.83 0.145 158.5)" />
+                  <stop offset="50%" stopColor="oklch(0.775 0.145 158.5)" />
+                  <stop offset="100%" stopColor="oklch(0.718 0.127 158.8)" />
                 </linearGradient>
                 <linearGradient id="dumbbell-grad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#93c5fd" />
-                  <stop offset="100%" stopColor="#3b82f6" />
+                  <stop offset="0%" stopColor="oklch(0.906 0.047 247.2)" />
+                  <stop offset="100%" stopColor="oklch(0.783 0.107 251.3)" />
                 </linearGradient>
-                <filter id="blob-glow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="8" stdDeviation="12" floodColor="rgba(34, 197, 94, 0.35)" />
+                <filter
+                  id="blob-glow"
+                  x="-20%"
+                  y="-20%"
+                  width="140%"
+                  height="140%"
+                >
+                  <feDropShadow
+                    dx="0"
+                    dy="8"
+                    stdDeviation="12"
+                    floodColor="rgba(34, 197, 94, 0.35)"
+                  />
                 </filter>
               </defs>
 
@@ -58,17 +69,26 @@ export function DailySparkMascotMotivation({
                     "M 60,100 C 60,60 140,60 140,100 C 140,140 130,155 100,155 C 70,155 60,140 60,100 Z",
                   ],
                 }}
-                transition={{ repeat: Infinity, duration: 2.6, ease: "easeInOut" }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 2.6,
+                  ease: "easeInOut",
+                }}
               />
 
               {/* Happy Eyes */}
-              <circle cx="85" cy="95" r="4.5" fill="#0f172a" />
-              <circle cx="115" cy="95" r="4.5" fill="#0f172a" />
+              <circle cx="85" cy="95" r="4.5" fill="oklch(0.447 0.051 261.4)" />
+              <circle
+                cx="115"
+                cy="95"
+                r="4.5"
+                fill="oklch(0.447 0.051 261.4)"
+              />
 
               {/* Cute Smile */}
               <path
                 d="M 92,108 Q 100,116 108,108"
-                stroke="#0f172a"
+                stroke="oklch(0.447 0.051 261.4)"
                 strokeWidth="3.5"
                 strokeLinecap="round"
                 fill="none"
@@ -76,21 +96,54 @@ export function DailySparkMascotMotivation({
 
               {/* Dumbbell held up proudly */}
               <g transform="translate(68, 30) rotate(-15)">
-                <rect x="0" y="14" width="64" height="6" rx="3" fill="#cbd5e1" />
+                <rect
+                  x="0"
+                  y="14"
+                  width="64"
+                  height="6"
+                  rx="3"
+                  fill="oklch(0.94 0.009 252)"
+                />
                 {/* Left Weight */}
-                <rect x="-8" y="4" width="12" height="26" rx="5" fill="url(#dumbbell-grad)" />
+                <rect
+                  x="-8"
+                  y="4"
+                  width="12"
+                  height="26"
+                  rx="5"
+                  fill="url(#dumbbell-grad)"
+                />
                 {/* Right Weight */}
-                <rect x="60" y="4" width="12" height="26" rx="5" fill="url(#dumbbell-grad)" />
+                <rect
+                  x="60"
+                  y="4"
+                  width="12"
+                  height="26"
+                  rx="5"
+                  fill="url(#dumbbell-grad)"
+                />
               </g>
 
               {/* Little arms holding the dumbbell bar */}
-              <path d="M 68,105 Q 60,75 75,48" stroke="#16a34a" strokeWidth="8" strokeLinecap="round" fill="none" />
-              <path d="M 132,105 Q 140,75 125,48" stroke="#16a34a" strokeWidth="8" strokeLinecap="round" fill="none" />
+              <path
+                d="M 68,105 Q 60,75 75,48"
+                stroke="oklch(0.775 0.145 158.5)"
+                strokeWidth="8"
+                strokeLinecap="round"
+                fill="none"
+              />
+              <path
+                d="M 132,105 Q 140,75 125,48"
+                stroke="oklch(0.775 0.145 158.5)"
+                strokeWidth="8"
+                strokeLinecap="round"
+                fill="none"
+              />
             </svg>
           </motion.div>
 
           {/* Pedestal Base Shadow (matching image 4) */}
-          <div className="relative -mt-4 h-9 w-32 rounded-[50%] bg-gradient-to-b from-[#2a2c33] to-[#121316] shadow-xl border border-white/5" />
+          <div className="relative -mt-4 h-9 w-32 rounded-[50%] bg-gradient-to-b from-[oklch(0.557_0.013_272.5)] to-[oklch(0.421_0.01_270.3)] shadow-xl border border-white/5" />
         </div>
 
         {/* Heading & Subhead */}
@@ -137,7 +190,7 @@ export function DailySparkMascotMotivation({
         <button
           type="button"
           onClick={onContinue}
-          className="h-12 w-full rounded-full bg-[#e2e4e9] font-bold text-sm text-black shadow-lg transition-all hover:bg-white active:scale-98"
+          className="h-12 w-full rounded-full bg-[oklch(0.963_0.003_268.4)] font-bold text-sm text-black shadow-lg transition-all hover:bg-white active:scale-98"
         >
           Continue
         </button>

@@ -16,7 +16,7 @@ export function DailySparkStreakScreen({
   const dayIndex = (now.getDay() + 6) % 7; // Monday = 0, Sunday = 6
 
   return (
-    <div className="relative flex min-h-[580px] w-full max-w-4xl flex-col items-center justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#0f1013] p-8 text-white shadow-2xl text-center">
+    <div className="relative flex min-h-[580px] w-full max-w-4xl flex-col items-center justify-between overflow-hidden rounded-3xl border border-white/10 bg-[oklch(0.398_0.011_270.1)] p-8 text-white shadow-2xl text-center">
       {/* Ambient Olive/Gold Radial Glow in Background (as in Image 5) */}
       <div
         className="pointer-events-none absolute inset-0 size-full"
@@ -46,16 +46,27 @@ export function DailySparkStreakScreen({
             <svg viewBox="0 0 200 200" className="size-full">
               <defs>
                 <linearGradient id="bolt-front" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#facc15" />
-                  <stop offset="60%" stopColor="#bef264" />
-                  <stop offset="100%" stopColor="#84cc16" />
+                  <stop offset="0%" stopColor="oklch(0.92 0.165 101)" />
+                  <stop offset="60%" stopColor="oklch(0.945 0.107 122.5)" />
+                  <stop offset="100%" stopColor="oklch(0.871 0.178 123.2)" />
                 </linearGradient>
                 <linearGradient id="bolt-rim" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#eab308" />
-                  <stop offset="100%" stopColor="#4d7c0f" />
+                  <stop offset="0%" stopColor="oklch(0.885 0.172 99.3)" />
+                  <stop offset="100%" stopColor="oklch(0.737 0.149 124.5)" />
                 </linearGradient>
-                <filter id="bolt-shadow" x="-30%" y="-30%" width="160%" height="160%">
-                  <feDropShadow dx="0" dy="10" stdDeviation="14" floodColor="rgba(190, 242, 100, 0.4)" />
+                <filter
+                  id="bolt-shadow"
+                  x="-30%"
+                  y="-30%"
+                  width="160%"
+                  height="160%"
+                >
+                  <feDropShadow
+                    dx="0"
+                    dy="10"
+                    stdDeviation="14"
+                    floodColor="rgba(190, 242, 100, 0.4)"
+                  />
                 </filter>
               </defs>
 
@@ -70,7 +81,7 @@ export function DailySparkStreakScreen({
               <path
                 d="M 115,25 L 50,110 L 95,110 L 75,180 L 155,85 L 110,85 Z"
                 fill="url(#bolt-front)"
-                stroke="#fef08a"
+                stroke="oklch(0.972 0.069 102.1)"
                 strokeWidth="4"
                 strokeLinejoin="round"
                 filter="url(#bolt-shadow)"
@@ -78,13 +89,27 @@ export function DailySparkStreakScreen({
 
               {/* Peeking Blob Mascot Clinging to Top-Right of Lightning (as in Image 5) */}
               <g transform="translate(125, 20) scale(0.48)">
-                <circle cx="50" cy="50" r="42" fill="#22c55e" stroke="#15803d" strokeWidth="4" />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="oklch(0.83 0.145 158.5)"
+                  stroke="oklch(0.718 0.127 158.8)"
+                  strokeWidth="4"
+                />
                 {/* Mascot Square Visor / Eyes */}
-                <rect x="30" y="32" width="40" height="26" rx="8" fill="#ffffff" />
-                <circle cx="42" cy="45" r="5" fill="#0f172a" />
-                <circle cx="58" cy="45" r="5" fill="#0f172a" />
-                <circle cx="44" cy="43" r="1.5" fill="#ffffff" />
-                <circle cx="60" cy="43" r="1.5" fill="#ffffff" />
+                <rect
+                  x="30"
+                  y="32"
+                  width="40"
+                  height="26"
+                  rx="8"
+                  fill="oklch(1 0 89.9)"
+                />
+                <circle cx="42" cy="45" r="5" fill="oklch(0.447 0.051 261.4)" />
+                <circle cx="58" cy="45" r="5" fill="oklch(0.447 0.051 261.4)" />
+                <circle cx="44" cy="43" r="1.5" fill="oklch(1 0 89.9)" />
+                <circle cx="60" cy="43" r="1.5" fill="oklch(1 0 89.9)" />
               </g>
             </svg>
           </motion.div>
@@ -158,7 +183,7 @@ export function DailySparkStreakScreen({
         <button
           type="button"
           onClick={onFinish}
-          className="h-12 w-full rounded-full bg-[#e2e4e9] font-bold text-sm text-black shadow-lg transition-all hover:bg-white active:scale-98"
+          className="h-12 w-full rounded-full bg-[oklch(0.963_0.003_268.4)] font-bold text-sm text-black shadow-lg transition-all hover:bg-white active:scale-98"
         >
           Continue
         </button>

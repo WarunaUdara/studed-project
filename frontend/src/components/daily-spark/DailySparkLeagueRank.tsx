@@ -9,15 +9,46 @@ interface DailySparkLeagueRankProps {
 }
 
 const DEFAULT_MEMBERS: LeagueMember[] = [
-  { rank: 3, name: "Ankit K", avatarLetter: "A", avatarColor: "bg-emerald-500", xp: 225 },
-  { rank: 5, name: "David E", avatarLetter: "D", avatarColor: "bg-emerald-500", xp: 200 },
-  { rank: 6, name: "Jeremy L", avatarLetter: "J", avatarColor: "bg-amber-400 text-black", xp: 55 },
-  { rank: 6, name: "Yolanda J", avatarLetter: "Y", avatarColor: "bg-yellow-600 text-black", xp: 55 },
+  {
+    rank: 3,
+    name: "Ankit K",
+    avatarLetter: "A",
+    avatarColor: "bg-emerald-500",
+    xp: 225,
+  },
+  {
+    rank: 5,
+    name: "David E",
+    avatarLetter: "D",
+    avatarColor: "bg-emerald-500",
+    xp: 200,
+  },
+  {
+    rank: 6,
+    name: "Jeremy L",
+    avatarLetter: "J",
+    avatarColor: "bg-amber-400 text-black",
+    xp: 55,
+  },
+  {
+    rank: 6,
+    name: "Yolanda J",
+    avatarLetter: "Y",
+    avatarColor: "bg-yellow-600 text-black",
+    xp: 55,
+  },
 ];
 
-export function DailySparkLeagueRank({ totalXp, onFinish }: DailySparkLeagueRankProps) {
+export function DailySparkLeagueRank({
+  totalXp,
+  onFinish,
+}: DailySparkLeagueRankProps) {
   const { user } = useAuthStore();
-  const userName = user?.fullName ? user.fullName.split(" ")[0] + " " + (user.fullName.split(" ")[1]?.charAt(0) ?? "U") : "Waruna U";
+  const userName = user?.fullName
+    ? user.fullName.split(" ")[0] +
+      " " +
+      (user.fullName.split(" ")[1]?.charAt(0) ?? "U")
+    : "Waruna U";
   const userInitial = user?.fullName?.charAt(0).toUpperCase() ?? "W";
 
   // Rank climb counter animation (e.g. from 28 down to 6)
@@ -39,21 +70,21 @@ export function DailySparkLeagueRank({ totalXp, onFinish }: DailySparkLeagueRank
   }, []);
 
   return (
-    <div className="relative flex min-h-[640px] w-full max-w-4xl flex-col items-center justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#0d0e11] p-6 text-white shadow-2xl text-center sm:p-8">
+    <div className="relative flex min-h-[640px] w-full max-w-4xl flex-col items-center justify-between overflow-hidden rounded-3xl border border-white/10 bg-[oklch(0.38_0.012_270)] p-6 text-white shadow-2xl text-center sm:p-8">
       {/* Background Circuit Geometric Pattern (as in Screenshot 2) */}
       <div className="pointer-events-none absolute top-0 inset-x-0 h-72 opacity-25 select-none">
         <svg viewBox="0 0 600 240" className="size-full">
           <path
             d="M 50,40 L 150,40 L 190,80 L 300,80 M 450,40 L 400,40 L 360,80 L 250,80 M 100,120 L 180,120 L 220,160 M 500,120 L 420,120 L 380,160"
-            stroke="#ea580c"
+            stroke="oklch(0.773 0.149 64.8)"
             strokeWidth="1.5"
             fill="none"
             strokeDasharray="4 6"
           />
-          <circle cx="190" cy="80" r="3.5" fill="#ea580c" />
-          <circle cx="360" cy="80" r="3.5" fill="#ea580c" />
-          <circle cx="220" cy="160" r="3.5" fill="#ea580c" />
-          <circle cx="380" cy="160" r="3.5" fill="#ea580c" />
+          <circle cx="190" cy="80" r="3.5" fill="oklch(0.773 0.149 64.8)" />
+          <circle cx="360" cy="80" r="3.5" fill="oklch(0.773 0.149 64.8)" />
+          <circle cx="220" cy="160" r="3.5" fill="oklch(0.773 0.149 64.8)" />
+          <circle cx="380" cy="160" r="3.5" fill="oklch(0.773 0.149 64.8)" />
         </svg>
       </div>
 
@@ -69,20 +100,20 @@ export function DailySparkLeagueRank({ totalXp, onFinish }: DailySparkLeagueRank
           <svg viewBox="0 0 100 120" className="size-full">
             <defs>
               <linearGradient id="shield-grad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#ea580c" />
-                <stop offset="60%" stopColor="#c2410c" />
-                <stop offset="100%" stopColor="#7c2d12" />
+                <stop offset="0%" stopColor="oklch(0.773 0.149 64.8)" />
+                <stop offset="60%" stopColor="oklch(0.713 0.14 58.5)" />
+                <stop offset="100%" stopColor="oklch(0.625 0.103 51)" />
               </linearGradient>
               <linearGradient id="sun-grad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#ffedd5" />
-                <stop offset="100%" stopColor="#fdba74" />
+                <stop offset="0%" stopColor="oklch(0.979 0.017 76.6)" />
+                <stop offset="100%" stopColor="oklch(0.917 0.065 74.2)" />
               </linearGradient>
             </defs>
             {/* Shield Outline Body */}
             <path
               d="M 15,10 L 85,10 L 85,60 C 85,90 50,110 50,110 C 50,110 15,90 15,60 Z"
               fill="url(#shield-grad)"
-              stroke="#fb923c"
+              stroke="oklch(0.864 0.103 71.4)"
               strokeWidth="4"
               strokeLinejoin="round"
             />
@@ -90,7 +121,7 @@ export function DailySparkLeagueRank({ totalXp, onFinish }: DailySparkLeagueRank
             <circle cx="50" cy="48" r="16" fill="url(#sun-grad)" />
             <path
               d="M 38,62 Q 44,54 52,54 Q 60,54 64,62 Z"
-              fill="#ffffff"
+              fill="oklch(1 0 89.9)"
               opacity="0.9"
             />
           </svg>
@@ -107,9 +138,12 @@ export function DailySparkLeagueRank({ totalXp, onFinish }: DailySparkLeagueRank
             So close
           </h2>
           <p className="text-xs text-neutral-400 sm:text-sm">
-            You previously finished #28 and kept your spot in the Hydrogen League
+            You previously finished #28 and kept your spot in the Hydrogen
+            League
           </p>
-          <p className="text-[11px] font-semibold text-neutral-500">6 days left</p>
+          <p className="text-[11px] font-semibold text-neutral-500">
+            6 days left
+          </p>
         </motion.div>
       </div>
 
@@ -126,7 +160,7 @@ export function DailySparkLeagueRank({ totalXp, onFinish }: DailySparkLeagueRank
           initial={{ scale: 0.95, opacity: 0, x: -15 }}
           animate={{ scale: 1, opacity: 1, x: 0 }}
           transition={{ delay: 0.35, type: "spring", bounce: 0.2 }}
-          className="flex items-center justify-between rounded-2xl border border-emerald-500/40 bg-[#0e4823] px-4 py-3 shadow-lg shadow-emerald-950/40"
+          className="flex items-center justify-between rounded-2xl border border-emerald-500/40 bg-[oklch(0.595_0.101_158.2)] px-4 py-3 shadow-lg shadow-emerald-950/40"
         >
           <div className="flex items-center gap-3.5">
             <span className="w-5 text-center font-bold text-sm text-emerald-400">
@@ -137,7 +171,9 @@ export function DailySparkLeagueRank({ totalXp, onFinish }: DailySparkLeagueRank
             </div>
             <span className="font-bold text-sm text-white">{userName}</span>
           </div>
-          <span className="font-semibold text-sm text-emerald-100">{totalXp || 55} XP</span>
+          <span className="font-semibold text-sm text-emerald-100">
+            {totalXp || 55} XP
+          </span>
         </motion.div>
 
         {/* Rank 6 Tied: Jeremy L */}
@@ -157,7 +193,7 @@ export function DailySparkLeagueRank({ totalXp, onFinish }: DailySparkLeagueRank
         <button
           type="button"
           onClick={onFinish}
-          className="h-12 w-full rounded-full bg-[#e2e4e9] font-bold text-sm text-black shadow-lg transition-all hover:bg-white active:scale-98"
+          className="h-12 w-full rounded-full bg-[oklch(0.963_0.003_268.4)] font-bold text-sm text-black shadow-lg transition-all hover:bg-white active:scale-98"
         >
           Continue
         </button>
@@ -177,7 +213,7 @@ function LeaderboardRow({
     <div className="flex items-center justify-between px-4 py-2.5 text-neutral-300">
       <div className="flex items-center gap-3.5">
         {isTopBadge ? (
-          <span className="flex size-5 items-center justify-center rounded-md bg-[#7c2d12] font-bold text-xs text-amber-200">
+          <span className="flex size-5 items-center justify-center rounded-md bg-[oklch(0.625_0.103_51)] font-bold text-xs text-amber-200">
             {member.rank}
           </span>
         ) : (
@@ -190,9 +226,13 @@ function LeaderboardRow({
         >
           {member.avatarLetter}
         </div>
-        <span className="font-medium text-sm text-neutral-200">{member.name}</span>
+        <span className="font-medium text-sm text-neutral-200">
+          {member.name}
+        </span>
       </div>
-      <span className="font-medium text-sm text-neutral-400">{member.xp} XP</span>
+      <span className="font-medium text-sm text-neutral-400">
+        {member.xp} XP
+      </span>
     </div>
   );
 }

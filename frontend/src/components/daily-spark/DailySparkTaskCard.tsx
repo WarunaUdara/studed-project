@@ -71,7 +71,7 @@ export function DailySparkTaskCard({
   };
 
   return (
-    <div className="relative flex min-h-[580px] w-full max-w-4xl flex-col justify-between rounded-3xl border border-white/10 bg-[#121316] p-6 text-white shadow-2xl transition-all sm:p-8">
+    <div className="relative flex min-h-[580px] w-full max-w-4xl flex-col justify-between rounded-3xl border border-white/10 bg-[oklch(0.421_0.01_270.3)] p-6 text-white shadow-2xl transition-all sm:p-8">
       {/* Top Header & Step Progress Bar */}
       <div className="flex items-center justify-between gap-4">
         {/* Left: Close Button */}
@@ -87,7 +87,8 @@ export function DailySparkTaskCard({
         {/* Center: Segmented Pills Progress Bar */}
         <div className="flex items-center gap-2">
           {Array.from({ length: totalTasks }).map((_, i) => {
-            const isCompleted = i < currentIndex || (i === currentIndex && isCorrect);
+            const isCompleted =
+              i < currentIndex || (i === currentIndex && isCorrect);
             const isCurrent = i === currentIndex && !isCorrect;
 
             return (
@@ -117,8 +118,8 @@ export function DailySparkTaskCard({
       <div
         className={`relative my-4 flex flex-1 flex-col items-center justify-center rounded-2xl border p-6 transition-all duration-300 sm:p-8 ${
           isCorrect
-            ? "border-emerald-500/80 bg-[#151a17] shadow-lg shadow-emerald-950/40"
-            : "border-white/5 bg-[#17181c]"
+            ? "border-emerald-500/80 bg-[oklch(0.458_0.014_160.2)] shadow-lg shadow-emerald-950/40"
+            : "border-white/5 bg-[oklch(0.456_0.011_274.1)]"
         }`}
       >
         {/* Flag Icon on Top-Left (as seen in screenshot 2) */}
@@ -137,7 +138,9 @@ export function DailySparkTaskCard({
           <h2 className="flex items-center justify-center gap-1.5 text-lg font-bold text-neutral-100 sm:text-xl">
             <span>Color</span>
             <span className="inline-flex flex-col items-center px-1 text-sm leading-none font-extrabold text-white">
-              <span className="border-b-2 border-white pb-0.5">{task.numerator}</span>
+              <span className="border-b-2 border-white pb-0.5">
+                {task.numerator}
+              </span>
               <span className="pt-0.5">{task.denominator}</span>
             </span>
             <span>of the triangle.</span>
@@ -182,7 +185,9 @@ export function DailySparkTaskCard({
               {/* Left Indicator */}
               <div className="flex items-center gap-2">
                 <PartyPopper className="size-5 text-emerald-400" />
-                <span className="font-extrabold text-base text-white">Correct!</span>
+                <span className="font-extrabold text-base text-white">
+                  Correct!
+                </span>
               </div>
 
               {/* Right Action Buttons */}
@@ -244,10 +249,14 @@ export function DailySparkTaskCard({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md rounded-2xl border border-white/20 bg-[#1e2026] p-6 shadow-2xl text-left"
+              className="w-full max-w-md rounded-2xl border border-white/20 bg-[oklch(0.501_0.014_270.1)] p-6 shadow-2xl text-left"
             >
-              <h3 className="text-lg font-bold text-white mb-2">Geometric Proof &amp; Explanation</h3>
-              <p className="text-sm text-neutral-300 leading-relaxed mb-6">{task.explanation}</p>
+              <h3 className="text-lg font-bold text-white mb-2">
+                Geometric Proof &amp; Explanation
+              </h3>
+              <p className="text-sm text-neutral-300 leading-relaxed mb-6">
+                {task.explanation}
+              </p>
               <button
                 type="button"
                 onClick={() => setShowExplanation(false)}
