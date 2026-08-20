@@ -23,32 +23,22 @@ export type Stop = { offset: number; color: string };
 const VBW = 1271;
 const VBH = 599;
 
-// Ruixen's stops, floor (0) → top (1): dark ember → blue → near-white → yellow
-// → red-orange → magenta → transparent pink.
-export const RUIXEN_STOPS: Stop[] = [
-  { offset: 0, color: "#340B05" },
-  { offset: 0.1827, color: "#0358F7" },
-  { offset: 0.2837, color: "#5092C7" },
-  { offset: 0.4135, color: "#E1ECFE" },
-  { offset: 0.5866, color: "#FFD400" },
-  { offset: 0.6827, color: "#FA3D1D" },
-  { offset: 0.8029, color: "#FD02F5" },
-  { offset: 1, color: "#FFC0FD00" },
+
+// StudEd refined low-saturation, theme-aligned palette stops, floor (0) → top (1):
+// Deep muted slate-emerald → Soft jade → Gentle mint → Soft cyan/sky → Warm champagne → Soft mist → Transparent
+export const STUDED_GRADIENT_STOPS: Stop[] = [
+  { offset: 0, color: "#061a14" },
+  { offset: 0.18, color: "#0d3d30" },
+  { offset: 0.36, color: "#165948" },
+  { offset: 0.52, color: "#2ea07d" },
+  { offset: 0.68, color: "#389ba6" },
+  { offset: 0.82, color: "#5ea3bf" },
+  { offset: 0.92, color: "#d1c79f" },
+  { offset: 0.97, color: "#dbeafe" },
+  { offset: 1, color: "#2ea07d00" },
 ];
 
-// StudEd harmonious palette stops, floor (0) → top (1):
-// Deep forest floor → Emerald primary → Mint → Science cyan → Blue → Gold → Magenta → Transparent fade
-export const STUDED_GRADIENT_STOPS: Stop[] = [
-  { offset: 0, color: "#062419" },
-  { offset: 0.18, color: "#047857" },
-  { offset: 0.32, color: "#059669" },
-  { offset: 0.48, color: "#10b981" },
-  { offset: 0.62, color: "#06b6d4" },
-  { offset: 0.76, color: "#3b82f6" },
-  { offset: 0.88, color: "#f59e0b" },
-  { offset: 0.96, color: "#ec4899" },
-  { offset: 1, color: "#10b98100" },
-];
+export const RUIXEN_STOPS: Stop[] = STUDED_GRADIENT_STOPS;
 
 // Height curve: a gentle power falloff, giving the flatter, pyramid-like rise of
 // the original footer (short edges, tallest middle).
@@ -97,10 +87,10 @@ export function RuixenGradientFooter({
   gradientHeight = "65vh",
   minReveal = 0,
   bars = 9,
-  blur = 15,
+  blur = 22,
   peak = 0.98,
   valley = 0.55,
-  stops = RUIXEN_STOPS,
+  stops = STUDED_GRADIENT_STOPS,
   className,
   style,
 }: RuixenGradientFooterProps) {
