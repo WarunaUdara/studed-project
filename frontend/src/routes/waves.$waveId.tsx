@@ -8,6 +8,8 @@ import { Confetti } from "@/components/gamification/Confetti";
 import { ProficiencyBadge } from "@/components/gamification/ProficiencyBadge";
 import { XPToast } from "@/components/gamification/XPToast";
 import { LearnBlockRenderer } from "@/components/learn/LearnBlockRenderer";
+import { LessonChatPanel } from "@/components/learn/LessonChatPanel";
+import { buildLessonContext } from "@/components/learn/lessonChatSize";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { BlobProgramMaze } from "@/components/waves/BlobProgramMaze";
@@ -365,6 +367,12 @@ function WavePlayerPage() {
         amount={result?.xpEarned ?? 0}
         show={showXpToast}
         onDismiss={() => setShowXpToast(false)}
+      />
+      <LessonChatPanel
+        waveTitle={wave.title}
+        waveContext={buildLessonContext(wave.title, learnBlocks)}
+        grade={user?.grade ?? undefined}
+        language={user?.preferredLanguage ?? undefined}
       />
 
       <div className="mx-auto max-w-4xl space-y-5 p-4 pt-6 sm:p-6 sm:pt-8">
