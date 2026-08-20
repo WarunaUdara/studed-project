@@ -92,9 +92,9 @@ export const SCIENCE_GEAR_PUZZLES: GearNetworkPuzzle[] = [
     type: "learn_demo",
     driverId: "g0",
     nodes: [
-      { id: "g0", x: 60, y: 120, radius: 46, teeth: 14, color: "#84cc16", shadowColor: "#65a30d", isDriver: true },
-      { id: "g1", x: 135, y: 120, radius: 46, teeth: 14, color: "#06b6d4", shadowColor: "#0891b2" },
-      { id: "g2", x: 210, y: 120, radius: 46, teeth: 14, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g0", x: 60, y: 120, radius: 44, teeth: 14, color: "#84cc16", shadowColor: "#65a30d", isDriver: true },
+      { id: "g1", x: 138, y: 120, radius: 44, teeth: 14, color: "#06b6d4", shadowColor: "#0891b2" },
+      { id: "g2", x: 216, y: 120, radius: 44, teeth: 14, color: "#94a3b8", shadowColor: "#64748b" },
     ],
     edges: [
       { from: "g0", to: "g1" },
@@ -121,8 +121,8 @@ export const SCIENCE_GEAR_PUZZLES: GearNetworkPuzzle[] = [
     targetId: "g2",
     nodes: [
       { id: "g0", x: 60, y: 110, radius: 44, teeth: 14, color: "#eab308", shadowColor: "#ca8a04", isDriver: true },
-      { id: "g1", x: 132, y: 110, radius: 44, teeth: 14, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g2", x: 204, y: 110, radius: 44, teeth: 14, color: "#3b82f6", shadowColor: "#1d4ed8", isTarget: true },
+      { id: "g1", x: 138, y: 110, radius: 44, teeth: 14, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g2", x: 216, y: 110, radius: 44, teeth: 14, color: "#3b82f6", shadowColor: "#1d4ed8", isTarget: true },
     ],
     edges: [
       { from: "g0", to: "g1" },
@@ -151,11 +151,11 @@ export const SCIENCE_GEAR_PUZZLES: GearNetworkPuzzle[] = [
     type: "tap_to_select",
     driverId: "g0",
     nodes: [
-      { id: "g0", x: 45, y: 110, radius: 36, teeth: 12, color: "#eab308", shadowColor: "#ca8a04", isDriver: true },
-      { id: "g1", x: 104, y: 110, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g2", x: 163, y: 110, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g3", x: 222, y: 110, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g4", x: 281, y: 110, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g0", x: 45, y: 110, radius: 34, teeth: 12, color: "#eab308", shadowColor: "#ca8a04", isDriver: true },
+      { id: "g1", x: 106, y: 110, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g2", x: 167, y: 110, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g3", x: 228, y: 110, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g4", x: 289, y: 110, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
     ],
     edges: [
       { from: "g0", to: "g1" },
@@ -185,12 +185,12 @@ export const SCIENCE_GEAR_PUZZLES: GearNetworkPuzzle[] = [
     driverId: "g0",
     targetId: "g5",
     nodes: [
-      { id: "g0", x: 60, y: 60, radius: 34, teeth: 12, color: "#eab308", shadowColor: "#ca8a04", isDriver: true },
-      { id: "g1", x: 114, y: 48, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g2", x: 168, y: 58, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g3", x: 212, y: 92, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g4", x: 236, y: 144, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g5", x: 224, y: 198, radius: 34, teeth: 12, color: "#3b82f6", shadowColor: "#1d4ed8", isTarget: true },
+      { id: "g0", x: 50, y: 80, radius: 34, teeth: 12, color: "#eab308", shadowColor: "#ca8a04", isDriver: true },
+      { id: "g1", x: 95, y: 45, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g2", x: 152, y: 38, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g3", x: 206, y: 58, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g4", x: 244, y: 102, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g5", x: 252, y: 160, radius: 34, teeth: 12, color: "#3b82f6", shadowColor: "#1d4ed8", isTarget: true },
     ],
     edges: [
       { from: "g0", to: "g1" },
@@ -214,7 +214,7 @@ export const SCIENCE_GEAR_PUZZLES: GearNetworkPuzzle[] = [
     },
   },
 
-  // Puzzle 4: Advanced 7-Gear Branched Cluster (Screenshot 1)
+  // Puzzle 4: Advanced 7-Gear Branched Cluster
   {
     id: "seven-gear-branched-cluster",
     title: "7-Gear Cluster Challenge",
@@ -222,13 +222,13 @@ export const SCIENCE_GEAR_PUZZLES: GearNetworkPuzzle[] = [
     type: "tap_to_select",
     driverId: "g0",
     nodes: [
-      { id: "g0", x: 190, y: 210, radius: 36, teeth: 12, color: "#eab308", shadowColor: "#ca8a04", isDriver: true },
-      { id: "g1", x: 130, y: 175, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g2", x: 70, y: 175, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g3", x: 130, y: 115, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g4", x: 190, y: 115, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g5", x: 130, y: 55, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
-      { id: "g6", x: 225, y: 60, radius: 36, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g0", x: 190, y: 200, radius: 34, teeth: 12, color: "#eab308", shadowColor: "#ca8a04", isDriver: true },
+      { id: "g1", x: 135, y: 165, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g2", x: 75, y: 165, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g3", x: 135, y: 105, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g4", x: 195, y: 105, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g5", x: 135, y: 45, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
+      { id: "g6", x: 245, y: 60, radius: 34, teeth: 12, color: "#94a3b8", shadowColor: "#64748b" },
     ],
     edges: [
       { from: "g0", to: "g1" },

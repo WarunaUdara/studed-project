@@ -102,10 +102,11 @@ export function GearGraphSvg({
             return (
               <g
                 key={node.id}
+                transform={`translate(${node.x}, ${node.y})`}
                 className={`transition-opacity ${isInteractive ? "cursor-pointer" : "cursor-default"}`}
                 onClick={() => isInteractive && onToggleNode?.(node.id)}
               >
-                {/* Rotating SVG Gear Group centered at (node.x, node.y) */}
+                {/* Rotating SVG Gear Group centered at local (0, 0) */}
                 <motion.g
                   animate={
                     isRotating
@@ -118,11 +119,10 @@ export function GearGraphSvg({
                       : { duration: 0.3 }
                   }
                   style={{
-                    originX: `${node.x}px`,
-                    originY: `${node.y}px`,
+                    transformOrigin: "0px 0px",
                   }}
                 >
-                  <g transform={`translate(${node.x - node.radius}, ${node.y - node.radius})`}>
+                  <g transform={`translate(${-node.radius}, ${-node.radius})`}>
                     {/* Shadow 3D Drop */}
                     <path d={gearPath} fill={shadow} transform="translate(0, 3.5)" />
                     {/* Main Gear Surface */}
@@ -167,33 +167,37 @@ export function GearGraphSvg({
                       y1={node.radius}
                       x2={node.radius + node.radius * 0.75}
                       y2={node.radius}
-                      stroke="#475569"
-                      strokeWidth="1.5"
+                      stroke="#0f172a"
+                      strokeWidth="2"
                       strokeDasharray="2 2"
                     />
                   </g>
                 </motion.g>
 
+                {/* Fixed center axle pin */}
+                <circle cx={0} cy={0} r={4} fill="#1e293b" />
+                <circle cx={0} cy={0} r={2} fill="#94a3b8" />
+
                 {/* Driver Rotation Arrow Indicator */}
                 {node.isDriver && (
-                  <g className="text-white drop-shadow-md pointer-events-none">
+                  <g className="text-white drop-shadow-md pointer-events-none" transform={`translate(0, ${-node.radius - 12})`}>
                     <path
-                      d={`M ${node.x - node.radius * 0.5} ${node.y - node.radius * 0.9} A ${node.radius * 1.1} ${node.radius * 1.1} 0 0 1 ${node.x + node.radius * 0.5} ${node.y - node.radius * 0.9}`}
+                      d="M -16 0 A 20 20 0 0 1 16 0"
                       fill="none"
-                      stroke="currentColor"
+                      stroke="#ffffff"
                       strokeWidth="3.5"
                       strokeLinecap="round"
                     />
                     <polygon
-                      points={`${node.x - node.radius * 0.7},${node.y - node.radius * 0.9} ${node.x - node.radius * 0.4},${node.y - node.radius * 1.1} ${node.x - node.radius * 0.4},${node.y - node.radius * 0.7}`}
-                      fill="currentColor"
+                      points="-20,-2 -14,6 -12,-4"
+                      fill="#ffffff"
                     />
                   </g>
                 )}
 
                 {/* Status Badges: Checkmark or Crossmark */}
                 {isSelected && evaluated === "correct" && (
-                  <g transform={`translate(${node.x + node.radius * 0.6}, ${node.y - node.radius * 0.9})`}>
+                  <g transform={`translate(${node.radius * 0.6}, ${-node.radius * 0.9})`}>
                     <circle cx="0" cy="0" r="9" fill="#22c55e" />
                     <path
                       d="M -3 0 L -1 3 L 4 -3"
@@ -206,7 +210,7 @@ export function GearGraphSvg({
                 )}
 
                 {isWrong && (
-                  <g transform={`translate(${node.x + node.radius * 0.6}, ${node.y - node.radius * 0.9})`}>
+                  <g transform={`translate(${node.radius * 0.6}, ${-node.radius * 0.9})`}>
                     <circle cx="0" cy="0" r="9" fill="#000000" stroke="#f59e0b" strokeWidth="1.5" />
                     <path
                       d="M -2.5 -2.5 L 2.5 2.5 M 2.5 -2.5 L -2.5 2.5"

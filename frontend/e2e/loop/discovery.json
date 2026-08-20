@@ -1,0 +1,470 @@
+{
+  "timestamp": "2026-08-20T09:12:22.708Z",
+  "staticRoutes": [
+    {
+      "routeFile": "frontend/src/routes/settings.tsx",
+      "routePattern": "/settings",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/index.tsx",
+      "routePattern": "/",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/leaderboard.tsx",
+      "routePattern": "/leaderboard",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/subscription.tsx",
+      "routePattern": "/subscription",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/login.tsx",
+      "routePattern": "/login",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/dashboard.tsx",
+      "routePattern": "/dashboard",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/achievements.tsx",
+      "routePattern": "/achievements",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/register.tsx",
+      "routePattern": "/register",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/courses.tsx",
+      "routePattern": "/courses",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/courses.index.tsx",
+      "routePattern": "/courses",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout/settings.tsx",
+      "routePattern": "/educator/settings",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout/index.tsx",
+      "routePattern": "/educator",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout/leaderboard.tsx",
+      "routePattern": "/educator/leaderboard",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout/courses.new.tsx",
+      "routePattern": "/educator/courses/new",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout/achievements.tsx",
+      "routePattern": "/educator/achievements",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout/courses.$courseId.index.tsx",
+      "routePattern": "/educator/courses/$courseId",
+      "isDynamic": true,
+      "params": [
+        "courseId"
+      ]
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout/courses.tsx",
+      "routePattern": "/educator/courses",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout/courses.index.tsx",
+      "routePattern": "/educator/courses",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout/courses.$courseId.tsx",
+      "routePattern": "/educator/courses/$courseId",
+      "isDynamic": true,
+      "params": [
+        "courseId"
+      ]
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout/courses.$courseId.lessons.$lessonId.waves.$waveId.tsx",
+      "routePattern": "/educator/courses/$courseId/lessons/$lessonId/waves/$waveId",
+      "isDynamic": true,
+      "params": [
+        "courseId",
+        "lessonId",
+        "waveId"
+      ]
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout/courses.$courseId.lessons.$lessonId.index.tsx",
+      "routePattern": "/educator/courses/$courseId/lessons/$lessonId",
+      "isDynamic": true,
+      "params": [
+        "courseId",
+        "lessonId"
+      ]
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout/courses.$courseId.lessons.$lessonId.tsx",
+      "routePattern": "/educator/courses/$courseId/lessons/$lessonId",
+      "isDynamic": true,
+      "params": [
+        "courseId",
+        "lessonId"
+      ]
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout/courses.$courseId.edit.tsx",
+      "routePattern": "/educator/courses/$courseId/edit",
+      "isDynamic": true,
+      "params": [
+        "courseId"
+      ]
+    },
+    {
+      "routeFile": "frontend/src/routes/educator/_layout.tsx",
+      "routePattern": "/educator",
+      "isDynamic": false,
+      "params": []
+    },
+    {
+      "routeFile": "frontend/src/routes/courses.$courseId.tsx",
+      "routePattern": "/courses/$courseId",
+      "isDynamic": true,
+      "params": [
+        "courseId"
+      ]
+    },
+    {
+      "routeFile": "frontend/src/routes/waves.$waveId.tsx",
+      "routePattern": "/waves/$waveId",
+      "isDynamic": true,
+      "params": [
+        "waveId"
+      ]
+    }
+  ],
+  "roles": {
+    "student": {
+      "screens": [
+        {
+          "path": "/dashboard",
+          "routeFile": "frontend/src/routes/dashboard.tsx",
+          "depth": 0,
+          "title": "StudEd",
+          "role": "student"
+        },
+        {
+          "path": "/courses",
+          "routeFile": "frontend/src/routes/courses.tsx",
+          "depth": 0,
+          "title": "StudEd",
+          "role": "student"
+        },
+        {
+          "path": "/courses/science-thinking",
+          "routeFile": "frontend/src/routes/courses.$courseId.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "student",
+          "parentPath": "/courses"
+        },
+        {
+          "path": "/login",
+          "routeFile": "frontend/src/routes/login.tsx",
+          "depth": 2,
+          "title": "StudEd",
+          "role": "student",
+          "parentPath": "/courses/science-thinking"
+        },
+        {
+          "path": "/login",
+          "routeFile": "frontend/src/routes/login.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "student",
+          "parentPath": "/dashboard"
+        },
+        {
+          "path": "/login",
+          "routeFile": "frontend/src/routes/login.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "student",
+          "parentPath": "/dashboard"
+        },
+        {
+          "path": "/subscription",
+          "routeFile": "frontend/src/routes/subscription.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "student",
+          "parentPath": "/dashboard"
+        },
+        {
+          "path": "/login",
+          "routeFile": "frontend/src/routes/login.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "student",
+          "parentPath": "/dashboard"
+        },
+        {
+          "path": "/courses/fractions",
+          "routeFile": "frontend/src/routes/courses.$courseId.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "student",
+          "parentPath": "/dashboard"
+        },
+        {
+          "path": "/courses/thinking-in-python",
+          "routeFile": "frontend/src/routes/courses.$courseId.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "student",
+          "parentPath": "/dashboard"
+        },
+        {
+          "path": "/courses/logic-structures",
+          "routeFile": "frontend/src/routes/courses.$courseId.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "student",
+          "parentPath": "/dashboard"
+        },
+        {
+          "path": "/login",
+          "routeFile": "frontend/src/routes/login.tsx",
+          "depth": 2,
+          "title": "StudEd",
+          "role": "student",
+          "parentPath": "/courses/science-thinking"
+        },
+        {
+          "path": "/",
+          "routeFile": "frontend/src/routes/index.tsx",
+          "depth": 3,
+          "title": "StudEd",
+          "role": "student",
+          "parentPath": "/login"
+        },
+        {
+          "path": "/register",
+          "routeFile": "frontend/src/routes/register.tsx",
+          "depth": 3,
+          "title": "StudEd",
+          "role": "student",
+          "parentPath": "/login"
+        }
+      ],
+      "redirects": [
+        {
+          "from": "/waves/science-gears-1",
+          "to": "/login"
+        },
+        {
+          "from": "/leaderboard",
+          "to": "/login"
+        },
+        {
+          "from": "/achievements",
+          "to": "/login"
+        },
+        {
+          "from": "/settings",
+          "to": "/login"
+        },
+        {
+          "from": "/waves/science-gears-2",
+          "to": "/login"
+        }
+      ],
+      "errors404": []
+    },
+    "educator": {
+      "screens": [
+        {
+          "path": "/",
+          "routeFile": "frontend/src/routes/index.tsx",
+          "depth": 0,
+          "title": "StudEd",
+          "role": "educator"
+        },
+        {
+          "path": "/",
+          "routeFile": "frontend/src/routes/index.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/educator/courses"
+        },
+        {
+          "path": "/",
+          "routeFile": "frontend/src/routes/index.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/educator/courses"
+        },
+        {
+          "path": "/",
+          "routeFile": "frontend/src/routes/index.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/educator/courses"
+        },
+        {
+          "path": "/dashboard",
+          "routeFile": "frontend/src/routes/dashboard.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/"
+        },
+        {
+          "path": "/courses",
+          "routeFile": "frontend/src/routes/courses.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/"
+        },
+        {
+          "path": "/login",
+          "routeFile": "frontend/src/routes/login.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/"
+        },
+        {
+          "path": "/login",
+          "routeFile": "frontend/src/routes/login.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/"
+        },
+        {
+          "path": "/subscription",
+          "routeFile": "frontend/src/routes/subscription.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/"
+        },
+        {
+          "path": "/",
+          "routeFile": "frontend/src/routes/index.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/"
+        },
+        {
+          "path": "/pricing",
+          "routeFile": "unknown",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/"
+        },
+        {
+          "path": "/register",
+          "routeFile": "frontend/src/routes/register.tsx",
+          "depth": 1,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/"
+        },
+        {
+          "path": "/courses/fractions",
+          "routeFile": "frontend/src/routes/courses.$courseId.tsx",
+          "depth": 2,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/dashboard"
+        },
+        {
+          "path": "/courses/thinking-in-python",
+          "routeFile": "frontend/src/routes/courses.$courseId.tsx",
+          "depth": 2,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/dashboard"
+        },
+        {
+          "path": "/courses/logic-structures",
+          "routeFile": "frontend/src/routes/courses.$courseId.tsx",
+          "depth": 2,
+          "title": "StudEd",
+          "role": "educator",
+          "parentPath": "/dashboard"
+        }
+      ],
+      "redirects": [
+        {
+          "from": "/educator/courses",
+          "to": "/"
+        },
+        {
+          "from": "/educator/courses/new",
+          "to": "/"
+        },
+        {
+          "from": "/educator/leaderboard",
+          "to": "/"
+        },
+        {
+          "from": "/educator/settings",
+          "to": "/"
+        },
+        {
+          "from": "/leaderboard",
+          "to": "/login"
+        },
+        {
+          "from": "/achievements",
+          "to": "/login"
+        }
+      ],
+      "errors404": []
+    }
+  }
+}

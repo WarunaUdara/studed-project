@@ -40,10 +40,22 @@ export function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const pathname = useRouterState().location.pathname;
+  const isLandingPage = pathname === "/";
+  const [isScrolled, setIsScrolled] = useState(false);
+
   const streak = Math.max(1, user?.streak ?? 1);
   const keys = 2;
   const totalXp = Math.max(0, user?.totalXp ?? 140);
   const levelInfo = levelFromXp(totalXp);
+
+  // Detect scroll state for landing page
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 40);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Close user dropdown on outside click
   useEffect(() => {
@@ -69,6 +81,61 @@ export function Navbar() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  // Landing Page Unauthenticated Navbar: Floating minimal pill capsule with fully curved ends
+  if (isLandingPage && !isAuthenticated) {
+    return (
+      <>
+        <div className="fixed top-4 left-0 right-0 z-50 px-4 sm:px-6 pointer-events-none">
+          <header className="pointer-events-auto mx-auto flex h-14 max-w-6xl items-center justify-between rounded-full border border-border/60 bg-background/80 px-6 backdrop-blur-xl shadow-xs transition-all duration-300">
+            {/* Left: Text Logo */}
+            <Link
+              to="/"
+              className="flex items-center gap-1 font-serif text-2xl font-bold tracking-tight text-foreground hover:opacity-90 transition-opacity"
+            >
+              Stud<span className="italic text-primary">Ed</span>
+            </Link>
+
+            {/* Right: Sign in (always) + Get started (revealed on scroll) */}
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setLoginModalOpen(true)}
+                className="rounded-full border-border/80 px-5 text-sm font-semibold text-foreground hover:bg-muted"
+              >
+                Sign in
+              </Button>
+
+              <AnimatePresence>
+                {isScrolled && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9, width: 0 }}
+                    animate={{ opacity: 1, scale: 1, width: "auto" }}
+                    exit={{ opacity: 0, scale: 0.9, width: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <Button
+                      asChild
+                      size="sm"
+                      className="rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 shadow-xs"
+                    >
+                      <Link to="/register">Get started</Link>
+                    </Button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </header>
+        </div>
+
+        {/* Modals */}
+        <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
+        <SearchAskModal isOpen={searchModalOpen} onClose={() => setSearchModalOpen(false)} />
+      </>
+    );
+  }
 
   // Clean, focused navigation categories
   const NAV_ITEMS: MegaMenuItem[] = [

@@ -134,19 +134,8 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="flex flex-wrap items-center gap-2.5"
+            className="flex items-center"
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary shadow-xs">
-              <Sparkles className="h-3.5 w-3.5 shrink-0 text-primary" />
-              <span>{t("heroBadge")}</span>
-            </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-success/25 bg-success/5 px-3 py-1 text-xs font-medium text-success shadow-xs">
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
-              </span>
-              <span>{t("heroLiveChip")}</span>
-            </span>
             <LanguageToggle />
           </motion.div>
 
@@ -154,11 +143,11 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.06 }}
-            className="text-balance font-serif text-4xl leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl"
+            className="text-balance font-serif font-bold text-4xl leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl"
           >
-            {t("heroTitleA")}
+            <span className="font-extrabold">{t("heroTitleA")}</span>
             <br />
-            <span className="italic text-primary">
+            <span className="italic font-bold text-primary">
               <SplitText
                 text={effectiveHeroTitleB}
                 tag="span"
