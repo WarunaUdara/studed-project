@@ -71,18 +71,9 @@ export const graphqlClient = createClient({
             const result = await utils.mutate(REFRESH_TOKEN_MUTATION, { refreshToken: "" });
             if (!result.data?.refreshToken) {
               localStorage.removeItem("studed_has_session");
-              if (
-                window.location.pathname !== "/login" &&
-                window.location.pathname !== "/register"
-              ) {
-                window.location.href = "/login";
-              }
             }
           } catch (_err) {
             localStorage.removeItem("studed_has_session");
-            if (window.location.pathname !== "/login" && window.location.pathname !== "/register") {
-              window.location.href = "/login";
-            }
           }
         },
       };

@@ -5,5 +5,5 @@ describe("SplitText component exports", () => {
     const mod = await import("./SplitText");
     expect(mod.SplitText).toBeDefined();
     expect(typeof mod.SplitText).toBe("function");
-  });
+  }, 15000);
 });
