@@ -33,6 +33,8 @@ export const INTERACTIVE_LEARN_TYPES = [
   "fraction_lab",
   "lever_lab",
   "ohms_law_lab",
+  "gear_train",
+  "blob_maze",
   "python_runner",
   "animation",
 ] as const;
@@ -144,6 +146,18 @@ export interface OhmsLawLabConfig {
   maxVoltage?: number;
   maxResistance?: number;
   caption?: string;
+}
+
+export interface GearTrainConfig {
+  version: number;
+  /** Puzzle ids from the gear engine, in the order they should be played. */
+  puzzleIds?: string[];
+}
+
+export interface BlobMazeConfig {
+  version: number;
+  /** Optional grid definition; the block falls back to the built-in maze. */
+  grid?: Record<string, unknown>;
 }
 
 export interface PythonRunnerConfig {

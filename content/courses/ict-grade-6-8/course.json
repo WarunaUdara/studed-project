@@ -449,6 +449,147 @@
               }
             }
           ]
+        },
+        {
+          "title": "4. Program the Blob",
+          "sequenceOrder": 4,
+          "status": "published",
+          "xpReward": 45,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 9,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "i-7-1",
+              "type": "blob_dialog",
+              "content": "Now you write the instructions and something else follows them.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Now you write the instructions and something else follows them.",
+                    "mood": "happy",
+                    "cta": "Follows them?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Blobby walks the grid using exactly the commands you put in order. No more, no less.",
+                    "mood": "thinking",
+                    "cta": "What if I am wrong?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Then Blobby walks into a wall, and you can see exactly which step was wrong.",
+                    "mood": "cheer",
+                    "cta": "Let me try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-7-2",
+              "type": "blob_maze",
+              "content": "Drag the movement commands into the right order, then run the program.",
+              "metadata": {
+                "version": 1
+              }
+            },
+            {
+              "id": "i-7-3",
+              "type": "text",
+              "content": "This is what programming is: **planning the whole sequence before anything runs**, then watching where reality disagrees with your plan."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "i-eb-7-1",
+              "type": "order_steps",
+              "question": "Blobby faces east and the gem is two squares east, then one square north. Put the program in order.",
+              "correctAnswer": "forward>forward-2>turn-left>forward-3",
+              "explanation": "Two moves east first, then a left turn to face north, then one more move.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "forward",
+                    "label": "Move forward"
+                  },
+                  {
+                    "id": "forward-2",
+                    "label": "Move forward again"
+                  },
+                  {
+                    "id": "turn-left",
+                    "label": "Turn left"
+                  },
+                  {
+                    "id": "forward-3",
+                    "label": "Move forward once more"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-7-2",
+              "type": "tap_target",
+              "question": "Your program sends Blobby into a wall. What does that tell you?",
+              "correctAnswer": "wrong-step",
+              "explanation": "The computer followed your instructions exactly, so the mistake is in the order or the number of steps you gave.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "wrong-step",
+                    "label": "One of my steps is wrong"
+                  },
+                  {
+                    "id": "blob-mistake",
+                    "label": "Blobby made a mistake"
+                  },
+                  {
+                    "id": "broken",
+                    "label": "The game is broken"
+                  },
+                  {
+                    "id": "impossible",
+                    "label": "The puzzle cannot be solved"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-7-3",
+              "type": "toggle_switch",
+              "question": "Switch on what a computer does with your instructions.",
+              "correctAnswer": "exact=on,guess=off,order=on",
+              "explanation": "A computer follows the steps exactly, in the order given, and never guesses what you meant.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "exact",
+                    "label": "Follows them exactly",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "order",
+                    "label": "Follows them in order",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "guess",
+                    "label": "Guesses what you meant",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  }
+                ]
+              }
+            }
+          ]
         }
       ]
     },

@@ -11,9 +11,8 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
 import { COURSES_QUERY } from "@/graphql/courses";
 import { COURSE_PLAYER_QUERY, ENROLL_IN_COURSE_MUTATION } from "@/graphql/student";
-import { localCourseNodes } from "@/lib/content/localCourses";
+import { localCourseDetail, localCourseNodes } from "@/lib/content/localCourses";
 import { sanitizeGraphQLError } from "@/lib/errors";
-import { isScienceCourseId, SCIENCE_COURSE_DETAIL, SCIENCE_COURSE_NODE } from "@/lib/scienceCourse";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
 
@@ -108,14 +107,7 @@ function CoursesCatalogPage() {
           c.slug.includes("physics")),
     );
 
-    const defaultScienceCourse: CourseNode = SCIENCE_COURSE_NODE;
-
-    const scienceCourses =
-      scienceDbCourses.length > 0
-        ? scienceDbCourses
-        : matchesSearch(defaultScienceCourse)
-          ? [defaultScienceCourse]
-          : [];
+    const scienceCourses = scienceDbCourses;
 
     // Languages Courses
     const langCourses = allCourses.filter(
@@ -363,16 +355,17 @@ function CourseDetailSheet({
 }) {
   const { isAuthenticated } = useAuthStore();
   const { toast } = useToast();
-  const [{ data, fetching, error }] = useQuery({
+  // A query error is not reported separately: with a manifest fallback in play,
+  // the only thing the drawer can act on is whether it ended up with a course.
+  const [{ data, fetching }] = useQuery({
     query: COURSE_PLAYER_QUERY,
     variables: { id: courseId },
   });
   const [enrollResult, enroll] = useMutation(ENROLL_IN_COURSE_MUTATION);
-  const isScienceCourse = isScienceCourseId(courseId);
 
-  const fallbackScienceCourse = SCIENCE_COURSE_DETAIL;
-
-  const course = data?.course || (isScienceCourse ? fallbackScienceCourse : undefined);
+  // Manifest-backed courses fill the drawer when the catalog is serving them,
+  // so the syllabus reads the same whether a course is seeded or shipped.
+  const course = data?.course ?? localCourseDetail(courseId) ?? undefined;
   const isEnrolled = course?.myProgress !== null && course?.myProgress !== undefined;
 
   const handleEnroll = async () => {
@@ -418,14 +411,14 @@ function CourseDetailSheet({
             </button>
           </div>
 
-          {fetching && !isScienceCourse ? (
+          {fetching && !course ? (
             <div className="space-y-4">
               <Skeleton className="h-8 w-3/4" />
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-20 w-full" />
               <Skeleton className="h-40 w-full" />
             </div>
-          ) : error || !course ? (
+          ) : !course ? (
             <div className="text-center py-8">
               <p className="text-sm text-muted-foreground">Error loading course syllabus.</p>
             </div>

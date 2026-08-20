@@ -5,6 +5,8 @@ import { CircuitLabBlock } from "@/components/learn/interactive/CircuitLabBlock"
 import { ForceLabBlock } from "@/components/learn/interactive/ForceLabBlock";
 import { FractionLabBlock } from "@/components/learn/interactive/FractionLabBlock";
 import { LeverLabBlock } from "@/components/learn/interactive/LeverLabBlock";
+import { BlobMazeBlock } from "@/components/learn/interactive/BlobMazeBlock";
+import { GearTrainBlock } from "@/components/learn/interactive/GearTrainBlock";
 import { OhmsLawLabBlock } from "@/components/learn/interactive/OhmsLawLabBlock";
 import { PythonRunnerBlock } from "@/components/learn/interactive/PythonRunnerBlock";
 import { WaterFlowBlock } from "@/components/learn/interactive/WaterFlowBlock";
@@ -144,6 +146,12 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
 
     case "ohms_law_lab":
       return <OhmsLawLabBlock content={block.content} metadata={block.metadata} />;
+
+    case "gear_train":
+      return <GearTrainBlock content={block.content} metadata={block.metadata} />;
+
+    case "blob_maze":
+      return <BlobMazeBlock content={block.content} metadata={block.metadata} />;
 
     case "python_runner":
       return <PythonRunnerBlock content={block.content} metadata={block.metadata} />;

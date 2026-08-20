@@ -108,6 +108,8 @@
             "fraction_lab",
             "lever_lab",
             "ohms_law_lab",
+            "gear_train",
+            "blob_maze",
             "python_runner",
             "animation"
           ]

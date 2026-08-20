@@ -104,7 +104,15 @@ describe("Computers and Code course", () => {
   it("ships two full lessons of coding waves", () => {
     const detail = localCourseDetail(ICT);
     expect(detail?.lessons).toHaveLength(2);
-    expect(detail?.lessons.every((lesson) => lesson.waves.length === 3)).toBe(true);
+    expect(detail?.lessons.every((lesson) => lesson.waves.length >= 3)).toBe(true);
+  });
+
+  it("teaches sequencing with the instruction maze", () => {
+    const detail = localCourseDetail(ICT);
+    const mazeWave = detail?.lessons[0].waves.find((w) => w.title.includes("Program the Blob"));
+    expect(mazeWave).toBeDefined();
+    const wave = findLocalWave(mazeWave?.id ?? "");
+    expect(wave?.learnBlocks.some((block) => block.type === "blob_maze")).toBe(true);
   });
 
   it("puts a runnable Python exercise in the waves that teach code", () => {

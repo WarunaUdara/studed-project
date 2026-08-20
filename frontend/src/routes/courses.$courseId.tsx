@@ -12,7 +12,6 @@ import { useToast } from "@/components/ui/Toast";
 import { COURSE_PLAYER_QUERY, ENROLL_IN_COURSE_MUTATION, RESET_WAVE_ATTEMPTS_MUTATION } from "@/graphql/student";
 import { localCourseDetail } from "@/lib/content/localCourses";
 import { sanitizeGraphQLError } from "@/lib/errors";
-import { isScienceCourseId, SCIENCE_COURSE_DETAIL } from "@/lib/scienceCourse";
 import { cn } from "@/lib/utils";
 
 interface Wave {
@@ -102,29 +101,6 @@ function CoursePlayerPage() {
       reexecuteQuery({ requestPolicy: "network-only" });
     }
   };
-
-  const isScienceCourse = isScienceCourseId(courseId);
-
-  if (isScienceCourse) {
-    return (
-      <div className="mx-auto max-w-6xl p-4 pt-6 sm:p-6 sm:pt-8">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <Link to="/courses">
-            <Button variant="ghost" size="sm" className="gap-1">
-              <ArrowLeft className="h-4 w-4" /> Back to Courses
-            </Button>
-          </Link>
-        </div>
-        <CourseJourneyMap
-          courseId={SCIENCE_COURSE_DETAIL.id}
-          courseTitle={SCIENCE_COURSE_DETAIL.title}
-          gradeLevel={SCIENCE_COURSE_DETAIL.gradeLevel}
-          lessons={SCIENCE_COURSE_DETAIL.lessons}
-          isEnrolled={true}
-        />
-      </div>
-    );
-  }
 
   if (fetching) {
     return (

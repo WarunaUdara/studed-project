@@ -17,7 +17,7 @@ export const LEARN_BLOCK_TYPES = [
   "coordinate_plane", "manim", "molecule", "circuit", "physics",
   // Interactive blocks. Their configuration lives in `metadata`; see
   // frontend/src/lib/content/interactiveBlocks.ts for the shapes.
-  "blob_dialog", "force_lab", "circuit_lab", "water_flow", "fraction_lab", "lever_lab", "ohms_law_lab", "python_runner", "animation",
+  "blob_dialog", "force_lab", "circuit_lab", "water_flow", "fraction_lab", "lever_lab", "ohms_law_lab", "gear_train", "blob_maze", "python_runner", "animation",
 ] as const;
 
 export type LearnBlockType = (typeof LEARN_BLOCK_TYPES)[number];

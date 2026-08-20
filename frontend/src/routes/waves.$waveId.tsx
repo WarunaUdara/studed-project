@@ -12,8 +12,6 @@ import { LessonChatPanel } from "@/components/learn/LessonChatPanel";
 import { buildLessonContext } from "@/components/learn/lessonChatSize";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { BlobProgramMaze } from "@/components/waves/BlobProgramMaze";
-import { ScientificThinkingGearsMaster } from "@/components/waves/science/ScientificThinkingGearsMaster";
 import { PointsBadge } from "@/components/ui/points-badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
@@ -163,115 +161,6 @@ function WavePlayerPage() {
     setAnswers({});
     setResult(null);
   };
-
-  const isScienceWave = waveId.startsWith("science-") || waveId.startsWith("gears-");
-  const isPythonWave = waveId.startsWith("python-") || waveId.startsWith("maze-");
-
-  if (isScienceWave) {
-    return (
-      <ProtectedRoute>
-        <Confetti show={showConfetti} />
-        <XPToast
-          amount={30}
-          show={showXpToast}
-          onDismiss={() => setShowXpToast(false)}
-        />
-        <div className="mx-auto max-w-4xl space-y-5 p-4 pt-6 sm:p-6 sm:pt-8">
-          <div className="flex items-center justify-between gap-3">
-            <Link
-              to="/courses"
-              className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" /> Basic Science · Scientific Thinking
-            </Link>
-          </div>
-
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary">
-                Level 1 · Kinetic Science
-              </span>
-              <PointsBadge
-                name="XP Reward"
-                total={30}
-                size="sm"
-                icon={Zap}
-                className="border-0 p-0"
-              />
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Connecting Gears & Mechanical Parity
-            </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Lesson 1 · Wave 1 · Physical intuition through interactive 2D & 3D gear train simulations.
-            </p>
-          </div>
-
-          <div className="rounded-3xl border border-border/80 bg-card/60 p-4 sm:p-6 shadow-sm">
-            <ScientificThinkingGearsMaster
-              onComplete={(xp) => {
-                updateTotalXp(user ? user.totalXp + xp : xp);
-                setShowConfetti(true);
-                setShowXpToast(true);
-                playSuccessSound();
-              }}
-            />
-          </div>
-        </div>
-      </ProtectedRoute>
-    );
-  }
-
-  if (isPythonWave) {
-    return (
-      <ProtectedRoute>
-        <Confetti show={showConfetti} />
-        <XPToast
-          amount={30}
-          show={showXpToast}
-          onDismiss={() => setShowXpToast(false)}
-        />
-        <div className="mx-auto max-w-4xl space-y-5 p-4 pt-6 sm:p-6 sm:pt-8">
-          <div className="flex items-center justify-between gap-3">
-            <Link
-              to="/courses"
-              className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" /> Thinking in Python & Coding
-            </Link>
-          </div>
-
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-500">
-                Module 1 · Algorithms
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-bold text-amber-500">
-                <Zap className="size-3" /> +30 XP
-              </span>
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Blob Algorithm Grid Runner
-            </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Guide the Blob mascot to the goal using reorderable movement instructions.
-            </p>
-          </div>
-
-          <div className="rounded-3xl border border-border/80 bg-card/60 p-4 sm:p-6 shadow-sm">
-            <BlobProgramMaze
-              onSuccess={(xp) => {
-                updateTotalXp(user ? user.totalXp + xp : xp);
-                setShowConfetti(true);
-                setShowXpToast(true);
-                playSuccessSound();
-              }}
-            />
-          </div>
-        </div>
-      </ProtectedRoute>
-    );
-  }
 
   if (fetching) {
     return (
@@ -448,34 +337,8 @@ function WavePlayerPage() {
           </TabsContent>
 
           <TabsContent value="evaluate" className="mt-5 space-y-6">
-            {wave?.title?.toLowerCase().includes("gear") || wave?.title?.toLowerCase().includes("science") ? (
-              <div className="py-4">
-                <ScientificThinkingGearsMaster
-                  onComplete={(xp) => {
-                    updateTotalXp(user ? user.totalXp + xp : xp);
-                    setShowConfetti(true);
-                    playSuccessSound();
-                    if (nextWave) {
-                      setTimeout(() => window.location.assign(`/waves/${nextWave.id}`), 1200);
-                    }
-                  }}
-                />
-              </div>
-            ) : evaluateBlocks.length === 0 ? (
-              <div className="py-4">
-                <BlobProgramMaze
-                  onSuccess={(xp) => {
-                    updateTotalXp(user ? user.totalXp + xp : xp);
-                    setShowConfetti(true);
-                    playSuccessSound();
-                  }}
-                  onFinish={() => {
-                    if (nextWave) {
-                      window.location.assign(`/waves/${nextWave.id}`);
-                    }
-                  }}
-                />
-              </div>
+            {evaluateBlocks.length === 0 ? (
+              <p className="text-muted-foreground">No questions in this wave yet.</p>
             ) : (
               <>
                 {evaluateBlocks.map((block, index) => (

@@ -72,6 +72,18 @@ test.describe("Grade 4-5 Physics demo", () => {
     await expect(page.getByRole("button", { name: "Run" })).toBeEnabled();
   });
 
+  test("plays the gears wave through the standard player, not a bespoke page", async ({ page }) => {
+    await page.goto("/waves/science-thinking-l1-w1");
+
+    // The gear puzzles now arrive as a learn block inside the normal wave
+    // shell, so the Learn and Evaluate tabs are both present.
+    await expect(
+      page.getByText("Two gears with meshing teeth cannot turn the same way. It is physically impossible."),
+    ).toBeVisible({ timeout: 20000 });
+    await expect(page.getByRole("tab", { name: /Learn/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Start Evaluation" })).toBeVisible();
+  });
+
   test("lights the bulb in the electricity wave and warns on a short circuit", async ({ page }) => {
     await page.goto("/waves/physics-grade-4-5-l2-w1");
 
