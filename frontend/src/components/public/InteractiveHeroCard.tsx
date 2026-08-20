@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { Brain, CheckCircle2, Code2, Compass, Terminal } from "lucide-react";
+import { Bot, Brain, CheckCircle2, Code2, Compass, Gem, Terminal } from "lucide-react";
 
 export function InteractiveHeroCard() {
   const [activeTab, setActiveTab] = useState<"math" | "science" | "code">("math");
@@ -351,7 +351,7 @@ export function InteractiveHeroCard() {
                             : "bg-muted/40 border border-border/40"
                         }`}
                       >
-                        {isHero ? "🤖" : hasGem ? "💎" : "·"}
+                        {isHero ? <Bot className="size-4" /> : hasGem ? <Gem className="size-4" /> : null}
                       </div>
                     );
                   })}

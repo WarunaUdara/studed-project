@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export interface LessonCompleteCelebrationProps {
@@ -74,7 +74,7 @@ export function LessonCompleteCelebration({
             </div>
             <div className="text-4xl sm:text-5xl font-black text-white flex items-center justify-center gap-1.5">
               <span>{totalXp}</span>
-              <span className="text-emerald-400 text-2xl font-bold">✦ ⚡</span>
+              <span className="text-emerald-400 text-2xl font-bold">✦ <Zap className="inline size-6" fill="currentColor" /></span>
             </div>
           </div>
         </div>

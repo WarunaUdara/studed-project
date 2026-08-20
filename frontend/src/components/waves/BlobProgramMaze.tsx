@@ -6,6 +6,8 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  Gem,
+  PartyPopper,
   Play,
   RotateCcw,
   Sparkles,
@@ -257,7 +259,7 @@ export function BlobProgramMaze({
             </div>
           ) : (
             <div className="flex items-center gap-1.5 text-purple-300 font-bold">
-              <span className="text-base">💎</span>
+              <Gem className="size-4" />
               <span>1 left</span>
             </div>
           )}
@@ -304,9 +306,9 @@ export function BlobProgramMaze({
                     <motion.div
                       animate={{ scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] }}
                       transition={{ repeat: Infinity, duration: 2.2 }}
-                      className="text-2xl drop-shadow-[0_0_12px_rgba(168,85,247,0.8)]"
+                      className="drop-shadow-[0_0_12px_rgba(168,85,247,0.8)]"
                     >
-                      💎
+                      <Gem className="size-7 text-purple-400" />
                     </motion.div>
                   )}
 
@@ -427,7 +429,8 @@ export function BlobProgramMaze({
         ) : status === "success" ? (
           <div className="flex w-full items-center justify-between gap-2">
             <div className="flex items-center gap-1.5 font-bold text-emerald-500 text-sm">
-              <span>🎉 Correct!</span>
+              <PartyPopper className="size-4" />
+              <span>Correct!</span>
             </div>
 
             <div className="flex items-center gap-2">

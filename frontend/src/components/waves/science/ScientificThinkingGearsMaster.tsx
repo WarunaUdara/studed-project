@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { CheckCircle2, Sparkles, X, XCircle } from "lucide-react";
+import { CheckCircle2, Lightbulb, Sparkles, X, XCircle } from "lucide-react";
 import { useState } from "react";
 import { DailyLessonLimitGate } from "./DailyLessonLimitGate";
 import { GearGraphSvg } from "./GearGraphSvg";
@@ -380,7 +380,7 @@ export function ScientificThinkingGearsMaster({
                 ))}
 
                 <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-600 dark:text-emerald-300 font-medium">
-                  💡 {puzzle.explanation.rule}
+                  <Lightbulb className="inline size-4" /> {puzzle.explanation.rule}
                 </div>
               </div>
 

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Flag, Sparkles, X, Zap } from "lucide-react";
+import { Flag, HelpCircle, PartyPopper, Sparkles, X, Zap } from "lucide-react";
 import { useState } from "react";
 import { FractionTriangle, TRIANGLE_REGIONS } from "./FractionTriangle";
 import type { SparkTask } from "./types";
@@ -181,7 +181,7 @@ export function DailySparkTaskCard({
             >
               {/* Left Indicator */}
               <div className="flex items-center gap-2">
-                <span className="text-xl">🎉</span>
+                <PartyPopper className="size-5 text-emerald-400" />
                 <span className="font-extrabold text-base text-white">Correct!</span>
               </div>
 
@@ -212,7 +212,7 @@ export function DailySparkTaskCard({
               className="flex flex-wrap items-center justify-between gap-4"
             >
               <div className="flex items-center gap-2">
-                <span className="text-xl">🤔</span>
+                <HelpCircle className="size-5 text-amber-400" />
                 <span className="font-bold text-sm text-amber-400">
                   Not quite the target area. Try another combination!
                 </span>

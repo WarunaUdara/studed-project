@@ -1,3 +1,4 @@
+import { Flame } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Confetti } from "@/components/gamification/Confetti";
@@ -93,7 +94,7 @@ export function GamifiedPreview() {
             {youRow?.rank ? (
               <p className="mt-2 px-1 text-center text-xs text-muted-foreground">
                 You are <span className="font-bold text-primary">#{youRow.rank}</span> of 100. Keep
-                going 🔥
+                going <Flame className="inline size-3.5 text-orange-500" />
               </p>
             ) : null}
           </div>
