@@ -188,6 +188,12 @@ describe("every shipped course", () => {
     }
   });
 
+  it("covers a ladder of grade levels rather than one band", () => {
+    const grades = new Set(localCourseNodes().map((course) => course.gradeLevel));
+    expect(grades.size).toBeGreaterThanOrEqual(4);
+    expect(grades.has("OL")).toBe(true);
+  });
+
   it("gives each course a distinct slug and a non-empty syllabus", () => {
     const slugs = localCourseNodes().map((course) => course.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
