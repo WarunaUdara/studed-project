@@ -1,0 +1,1054 @@
+{
+  "slug": "physics-grade-4-5",
+  "title": "Physics Adventures",
+  "description": "Grades 4 and 5 meet forces, motion and electricity by pushing carts and wiring bulbs with Blobby the science teacher.",
+  "gradeLevel": "G4",
+  "subject": "Physics",
+  "price": 0,
+  "version": 1,
+  "lessons": [
+    {
+      "title": "Lesson 1: Forces and Motion",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Pushes and Pulls",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 40,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 7,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-1-1",
+              "type": "blob_dialog",
+              "content": "Hello! I am Blobby. Today we hunt for forces.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Hello! I am Blobby. Today we hunt for forces.",
+                    "mood": "happy",
+                    "cta": "Let us go"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "A force is just a push or a pull. That is all it is.",
+                    "mood": "happy",
+                    "cta": "Okay"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "When you push a toy car, it rolls away from you. When you pull a drawer, it comes closer.",
+                    "mood": "thinking",
+                    "cta": "Got it"
+                  },
+                  {
+                    "id": "l4",
+                    "text": "Try the cart below. Push it hard, then push it gently, and watch the green arrow.",
+                    "mood": "cheer",
+                    "cta": "I will try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "lb-1-2",
+              "type": "force_lab",
+              "content": "Move the slider to choose how hard you push the cart.",
+              "metadata": {
+                "version": 1,
+                "label": "Toy cart",
+                "minForce": 0,
+                "maxForce": 10,
+                "surfaces": [
+                  {
+                    "id": "ice",
+                    "label": "Slippery ice",
+                    "friction": 0.1
+                  },
+                  {
+                    "id": "floor",
+                    "label": "Smooth floor",
+                    "friction": 0.4
+                  },
+                  {
+                    "id": "carpet",
+                    "label": "Fluffy carpet",
+                    "friction": 0.85
+                  }
+                ],
+                "caption": "The green arrow is your push. The orange arrow is the ground pushing back."
+              }
+            },
+            {
+              "id": "lb-1-3",
+              "type": "text",
+              "content": "A **bigger push** means a bigger force. A bigger force makes the cart speed up faster."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-1-1",
+              "type": "tap_target",
+              "question": "Which one of these is a pull?",
+              "correctAnswer": "drawer",
+              "explanation": "Opening a drawer brings it towards you, so it is a pull. Kicking and closing push things away.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "drawer",
+                    "label": "Opening a drawer"
+                  },
+                  {
+                    "id": "kick",
+                    "label": "Kicking a ball"
+                  },
+                  {
+                    "id": "door",
+                    "label": "Closing a door"
+                  },
+                  {
+                    "id": "slide",
+                    "label": "Sliding a box away"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "eb-1-2",
+              "type": "slider_target",
+              "question": "The cart is on fluffy carpet. How hard should you push to get it moving nicely?",
+              "correctAnswer": "just-right",
+              "explanation": "A tiny push cannot beat the carpet. A huge push sends the cart flying. Something in the middle is just right.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 10,
+                "step": 1,
+                "unit": "newtons",
+                "bands": [
+                  {
+                    "value": "too-little",
+                    "upTo": 3
+                  },
+                  {
+                    "value": "just-right",
+                    "upTo": 7
+                  },
+                  {
+                    "value": "too-much"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "eb-1-3",
+              "type": "order_steps",
+              "question": "Put the story of the rolling cart in order.",
+              "correctAnswer": "push>speed-up>slow-down",
+              "explanation": "First your hand pushes, then the cart speeds up, and finally the ground rubs it slower.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "push",
+                    "label": "Your hand pushes the cart"
+                  },
+                  {
+                    "id": "speed-up",
+                    "label": "The cart speeds up"
+                  },
+                  {
+                    "id": "slow-down",
+                    "label": "The ground slows the cart down"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Friction Slows Things Down",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 40,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-2-1",
+              "type": "blob_dialog",
+              "content": "Have you ever slid across a smooth floor in socks? Fun, right?",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Have you ever slid across a smooth floor in socks? Fun, right?",
+                    "mood": "happy",
+                    "cta": "Yes!"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Now try that on a carpet. You stop almost at once. That is friction.",
+                    "mood": "thinking",
+                    "cta": "Why?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Friction is the ground grabbing back. Rough ground grabs hard, smooth ground grabs gently.",
+                    "mood": "happy",
+                    "cta": "Show me"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "lb-2-2",
+              "type": "force_lab",
+              "content": "Keep your push the same and change what is under the wheels.",
+              "metadata": {
+                "version": 1,
+                "label": "Toy cart",
+                "surfaces": [
+                  {
+                    "id": "ice",
+                    "label": "Slippery ice",
+                    "friction": 0.05
+                  },
+                  {
+                    "id": "tile",
+                    "label": "Shiny tile",
+                    "friction": 0.35
+                  },
+                  {
+                    "id": "sand",
+                    "label": "Rough sand",
+                    "friction": 0.9
+                  }
+                ],
+                "caption": "Same push, different ground. Watch how much of your push is eaten up."
+              }
+            },
+            {
+              "id": "lb-2-3",
+              "type": "animation",
+              "content": "force-arrows",
+              "metadata": {
+                "version": 1,
+                "scene": "force-arrows",
+                "params": {
+                  "push": 8,
+                  "friction": 0.9,
+                  "label": "Cart in sand"
+                },
+                "caption": "In deep sand almost the whole push is cancelled, so the cart hardly moves."
+              }
+            },
+            {
+              "id": "lb-2-4",
+              "type": "callout",
+              "content": "Friction is not our enemy. Without it your shoes would slip and a bus could never stop."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-2-1",
+              "type": "drag_drop",
+              "question": "Put each ground where it belongs.",
+              "correctAnswer": "slot-far:ice,slot-quick:sand",
+              "explanation": "Ice grabs the cart very gently so it slides far. Sand grabs hard so the cart stops quickly.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "ice",
+                    "label": "Slippery ice"
+                  },
+                  {
+                    "id": "sand",
+                    "label": "Rough sand"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-far",
+                    "label": "The cart slides far"
+                  },
+                  {
+                    "id": "slot-quick",
+                    "label": "The cart stops quickly"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "eb-2-2",
+              "type": "tap_target",
+              "question": "Which shoe grips a wet school corridor best?",
+              "correctAnswer": "grip",
+              "explanation": "Deep grooves give more friction, so the shoe grips instead of slipping.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "grip",
+                    "label": "A shoe with deep grooves"
+                  },
+                  {
+                    "id": "smooth",
+                    "label": "A shoe worn smooth"
+                  },
+                  {
+                    "id": "sock",
+                    "label": "A cotton sock"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "eb-2-3",
+              "type": "slider_target",
+              "question": "You push the cart into deep sand. How much of your push is left over to move it?",
+              "correctAnswer": "almost-none",
+              "explanation": "Deep sand eats nearly the whole push, so barely any force is left to move the cart.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 10,
+                "step": 1,
+                "unit": "newtons left",
+                "bands": [
+                  {
+                    "value": "almost-none",
+                    "upTo": 3
+                  },
+                  {
+                    "value": "about-half",
+                    "upTo": 7
+                  },
+                  {
+                    "value": "nearly-all"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Speeding Up and Slowing Down",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 45,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-3-1",
+              "type": "blob_dialog",
+              "content": "Here is the tricky bit. A force does not give something a speed. It changes the speed.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Here is the tricky bit. A force does not give something a speed. It changes the speed.",
+                    "mood": "thinking",
+                    "cta": "Hmm"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Keep pushing and the cart keeps getting faster and faster. That is called speeding up.",
+                    "mood": "happy",
+                    "cta": "Show me"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Stop pushing and friction takes over, so the cart slows down until it stops.",
+                    "mood": "happy",
+                    "cta": "Got it"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "lb-3-2",
+              "type": "animation",
+              "content": "force-arrows",
+              "metadata": {
+                "version": 1,
+                "scene": "force-arrows",
+                "params": {
+                  "push": 9,
+                  "friction": 0.1,
+                  "label": "Cart on ice"
+                },
+                "caption": "Watch closely. The cart starts slowly and keeps getting faster while the push stays on."
+              }
+            },
+            {
+              "id": "lb-3-3",
+              "type": "force_lab",
+              "content": "Set a big push on ice, then a big push on carpet. Which one keeps speeding up?",
+              "metadata": {
+                "version": 1,
+                "label": "Race cart",
+                "surfaces": [
+                  {
+                    "id": "ice",
+                    "label": "Ice",
+                    "friction": 0.05
+                  },
+                  {
+                    "id": "carpet",
+                    "label": "Carpet",
+                    "friction": 0.8
+                  }
+                ]
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-3-1",
+              "type": "tap_target",
+              "question": "Two carts get the same push. Which one speeds up more?",
+              "correctAnswer": "light",
+              "explanation": "The same push moves a light cart more easily, so it speeds up faster than a heavy one.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "light",
+                    "label": "The light cart"
+                  },
+                  {
+                    "id": "heavy",
+                    "label": "The heavy cart"
+                  },
+                  {
+                    "id": "same",
+                    "label": "Both speed up the same"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "eb-3-2",
+              "type": "order_steps",
+              "question": "A ball rolls down the school corridor. Put it in order.",
+              "correctAnswer": "kick>fastest>slower>stop",
+              "explanation": "The kick is the force. After the kick only friction is left, so the ball gets slower and slower until it stops.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "kick",
+                    "label": "You kick the ball"
+                  },
+                  {
+                    "id": "fastest",
+                    "label": "The ball is at its fastest"
+                  },
+                  {
+                    "id": "slower",
+                    "label": "The ball gets slower"
+                  },
+                  {
+                    "id": "stop",
+                    "label": "The ball stops"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "eb-3-3",
+              "type": "toggle_switch",
+              "question": "Switch on everything that makes a moving cart slow down.",
+              "correctAnswer": "friction=on,push=off,wheels=off",
+              "explanation": "Only friction works against the cart. Pushing it and giving it smoother wheels help it keep going.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "friction",
+                    "label": "Rough ground rubbing the wheels",
+                    "onLabel": "slows it",
+                    "offLabel": "no effect"
+                  },
+                  {
+                    "id": "push",
+                    "label": "You keep pushing it",
+                    "onLabel": "slows it",
+                    "offLabel": "no effect"
+                  },
+                  {
+                    "id": "wheels",
+                    "label": "Smoother wheels",
+                    "onLabel": "slows it",
+                    "offLabel": "no effect"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Lesson 2: Electricity",
+      "sequenceOrder": 2,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Make the Bulb Glow",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 45,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "lb-4-1",
+              "type": "blob_dialog",
+              "content": "Electricity is shy. It only travels in a full circle.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Electricity is shy. It only travels in a full circle.",
+                    "mood": "happy",
+                    "cta": "A circle?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Out of the battery, through the wire, through the bulb, and all the way back to the battery.",
+                    "mood": "thinking",
+                    "cta": "Okay"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "If there is one single gap anywhere, nothing moves and the bulb stays dark.",
+                    "mood": "surprised",
+                    "cta": "Let me fix it"
+                  },
+                  {
+                    "id": "l4",
+                    "text": "Fill the gaps below. When the loop is complete, the bulb lights up. Yaay!",
+                    "mood": "cheer",
+                    "cta": "I will try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "lb-4-2",
+              "type": "circuit_lab",
+              "content": "Pick a part, then tap the gap where it belongs. Fill the top gap and the bottom gap.",
+              "metadata": {
+                "version": 1,
+                "slots": [
+                  {
+                    "id": "slot-top",
+                    "label": "Top gap",
+                    "accepts": "wire"
+                  },
+                  {
+                    "id": "slot-power",
+                    "label": "Bottom gap",
+                    "accepts": "battery"
+                  },
+                  {
+                    "id": "slot-bypass",
+                    "label": "Shortcut gap",
+                    "accepts": "wire"
+                  }
+                ],
+                "components": [
+                  {
+                    "id": "cell",
+                    "label": "Battery",
+                    "kind": "battery"
+                  },
+                  {
+                    "id": "wire",
+                    "label": "Wire",
+                    "kind": "wire"
+                  }
+                ],
+                "solution": {
+                  "slot-top": "wire",
+                  "slot-power": "cell"
+                },
+                "shortCircuit": {
+                  "slot-top": "wire",
+                  "slot-power": "cell",
+                  "slot-bypass": "wire"
+                },
+                "caption": "Leave the shortcut gap empty for now. We will meet it in the last wave."
+              }
+            },
+            {
+              "id": "lb-4-3",
+              "type": "text",
+              "content": "A complete circle for electricity is called a **circuit**. One gap breaks it, just like one missing step breaks a staircase."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-4-1",
+              "type": "drag_drop",
+              "question": "Build a circuit that lights the bulb.",
+              "correctAnswer": "slot-power:cell,slot-top:wire",
+              "explanation": "The battery goes in the bottom gap to push the current, and the wire closes the top gap so the loop is complete.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "cell",
+                    "label": "Battery"
+                  },
+                  {
+                    "id": "wire",
+                    "label": "Wire"
+                  },
+                  {
+                    "id": "paper",
+                    "label": "Strip of paper"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-power",
+                    "label": "Bottom gap"
+                  },
+                  {
+                    "id": "slot-top",
+                    "label": "Top gap"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "eb-4-2",
+              "type": "tap_target",
+              "question": "When does the bulb glow?",
+              "correctAnswer": "loop",
+              "explanation": "Only a complete loop lets the current travel all the way round and back into the battery.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "loop",
+                    "label": "When the loop has no gaps"
+                  },
+                  {
+                    "id": "onewire",
+                    "label": "When one wire touches the bulb"
+                  },
+                  {
+                    "id": "battery",
+                    "label": "When the battery is nearby"
+                  },
+                  {
+                    "id": "dark",
+                    "label": "When the room is dark"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "eb-4-3",
+              "type": "toggle_switch",
+              "question": "Flip on only the switches that are part of the bulb's loop.",
+              "correctAnswer": "main=on,spare=off",
+              "explanation": "The main switch sits on the loop, so it must be closed. The spare switch is on a wire that goes nowhere.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "main",
+                    "label": "Switch on the wire to the bulb",
+                    "onLabel": "closed",
+                    "offLabel": "open"
+                  },
+                  {
+                    "id": "spare",
+                    "label": "Switch on a loose wire",
+                    "onLabel": "closed",
+                    "offLabel": "open"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Water in the Wires",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 45,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 9,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-5-1",
+              "type": "blob_dialog",
+              "content": "You cannot see electricity, so let us look at water instead.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "You cannot see electricity, so let us look at water instead.",
+                    "mood": "happy",
+                    "cta": "Water?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "The battery is a pump. It pushes. We call that push the voltage.",
+                    "mood": "thinking",
+                    "cta": "Okay"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "The moving water is the current. It is what actually flows through the wire.",
+                    "mood": "happy",
+                    "cta": "Got it"
+                  },
+                  {
+                    "id": "l4",
+                    "text": "Squeeze the pipe and less water gets through. That squeeze is resistance.",
+                    "mood": "happy",
+                    "cta": "Let me play"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "lb-5-2",
+              "type": "water_flow",
+              "content": "Turn the pump up and down, then squeeze the pipe and watch the drops.",
+              "metadata": {
+                "version": 1,
+                "voltageLabel": "Pump pressure (voltage)",
+                "resistanceLabel": "Pipe narrowness (resistance)",
+                "caption": "More pressure sends more water. A narrower pipe holds it back."
+              }
+            },
+            {
+              "id": "lb-5-3",
+              "type": "text",
+              "content": "Voltage pushes, resistance holds back, and current is what actually flows. Every circuit is that tug of war."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-5-1",
+              "type": "tap_target",
+              "question": "In the water picture, what does the battery act like?",
+              "correctAnswer": "pump",
+              "explanation": "The battery is the pump. It gives the push that starts everything moving.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "pump",
+                    "label": "The pump"
+                  },
+                  {
+                    "id": "pipe",
+                    "label": "The pipe"
+                  },
+                  {
+                    "id": "drops",
+                    "label": "The drops of water"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "eb-5-2",
+              "type": "drag_drop",
+              "question": "Match each electricity word to its water twin.",
+              "correctAnswer": "slot-drops:current,slot-narrow:resistance,slot-pump:voltage",
+              "explanation": "The pump is the voltage, the drops are the current, and the narrow pipe is the resistance.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "voltage",
+                    "label": "Voltage"
+                  },
+                  {
+                    "id": "current",
+                    "label": "Current"
+                  },
+                  {
+                    "id": "resistance",
+                    "label": "Resistance"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-pump",
+                    "label": "The pump pushing"
+                  },
+                  {
+                    "id": "slot-drops",
+                    "label": "The drops moving along"
+                  },
+                  {
+                    "id": "slot-narrow",
+                    "label": "The narrow part of the pipe"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "eb-5-3",
+              "type": "slider_target",
+              "question": "You squeeze the pipe very narrow. How much water gets through now?",
+              "correctAnswer": "a-trickle",
+              "explanation": "A narrow pipe is high resistance, so only a trickle gets through even when the pump works hard.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 10,
+                "step": 1,
+                "unit": "drops per second",
+                "bands": [
+                  {
+                    "value": "a-trickle",
+                    "upTo": 3
+                  },
+                  {
+                    "value": "a-steady-flow",
+                    "upTo": 7
+                  },
+                  {
+                    "value": "a-rush"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. The Dangerous Shortcut",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 50,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 9,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "lb-6-1",
+              "type": "blob_dialog",
+              "content": "Current is lazy. If you give it a shorter path, it takes it.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Current is lazy. If you give it a shorter path, it takes it.",
+                    "mood": "thinking",
+                    "cta": "Uh oh"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Add a wire straight across the bulb and the current skips the bulb completely.",
+                    "mood": "surprised",
+                    "cta": "What happens?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "The bulb goes dark and that shortcut wire gets hot. We call it a short circuit.",
+                    "mood": "thinking",
+                    "cta": "Show me"
+                  },
+                  {
+                    "id": "l4",
+                    "text": "Try it below, then take the shortcut out and watch the bulb come back. Gotcha!",
+                    "mood": "cheer",
+                    "cta": "Let me try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "lb-6-2",
+              "type": "circuit_lab",
+              "content": "Build the working circuit first. Then put a wire in the shortcut gap and see what changes.",
+              "metadata": {
+                "version": 1,
+                "slots": [
+                  {
+                    "id": "slot-top",
+                    "label": "Top gap",
+                    "accepts": "wire"
+                  },
+                  {
+                    "id": "slot-power",
+                    "label": "Bottom gap",
+                    "accepts": "battery"
+                  },
+                  {
+                    "id": "slot-bypass",
+                    "label": "Shortcut gap",
+                    "accepts": "wire"
+                  }
+                ],
+                "components": [
+                  {
+                    "id": "cell",
+                    "label": "Battery",
+                    "kind": "battery"
+                  },
+                  {
+                    "id": "wire",
+                    "label": "Wire",
+                    "kind": "wire"
+                  }
+                ],
+                "solution": {
+                  "slot-top": "wire",
+                  "slot-power": "cell"
+                },
+                "shortCircuit": {
+                  "slot-top": "wire",
+                  "slot-power": "cell",
+                  "slot-bypass": "wire"
+                },
+                "caption": "Take the shortcut wire out again to bring your bulb back to life."
+              }
+            },
+            {
+              "id": "lb-6-3",
+              "type": "animation",
+              "content": "short-circuit-warning",
+              "metadata": {
+                "version": 1,
+                "scene": "short-circuit-warning",
+                "params": {
+                  "active": true
+                },
+                "caption": "The red wire is the shortcut. It carries far more current than it was built for, so it heats up."
+              }
+            },
+            {
+              "id": "lb-6-4",
+              "type": "callout",
+              "content": "This is why we never poke wires into a wall socket. A short circuit at home can start a fire."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "eb-6-1",
+              "type": "tap_target",
+              "question": "Which circuit is a short circuit?",
+              "correctAnswer": "bypass",
+              "explanation": "A short circuit has a wire that goes straight across the bulb, giving the current a shorter way home.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "bypass",
+                    "label": "A wire straight across the bulb"
+                  },
+                  {
+                    "id": "gap",
+                    "label": "A circuit with one gap left open"
+                  },
+                  {
+                    "id": "long",
+                    "label": "A circuit with a very long wire"
+                  },
+                  {
+                    "id": "twobulbs",
+                    "label": "A circuit with two bulbs"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "eb-6-2",
+              "type": "order_steps",
+              "question": "What happens when someone adds the shortcut wire?",
+              "correctAnswer": "shortcut>skips>dark>hot",
+              "explanation": "The shortcut gives the current an easier path, so it skips the bulb, the bulb goes dark, and the shortcut wire heats up.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "shortcut",
+                    "label": "A wire is added across the bulb"
+                  },
+                  {
+                    "id": "skips",
+                    "label": "The current takes the shorter path"
+                  },
+                  {
+                    "id": "dark",
+                    "label": "The bulb goes dark"
+                  },
+                  {
+                    "id": "hot",
+                    "label": "The shortcut wire gets hot"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "eb-6-3",
+              "type": "toggle_switch",
+              "question": "Switch on the safe habits and leave the risky ones off.",
+              "correctAnswer": "battery=on,socket=off,switch=on",
+              "explanation": "Small torch batteries and a proper switch are safe to explore with. Wall sockets carry far too much current for experiments.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "battery",
+                    "label": "Experiment with a small torch battery",
+                    "onLabel": "safe",
+                    "offLabel": "risky"
+                  },
+                  {
+                    "id": "socket",
+                    "label": "Push a wire into a wall socket",
+                    "onLabel": "safe",
+                    "offLabel": "risky"
+                  },
+                  {
+                    "id": "switch",
+                    "label": "Use a switch to turn the circuit off",
+                    "onLabel": "safe",
+                    "offLabel": "risky"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
