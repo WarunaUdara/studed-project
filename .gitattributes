@@ -1,0 +1,39 @@
+# Normalize line endings so Windows clones (Git for Windows defaults to
+# core.autocrlf=true) do not rewrite files that must stay LF. A CRLF shebang
+# line makes a script fail with the infamous "bad interpreter: /bin/bash^M",
+# both in Git Bash/WSL and when the file is COPYed into a Linux container.
+* text=auto eol=lf
+
+# Files that are executed by a Unix shell or inside a container: always LF.
+*.sh            text eol=lf
+*.bash          text eol=lf
+Makefile        text eol=lf
+Dockerfile      text eol=lf
+*.dockerfile    text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+*.ts            text eol=lf
+*.tsx           text eol=lf
+*.go            text eol=lf
+*.sql           text eol=lf
+
+# Windows batch files must keep CRLF - cmd.exe mis-parses multi-line blocks
+# (the parenthesised if/else in make.bat) when they arrive with bare LF.
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+
+# Binary assets: never touch.
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.gif           binary
+*.ico           binary
+*.webp          binary
+*.pdf           binary
+*.woff          binary
+*.woff2         binary
+*.ttf           binary
+*.otf           binary
+*.mp4           binary
+*.zip           binary
+*.gz            binary

@@ -137,7 +137,7 @@ graph TB
 | **Backend & Mesh** | Go 1.24+, `gqlgen` GraphQL, gRPC (Protobuf), Gin | Asynchronous microservices communicating over low-latency binary gRPC. |
 | **Data & Caching** | PostgreSQL 15, Redis 7 (Sorted Sets), GCS / Cloudflare R2 | ACID relational records, sub-millisecond rank indexing, object storage. |
 | **Cloud & DevOps** | GCP GKE Standard, Cloudflare Pages, OpenTofu, Kyverno | Multi-zonal resilience, automated GitOps, IaC-managed infrastructure. |
-| **Local Emulation** | Floci (Local Cloud), GCS Emulator, Podman / Docker Bake | 24ms cloud resource emulation without internet dependencies or cloud bills. |
+| **Local Emulation** | Floci (Local Cloud), GCS Emulator, Docker Compose / BuildKit | 24ms cloud resource emulation without internet dependencies or cloud bills. |
 | **Observability** | OpenTelemetry, Prometheus, Grafana | Distributed tracing across gateway & mesh, pre-configured dashboard suites. |
 | **Security & Governance** | Workload Identity, ESO, Cloud Armor, Kyverno Policies | Zero-trust secrets syncing, policy enforcement, rate limiting, and WAF. |
 
@@ -148,7 +148,14 @@ graph TB
 ### Prerequisites
 * **Go**: `1.24+`
 * **Node & Bun**: `Node 22+` / `Bun 1.2+`
-* **Container Runtime**: Docker (Colima recommended on macOS)
+* **Container Runtime**: Docker with the `buildx` plugin and **≥ 6 GiB** allocated to the
+  container VM. Any of these work:
+  * **Docker Desktop** (macOS / Windows) — bundles `buildx`; raise memory under
+    *Settings → Resources → Memory* to 8 GB.
+  * **Colima** (macOS alternative) — `colima start --cpu 4 --memory 8`, plus
+    `brew install docker-buildx` since Colima does not bundle the plugin.
+* **Windows only**: **Git for Windows** (supplies the Git Bash used by `seed` and
+  `demo-public`). Use `make.bat <target>` in place of `make <target>`.
 * **OpenTofu**: `v1.8+` *(optional for IaC)*
 
 ### 1. Launch Complete Stack Locally
@@ -165,7 +172,23 @@ make seed
 cd frontend && bun install && bun run dev
 ```
 
-The frontend will be available at **`http://localhost:5173`** and the GraphQL API at **`http://localhost:8080/query`**.
+On **Windows**, run the same targets through `make.bat` (CMD or PowerShell):
+
+```bat
+make.bat dev-up
+make.bat seed
+cd frontend && bun install && bun run dev
+```
+
+The frontend will be available at **`http://localhost:5173`** and the GraphQL API at **`http://localhost:8080/graphql`** (playground at **`http://localhost:8080/`**).
+
+> **Observability is opt-in.** Prometheus, Grafana and Tempo sit behind the
+> `monitoring` compose profile and are started separately with `make monitoring-up`.
+> They are the only services that bind-mount host config, so keeping them out of
+> `dev-up` means a mount failure can never take the application stack down with it.
+> On macOS those mounts need Docker Desktop to have access to the repo directory
+> (*System Settings → Privacy & Security → Files and Folders*, or grant Full Disk
+> Access); without it `make monitoring-up` fails with `operation not permitted`.
 
 ---
 

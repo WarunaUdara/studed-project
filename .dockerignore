@@ -29,3 +29,10 @@ submodules
 .DS_Store
 services/content-service
 services/user-service
+
+# Host-arch dev binaries from `make go-build`. The Dockerfiles only ever consume
+# bin/linux_service (the cross-compiled artifact from `make go-build-linux`), so
+# shipping these adds ~200MB to every build context for nothing. Keep the
+# exclusion this specific - ignoring services/*/bin wholesale would also hide
+# linux_service and silently disable the pre-build fast path.
+services/*/bin/service

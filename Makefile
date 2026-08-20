@@ -1,16 +1,28 @@
 .PHONY: dev-up dev-down dev dev-stop launch test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint frontend-e2e go-build go-test shared-test proto-gen seed content-validate content-sync demo-public
 
 # Development
-go-build-linux:
-	@for svc in services/*; do \
+# Pre-builds each service on the host so the Dockerfiles can copy bin/linux_service
+# instead of compiling in-image. The target arch MUST match the container engine's
+# arch, not a hardcoded value: on an amd64 host (every Windows/Intel dev) a
+# hardcoded arm64 binary gets baked into an amd64 image and the container dies at
+# runtime with "exec format error". Ask Docker what it runs, fall back to the host.
+ go-build-linux:
+	@ARCH=$$(docker info --format '{{.Architecture}}' 2>/dev/null); \
+	case "$$ARCH" in \
+		aarch64|arm64) GOARCH=arm64 ;; \
+		x86_64|amd64)  GOARCH=amd64 ;; \
+		*)             GOARCH=$$(go env GOARCH) ;; \
+	esac; \
+	echo "pre-building services for linux/$$GOARCH..."; \
+	for svc in services/*; do \
 		if [ -f "$$svc/main.go" ]; then \
-			echo "pre-building $$svc for Linux ARM64..."; \
-			(cd "$$svc" && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o bin/linux_service .); \
+			echo "  $$svc"; \
+			(cd "$$svc" && CGO_ENABLED=0 GOOS=linux GOARCH=$$GOARCH go build -o bin/linux_service .) || exit 1; \
 		fi \
 	done
 
 dev-up: docker-mem-check docker-buildx-check
-	@docker info >/dev/null 2>&1 || (echo "Container engine (Docker) is not running. Start it with 'colima start' and try again." && exit 1)
+	@docker info >/dev/null 2>&1 || (echo "Container engine (Docker) is not running. Start Docker Desktop (or run 'colima start' if you use Colima) and try again." && exit 1)
 	# COMPOSE_PARALLEL_LIMIT=2 caps concurrent builds so 9 Go Dockerfiles cannot
 	# OOM a 16GB dev laptop (each build already runs with GOFLAGS=-p=2).
 	COMPOSE_PARALLEL_LIMIT=2 docker compose -f docker-compose.yml up --build -d --remove-orphans
@@ -25,7 +37,7 @@ dev-up: docker-mem-check docker-buildx-check
 	docker compose logs -f
 
  floci-gcp-up:
-	@docker info >/dev/null 2>&1 || (echo "Container engine (Docker) is not running. Start it with 'colima start' and try again." && exit 1)
+	@docker info >/dev/null 2>&1 || (echo "Container engine (Docker) is not running. Start Docker Desktop (or run 'colima start' if you use Colima) and try again." && exit 1)
 	docker compose -f docker-compose.yml up -d floci-gcp
 
  floci-gcp-down:
@@ -108,7 +120,8 @@ dev-up: docker-mem-check docker-buildx-check
 	FITS=$$(echo "$$MEM_GB >= 6" | bc 2>/dev/null || echo 0); \
 	if [ "$$FITS" != "1" ]; then \
 		echo "error: Docker VM has only $$MEM_GB GiB (Total Memory: $$(echo "$$UNIT" | awk -F': ' '{print $$2}'))."; \
-		echo "The StudEd stack needs >= 6 GiB. Fix: 'colima start --cpu 4 --memory 8'."; \
+		echo "The StudEd stack needs >= 6 GiB. Fix (Docker Desktop): Settings > Resources >"; \
+		echo "  Memory -> 8 GB > Apply & Restart. Fix (Colima): 'colima start --cpu 4 --memory 8'."; \
 		exit 1; \
 	fi; \
 	echo "ok: Docker VM memory ($$MEM_GB GiB) is sufficient."
@@ -118,7 +131,7 @@ dev-up: docker-mem-check docker-buildx-check
 # need 'brew install docker-buildx'. Fail early with a clear hint instead of the
 # cryptic 'the --mount option requires BuildKit' build error.
  docker-buildx-check:
-	@docker buildx version >/dev/null 2>&1 || { echo "error: docker buildx plugin is required (Dockerfiles use BuildKit --mount)."; echo "Docker Desktop bundles it. Colima users: 'brew install docker-buildx'."; exit 1; }
+	@docker buildx version >/dev/null 2>&1 || { echo "error: docker buildx plugin is required (Dockerfiles use BuildKit --mount)."; echo "Docker Desktop (macOS/Windows) bundles it. Colima users: 'brew install docker-buildx'."; exit 1; }
 	@echo "ok: docker buildx (BuildKit) is available."
 
 # The observability stack sits behind the `monitoring` compose profile so a bad

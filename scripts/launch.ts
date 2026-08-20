@@ -233,7 +233,7 @@ async function main() {
     });
     const exitCode = await dockerCheck.exited.catch(() => 1);
     if (exitCode !== 0) {
-      process.stdout.write(`${red("Container engine (Docker) is not running. Start it with 'colima start' and try again.")}\n`);
+      process.stdout.write(`${red("Container engine (Docker) is not running. Start Docker Desktop (or run 'colima start' if you use Colima) and try again.")}\n`);
       process.exit(1);
     }
   } catch {
