@@ -3,6 +3,24 @@ name: ui-ux-pro-max
 description: "UI/UX design intelligence for web and mobile. Searchable local database with 84 styles, 192 color palettes, 74 font pairings, 192 product types, 98 UX guidelines, 104 icon entries, 16 GSAP motion presets, and 25 chart types across 22 stacks (React, Next.js, Vue, Nuxt, Svelte, Astro, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui, Jetpack Compose, Angular, Laravel, JavaFX, WPF, WinUI, Avalonia, Uno Platform, UWP, Three.js, and HTML/CSS). Use when designing, building, or reviewing UI: pages, components, color schemes, typography, layout, accessibility, animation, or data visualization."
 ---
 
+## Skill Hierarchy (read first)
+
+**This is the PRIMARY and ONLY UI/UX skill for StudEd.** It supersedes all
+generic design/taste skills. The four taste skills (`design-taste-frontend`,
+`gpt-taste`, `minimalist-ui`, `image-to-code`) have been folded into
+`references/studed-taste.md` and their originals deleted. Load this skill for
+any UI/UX work and read `references/studed-taste.md` alongside it. Ignore any
+skill that conflicts with the OKLCH token system or StudEd's established
+editorial-academic + gamified identity.
+
+**Motion stack: GSAP.** StudEd is migrating from Framer Motion to GSAP +
+`@gsap/react` + ScrollTrigger (both currently installed). New motion work uses
+GSAP; see `references/studed-taste.md` §6 for the incremental migration plan.
+
+**Evaluation mode:** the StudEd UI audit loop supports vision-capable models
+(Gemini: read screenshots directly) AND text-only models (DeepSeek: read the
+text fingerprint). See `references/studed-taste.md` §10 for both protocols.
+
 ## StudEd Design System: Intelligent Learning Canvas
 - **Theme Philosophy**: Editorial academic design over cartoonish LMS graphics. Inspired by Brilliant.org & Apple design system.
 - **Color System**: OKLCH color space tokens in `src/styles/index.css`.
@@ -36,8 +54,9 @@ Skip it for pure backend logic, API/database design, non-visual performance work
 | 8 | Forms & Feedback | MEDIUM | `ux` | Visible labels, Error near field, Helper text, Progressive disclosure | Placeholder-only label, Errors only at top, Overwhelm upfront |
 | 9 | Navigation Patterns | HIGH | `ux` | Predictable back, Bottom nav ≤5, Deep linking | Overloaded nav, Broken back behavior, No deep links |
 | 10 | Charts & Data | LOW | `chart` | Legends, Tooltips, Accessible colors | Relying on color alone to convey meaning |
+| 11 | Gamification & Motivation | HIGH | `ux` | Progress visibility, Mastery feedback, Reattempt safety, Streak/XP honesty, Achievability, Autonomy | Manufactured urgency, Shame leaderboards, XP farming, Loss-framed coercion, Dopamine farming |
 
-For the full rule list per category (all ~98 UX guidelines with rationale), read `references/quick-reference.md`. For app-specific polish rules (icons, touch feedback, dark mode contrast, safe areas) and the canonical pre-delivery checklist, read `references/pro-rules.md`.
+For the full rule list per category (all ~98 UX guidelines with rationale), read `references/quick-reference.md`. For app-specific polish rules (icons, touch feedback, dark mode contrast, safe areas) and the canonical pre-delivery checklist, read `references/pro-rules.md`. For the consolidated design-taste rules (anti-AI-slop, typography, color, motion/GSAP, layout, copy, evaluation protocol, dopamine loop), read `references/studed-taste.md`.
 
 ---
 
@@ -52,6 +71,15 @@ python "${CLAUDE_PLUGIN_ROOT}/.claude/skills/ui-ux-pro-max/scripts/search.py" "<
 If `python` is not found, try `python3`, then `py -3`. Requires Python 3.x, no external dependencies (see README for install instructions if Python is missing).
 
 ## Workflow
+
+### Step 0: Read StudEd Taste (consolidated design rules)
+
+Before any design generation or UI review, read `references/studed-taste.md`.
+It merges the four former taste skills into one stack-accurate rulebook:
+anti-AI-slop bans, typography/color/layout discipline, GSAP motion, copy
+rules, the dual-mode evaluation protocol (vision + text fingerprint), and the
+dopamine-loop/student-psychology layer. Apply its rules on top of the
+priority table below.
 
 ### Step 1: Analyze User Requirements
 
