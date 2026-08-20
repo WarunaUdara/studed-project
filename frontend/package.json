@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
+    "@blobatar/react": "^2.3.0",
     "@gsap/react": "^2.1.2",
     "@hookform/resolvers": "^5.4.0",
     "@paper-design/shaders-react": "^0.0.80",
@@ -28,6 +29,7 @@
     "@types/three": "^0.185.4",
     "@urql/core": "^5.0.0",
     "@urql/exchange-auth": "^3.0.0",
+    "blobatar": "^2.3.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "feral-blob": "^0.1.0",

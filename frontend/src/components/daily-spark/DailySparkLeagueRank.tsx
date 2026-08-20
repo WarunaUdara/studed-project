@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { BlobAvatar } from "@/components/ui/BlobAvatar";
 import { useAuthStore } from "@/stores/auth";
 import type { LeagueMember } from "./types";
 
@@ -49,7 +50,6 @@ export function DailySparkLeagueRank({
       " " +
       (user.fullName.split(" ")[1]?.charAt(0) ?? "U")
     : "Waruna U";
-  const userInitial = user?.fullName?.charAt(0).toUpperCase() ?? "W";
 
   // Rank climb counter animation (e.g. from 28 down to 6)
   const [displayRank, setDisplayRank] = useState(28);
@@ -166,9 +166,7 @@ export function DailySparkLeagueRank({
             <span className="w-5 text-center font-bold text-sm text-emerald-400">
               {displayRank}
             </span>
-            <div className="flex size-9 items-center justify-center rounded-full bg-emerald-400 font-extrabold text-sm text-black shadow-sm">
-              {userInitial}
-            </div>
+            <BlobAvatar name={user?.id ?? "learner"} size={36} title={userName} />
             <span className="font-bold text-sm text-white">{userName}</span>
           </div>
           <span className="font-semibold text-sm text-emerald-100">

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useQuery, useSubscription } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { StudentShell } from "@/components/layout/StudentShell";
+import { BlobAvatar } from "@/components/ui/BlobAvatar";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { LEADERBOARD_QUERY } from "@/graphql/courses";
@@ -296,9 +297,11 @@ function LeaderboardPage() {
                           <span className="text-base font-serif font-semibold text-muted-foreground w-6 text-center">
                             {entry.rank}
                           </span>
-                          <span className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs font-serif font-bold shrink-0">
-                            {privateLeaderboardName(entry.user.fullName)[0] ?? "S"}
-                          </span>
+                          <BlobAvatar
+                            name={entry.user.id}
+                            size={32}
+                            title={`${privateLeaderboardName(entry.user.fullName)} avatar`}
+                          />
                           <div className="min-w-0">
                             <p
                               className={cn(
@@ -347,9 +350,7 @@ function LeaderboardPage() {
                         <span className="text-base font-serif font-semibold text-primary w-6 text-center">
                           {myRank}
                         </span>
-                        <span className="h-8 w-8 rounded-full bg-primary/25 text-primary flex items-center justify-center text-xs font-serif font-bold shrink-0">
-                          {user?.fullName[0]}
-                        </span>
+                        <BlobAvatar name={user?.id ?? "you"} size={32} title="Your avatar" />
                         <div className="min-w-0">
                           <p className="text-sm font-bold text-primary truncate">
                             {privateLeaderboardName(user?.fullName ?? "")}

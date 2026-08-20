@@ -7,6 +7,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import * as React from "react";
+import { BlobAvatar } from "@/components/ui/BlobAvatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -164,9 +165,11 @@ const LeaderboardRankings = React.forwardRef<HTMLDivElement, LeaderboardRankings
                     className="h-10 w-10 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="bg-muted text-muted-foreground flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium">
-                    {(ranking.userName ?? ranking.userId).charAt(0).toUpperCase()}
-                  </div>
+                  <BlobAvatar
+                    name={ranking.userId}
+                    size={40}
+                    title={`${displayName} avatar`}
+                  />
                 )}
 
                 <div className="min-w-0 flex-1">

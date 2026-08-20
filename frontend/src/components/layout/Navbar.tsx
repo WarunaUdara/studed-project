@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { LoginModal } from "@/components/auth/LoginModal";
+import { BlobAvatar } from "@/components/ui/BlobAvatar";
 import { Button } from "@/components/ui/button";
 import { FloatingCardNav, type MegaMenuItem } from "@/components/ui/CardNav";
 import { SearchAskModal } from "@/components/search/SearchAskModal";
@@ -344,10 +345,10 @@ export function Navbar() {
                 <button
                   type="button"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex size-9 items-center justify-center rounded-full bg-primary/20 text-primary font-bold text-xs border border-primary/40 hover:scale-105 transition-transform"
+                  className="flex items-center justify-center rounded-full border border-primary/40 hover:scale-105 transition-transform"
                   aria-label="User profile menu"
                 >
-                  {user?.fullName?.slice(0, 1).toUpperCase() || "S"}
+                  <BlobAvatar name={user?.id ?? "guest"} size={36} animate="hover" title={user?.fullName ?? "Your profile"} />
                 </button>
 
                 {/* Profile Menu Dropdown */}

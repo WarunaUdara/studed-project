@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { BlobAvatar } from "@/components/ui/BlobAvatar";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
 
@@ -131,12 +132,12 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
                   collapsed ? "justify-center px-0" : "px-1",
                 )}
               >
-                <span
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 font-bold text-primary-foreground group-hover:scale-105 transition-transform"
-                  aria-hidden
-                >
-                  {user?.fullName?.charAt(0).toUpperCase() ?? "E"}
-                </span>
+                <BlobAvatar
+                  name={user?.id ?? "educator"}
+                  size={40}
+                  title={user?.fullName ?? "Educator"}
+                  className="shrink-0 group-hover:scale-105 transition-transform"
+                />
                 {!collapsed && (
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold group-hover:text-primary transition-colors">

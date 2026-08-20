@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "urql";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { BlobAvatar } from "@/components/ui/BlobAvatar";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Progress } from "@/components/ui/Progress";
@@ -54,6 +55,7 @@ export function RegisterAuthCard() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -64,6 +66,8 @@ export function RegisterAuthCard() {
   });
 
   const [, registerMutation] = useMutation(REGISTER_MUTATION);
+
+  const liveAvatarSeed = watch("fullName");
 
   const onSubmit = async (data: RegisterFormData) => {
     setError(null);
@@ -118,9 +122,22 @@ export function RegisterAuthCard() {
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4 short:mt-4 short:space-y-3" noValidate>
         {/* Full Name */}
         <div className="space-y-2">
-          <Label htmlFor="fullName" className="text-sm font-semibold text-login-ink">
-            Full name
-          </Label>
+          <div className="flex items-center gap-2.5">
+            <BlobAvatar
+              name={liveAvatarSeed?.trim() || "new learner"}
+              size={40}
+              animate="always"
+              title={liveAvatarSeed?.trim() ? `${liveAvatarSeed.trim()}'s avatar` : "Your avatar"}
+            />
+            <div>
+              <Label htmlFor="fullName" className="text-sm font-semibold text-login-ink">
+                Full name
+              </Label>
+              <p className="text-xs text-login-ink-muted">
+                Your avatar is generated from your name — no upload needed
+              </p>
+            </div>
+          </div>
           <div className="relative">
             <User
               aria-hidden="true"

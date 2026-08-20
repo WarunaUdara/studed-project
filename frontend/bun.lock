@@ -6,6 +6,7 @@
       "name": "studed-frontend",
       "dependencies": {
         "@base-ui/react": "^1.6.0",
+        "@blobatar/react": "^2.3.0",
         "@gsap/react": "^2.1.2",
         "@hookform/resolvers": "^5.4.0",
         "@paper-design/shaders-react": "^0.0.80",
@@ -15,6 +16,7 @@
         "@types/three": "^0.185.4",
         "@urql/core": "^5.0.0",
         "@urql/exchange-auth": "^3.0.0",
+        "blobatar": "^2.3.0",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
         "feral-blob": "^0.1.0",
@@ -125,6 +127,8 @@
     "@biomejs/cli-win32-arm64": ["@biomejs/cli-win32-arm64@2.5.7", "", { "os": "win32", "cpu": "arm64" }, "sha512-Oq4x0CCwP4jirrcTywXs5kOGZ4v5vuEP+gWrbtjApOA2CL9F3F9GlIdQIci8AKSCa/zURanMRpX/4wQ7Am6hHg=="],
 
     "@biomejs/cli-win32-x64": ["@biomejs/cli-win32-x64@2.5.7", "", { "os": "win32", "cpu": "x64" }, "sha512-V+0wu/nrj2S+MhP4EQ0uHNolP0IALEsz45pg0WoKkHfDeh0+ItHwP/p7bX5RPoMOl9NkpHYWdYPhIcy2mACHvQ=="],
+
+    "@blobatar/react": ["@blobatar/react@2.3.0", "", { "peerDependencies": { "blobatar": "2.x", "react": ">=18" } }, "sha512-SRugpUaR8B7afF7n5jqtZwlanxmzsFAveenffP04YOmCZzDbLa9yng+SdGPdeUkYVFdE+sXAZZwk+w3mS2d6pQ=="],
 
     "@cloudflare/workers-types": ["@cloudflare/workers-types@4.20260702.1", "", {}, "sha512-mOhf5TUEB1m2vPrxtqoIGfz0fUC9xyxRDx5gWHy5s+OCo6dcV+g7wI1R7gYCMFohhqF/2y2xeKVwMwCJjfn/WA=="],
 
@@ -463,6 +467,8 @@
     "bail": ["bail@2.0.2", "", {}, "sha512-0xO6mYd7JB2YesxDKplafRpsiOzPt9V02ddPCLbY1xYGPOX24NTyN50qnUxgCPcSoYMhKpAuBTjQoRZCAkUDRw=="],
 
     "baseline-browser-mapping": ["baseline-browser-mapping@2.11.13", "", { "bin": { "baseline-browser-mapping": "dist/cli.cjs" } }, "sha512-k9HNuUVMlqVjQ9UHzfPjIqiDbWw7WqT1AoT7GL8VwvF3r0ZfArtgiSPAlmupyNquNgOJHTuH4CKYf8ttMTWBTQ=="],
+
+    "blobatar": ["blobatar@2.3.0", "", { "peerDependencies": { "react": ">=18", "vue": ">=3" }, "optionalPeers": ["react", "vue"] }, "sha512-hQsLK835oEJL7+lj+YDYOJzEhQ9lPX+n+FlGReZv0XIT/6KPlFHKNWNDLsZEobz07SuX6EEjfSTls/c6Cw8ifA=="],
 
     "browserslist": ["browserslist@4.28.8", "", { "dependencies": { "baseline-browser-mapping": "^2.11.12", "caniuse-lite": "^1.0.30001809", "electron-to-chromium": "^1.5.402", "node-releases": "^2.0.53", "update-browserslist-db": "^1.3.0" }, "bin": { "browserslist": "cli.js" } }, "sha512-V2NpofLblG64mfOtSgDhOJESZEGogzDMBv/q+W6oc4LXWP/q75eOXoOaaOu1EOadB9U4Bwx/e0yzbvwKH8zalA=="],
 

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight, Maximize2 } from "lucide-react";
+import { BlobAvatar } from "@/components/ui/BlobAvatar";
 import { useAuthStore } from "@/stores/auth";
 
 export function DashboardLeagueWidget() {
@@ -7,7 +8,6 @@ export function DashboardLeagueWidget() {
   const userName = user?.fullName
     ? user.fullName.split(" ")[0] + " " + (user.fullName.split(" ")[1]?.charAt(0) ?? "U")
     : "Waruna U";
-  const userInitial = user?.fullName?.charAt(0).toUpperCase() ?? "W";
   const totalXp = user?.totalXp ?? 55;
 
   return (
@@ -58,9 +58,7 @@ export function DashboardLeagueWidget() {
             <span className="w-4 font-extrabold text-emerald-600 dark:text-emerald-400 text-center">
               6
             </span>
-            <div className="flex size-6 items-center justify-center rounded-full bg-emerald-500 font-extrabold text-white text-[10px] shadow-xs">
-              {userInitial}
-            </div>
+            <BlobAvatar name={user?.id ?? "learner"} size={24} title={userName} />
             <span className="font-bold text-foreground">{userName}</span>
           </div>
           <span className="font-bold text-emerald-600 dark:text-emerald-400">

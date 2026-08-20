@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Bot, User as UserIcon } from "lucide-react";
 import type { LeaderboardEntry } from "@/components/gamification/LeaderboardTable";
 import { RankBadge } from "@/components/gamification/RankBadge";
+import { BlobAvatar } from "@/components/ui/BlobAvatar";
 import { privateLeaderboardName } from "@/lib/gamification";
 import { cn } from "@/lib/utils";
 
@@ -45,14 +46,13 @@ export function LeaderboardRow({
       <span className="flex w-9 items-center justify-center">
         <RankBadge rank={rank} total={total} size={rank <= 3 ? "lg" : "md"} />
       </span>
-      <span
-        className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-          isYou ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground",
-        )}
-      >
-        {isBot ? <Bot className="h-4 w-4" /> : <UserIcon className="h-4 w-4" />}
-      </span>
+      {isBot ? (
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+          <Bot className="h-4 w-4" />
+        </span>
+      ) : (
+        <BlobAvatar name={entry.user.id} size={32} title={`${entry.user.fullName} avatar`} />
+      )}
       <span
         className={cn(
           "min-w-0 flex-1 truncate text-sm",

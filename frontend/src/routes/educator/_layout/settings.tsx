@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
+import { BlobAvatar } from "@/components/ui/BlobAvatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
@@ -186,9 +187,11 @@ function EducatorSettingsPage() {
             <CardContent className="p-6">
               <div className="flex flex-wrap items-start gap-6">
                 {/* Avatar */}
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/70 text-2xl font-black text-primary-foreground shadow-md">
-                  {user?.fullName?.charAt(0).toUpperCase() ?? "E"}
-                </div>
+                <BlobAvatar
+                  name={user?.id ?? "educator"}
+                  size={64}
+                  title={user?.fullName ?? "Educator"}
+                />
 
                 <div className="flex-1 space-y-3 min-w-0">
                   <div>
