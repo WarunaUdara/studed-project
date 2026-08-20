@@ -27,28 +27,36 @@ export function pick(pair: StringPair, lang: Lang): string {
 
 export const PUBLIC_STRINGS = {
   heroBadge: {
-    EN: "Premium learning for Sri Lankan schools",
-    SI: "ලංකාවේ පාසල් සඳහාම නිර්මාණය වූ Premium learning platform එක",
+    EN: "Interactive Learning Platform",
+    SI: "අන්තර්ක්‍රියාකාරී අධ්‍යාපනික වේදිකාව",
   },
   heroTitleA: {
-    EN: "School, rewritten as",
-    SI: "පාසල් අධ්‍යාපනය, ජයගත හැකි",
+    EN: "Your interactive tutor for",
+    SI: "ඔබේ අන්තර්ක්‍රියාකාරී ගුරුවරයා,",
   },
   heroTitleB: {
-    EN: "a game you can win",
-    SI: "Game එකක් ලෙසින්",
+    EN: "math, science, & coding",
+    SI: "ගණිතය, විද්‍යාව සහ කේතකරණය සඳහා",
   },
   heroSubtitle: {
-    EN: "StudEd turns the Sri Lankan curriculum into a world of waves — structured courses, bite-sized lessons and game-grade evaluation. Earn XP, hold your streak and climb the leaderboard, in English and Sinhala.",
-    SI: "StudEd මඟින් ලංකාවේ විෂය නිර්දේශය Waves, Lessons සහ Courses ලෙස සකසා ඇත. Learn සහ Evaluate අදියර හරහා XP උපයාගෙන, Streak එක රැකගෙන Leaderboard එකේ ඉහළටම යන්න.",
+    EN: "Visual, hands-on learning for Sri Lankan students. Build true intuition through interactive simulations, step-by-step guidance, and gamified progress.",
+    SI: "ලංකාවේ සිසුන් සඳහාම නිර්මාණය කළ අන්තර්ක්‍රියාකාරී අධ්‍යාපනික වේදිකාව. ප්‍රායෝගික අභ්‍යාස, පියවරෙන් පියවර මඟපෙන්වීම සහ විනෝදජනක අභියෝග හරහා සැබෑ දැනුම ගොඩනගන්න.",
   },
   heroLiveChip: {
-    EN: "1,240 learners riding the wave right now",
-    SI: "සිසුන් 1,240ක් මේ වන විටත් Waves ජයගනිමින් සිටී",
+    EN: "Interactive waves live",
+    SI: "අන්තර්ක්‍රියාකාරී Waves සජීවීව",
   },
   heroScrollHint: {
-    EN: "Scroll to earn Explorer XP",
-    SI: "Explorer XP ලබාගැනීමට Scroll කරන්න",
+    EN: "Scroll to explore courses",
+    SI: "Courses නැරඹීමට Scroll කරන්න",
+  },
+  ctaLearner: {
+    EN: "I'm a learner",
+    SI: "මම ශිෂ්‍යයෙක්",
+  },
+  ctaParentTeacher: {
+    EN: "I'm a parent or teacher",
+    SI: "මම දෙමව්පියෙක් / ගුරුවරයෙක්",
   },
   ctaGetStarted: {
     EN: "Get started free",
@@ -59,16 +67,16 @@ export const PUBLIC_STRINGS = {
     SI: "Courses නරඹන්න",
   },
   ctaPortal: {
-    EN: "Go to your portal",
-    SI: "ඔබගේ Portal එකට යන්න",
+    EN: "Go to your dashboard",
+    SI: "ඔබගේ Dashboard එකට යන්න",
   },
   ctaSeePricing: {
     EN: "See full comparison",
     SI: "සම්පූර්ණ විස්තරය බලන්න",
   },
   trustRow: {
-    EN: "Trusted by students across Sri Lankan schools",
-    SI: "ලංකාවේ පාසල් සිසුන් දහස් ගණනකගේ විශ්වාසය දිනූ",
+    EN: "Sri Lankan National Curriculum & Cambridge Aligned",
+    SI: "ලංකාවේ ජාතික විෂය නිර්දේශයට සහ Cambridge වලට අනුකූලයි",
   },
 
   statsGradeLevels: { EN: "Grade levels", SI: "ශ්‍රේණි (Grades)" },

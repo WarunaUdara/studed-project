@@ -5,7 +5,6 @@ import {
   Brain,
   CalendarClock,
   Check,
-  ChevronDown,
   Compass,
   Gamepad2,
   Globe2,
@@ -34,14 +33,13 @@ import { PlayableWave } from "@/components/public/PlayableWave";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { ScrollXpMeter } from "@/components/public/ScrollXpMeter";
 import { CTAAuroraMesh } from "@/components/public/CTAAuroraMesh";
-import { WaveMapHero } from "@/components/public/WaveMapHero";
+import { InteractiveHeroCard } from "@/components/public/InteractiveHeroCard";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/Card";
 import { ScrollExpand } from "@/components/ui/ScrollExpand";
 import { SplitText } from "@/components/ui/SplitText";
 import { TextLoop } from "@/components/ui/TextLoop";
 import { MagicBento, MagicBentoCard } from "@/components/ui/MagicBento";
-import { SpecularButton } from "@/components/ui/SpecularButton";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { FEATURED_COURSES, type FeaturedCourse } from "@/lib/demoData";
 import { type ProficiencyLevel, proficiencyMeta } from "@/lib/gamification";
@@ -97,39 +95,24 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
   const effectiveHeroTitleB = isSinhala ? t("heroTitleB").replace(/ /g, "\u00A0") : t("heroTitleB");
 
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden px-4 pb-12 pt-24 sm:px-6 sm:pb-16 sm:pt-28 lg:pb-20 lg:pt-32">
-      {/* Atmosphere: graph-paper dots + soft brand washes */}
+    <section className="relative flex min-h-screen items-center overflow-hidden px-4 pb-16 pt-28 sm:px-6 sm:pb-20 sm:pt-32 lg:pb-24 lg:pt-36">
+      {/* Atmosphere: Subtle graph-paper dots */}
       <div aria-hidden className="pointer-events-none absolute inset-0 select-none">
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: "radial-gradient(oklch(0.484 0.164 145 / 0.07) 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(oklch(0.484 0.164 145 / 0.06) 1px, transparent 1px)",
             backgroundSize: "28px 28px",
             maskImage: "linear-gradient(to bottom, black 0%, transparent 80%)",
             WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 80%)",
           }}
         />
-        <div className="absolute -top-40 left-[-15%] h-[560px] w-[70vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.484_0.164_145_/_0.12)_0%,transparent_70%)] blur-[100px]" />
-        <div className="absolute -top-32 right-[-15%] h-[520px] w-[60vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.571_0.181_145_/_0.1)_0%,transparent_70%)] blur-[100px]" />
-        
-        {/* Editorial Abstract Shape Overlay — scaled & cropped by screen borders */}
-        <img
-          src="/abstract-shapes/Union.svg"
-          alt=""
-          aria-hidden
-          className="absolute -top-32 -left-32 w-[540px] h-[540px] opacity-[0.22] dark:opacity-[0.14] pointer-events-none select-none rotate-12"
-        />
-        <img
-          src="/abstract-shapes/Group 211.svg"
-          alt=""
-          aria-hidden
-          className="absolute top-1/4 -right-48 w-[640px] h-[640px] opacity-[0.22] dark:opacity-[0.14] pointer-events-none select-none -rotate-45"
-        />
+        <div className="absolute -top-40 left-[-10%] h-[500px] w-[60vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.484_0.164_145_/_0.08)_0%,transparent_70%)] blur-[100px]" />
       </div>
 
-      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
         {/* Copy */}
-        <div className="flex flex-col items-start gap-4 sm:gap-5">
+        <div className="flex flex-col items-start gap-5 sm:gap-6">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -143,127 +126,109 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.06 }}
-            className="text-balance font-serif font-bold text-4xl leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl"
+            className="text-balance font-serif font-bold text-5xl leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-7xl"
           >
-            <span className="font-extrabold">{t("heroTitleA")}</span>
+            <span>{t("heroTitleA")}</span>
             <br />
-            <span className="italic font-bold text-primary">
+            <span className="italic text-primary">
               <SplitText
                 text={effectiveHeroTitleB}
                 tag="span"
                 splitType="chars"
-                delay={35}
-                duration={0.65}
+                delay={30}
+                duration={0.6}
                 ease="power3.out"
-                from={{ opacity: 0, y: 28 }}
+                from={{ opacity: 0, y: 24 }}
                 to={{ opacity: 1, y: 0 }}
                 className="inline-block"
               />
             </span>
-            <span className="text-primary">.</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.14 }}
-            className="max-w-lg text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base"
+            className="max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg"
           >
             {t("heroSubtitle")}
           </motion.p>
 
+          {/* Dual Audience Action Buttons (Learner vs Parent / Educator) */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.22 }}
-            className="flex flex-wrap items-center gap-3.5 pt-1"
+            className="flex flex-wrap items-center gap-3.5 pt-2"
           >
             {authed ? (
-              <Button asChild size="lg">
+              <Button asChild size="lg" className="rounded-full px-8 py-6 text-base font-bold shadow-md">
                 <Link to={ctaLink}>
-                  <Zap className="h-4 w-4" />
+                  <Zap className="h-5 w-5" />
                   {t("ctaPortal")}
                 </Link>
               </Button>
             ) : (
               <>
                 <Link to="/register">
-                  <SpecularButton
+                  <Button
                     size="lg"
-                    radius={22}
-                    lineColor="#ffffff"
-                    baseColor="#059669"
-                    tint="#10b981"
-                    tintOpacity={0.25}
-                    followMouse
-                    proximity={300}
-                    autoAnimate={false}
+                    className="h-13 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 text-base shadow-sm hover:shadow-md transition-all active:scale-98"
                   >
-                    <Zap className="h-4.5 w-4.5 text-white" />
-                    {t("ctaGetStarted")}
-                  </SpecularButton>
+                    {t("ctaLearner")}
+                  </Button>
                 </Link>
-                <Button asChild size="lg" variant="outline">
-                  <Link to="/courses">
-                    <Compass className="h-4 w-4 text-muted-foreground" />
-                    {t("ctaBrowseCourses")}
-                  </Link>
-                </Button>
+                <Link to="/courses">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="h-13 rounded-full border-border/80 bg-card hover:bg-muted text-foreground font-semibold px-8 text-base shadow-xs hover:shadow-sm transition-all"
+                  >
+                    {t("ctaParentTeacher")}
+                  </Button>
+                </Link>
               </>
             )}
           </motion.div>
 
+          {/* Clean Accreditation Badges */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.55, delay: 0.38 }}
-            className="mt-2 flex items-center gap-3 text-xs text-muted-foreground"
+            className="mt-3 flex flex-wrap items-center gap-4 text-xs font-semibold text-muted-foreground"
           >
-            <div className="flex -space-x-2">
-              {["a", "b", "c", "d"].map((k) => (
-                <span
-                  key={k}
-                  className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary to-purple text-[10px] font-bold text-white ring-2 ring-background"
-                >
-                  {k.toUpperCase()}
-                </span>
-              ))}
-            </div>
-            <div className="flex items-center gap-1">
-              {["s1", "s2", "s3", "s4", "s5"].map((k) => (
-                <Star key={k} className="h-3.5 w-3.5 fill-gold text-gold" />
-              ))}
+            <div className="flex items-center gap-1 text-amber-500">
+              <Star className="size-4 fill-current" />
+              <Star className="size-4 fill-current" />
+              <Star className="size-4 fill-current" />
+              <Star className="size-4 fill-current" />
+              <Star className="size-4 fill-current" />
             </div>
             <span>{t("trustRow")}</span>
           </motion.div>
         </div>
 
-        {/* Interactive wave map */}
+        {/* Right: Clean Interactive Simulation Card */}
         <motion.div
           initial={{ opacity: 0, y: 32, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.2 }}
         >
-          <WaveMapHero />
+          <InteractiveHeroCard />
         </motion.div>
       </div>
 
-      {/* Scroll cue — feeds the Explorer XP meter */}
+      {/* Scroll cue */}
       {!reduce && (
         <motion.div
           aria-hidden
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.6 }}
-          className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1 text-muted-foreground sm:flex"
+          className="absolute bottom-4 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1 text-muted-foreground sm:flex"
         >
           <span className="text-[11px] font-medium">{t("heroScrollHint")}</span>
-          <motion.span
-            animate={{ y: [0, 6, 0] }}
-            transition={{ duration: 1.8, repeat: Number.POSITIVE_INFINITY }}
-          >
-            <ChevronDown className="h-4 w-4" />
-          </motion.span>
         </motion.div>
       )}
     </section>
