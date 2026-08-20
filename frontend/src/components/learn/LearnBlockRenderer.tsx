@@ -5,6 +5,7 @@ import { CircuitLabBlock } from "@/components/learn/interactive/CircuitLabBlock"
 import { ForceLabBlock } from "@/components/learn/interactive/ForceLabBlock";
 import { FractionLabBlock } from "@/components/learn/interactive/FractionLabBlock";
 import { LeverLabBlock } from "@/components/learn/interactive/LeverLabBlock";
+import { OhmsLawLabBlock } from "@/components/learn/interactive/OhmsLawLabBlock";
 import { PythonRunnerBlock } from "@/components/learn/interactive/PythonRunnerBlock";
 import { WaterFlowBlock } from "@/components/learn/interactive/WaterFlowBlock";
 import { CodeBlock } from "@/components/learn/visualizations/CodeBlock";
@@ -140,6 +141,9 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
 
     case "lever_lab":
       return <LeverLabBlock content={block.content} metadata={block.metadata} />;
+
+    case "ohms_law_lab":
+      return <OhmsLawLabBlock content={block.content} metadata={block.metadata} />;
 
     case "python_runner":
       return <PythonRunnerBlock content={block.content} metadata={block.metadata} />;

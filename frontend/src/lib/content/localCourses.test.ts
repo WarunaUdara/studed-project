@@ -171,6 +171,23 @@ describe("every shipped course", () => {
     }
   });
 
+  it("writes formulas as single-escaped LaTeX so KaTeX can render them", () => {
+    for (const node of localCourseNodes()) {
+      const detail = localCourseDetail(node.slug);
+      for (const lesson of detail?.lessons ?? []) {
+        for (const summary of lesson.waves) {
+          const wave = findLocalWave(summary.id);
+          for (const block of wave?.learnBlocks ?? []) {
+            if (block.type !== "formula") continue;
+            // A doubled backslash is a LaTeX line break, not a command, and is
+            // the usual sign that an authoring script over-escaped the string.
+            expect(block.content.includes("\\\\")).toBe(false);
+          }
+        }
+      }
+    }
+  });
+
   it("gives each course a distinct slug and a non-empty syllabus", () => {
     const slugs = localCourseNodes().map((course) => course.slug);
     expect(new Set(slugs).size).toBe(slugs.length);

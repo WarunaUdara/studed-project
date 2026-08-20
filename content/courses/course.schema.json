@@ -107,6 +107,7 @@
             "water_flow",
             "fraction_lab",
             "lever_lab",
+            "ohms_law_lab",
             "python_runner",
             "animation"
           ]

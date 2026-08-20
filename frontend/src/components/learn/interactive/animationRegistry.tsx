@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import { ForceArrowsScene } from "./ForceArrowsScene";
 import { FractionBarScene } from "./FractionBarScene";
 import { LeverBalanceScene } from "./LeverBalanceScene";
+import { OhmsLawScene } from "./OhmsLawScene";
 import { ShortCircuitScene } from "./ShortCircuitScene";
 import { WaterFlowScene } from "./WaterFlowScene";
 
@@ -97,6 +98,16 @@ export const ANIMATION_SCENES: Record<string, SceneDefinition> = {
           weight: numberParam(params, "rightWeight", 6),
         }}
         notches={numberParam(params, "notches", 4)}
+      />
+    ),
+  },
+  "ohms-law": {
+    label: "Ohm's law circuit",
+    params: ["voltage", "resistance"],
+    Component: ({ params }) => (
+      <OhmsLawScene
+        voltage={numberParam(params, "voltage", 6)}
+        resistance={numberParam(params, "resistance", 3)}
       />
     ),
   },

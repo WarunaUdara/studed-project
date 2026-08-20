@@ -32,6 +32,7 @@ export const INTERACTIVE_LEARN_TYPES = [
   "water_flow",
   "fraction_lab",
   "lever_lab",
+  "ohms_law_lab",
   "python_runner",
   "animation",
 ] as const;
@@ -133,6 +134,15 @@ export interface LeverLabConfig {
   /** Load the beam starts with on each side. */
   left?: { position: number; weight: number } | null;
   right?: { position: number; weight: number } | null;
+  caption?: string;
+}
+
+export interface OhmsLawLabConfig {
+  version: number;
+  voltage?: number;
+  resistance?: number;
+  maxVoltage?: number;
+  maxResistance?: number;
   caption?: string;
 }
 

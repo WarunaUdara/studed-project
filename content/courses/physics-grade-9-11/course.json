@@ -1,0 +1,942 @@
+{
+  "slug": "physics-grade-9-11",
+  "title": "Electricity and Motion",
+  "description": "Grades 9 to 11 build the O/L core: Ohm's law on a bench you can set, series and parallel circuits, and the equations of motion behind everyday journeys.",
+  "gradeLevel": "G10",
+  "subject": "Physics",
+  "price": 0,
+  "version": 1,
+  "lessons": [
+    {
+      "title": "Lesson 1: Current, Voltage and Resistance",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Ohm's Law on the Bench",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 50,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 9,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "p911-1-1",
+              "type": "blob_dialog",
+              "content": "Three quantities, one relationship, and most mistakes come from mixing up which one you control.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Three quantities, one relationship, and most mistakes come from mixing up which one you control.",
+                    "mood": "thinking",
+                    "cta": "Which ones?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "You set the supply voltage. You choose the resistor. The current is what is left over.",
+                    "mood": "happy",
+                    "cta": "So current is the result?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Exactly. Current is never something you dial in directly. Prove it on the bench below.",
+                    "mood": "cheer",
+                    "cta": "Let me try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-1-2",
+              "type": "ohms_law_lab",
+              "content": "Set the supply and the resistor, then read the ammeter.",
+              "metadata": {
+                "version": 1,
+                "voltage": 6,
+                "resistance": 3,
+                "maxVoltage": 12,
+                "maxResistance": 12,
+                "caption": "Double the voltage and the current doubles. Double the resistance and it halves."
+              }
+            },
+            {
+              "id": "p911-1-3",
+              "type": "formula",
+              "content": "I = \\frac{V}{R}"
+            },
+            {
+              "id": "p911-1-4",
+              "type": "text",
+              "content": "Rearranged: **V = IR** and **R = V/I**. All three say the same thing, so pick whichever one leaves the unknown alone on the left."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "p911-eb-1-1",
+              "type": "tap_target",
+              "question": "A 12 V supply drives 4 A through a resistor. What is its resistance?",
+              "correctAnswer": "three",
+              "explanation": "R = V / I = 12 / 4 = 3 ohm.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "three",
+                    "label": "3 ohm"
+                  },
+                  {
+                    "id": "forty-eight",
+                    "label": "48 ohm"
+                  },
+                  {
+                    "id": "eight",
+                    "label": "8 ohm"
+                  },
+                  {
+                    "id": "sixteen",
+                    "label": "16 ohm"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-eb-1-2",
+              "type": "slider_target",
+              "question": "You keep the resistance fixed and double the supply voltage. What happens to the current?",
+              "correctAnswer": "doubles",
+              "explanation": "Current is proportional to voltage when resistance is held constant, so doubling one doubles the other.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 10,
+                "step": 1,
+                "bands": [
+                  {
+                    "value": "halves",
+                    "upTo": 2
+                  },
+                  {
+                    "value": "unchanged",
+                    "upTo": 5
+                  },
+                  {
+                    "value": "doubles"
+                  }
+                ],
+                "unit": "relative current"
+              }
+            },
+            {
+              "id": "p911-eb-1-3",
+              "type": "drag_drop",
+              "question": "Match each quantity to its unit.",
+              "correctAnswer": "slot-current:ampere,slot-resistance:ohm,slot-voltage:volt",
+              "explanation": "Current is measured in amperes, voltage in volts and resistance in ohms.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "ampere",
+                    "label": "ampere"
+                  },
+                  {
+                    "id": "volt",
+                    "label": "volt"
+                  },
+                  {
+                    "id": "ohm",
+                    "label": "ohm"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-current",
+                    "label": "Current"
+                  },
+                  {
+                    "id": "slot-voltage",
+                    "label": "Voltage"
+                  },
+                  {
+                    "id": "slot-resistance",
+                    "label": "Resistance"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Series and Parallel",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "p911-2-1",
+              "type": "blob_dialog",
+              "content": "Add a second resistor in a line and the current has to fight through both.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Add a second resistor in a line and the current has to fight through both.",
+                    "mood": "thinking",
+                    "cta": "So more resistance?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Yes. In series you add the resistances, and the current is the same everywhere.",
+                    "mood": "happy",
+                    "cta": "And parallel?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "In parallel you give the current a second road, so the total resistance drops below either one.",
+                    "mood": "surprised",
+                    "cta": "Below both?"
+                  },
+                  {
+                    "id": "l4",
+                    "text": "Below the smaller one. Two roads always carry more traffic than one.",
+                    "mood": "cheer",
+                    "cta": "Gotcha"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-2-2",
+              "type": "ohms_law_lab",
+              "content": "Treat the resistance slider as the total. Try 4 ohm, then 8 ohm as if you added a second resistor in series.",
+              "metadata": {
+                "version": 1,
+                "voltage": 12,
+                "resistance": 4,
+                "maxVoltage": 12,
+                "maxResistance": 12,
+                "caption": "Series adds up: two 4 ohm resistors behave like a single 8 ohm one, halving the current."
+              }
+            },
+            {
+              "id": "p911-2-3",
+              "type": "formula",
+              "content": "R_{series} = R_1 + R_2 \\qquad \\frac{1}{R_{parallel}} = \\frac{1}{R_1} + \\frac{1}{R_2}"
+            },
+            {
+              "id": "p911-2-4",
+              "type": "callout",
+              "content": "Two identical resistors in parallel give exactly half of one resistance. That single case answers a large share of O/L questions."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "p911-eb-2-1",
+              "type": "tap_target",
+              "question": "Two 6 ohm resistors are connected in parallel. What is the total resistance?",
+              "correctAnswer": "three",
+              "explanation": "Two identical resistors in parallel halve the resistance, so 6 ohm becomes 3 ohm.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "three",
+                    "label": "3 ohm"
+                  },
+                  {
+                    "id": "twelve",
+                    "label": "12 ohm"
+                  },
+                  {
+                    "id": "six",
+                    "label": "6 ohm"
+                  },
+                  {
+                    "id": "one",
+                    "label": "1 ohm"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-eb-2-2",
+              "type": "toggle_switch",
+              "question": "Switch on what is true of a series circuit.",
+              "correctAnswer": "lower-total=off,same-current=on,shared-voltage=on",
+              "explanation": "One path means one current, the voltage divides across the parts, and adding resistance in series always raises the total.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "same-current",
+                    "label": "The current is the same through every part",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "shared-voltage",
+                    "label": "The supply voltage is shared between the parts",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "lower-total",
+                    "label": "Adding a resistor lowers the total resistance",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-eb-2-3",
+              "type": "order_steps",
+              "question": "Put these totals in order, smallest first.",
+              "correctAnswer": "parallel>single>series",
+              "explanation": "Parallel gives 2 ohm, the single resistor is 4 ohm, and series gives 8 ohm.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "parallel",
+                    "label": "Two 4 ohm resistors in parallel"
+                  },
+                  {
+                    "id": "single",
+                    "label": "One 4 ohm resistor"
+                  },
+                  {
+                    "id": "series",
+                    "label": "Two 4 ohm resistors in series"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Power and Paying the Bill",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "p911-3-1",
+              "type": "blob_dialog",
+              "content": "Your electricity bill is not measured in volts or amps. It is measured in energy.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Your electricity bill is not measured in volts or amps. It is measured in energy.",
+                    "mood": "thinking",
+                    "cta": "Which is?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Power times time. Power itself is voltage times current.",
+                    "mood": "happy",
+                    "cta": "Show me"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "A 1000 W iron for one hour uses one kilowatt hour. That is one unit on the bill.",
+                    "mood": "happy",
+                    "cta": "That is all?"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-3-2",
+              "type": "formula",
+              "content": "P = VI = I^2R \\qquad E = Pt"
+            },
+            {
+              "id": "p911-3-3",
+              "type": "ohms_law_lab",
+              "content": "Watch the current climb as you raise the voltage. Power climbs faster, because it depends on both.",
+              "metadata": {
+                "version": 1,
+                "voltage": 9,
+                "resistance": 3,
+                "maxVoltage": 12,
+                "maxResistance": 12,
+                "caption": "At 9 V through 3 ohm the current is 3 A, so the power is 27 W."
+              }
+            },
+            {
+              "id": "p911-3-4",
+              "type": "text",
+              "content": "Because **P = I squared R**, doubling the current gives four times the heating. That is why a thin overloaded wire fails so suddenly."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "p911-eb-3-1",
+              "type": "tap_target",
+              "question": "A heater draws 5 A from a 230 V supply. What is its power?",
+              "correctAnswer": "elevenfifty",
+              "explanation": "P = VI = 230 x 5 = 1150 W.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "elevenfifty",
+                    "label": "1150 W"
+                  },
+                  {
+                    "id": "fortysix",
+                    "label": "46 W"
+                  },
+                  {
+                    "id": "235",
+                    "label": "235 W"
+                  },
+                  {
+                    "id": "twohundred",
+                    "label": "200 W"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-eb-3-2",
+              "type": "slider_target",
+              "question": "You double the current through a fixed resistor. What happens to the heat produced?",
+              "correctAnswer": "four-times",
+              "explanation": "Power goes as current squared, so doubling the current gives four times the heat.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 10,
+                "step": 1,
+                "bands": [
+                  {
+                    "value": "same",
+                    "upTo": 2
+                  },
+                  {
+                    "value": "doubles",
+                    "upTo": 5
+                  },
+                  {
+                    "value": "four-times"
+                  }
+                ],
+                "unit": "relative heating"
+              }
+            },
+            {
+              "id": "p911-eb-3-3",
+              "type": "drag_drop",
+              "question": "Match each formula to what it gives you.",
+              "correctAnswer": "slot-rate:power,slot-relation:ohm,slot-total:energy",
+              "explanation": "Power is the rate, energy is the rate multiplied by time, and Ohm's law ties the three circuit quantities together.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "power",
+                    "label": "P = VI"
+                  },
+                  {
+                    "id": "energy",
+                    "label": "E = Pt"
+                  },
+                  {
+                    "id": "ohm",
+                    "label": "V = IR"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-rate",
+                    "label": "The rate energy is used"
+                  },
+                  {
+                    "id": "slot-total",
+                    "label": "The energy used over time"
+                  },
+                  {
+                    "id": "slot-relation",
+                    "label": "How voltage, current and resistance relate"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Lesson 2: Motion You Can Calculate",
+      "sequenceOrder": 2,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Speed, Velocity and Acceleration",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 50,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 9,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "p911-4-1",
+              "type": "blob_dialog",
+              "content": "Speed says how fast. Velocity says how fast and which way.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Speed says how fast. Velocity says how fast and which way.",
+                    "mood": "happy",
+                    "cta": "And acceleration?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "How quickly the velocity changes. Slowing down is acceleration too, just negative.",
+                    "mood": "thinking",
+                    "cta": "Even braking?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Even braking. A bus going round a corner at a steady speed is accelerating as well.",
+                    "mood": "surprised",
+                    "cta": "Because the direction changes?"
+                  },
+                  {
+                    "id": "l4",
+                    "text": "Exactly that. Direction is part of velocity, so changing it counts.",
+                    "mood": "cheer",
+                    "cta": "Got it"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-4-2",
+              "type": "formula",
+              "content": "a = \\frac{v - u}{t}"
+            },
+            {
+              "id": "p911-4-3",
+              "type": "force_lab",
+              "content": "A steady push gives a steady acceleration. Watch the cart get faster and faster, not just fast.",
+              "metadata": {
+                "version": 1,
+                "label": "Test trolley",
+                "surfaces": [
+                  {
+                    "id": "track",
+                    "label": "Smooth track",
+                    "friction": 0.05
+                  },
+                  {
+                    "id": "bench",
+                    "label": "Bench top",
+                    "friction": 0.4
+                  }
+                ],
+                "caption": "Acceleration is the change in velocity each second, which is why the gaps grow."
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "p911-eb-4-1",
+              "type": "tap_target",
+              "question": "A car goes from rest to 20 m/s in 5 s. What is its acceleration?",
+              "correctAnswer": "four",
+              "explanation": "a = (v - u) / t = (20 - 0) / 5 = 4 m/s squared.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "four",
+                    "label": "4 m/s squared"
+                  },
+                  {
+                    "id": "hundred",
+                    "label": "100 m/s squared"
+                  },
+                  {
+                    "id": "twentyfive",
+                    "label": "25 m/s squared"
+                  },
+                  {
+                    "id": "quarter",
+                    "label": "0.25 m/s squared"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-eb-4-2",
+              "type": "toggle_switch",
+              "question": "Switch on every case where the object is accelerating.",
+              "correctAnswer": "braking=on,corner=on,straight=off",
+              "explanation": "Any change in speed or direction is acceleration. Only steady speed in a straight line is not.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "braking",
+                    "label": "A bus braking to a stop",
+                    "onLabel": "accelerating",
+                    "offLabel": "not accelerating"
+                  },
+                  {
+                    "id": "corner",
+                    "label": "A car turning a corner at a steady speed",
+                    "onLabel": "accelerating",
+                    "offLabel": "not accelerating"
+                  },
+                  {
+                    "id": "straight",
+                    "label": "A train at a constant speed on a straight track",
+                    "onLabel": "accelerating",
+                    "offLabel": "not accelerating"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-eb-4-3",
+              "type": "order_steps",
+              "question": "Order these from smallest acceleration to largest.",
+              "correctAnswer": "a>b>c",
+              "explanation": "The accelerations are 1, 2 and 6 m/s squared.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "a",
+                    "label": "0 to 10 m/s in 10 s"
+                  },
+                  {
+                    "id": "b",
+                    "label": "0 to 10 m/s in 5 s"
+                  },
+                  {
+                    "id": "c",
+                    "label": "0 to 30 m/s in 5 s"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Reading a Motion Graph",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "p911-5-1",
+              "type": "blob_dialog",
+              "content": "Graphs give up their meaning through gradients and areas. Learn those two and you can read any of them.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Graphs give up their meaning through gradients and areas. Learn those two and you can read any of them.",
+                    "mood": "thinking",
+                    "cta": "Which is which?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "On a distance-time graph, the gradient is the speed.",
+                    "mood": "happy",
+                    "cta": "And on velocity-time?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "The gradient is the acceleration, and the area underneath is the distance travelled.",
+                    "mood": "cheer",
+                    "cta": "Two for one"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-5-2",
+              "type": "text",
+              "content": "**Distance-time**: flat means stopped, steeper means faster.\n\n**Velocity-time**: flat means steady speed, sloping up means speeding up, and the area under the line is the distance covered."
+            },
+            {
+              "id": "p911-5-3",
+              "type": "callout",
+              "content": "A flat line means opposite things on the two graphs. Check the axis labels before you read anything else."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "p911-eb-5-1",
+              "type": "tap_target",
+              "question": "A distance-time graph is a flat horizontal line. What is the object doing?",
+              "correctAnswer": "stopped",
+              "explanation": "On a distance-time graph a flat line means the distance is not changing, so the object is stationary.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "stopped",
+                    "label": "Standing still"
+                  },
+                  {
+                    "id": "steady",
+                    "label": "Moving at a steady speed"
+                  },
+                  {
+                    "id": "speeding",
+                    "label": "Speeding up"
+                  },
+                  {
+                    "id": "back",
+                    "label": "Moving backwards"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-eb-5-2",
+              "type": "drag_drop",
+              "question": "Match each graph feature to what it tells you.",
+              "correctAnswer": "slot-dt-gradient:speed,slot-vt-area:distance,slot-vt-gradient:acceleration",
+              "explanation": "Gradient of distance against time is speed, gradient of velocity against time is acceleration, and the area under velocity against time is distance.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "speed",
+                    "label": "The speed"
+                  },
+                  {
+                    "id": "acceleration",
+                    "label": "The acceleration"
+                  },
+                  {
+                    "id": "distance",
+                    "label": "The distance travelled"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-dt-gradient",
+                    "label": "Gradient of a distance-time graph"
+                  },
+                  {
+                    "id": "slot-vt-gradient",
+                    "label": "Gradient of a velocity-time graph"
+                  },
+                  {
+                    "id": "slot-vt-area",
+                    "label": "Area under a velocity-time graph"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-eb-5-3",
+              "type": "slider_target",
+              "question": "A velocity-time graph shows a steady 12 m/s for 5 s. What distance was covered?",
+              "correctAnswer": "sixty",
+              "explanation": "The area under the line is 12 x 5 = 60 m.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 100,
+                "step": 5,
+                "bands": [
+                  {
+                    "value": "too-small",
+                    "upTo": 30
+                  },
+                  {
+                    "value": "sixty",
+                    "upTo": 60
+                  },
+                  {
+                    "value": "too-large"
+                  }
+                ],
+                "unit": "metres"
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Putting Motion to Work",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 60,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "p911-6-1",
+              "type": "blob_dialog",
+              "content": "Exam questions rarely hand you the right equation. They hand you three quantities.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Exam questions rarely hand you the right equation. They hand you three quantities.",
+                    "mood": "thinking",
+                    "cta": "Then what?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Write down what you have and what you want, then pick the equation that connects them.",
+                    "mood": "happy",
+                    "cta": "Every time?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Every time. The equation you need is the one with no extra unknowns in it.",
+                    "mood": "cheer",
+                    "cta": "That is the trick"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-6-2",
+              "type": "formula",
+              "content": "v = u + at \\qquad s = ut + \\tfrac{1}{2}at^2 \\qquad v^2 = u^2 + 2as"
+            },
+            {
+              "id": "p911-6-3",
+              "type": "text",
+              "content": "Each of the three equations leaves out one quantity. Choose the one that leaves out whatever you were not given and do not need."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "p911-eb-6-1",
+              "type": "order_steps",
+              "question": "Put the solving steps in the order that avoids mistakes.",
+              "correctAnswer": "list>pick>substitute>check",
+              "explanation": "Listing first is what makes the right equation obvious, and checking the size catches a slipped decimal point.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "list",
+                    "label": "List what you are given and what you want"
+                  },
+                  {
+                    "id": "pick",
+                    "label": "Pick the equation with no extra unknowns"
+                  },
+                  {
+                    "id": "substitute",
+                    "label": "Substitute the numbers with their units"
+                  },
+                  {
+                    "id": "check",
+                    "label": "Check the answer is a sensible size"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-eb-6-2",
+              "type": "tap_target",
+              "question": "You know u, a and t, and you want the distance. Which equation?",
+              "correctAnswer": "suvat-s",
+              "explanation": "That is the only one of the three that gives distance without needing the final velocity.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "suvat-s",
+                    "label": "s = ut + half a t squared"
+                  },
+                  {
+                    "id": "suvat-v",
+                    "label": "v = u + at"
+                  },
+                  {
+                    "id": "suvat-v2",
+                    "label": "v squared = u squared + 2as"
+                  },
+                  {
+                    "id": "ohm",
+                    "label": "V = IR"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "p911-eb-6-3",
+              "type": "drag_drop",
+              "question": "Match each equation to the quantity it leaves out.",
+              "correctAnswer": "slot-suat:final-velocity,slot-v2:time,slot-vuat:distance",
+              "explanation": "Each equation omits exactly one quantity, and that is what makes choosing between them straightforward.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "distance",
+                    "label": "distance"
+                  },
+                  {
+                    "id": "time",
+                    "label": "time"
+                  },
+                  {
+                    "id": "final-velocity",
+                    "label": "final velocity"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-vuat",
+                    "label": "v = u + at"
+                  },
+                  {
+                    "id": "slot-suat",
+                    "label": "s = ut + half a t squared"
+                  },
+                  {
+                    "id": "slot-v2",
+                    "label": "v squared = u squared + 2as"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
