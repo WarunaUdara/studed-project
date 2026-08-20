@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import { ForceArrowsScene } from "./ForceArrowsScene";
+import { FractionBarScene } from "./FractionBarScene";
 import { ShortCircuitScene } from "./ShortCircuitScene";
 import { WaterFlowScene } from "./WaterFlowScene";
 
@@ -67,6 +68,17 @@ export const ANIMATION_SCENES: Record<string, SceneDefinition> = {
       <WaterFlowScene
         voltage={numberParam(params, "voltage", 6)}
         resistance={numberParam(params, "resistance", 2)}
+      />
+    ),
+  },
+  "fraction-bar": {
+    label: "Fraction bar",
+    params: ["parts", "shaded", "label"],
+    Component: ({ params }) => (
+      <FractionBarScene
+        parts={numberParam(params, "parts", 4)}
+        shaded={numberParam(params, "shaded", 1)}
+        label={stringParam(params, "label", "")}
       />
     ),
   },

@@ -105,6 +105,7 @@
             "force_lab",
             "circuit_lab",
             "water_flow",
+            "fraction_lab",
             "animation"
           ]
         },

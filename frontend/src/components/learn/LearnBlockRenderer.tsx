@@ -3,6 +3,7 @@ import { AnimationBlock } from "@/components/learn/interactive/AnimationBlock";
 import { BlobDialogBlock } from "@/components/learn/interactive/BlobDialogBlock";
 import { CircuitLabBlock } from "@/components/learn/interactive/CircuitLabBlock";
 import { ForceLabBlock } from "@/components/learn/interactive/ForceLabBlock";
+import { FractionLabBlock } from "@/components/learn/interactive/FractionLabBlock";
 import { WaterFlowBlock } from "@/components/learn/interactive/WaterFlowBlock";
 import { CodeBlock } from "@/components/learn/visualizations/CodeBlock";
 import { CoordinatePlaneBlock } from "@/components/learn/visualizations/CoordinatePlaneBlock";
@@ -128,6 +129,9 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
 
     case "circuit_lab":
       return <CircuitLabBlock content={block.content} metadata={block.metadata} />;
+
+    case "fraction_lab":
+      return <FractionLabBlock content={block.content} metadata={block.metadata} />;
 
     case "water_flow":
       return <WaterFlowBlock content={block.content} metadata={block.metadata} />;

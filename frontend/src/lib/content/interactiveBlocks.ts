@@ -30,6 +30,7 @@ export const INTERACTIVE_LEARN_TYPES = [
   "force_lab",
   "circuit_lab",
   "water_flow",
+  "fraction_lab",
   "animation",
 ] as const;
 
@@ -109,6 +110,18 @@ export interface WaterFlowConfig {
   caption?: string;
 }
 
+export interface FractionLabConfig {
+  version: number;
+  /** Parts the bar starts cut into. */
+  parts?: number;
+  /** Parts shaded to begin with. */
+  shaded?: number;
+  /** Upper limit on the cuts, kept small enough that pieces stay tappable. */
+  maxParts?: number;
+  label?: string;
+  caption?: string;
+}
+
 /* ----------------------------- Evaluate blocks ----------------------------- */
 
 export interface TapTargetConfig {
@@ -178,11 +191,15 @@ export function parseBlockConfig<T>(metadata: string | object | null | undefined
  * no interaction config at all. Those must fall back to the plain question card
  * rather than rendering an empty puzzle a student cannot solve.
  */
-export function hasInteractiveConfig(type: string, metadata: string | object | null | undefined): boolean {
+export function hasInteractiveConfig(
+  type: string,
+  metadata: string | object | null | undefined,
+): boolean {
   const config = parseBlockConfig<Record<string, unknown>>(metadata);
   if (!config) return false;
 
-  const filled = (key: string) => Array.isArray(config[key]) && (config[key] as unknown[]).length > 0;
+  const filled = (key: string) =>
+    Array.isArray(config[key]) && (config[key] as unknown[]).length > 0;
 
   switch (type.toLowerCase()) {
     case "tap_target":
