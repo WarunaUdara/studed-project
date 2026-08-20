@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   AlertTriangle,
   ArrowDown,
@@ -100,6 +100,7 @@ export function BlobProgramMaze({
   onFinish,
   className = "",
 }: BlobProgramMazeProps) {
+  const reduce = useReducedMotion();
   const [commands, setCommands] = useState<ProgramCommand[]>(config.initialCommands);
   const [robotPos, setRobotPos] = useState(config.startPos);
   const [robotDir, setRobotDir] = useState<Direction>(config.startDir);
@@ -304,7 +305,7 @@ export function BlobProgramMaze({
                   {/* Target Gem */}
                   {isGemHere && !(status === "success" && isRobotHere) && (
                     <motion.div
-                      animate={{ scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] }}
+                      animate={reduce ? undefined : { scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] }}
                       transition={{ repeat: Infinity, duration: 2.2 }}
                       className="drop-shadow-[0_0_12px_rgba(168,85,247,0.8)]"
                     >

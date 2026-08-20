@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
 interface DailySparkMascotMotivationProps {
@@ -10,6 +10,7 @@ export function DailySparkMascotMotivation({
   totalXp,
   onContinue,
 }: DailySparkMascotMotivationProps) {
+  const reduce = useReducedMotion();
   return (
     <div className="relative flex min-h-[580px] w-full max-w-4xl flex-col items-center justify-between rounded-3xl border border-white/10 bg-[oklch(0.406_0.011_270.2)] p-8 text-white shadow-2xl text-center">
       {/* Top spacer */}
@@ -22,7 +23,7 @@ export function DailySparkMascotMotivation({
           {/* 3D Floating Blob Character with Dumbbells */}
           <motion.div
             initial={{ y: 20, scale: 0.8, opacity: 0 }}
-            animate={{ y: [0, -10, 0], scale: 1, opacity: 1 }}
+            animate={reduce ? { y: 0, scale: 1, opacity: 1 } : { y: [0, -10, 0], scale: 1, opacity: 1 }}
             transition={{
               y: { repeat: Infinity, duration: 2.6, ease: "easeInOut" },
               scale: { duration: 0.5, type: "spring", bounce: 0.4 },
@@ -62,13 +63,17 @@ export function DailySparkMascotMotivation({
                 d="M 60,100 C 60,60 140,60 140,100 C 140,140 130,155 100,155 C 70,155 60,140 60,100 Z"
                 fill="url(#blob-grad)"
                 filter="url(#blob-glow)"
-                animate={{
-                  d: [
-                    "M 60,100 C 60,60 140,60 140,100 C 140,140 130,155 100,155 C 70,155 60,140 60,100 Z",
-                    "M 55,100 C 55,55 145,55 145,100 C 145,145 135,150 100,150 C 65,150 55,145 55,100 Z",
-                    "M 60,100 C 60,60 140,60 140,100 C 140,140 130,155 100,155 C 70,155 60,140 60,100 Z",
-                  ],
-                }}
+                animate={
+                  reduce
+                    ? undefined
+                    : {
+                        d: [
+                          "M 60,100 C 60,60 140,60 140,100 C 140,140 130,155 100,155 C 70,155 60,140 60,100 Z",
+                          "M 55,100 C 55,55 145,55 145,100 C 145,145 135,150 100,150 C 65,150 55,145 55,100 Z",
+                          "M 60,100 C 60,60 140,60 140,100 C 140,140 130,155 100,155 C 70,155 60,140 60,100 Z",
+                        ],
+                      }
+                }
                 transition={{
                   repeat: Infinity,
                   duration: 2.6,

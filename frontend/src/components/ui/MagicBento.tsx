@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import "./MagicBento.css";
+import { prefersReducedMotion } from "@/lib/motion";
 
 const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
@@ -133,6 +134,7 @@ export function MagicBentoCard({
 
   const animateParticles = useCallback(() => {
     if (!cardRef.current || !isHoveredRef.current || !enableStars) return;
+    if (prefersReducedMotion()) return;
 
     if (!particlesInitialized.current) {
       initializeParticles();

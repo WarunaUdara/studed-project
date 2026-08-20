@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { Bot, Brain, CheckCircle2, Code2, Compass, Gem, Terminal } from "lucide-react";
+import { prefersReducedMotion } from "@/lib/motion";
 
 export function InteractiveHeroCard() {
   const [activeTab, setActiveTab] = useState<"math" | "science" | "code">("math");
@@ -33,6 +34,7 @@ export function InteractiveHeroCard() {
   // GSAP Math Sine/Cosine Animation
   useEffect(() => {
     if (activeTab !== "math") return;
+    if (prefersReducedMotion()) return;
     const ctx = gsap.context(() => {
       const obj = { val: 0.1 };
       gsap.to(obj, {

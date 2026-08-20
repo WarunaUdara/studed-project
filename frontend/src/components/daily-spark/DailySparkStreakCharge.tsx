@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 interface DailySparkStreakChargeProps {
   onContinue: () => void;
@@ -7,6 +7,7 @@ interface DailySparkStreakChargeProps {
 export function DailySparkStreakCharge({
   onContinue,
 }: DailySparkStreakChargeProps) {
+  const reduce = useReducedMotion();
   return (
     <div className="relative flex min-h-[580px] w-full max-w-4xl flex-col items-center justify-between overflow-hidden rounded-3xl border border-white/10 bg-[oklch(0.398_0.011_270.1)] p-8 text-white shadow-2xl text-center">
       {/* Top spacer */}
@@ -22,7 +23,7 @@ export function DailySparkStreakCharge({
           {/* Spark Particle Rays around the capsule */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: [0.6, 1, 0.6], scale: [0.95, 1.05, 0.95] }}
+            animate={reduce ? undefined : { opacity: [0.6, 1, 0.6], scale: [0.95, 1.05, 0.95] }}
             transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
             className="absolute size-56 pointer-events-none select-none"
           >
@@ -61,7 +62,7 @@ export function DailySparkStreakCharge({
           {/* 3D Battery SVG */}
           <motion.div
             initial={{ scale: 0.7, y: 15, opacity: 0 }}
-            animate={{ scale: 1, y: [0, -8, 0], opacity: 1 }}
+            animate={reduce ? { scale: 1, opacity: 1 } : { scale: 1, y: [0, -8, 0], opacity: 1 }}
             transition={{
               scale: { type: "spring", duration: 0.7, bounce: 0.3 },
               y: { repeat: Infinity, duration: 2.8, ease: "easeInOut" },
