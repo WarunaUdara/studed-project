@@ -28,16 +28,37 @@ describe("EvaluateBlockRenderer", () => {
     expect(el.type.name).toBe("QuizBlock");
   });
 
+  const CONFIGS: Record<string, object> = {
+    tap_target: { targets: [{ id: "a", label: "A" }] },
+    drag_drop: { items: [{ id: "a", label: "A" }], slots: [{ id: "s", label: "S" }] },
+    order_steps: { steps: [{ id: "a", label: "A" }] },
+    toggle_switch: { switches: [{ id: "a", label: "A" }] },
+    slider_target: { min: 0, max: 10, bands: [{ value: "low" }] },
+  };
+
   it("routes interactive types to the manipulative card", () => {
-    for (const type of ["tap_target", "drag_drop", "order_steps", "toggle_switch", "slider_target"]) {
+    for (const [type, config] of Object.entries(CONFIGS)) {
       const el = EvaluateBlockRenderer({
-        block: { ...base, type },
+        block: { ...base, type, metadata: JSON.stringify({ version: 1, ...config }) },
         index: 0,
         answer: "",
         onAnswerChange: () => {},
       });
       expect(el.type.name).toBe("InteractiveCard");
       expect(el.props.instruction.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("falls back to the quiz card when an interactive block has nothing to manipulate", () => {
+    // Legacy and AI-generated blocks share these type names but carry no config.
+    for (const type of Object.keys(CONFIGS)) {
+      const el = EvaluateBlockRenderer({
+        block: { ...base, type },
+        index: 0,
+        answer: "",
+        onAnswerChange: () => {},
+      });
+      expect(el.type.name).toBe("QuizBlock");
     }
   });
 });

@@ -1,4 +1,4 @@
-import { isInteractiveEvaluateType } from "@/lib/content/interactiveBlocks";
+import { hasInteractiveConfig, isInteractiveEvaluateType } from "@/lib/content/interactiveBlocks";
 import { DragDropBlock } from "./interactive/DragDropBlock";
 import { InteractiveCard } from "./interactive/InteractiveCard";
 import { OrderStepsBlock } from "./interactive/OrderStepsBlock";
@@ -54,7 +54,9 @@ export function EvaluateBlockRenderer({
 }: EvaluateBlockRendererProps) {
   const type = block.type.toLowerCase();
 
-  if (!isInteractiveEvaluateType(type)) {
+  // A manipulative type with no interaction to manipulate is not manipulative;
+  // it falls back to the plain question card so the student can still answer.
+  if (!isInteractiveEvaluateType(type) || !hasInteractiveConfig(type, block.metadata)) {
     return (
       <QuizBlock
         block={block}

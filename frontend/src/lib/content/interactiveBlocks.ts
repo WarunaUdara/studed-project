@@ -171,6 +171,35 @@ export function parseBlockConfig<T>(metadata: string | object | null | undefined
   }
 }
 
+/**
+ * Whether a block carries enough configuration to actually be manipulated.
+ *
+ * The AI assistant and older content emit question types like `drag_drop` with
+ * no interaction config at all. Those must fall back to the plain question card
+ * rather than rendering an empty puzzle a student cannot solve.
+ */
+export function hasInteractiveConfig(type: string, metadata: string | object | null | undefined): boolean {
+  const config = parseBlockConfig<Record<string, unknown>>(metadata);
+  if (!config) return false;
+
+  const filled = (key: string) => Array.isArray(config[key]) && (config[key] as unknown[]).length > 0;
+
+  switch (type.toLowerCase()) {
+    case "tap_target":
+      return filled("targets");
+    case "drag_drop":
+      return filled("items") && filled("slots");
+    case "order_steps":
+      return filled("steps");
+    case "toggle_switch":
+      return filled("switches");
+    case "slider_target":
+      return filled("bands");
+    default:
+      return false;
+  }
+}
+
 /* ------------------------- Canonical answer encoding ----------------------- */
 
 /**
