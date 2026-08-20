@@ -35,7 +35,7 @@ export class GlobalErrorBoundary extends React.Component<ErrorBoundaryProps, Err
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-background px-4 text-center">
+        <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-6 bg-background px-4 text-center">
           <div className="space-y-2">
             <h1 className="text-2xl font-bold text-foreground">Something went wrong</h1>
             <p className="text-muted-foreground">

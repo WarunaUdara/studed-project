@@ -23,7 +23,7 @@ export function App() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-background text-foreground">
+    <div className="relative min-h-[100dvh] bg-background text-foreground">
       <ToastProvider>
         <ThemePullCord />
         <OfflineBanner />
