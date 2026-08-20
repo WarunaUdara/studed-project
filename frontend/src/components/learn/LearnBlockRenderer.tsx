@@ -1,5 +1,6 @@
 import { Info } from "lucide-react";
 import { AnimationBlock } from "@/components/learn/interactive/AnimationBlock";
+import { BlobDialogBlock } from "@/components/learn/interactive/BlobDialogBlock";
 import { CircuitLabBlock } from "@/components/learn/interactive/CircuitLabBlock";
 import { ForceLabBlock } from "@/components/learn/interactive/ForceLabBlock";
 import { WaterFlowBlock } from "@/components/learn/interactive/WaterFlowBlock";
@@ -118,6 +119,9 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
       return <HtmlSimulationBlock content={block.content} metadata={block.metadata} />;
 
     /* ------------------------- Interactive Learn Blocks --------------------- */
+
+    case "blob_dialog":
+      return <BlobDialogBlock content={block.content} metadata={block.metadata} />;
 
     case "force_lab":
       return <ForceLabBlock content={block.content} metadata={block.metadata} />;
