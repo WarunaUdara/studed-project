@@ -35,11 +35,19 @@ export function StreakCelebrationModal({
     if (!isOpen) return;
     if (!overlayRef.current || !panelRef.current) return;
     if (prefersReducedMotion()) {
-      gsap.set([overlayRef.current, panelRef.current], { opacity: 1, scale: 1, y: 0 });
+      gsap.set([overlayRef.current, panelRef.current], {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+      });
       return;
     }
     const tweens = [
-      gsap.fromTo(overlayRef.current, { opacity: 0 }, { opacity: 1, duration: 0.25 }),
+      gsap.fromTo(
+        overlayRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.25 },
+      ),
       gsap.fromTo(
         panelRef.current,
         { scale: 0.9, opacity: 0, y: 20 },
