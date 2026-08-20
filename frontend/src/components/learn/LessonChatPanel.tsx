@@ -5,7 +5,7 @@ import { CornerLeftUp, Send, X } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useEffect, useRef, useState } from "react";
 import "feral-blob/blob.css";
-import { streamAgentChat } from "@/lib/ai-chat";
+import { streamStudentAsk } from "@/lib/ai-chat";
 import { useReducedMotion } from "@/lib/motion";
 import { playClickSound } from "@/lib/sounds";
 import { cn } from "@/lib/utils";
@@ -123,7 +123,7 @@ export function LessonChatPanel({ waveTitle, waveContext, grade, language }: Les
       });
     };
 
-    await streamAgentChat(
+    await streamStudentAsk(
       {
         prompt,
         grade,
