@@ -1,0 +1,898 @@
+{
+  "slug": "ict-ol",
+  "title": "O/L ICT Revision",
+  "description": "Exam revision for O/L ICT: number systems, logic gates you switch by hand, and database tables that behave the way the paper expects.",
+  "gradeLevel": "OL",
+  "subject": "ICT",
+  "price": 0,
+  "version": 1,
+  "lessons": [
+    {
+      "title": "Lesson 1: Number Systems and Logic",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Counting in Binary",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 50,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "ictol-1-1",
+              "type": "blob_dialog",
+              "content": "A computer has two states, so it counts in twos rather than tens.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "A computer has two states, so it counts in twos rather than tens.",
+                    "mood": "happy",
+                    "cta": "Only two digits?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Only 0 and 1. Each place is worth double the one to its right: 1, 2, 4, 8, 16.",
+                    "mood": "thinking",
+                    "cta": "Like tens and hundreds?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "The same idea, different base. Add the place values where the digit is 1 and you have the decimal.",
+                    "mood": "cheer",
+                    "cta": "That is easy"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-1-2",
+              "type": "python_runner",
+              "content": "value = 45\n\nprint('decimal:', value)\nprint('binary :', bin(value)[2:])\nprint('back   :', int('101101', 2))",
+              "metadata": {
+                "version": 1,
+                "title": "Convert both ways",
+                "instruction": "Run it, then change the value to your own number and check the binary by hand.",
+                "starterCode": "value = 45\n\nprint('decimal:', value)\nprint('binary :', bin(value)[2:])\nprint('back   :', int('101101', 2))",
+                "hint": "bin() gives a string starting with 0b, which is why the code slices from index 2."
+              }
+            },
+            {
+              "id": "ictol-1-3",
+              "type": "text",
+              "content": "Place values from the right: **1, 2, 4, 8, 16, 32, 64, 128**. To convert 45, take the largest that fits (32), then keep going with the remainder."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ictol-eb-1-1",
+              "type": "tap_target",
+              "question": "What is binary 1011 in decimal?",
+              "correctAnswer": "eleven",
+              "explanation": "The place values with a 1 are 8, 2 and 1, which add to 11.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "eleven",
+                    "label": "11"
+                  },
+                  {
+                    "id": "thirteen",
+                    "label": "13"
+                  },
+                  {
+                    "id": "seven",
+                    "label": "7"
+                  },
+                  {
+                    "id": "nine",
+                    "label": "9"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-eb-1-2",
+              "type": "order_steps",
+              "question": "Put the decimal to binary method in order.",
+              "correctAnswer": "largest>mark>remainder>fill",
+              "explanation": "Working from the largest place value down turns the conversion into simple subtraction.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "largest",
+                    "label": "Find the largest place value that fits"
+                  },
+                  {
+                    "id": "mark",
+                    "label": "Write 1 in that place"
+                  },
+                  {
+                    "id": "remainder",
+                    "label": "Continue with what is left over"
+                  },
+                  {
+                    "id": "fill",
+                    "label": "Fill the remaining places with 0"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-eb-1-3",
+              "type": "toggle_switch",
+              "question": "Switch on the bits that make binary 100101.",
+              "correctAnswer": "bit1=on,bit32=on,bit4=on,bit8=off",
+              "explanation": "100101 is 32 + 4 + 1 = 37, so the 8 place stays 0.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "bit32",
+                    "label": "The 32 place",
+                    "onLabel": "1",
+                    "offLabel": "0"
+                  },
+                  {
+                    "id": "bit4",
+                    "label": "The 4 place",
+                    "onLabel": "1",
+                    "offLabel": "0"
+                  },
+                  {
+                    "id": "bit8",
+                    "label": "The 8 place",
+                    "onLabel": "1",
+                    "offLabel": "0"
+                  },
+                  {
+                    "id": "bit1",
+                    "label": "The 1 place",
+                    "onLabel": "1",
+                    "offLabel": "0"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Logic Gates by Hand",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "ictol-2-1",
+              "type": "blob_dialog",
+              "content": "Every gate is a rule that turns inputs into one output.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Every gate is a rule that turns inputs into one output.",
+                    "mood": "happy",
+                    "cta": "How many rules?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "AND needs both. OR needs at least one. NOT flips whatever it is given.",
+                    "mood": "thinking",
+                    "cta": "That is all?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "That is the whole basis of a processor. Flip the switches below and check each rule.",
+                    "mood": "cheer",
+                    "cta": "Let me try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-2-2",
+              "type": "python_runner",
+              "content": "def AND(a, b):\n    return a and b\n\ndef OR(a, b):\n    return a or b\n\nfor a in [0, 1]:\n    for b in [0, 1]:\n        print(a, b, '->', 'AND', AND(a, b), 'OR', OR(a, b))",
+              "metadata": {
+                "version": 1,
+                "title": "Print the truth tables",
+                "instruction": "Run it, then add a NOT function and print its table too.",
+                "starterCode": "def AND(a, b):\n    return a and b\n\ndef OR(a, b):\n    return a or b\n\nfor a in [0, 1]:\n    for b in [0, 1]:\n        print(a, b, '->', 'AND', AND(a, b), 'OR', OR(a, b))",
+                "hint": "In Python, 0 counts as false and 1 counts as true."
+              }
+            },
+            {
+              "id": "ictol-2-3",
+              "type": "text",
+              "content": "A **truth table** lists every possible input combination and the output for each. Two inputs give four rows, three inputs give eight."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ictol-eb-2-1",
+              "type": "toggle_switch",
+              "question": "Set the inputs so an AND gate outputs 1.",
+              "correctAnswer": "input-a=on,input-b=on",
+              "explanation": "AND outputs 1 only when every input is 1.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "input-a",
+                    "label": "Input A",
+                    "onLabel": "1",
+                    "offLabel": "0"
+                  },
+                  {
+                    "id": "input-b",
+                    "label": "Input B",
+                    "onLabel": "1",
+                    "offLabel": "0"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-eb-2-2",
+              "type": "toggle_switch",
+              "question": "Set the inputs so an OR gate outputs 1 while one input stays 0.",
+              "correctAnswer": "input-a=on,input-b=off",
+              "explanation": "OR needs at least one input to be 1, so one high input is enough.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "input-a",
+                    "label": "Input A",
+                    "onLabel": "1",
+                    "offLabel": "0"
+                  },
+                  {
+                    "id": "input-b",
+                    "label": "Input B",
+                    "onLabel": "1",
+                    "offLabel": "0"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-eb-2-3",
+              "type": "drag_drop",
+              "question": "Match each gate to its rule.",
+              "correctAnswer": "slot-and:and,slot-not:not,slot-or:or",
+              "explanation": "Those three rules combine into every other gate on the paper.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "and",
+                    "label": "Output 1 only when all inputs are 1"
+                  },
+                  {
+                    "id": "or",
+                    "label": "Output 1 when at least one input is 1"
+                  },
+                  {
+                    "id": "not",
+                    "label": "Output the opposite of the input"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-and",
+                    "label": "AND"
+                  },
+                  {
+                    "id": "slot-or",
+                    "label": "OR"
+                  },
+                  {
+                    "id": "slot-not",
+                    "label": "NOT"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. How Many Rows in the Table?",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "ictol-3-1",
+              "type": "blob_dialog",
+              "content": "Examiners like asking how many rows a truth table needs.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Examiners like asking how many rows a truth table needs.",
+                    "mood": "thinking",
+                    "cta": "Is there a formula?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Two to the power of the number of inputs. Two inputs give four rows, three give eight.",
+                    "mood": "happy",
+                    "cta": "Because each input doubles it?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Exactly that. Each new input doubles every existing combination.",
+                    "mood": "cheer",
+                    "cta": "Makes sense"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-3-2",
+              "type": "text",
+              "content": "The same doubling explains storage: **one byte is 8 bits**, which gives 256 different patterns, and that is why a byte counts from 0 to 255."
+            },
+            {
+              "id": "ictol-3-3",
+              "type": "callout",
+              "content": "Powers of two worth memorising: 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ictol-eb-3-1",
+              "type": "tap_target",
+              "question": "How many rows does a truth table with 3 inputs need?",
+              "correctAnswer": "eight",
+              "explanation": "Two to the power of three is eight, because each input doubles the number of combinations.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "eight",
+                    "label": "8"
+                  },
+                  {
+                    "id": "six",
+                    "label": "6"
+                  },
+                  {
+                    "id": "three",
+                    "label": "3"
+                  },
+                  {
+                    "id": "nine",
+                    "label": "9"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-eb-3-2",
+              "type": "slider_target",
+              "question": "How many different patterns can one byte hold?",
+              "correctAnswer": "two-fifty-six",
+              "explanation": "Eight bits give two to the power of eight, which is 256 patterns.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 1024,
+                "step": 8,
+                "bands": [
+                  {
+                    "value": "too-few",
+                    "upTo": 100
+                  },
+                  {
+                    "value": "two-fifty-six",
+                    "upTo": 300
+                  },
+                  {
+                    "value": "too-many"
+                  }
+                ],
+                "unit": "patterns"
+              }
+            },
+            {
+              "id": "ictol-eb-3-3",
+              "type": "drag_drop",
+              "question": "Match each quantity to its size.",
+              "correctAnswer": "slot-byte:eight,slot-kb:kilobyte,slot-range:two-fifty-six",
+              "explanation": "A byte is 8 bits holding 256 values, and a kilobyte is 1024 bytes, not 1000.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "eight",
+                    "label": "8 bits"
+                  },
+                  {
+                    "id": "kilobyte",
+                    "label": "1024 bytes"
+                  },
+                  {
+                    "id": "two-fifty-six",
+                    "label": "256 values"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-byte",
+                    "label": "One byte"
+                  },
+                  {
+                    "id": "slot-kb",
+                    "label": "One kilobyte"
+                  },
+                  {
+                    "id": "slot-range",
+                    "label": "What one byte can represent"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Lesson 2: Databases That Behave",
+      "sequenceOrder": 2,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Tables, Records and Keys",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "ictol-4-1",
+              "type": "blob_dialog",
+              "content": "A database table is a grid: each row is one thing, each column is one fact about it.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "A database table is a grid: each row is one thing, each column is one fact about it.",
+                    "mood": "happy",
+                    "cta": "Like a spreadsheet?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Close, but a table has rules. One column identifies each row uniquely.",
+                    "mood": "thinking",
+                    "cta": "The primary key?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "The primary key. No duplicates, never empty. That is what stops a database losing track of things.",
+                    "mood": "cheer",
+                    "cta": "Understood"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-4-2",
+              "type": "code",
+              "content": "Student(index_no, name, grade, class)\nindex_no is the primary key"
+            },
+            {
+              "id": "ictol-4-3",
+              "type": "text",
+              "content": "**Record** is a row, **field** is a column, and the **primary key** is the field that identifies a row uniquely. A key that lives in another table pointing back here is a **foreign key**."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ictol-eb-4-1",
+              "type": "tap_target",
+              "question": "Which field is the best primary key for a student table?",
+              "correctAnswer": "index",
+              "explanation": "Names, grades and birthdays repeat between students. An index number is unique to one student.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "index",
+                    "label": "Index number"
+                  },
+                  {
+                    "id": "name",
+                    "label": "Name"
+                  },
+                  {
+                    "id": "grade",
+                    "label": "Grade"
+                  },
+                  {
+                    "id": "birthday",
+                    "label": "Date of birth"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-eb-4-2",
+              "type": "drag_drop",
+              "question": "Match each database word to what it means.",
+              "correctAnswer": "slot-column:field,slot-key:key,slot-row:record",
+              "explanation": "Rows are records, columns are fields, and the primary key is the field that keeps rows apart.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "record",
+                    "label": "One row"
+                  },
+                  {
+                    "id": "field",
+                    "label": "One column"
+                  },
+                  {
+                    "id": "key",
+                    "label": "The field that identifies a row"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-row",
+                    "label": "Record"
+                  },
+                  {
+                    "id": "slot-column",
+                    "label": "Field"
+                  },
+                  {
+                    "id": "slot-key",
+                    "label": "Primary key"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-eb-4-3",
+              "type": "toggle_switch",
+              "question": "Switch on the rules a primary key must follow.",
+              "correctAnswer": "not-empty=on,number=off,unique=on",
+              "explanation": "A key must be unique and present. It can be text, such as a national identity number.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "unique",
+                    "label": "It must be unique in the table",
+                    "onLabel": "required",
+                    "offLabel": "not required"
+                  },
+                  {
+                    "id": "not-empty",
+                    "label": "It must never be empty",
+                    "onLabel": "required",
+                    "offLabel": "not required"
+                  },
+                  {
+                    "id": "number",
+                    "label": "It must be a number",
+                    "onLabel": "required",
+                    "offLabel": "not required"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Asking a Database Questions",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "ictol-5-1",
+              "type": "blob_dialog",
+              "content": "A query says what you want, not how to find it. The database works out the how.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "A query says what you want, not how to find it. The database works out the how.",
+                    "mood": "thinking",
+                    "cta": "Which parts?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "SELECT the columns, FROM the table, WHERE the condition holds.",
+                    "mood": "happy",
+                    "cta": "In that order?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Written in that order, yes. The database applies WHERE before it hands you the columns.",
+                    "mood": "cheer",
+                    "cta": "Good to know"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-5-2",
+              "type": "code",
+              "content": "SELECT name, grade\nFROM Student\nWHERE grade = 11\nORDER BY name;"
+            },
+            {
+              "id": "ictol-5-3",
+              "type": "text",
+              "content": "**SELECT** chooses columns, **WHERE** filters rows, **ORDER BY** sorts what is left. Filtering happens before sorting, which is why a filtered query sorts faster."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ictol-eb-5-1",
+              "type": "order_steps",
+              "question": "Put the query clauses in the order they are written.",
+              "correctAnswer": "select>from>where>order",
+              "explanation": "That written order is fixed, even though the database applies the filter before it returns the columns.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "select",
+                    "label": "SELECT the columns"
+                  },
+                  {
+                    "id": "from",
+                    "label": "FROM the table"
+                  },
+                  {
+                    "id": "where",
+                    "label": "WHERE the condition holds"
+                  },
+                  {
+                    "id": "order",
+                    "label": "ORDER BY a column"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-eb-5-2",
+              "type": "drag_drop",
+              "question": "Match each clause to its job.",
+              "correctAnswer": "slot-order:sort,slot-select:columns,slot-where:rows",
+              "explanation": "Columns, then rows, then order: three separate jobs in one statement.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "columns",
+                    "label": "Chooses the columns"
+                  },
+                  {
+                    "id": "rows",
+                    "label": "Filters the rows"
+                  },
+                  {
+                    "id": "sort",
+                    "label": "Sorts the result"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-select",
+                    "label": "SELECT"
+                  },
+                  {
+                    "id": "slot-where",
+                    "label": "WHERE"
+                  },
+                  {
+                    "id": "slot-order",
+                    "label": "ORDER BY"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-eb-5-3",
+              "type": "tap_target",
+              "question": "Which clause would you add to list only grade 11 students?",
+              "correctAnswer": "where",
+              "explanation": "WHERE filters rows by a condition, which is exactly what is being asked for.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "where",
+                    "label": "WHERE grade = 11"
+                  },
+                  {
+                    "id": "select",
+                    "label": "SELECT grade"
+                  },
+                  {
+                    "id": "order",
+                    "label": "ORDER BY grade"
+                  },
+                  {
+                    "id": "from",
+                    "label": "FROM grade"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Why Split Data Across Tables",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 60,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "ictol-6-1",
+              "type": "blob_dialog",
+              "content": "Suppose every student row also stores the teacher's name and phone number.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Suppose every student row also stores the teacher's name and phone number.",
+                    "mood": "thinking",
+                    "cta": "That sounds convenient"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Until the teacher changes number. Now you edit it in forty rows and miss one.",
+                    "mood": "surprised",
+                    "cta": "Then which is right?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Nobody knows. That is why repeated data is split into its own table and linked by a key.",
+                    "mood": "cheer",
+                    "cta": "Clear"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-6-2",
+              "type": "code",
+              "content": "Student(index_no, name, class_id)\nClass(class_id, teacher_name, teacher_phone)"
+            },
+            {
+              "id": "ictol-6-3",
+              "type": "callout",
+              "content": "Store each fact in exactly one place. Every duplicate is a future disagreement waiting to happen."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ictol-eb-6-1",
+              "type": "tap_target",
+              "question": "What is the main problem with storing a teacher's phone number in every student row?",
+              "correctAnswer": "update",
+              "explanation": "Duplicated data drifts apart the moment one copy is updated and another is not.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "update",
+                    "label": "Updating it means changing many rows, and one will be missed"
+                  },
+                  {
+                    "id": "space",
+                    "label": "It uses slightly more storage"
+                  },
+                  {
+                    "id": "slow",
+                    "label": "Queries run slightly slower"
+                  },
+                  {
+                    "id": "nothing",
+                    "label": "There is no real problem"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-eb-6-2",
+              "type": "order_steps",
+              "question": "Put the splitting method in order.",
+              "correctAnswer": "spot>move>key>link",
+              "explanation": "Repeating facts move out, get their own key, and the original table points at them instead of copying them.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "spot",
+                    "label": "Spot the facts that repeat across rows"
+                  },
+                  {
+                    "id": "move",
+                    "label": "Move them to a table of their own"
+                  },
+                  {
+                    "id": "key",
+                    "label": "Give that table a primary key"
+                  },
+                  {
+                    "id": "link",
+                    "label": "Link back with a foreign key"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictol-eb-6-3",
+              "type": "toggle_switch",
+              "question": "Switch on the benefits of splitting repeated data into its own table.",
+              "correctAnswer": "consistent=on,no-keys=off,one-place=on",
+              "explanation": "Splitting relies on keys, so it needs more of them, not fewer. What it buys is one place per fact.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "one-place",
+                    "label": "Each fact is stored in one place only",
+                    "onLabel": "benefit",
+                    "offLabel": "not a benefit"
+                  },
+                  {
+                    "id": "consistent",
+                    "label": "Updates cannot leave rows disagreeing",
+                    "onLabel": "benefit",
+                    "offLabel": "not a benefit"
+                  },
+                  {
+                    "id": "no-keys",
+                    "label": "You no longer need keys",
+                    "onLabel": "benefit",
+                    "offLabel": "not a benefit"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
