@@ -1,11 +1,15 @@
 import { Info } from "lucide-react";
+import { AnimationBlock } from "@/components/learn/interactive/AnimationBlock";
+import { CircuitLabBlock } from "@/components/learn/interactive/CircuitLabBlock";
+import { ForceLabBlock } from "@/components/learn/interactive/ForceLabBlock";
+import { WaterFlowBlock } from "@/components/learn/interactive/WaterFlowBlock";
 import { CodeBlock } from "@/components/learn/visualizations/CodeBlock";
 import { CoordinatePlaneBlock } from "@/components/learn/visualizations/CoordinatePlaneBlock";
-import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
 import { HtmlSimulationBlock } from "@/components/learn/visualizations/HtmlSimulationBlock";
+import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
 import { TsCircuitBlock } from "@/components/learn/visualizations/TsCircuitBlock";
-import { MathFormula } from "@/components/ui/MathFormula";
 import { MarkdownContent } from "@/components/ui/MarkdownContent";
+import { MathFormula } from "@/components/ui/MathFormula";
 
 interface LearnBlock {
   id: string;
@@ -24,7 +28,9 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
       return <h3 className="text-xl font-semibold text-foreground font-serif">{block.content}</h3>;
 
     case "text":
-      return <MarkdownContent content={block.content} className="text-foreground leading-relaxed" />;
+      return (
+        <MarkdownContent content={block.content} className="text-foreground leading-relaxed" />
+      );
 
     case "image":
       return (
@@ -111,6 +117,20 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
     case "simulation_html":
       return <HtmlSimulationBlock content={block.content} metadata={block.metadata} />;
 
+    /* ------------------------- Interactive Learn Blocks --------------------- */
+
+    case "force_lab":
+      return <ForceLabBlock content={block.content} metadata={block.metadata} />;
+
+    case "circuit_lab":
+      return <CircuitLabBlock content={block.content} metadata={block.metadata} />;
+
+    case "water_flow":
+      return <WaterFlowBlock content={block.content} metadata={block.metadata} />;
+
+    case "animation":
+      return <AnimationBlock content={block.content} metadata={block.metadata} />;
+
     case "code":
       return <CodeBlock content={block.content} />;
 
@@ -119,7 +139,10 @@ export function LearnBlockRenderer({ block }: LearnBlockRendererProps) {
       return (
         <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 shadow-sm flex items-start gap-3">
           <Info className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-          <MarkdownContent content={block.content} className="text-sm text-foreground leading-relaxed" />
+          <MarkdownContent
+            content={block.content}
+            className="text-sm text-foreground leading-relaxed"
+          />
         </div>
       );
 

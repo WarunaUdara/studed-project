@@ -50,7 +50,10 @@ describe("LearnBlockRenderer", () => {
         id: "6",
         type: "html_simulation",
         content: "Projectile Motion",
-        metadata: JSON.stringify({ title: "Projectile Motion", html: "<!doctype html><html><body><canvas></canvas></body></html>" }),
+        metadata: JSON.stringify({
+          title: "Projectile Motion",
+          html: "<!doctype html><html><body><canvas></canvas></body></html>",
+        }),
       },
     });
     expect(el.props.content).toBe("Projectile Motion");
@@ -61,8 +64,40 @@ describe("LearnBlockRenderer", () => {
     const el = LearnBlockRenderer({
       block: { id: "7", type: "callout", content: "Remember: **mass attracts mass**" },
     });
-    const md = el.props.children.find((c: { type?: { name?: string } }) => c?.type?.name === "MarkdownContent");
+    const md = el.props.children.find(
+      (c: { type?: { name?: string } }) => c?.type?.name === "MarkdownContent",
+    );
     expect(md).toBeTruthy();
     expect(md.props.content).toBe("Remember: **mass attracts mass**");
+  });
+
+  it("renders the interactive physics lab blocks", () => {
+    const force = LearnBlockRenderer({
+      block: { id: "10", type: "force_lab", content: "Push the cart" },
+    });
+    expect(force.type.name).toBe("ForceLabBlock");
+
+    const circuit = LearnBlockRenderer({
+      block: { id: "11", type: "circuit_lab", content: "Light the bulb" },
+    });
+    expect(circuit.type.name).toBe("CircuitLabBlock");
+
+    const water = LearnBlockRenderer({
+      block: { id: "12", type: "water_flow", content: "Watch the water" },
+    });
+    expect(water.type.name).toBe("WaterFlowBlock");
+  });
+
+  it("renders an injected animation block by scene id", () => {
+    const el = LearnBlockRenderer({
+      block: {
+        id: "13",
+        type: "animation",
+        content: "force-arrows",
+        metadata: JSON.stringify({ version: 1, scene: "force-arrows", params: { push: 8 } }),
+      },
+    });
+    expect(el.type.name).toBe("AnimationBlock");
+    expect(el.props.content).toBe("force-arrows");
   });
 });
