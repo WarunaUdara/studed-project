@@ -3,11 +3,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   BookOpen,
   CheckCircle,
+  Compass,
+  FlaskConical,
+  MonitorSmartphone,
   Play,
+  Ruler,
   Search,
+  Sparkles,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useMutation, useQuery } from "urql";
 import { LearningPathRibbon } from "@/components/learning-paths/LearningPathRibbon";
 import type { CourseNode, LearningPathDef, PathCategory } from "@/components/learning-paths/types";
@@ -26,12 +31,12 @@ export const Route = createFileRoute("/courses/")({
   component: CoursesCatalogPage,
 });
 
-const CATEGORY_TABS: { id: PathCategory; label: string; icon: string }[] = [
-  { id: "ALL", label: "All Paths", icon: "✨" },
-  { id: "MATH", label: "Mathematics", icon: "📐" },
-  { id: "CS", label: "Programming & CS", icon: "💻" },
-  { id: "SCIENCE", label: "Science & Physics", icon: "🔬" },
-  { id: "LANGUAGES", label: "Languages", icon: "📚" },
+const CATEGORY_TABS: { id: PathCategory; label: string; icon: ReactNode }[] = [
+  { id: "ALL", label: "All Paths", icon: <Sparkles className="size-4" /> },
+  { id: "MATH", label: "Mathematics", icon: <Ruler className="size-4" /> },
+  { id: "CS", label: "Programming & CS", icon: <MonitorSmartphone className="size-4" /> },
+  { id: "SCIENCE", label: "Science & Physics", icon: <FlaskConical className="size-4" /> },
+  { id: "LANGUAGES", label: "Languages", icon: <BookOpen className="size-4" /> },
 ];
 
 function CoursesCatalogPage() {
@@ -255,7 +260,7 @@ function CoursesCatalogPage() {
                     : "bg-card text-muted-foreground border-border hover:bg-muted/70 hover:text-foreground",
                 )}
               >
-                <span>{tab.icon}</span>
+                {tab.icon}
                 <span>{tab.label}</span>
               </button>
             );
