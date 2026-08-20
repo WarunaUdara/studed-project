@@ -1,0 +1,927 @@
+{
+  "slug": "ict-grade-9-11",
+  "title": "Computer Science Foundations",
+  "description": "Grades 9 to 11 move from writing code to reasoning about it: data structures, searching, cost of an algorithm, functions, and debugging by evidence.",
+  "gradeLevel": "G10",
+  "subject": "ICT",
+  "price": 0,
+  "version": 1,
+  "lessons": [
+    {
+      "title": "Lesson 1: Data and Algorithms",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Choosing the Right Structure",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 50,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "ict911-1-1",
+              "type": "blob_dialog",
+              "content": "A list keeps things in order. A dictionary looks things up by name.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "A list keeps things in order. A dictionary looks things up by name.",
+                    "mood": "happy",
+                    "cta": "When do I use which?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Ask what you will do most: walk through everything, or fetch one known item?",
+                    "mood": "thinking",
+                    "cta": "Walking means a list?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Yes, and fetching by name means a dictionary. Choosing wrong is slow code with correct output.",
+                    "mood": "cheer",
+                    "cta": "Got it"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-1-2",
+              "type": "python_runner",
+              "content": "student = {'name': 'Nimasha', 'grade': 10, 'marks': [78, 85, 69]}\n\nprint(student['name'], 'is in grade', student['grade'])\nprint('Best mark:', max(student['marks']))",
+              "metadata": {
+                "version": 1,
+                "title": "A record with a dictionary",
+                "instruction": "Run it, then add a subject key and print that too.",
+                "starterCode": "student = {'name': 'Nimasha', 'grade': 10, 'marks': [78, 85, 69]}\n\nprint(student['name'], 'is in grade', student['grade'])\nprint('Best mark:', max(student['marks']))",
+                "hint": "Square brackets fetch by key: student['name']."
+              }
+            },
+            {
+              "id": "ict911-1-3",
+              "type": "text",
+              "content": "**List**: ordered, fetched by position, natural for walking through everything.\n\n**Dictionary**: unordered pairs, fetched by key, natural for records and lookups."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ict911-eb-1-1",
+              "type": "drag_drop",
+              "question": "Match each job to the structure that fits it.",
+              "correctAnswer": "slot-lookup:dict,slot-order:list",
+              "explanation": "Order and iteration suit a list; lookup by a known key suits a dictionary.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "list",
+                    "label": "A list"
+                  },
+                  {
+                    "id": "dict",
+                    "label": "A dictionary"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-order",
+                    "label": "Marks in the order they were entered"
+                  },
+                  {
+                    "id": "slot-lookup",
+                    "label": "Looking up a student by index number"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-eb-1-2",
+              "type": "tap_target",
+              "question": "Which expression fetches the first mark from marks = [78, 85, 69]?",
+              "correctAnswer": "zero",
+              "explanation": "Python indexes from zero, so the first item is at position 0.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "zero",
+                    "label": "marks[0]"
+                  },
+                  {
+                    "id": "one",
+                    "label": "marks[1]"
+                  },
+                  {
+                    "id": "first",
+                    "label": "marks['first']"
+                  },
+                  {
+                    "id": "call",
+                    "label": "marks(0)"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-eb-1-3",
+              "type": "toggle_switch",
+              "question": "Switch on the true statements.",
+              "correctAnswer": "dict-index=off,dict-key=on,list-order=on",
+              "explanation": "Dictionaries are keyed, not positional, which is exactly what makes their lookups direct.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "list-order",
+                    "label": "A list keeps its items in order",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "dict-key",
+                    "label": "A dictionary fetches values by key",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "dict-index",
+                    "label": "A dictionary is indexed by position like a list",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Searching: Two Strategies",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "ict911-2-1",
+              "type": "blob_dialog",
+              "content": "Finding a name in an unsorted list means checking them one by one.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Finding a name in an unsorted list means checking them one by one.",
+                    "mood": "thinking",
+                    "cta": "And if it is sorted?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Then you can halve the problem every single check. That is binary search.",
+                    "mood": "surprised",
+                    "cta": "Every check?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Every check. Eight items take at most three checks instead of eight.",
+                    "mood": "cheer",
+                    "cta": "That is a big difference"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-2-2",
+              "type": "python_runner",
+              "content": "names = ['Kavindi', 'Sahan', 'Dilini', 'Tharindu', 'Achini']\n\ntarget = 'Dilini'\nsteps = 0\nfor name in names:\n    steps = steps + 1\n    if name == target:\n        print('Found', target, 'after', steps, 'checks')\n        break",
+              "metadata": {
+                "version": 1,
+                "title": "Linear search",
+                "instruction": "Run it and see how many checks it needed. Then look for Achini and run it again.",
+                "starterCode": "names = ['Kavindi', 'Sahan', 'Dilini', 'Tharindu', 'Achini']\n\ntarget = 'Dilini'\nsteps = 0\nfor name in names:\n    steps = steps + 1\n    if name == target:\n        print('Found', target, 'after', steps, 'checks')\n        break",
+                "hint": "Linear search checks items in order until it finds the target."
+              }
+            },
+            {
+              "id": "ict911-2-3",
+              "type": "python_runner",
+              "content": "marks = [12, 27, 34, 45, 58, 63, 79, 88]\ntarget = 63\n\nlow = 0\nhigh = len(marks) - 1\nsteps = 0\n\nwhile low <= high:\n    steps = steps + 1\n    mid = (low + high) // 2\n    if marks[mid] == target:\n        print('Found', target, 'after', steps, 'checks')\n        break\n    if marks[mid] < target:\n        low = mid + 1\n    else:\n        high = mid - 1",
+              "metadata": {
+                "version": 1,
+                "title": "Binary search",
+                "instruction": "Run it, then change the target to 12 and see how the number of checks changes.",
+                "starterCode": "marks = [12, 27, 34, 45, 58, 63, 79, 88]\ntarget = 63\n\nlow = 0\nhigh = len(marks) - 1\nsteps = 0\n\nwhile low <= high:\n    steps = steps + 1\n    mid = (low + high) // 2\n    if marks[mid] == target:\n        print('Found', target, 'after', steps, 'checks')\n        break\n    if marks[mid] < target:\n        low = mid + 1\n    else:\n        high = mid - 1",
+                "hint": "Binary search only works because the list is already sorted."
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ict911-eb-2-1",
+              "type": "order_steps",
+              "question": "Put one round of binary search in order.",
+              "correctAnswer": "middle>compare>discard>repeat",
+              "explanation": "Each round throws away half the remaining items, which is where the speed comes from.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "middle",
+                    "label": "Look at the middle item"
+                  },
+                  {
+                    "id": "compare",
+                    "label": "Compare it with the target"
+                  },
+                  {
+                    "id": "discard",
+                    "label": "Discard the half that cannot contain the target"
+                  },
+                  {
+                    "id": "repeat",
+                    "label": "Repeat on the half that remains"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-eb-2-2",
+              "type": "tap_target",
+              "question": "What must be true before binary search can be used?",
+              "correctAnswer": "sorted",
+              "explanation": "Binary search discards half the list based on order, so an unsorted list breaks the logic.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "sorted",
+                    "label": "The list must already be sorted"
+                  },
+                  {
+                    "id": "short",
+                    "label": "The list must be short"
+                  },
+                  {
+                    "id": "numbers",
+                    "label": "The list must contain numbers"
+                  },
+                  {
+                    "id": "unique",
+                    "label": "Every item must be unique"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-eb-2-3",
+              "type": "slider_target",
+              "question": "A sorted list has 1000 items. Roughly how many checks does binary search need at worst?",
+              "correctAnswer": "about-ten",
+              "explanation": "Each check halves the list, and ten halvings take 1000 down to one.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 1000,
+                "step": 10,
+                "bands": [
+                  {
+                    "value": "about-ten",
+                    "upTo": 20
+                  },
+                  {
+                    "value": "about-hundred",
+                    "upTo": 200
+                  },
+                  {
+                    "value": "about-thousand"
+                  }
+                ],
+                "unit": "checks"
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. What Makes an Algorithm Expensive",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 60,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "ict911-3-1",
+              "type": "blob_dialog",
+              "content": "The question is never how fast one run is. It is how the work grows as the data grows.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "The question is never how fast one run is. It is how the work grows as the data grows.",
+                    "mood": "thinking",
+                    "cta": "Why?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Because a fast computer with a bad algorithm loses to a slow computer with a good one, once the data is big.",
+                    "mood": "happy",
+                    "cta": "Every time?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Once the data is big enough, every time. That is what complexity measures.",
+                    "mood": "cheer",
+                    "cta": "Understood"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-3-2",
+              "type": "text",
+              "content": "Three shapes cover most school work:\n\n- **Constant**: the work does not change as the data grows.\n- **Linear**: double the data, double the work.\n- **Halving**: double the data, add just one step."
+            },
+            {
+              "id": "ict911-3-3",
+              "type": "code",
+              "content": "for a in items:\n    for b in items:\n        compare(a, b)"
+            },
+            {
+              "id": "ict911-3-4",
+              "type": "callout",
+              "content": "A loop inside a loop over the same data means the work grows with the square. That is the pattern to spot in your own code."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ict911-eb-3-1",
+              "type": "drag_drop",
+              "question": "Match each operation to how its cost grows.",
+              "correctAnswer": "slot-binary:halving,slot-index:constant,slot-scan:linear",
+              "explanation": "Indexing is direct, a full scan grows with the data, and halving turns doubling into a single extra step.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "constant",
+                    "label": "Stays the same"
+                  },
+                  {
+                    "id": "linear",
+                    "label": "Doubles when the data doubles"
+                  },
+                  {
+                    "id": "halving",
+                    "label": "Grows by one step when the data doubles"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-index",
+                    "label": "Fetching one item from a list by index"
+                  },
+                  {
+                    "id": "slot-scan",
+                    "label": "Checking every item once"
+                  },
+                  {
+                    "id": "slot-binary",
+                    "label": "Binary search on a sorted list"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-eb-3-2",
+              "type": "tap_target",
+              "question": "A loop inside another loop over the same list of n items. How many comparisons?",
+              "correctAnswer": "squared",
+              "explanation": "The inner loop runs fully for every step of the outer loop, so the work grows with the square.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "squared",
+                    "label": "About n times n"
+                  },
+                  {
+                    "id": "double",
+                    "label": "About 2n"
+                  },
+                  {
+                    "id": "linear",
+                    "label": "About n"
+                  },
+                  {
+                    "id": "half",
+                    "label": "About n divided by 2"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-eb-3-3",
+              "type": "toggle_switch",
+              "question": "Switch on what genuinely matters for how an algorithm scales.",
+              "correctAnswer": "names=off,shape=on,structure=on",
+              "explanation": "Growth and structure decide scaling. Naming matters for readability, which is a different kind of important.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "shape",
+                    "label": "How the work grows as the data grows",
+                    "onLabel": "matters",
+                    "offLabel": "does not matter"
+                  },
+                  {
+                    "id": "structure",
+                    "label": "Which data structure was chosen",
+                    "onLabel": "matters",
+                    "offLabel": "does not matter"
+                  },
+                  {
+                    "id": "names",
+                    "label": "How long the variable names are",
+                    "onLabel": "matters",
+                    "offLabel": "does not matter"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Lesson 2: Writing Code Worth Reading",
+      "sequenceOrder": 2,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Functions and Returning Values",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "ict911-4-1",
+              "type": "blob_dialog",
+              "content": "A function is a name for a job, so you write it once and call it everywhere.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "A function is a name for a job, so you write it once and call it everywhere.",
+                    "mood": "happy",
+                    "cta": "And return?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "return hands a value back to whoever called it. Printing is not returning.",
+                    "mood": "thinking",
+                    "cta": "They look the same"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "They look the same on screen and behave completely differently. A printed value cannot be reused.",
+                    "mood": "cheer",
+                    "cta": "Important"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-4-2",
+              "type": "python_runner",
+              "content": "def average(numbers):\n    return sum(numbers) / len(numbers)\n\nprint(average([82, 45, 67, 91, 58]))",
+              "metadata": {
+                "version": 1,
+                "title": "A function that returns",
+                "instruction": "Run it, then change return to print and see what the last line shows.",
+                "starterCode": "def average(numbers):\n    return sum(numbers) / len(numbers)\n\nprint(average([82, 45, 67, 91, 58]))",
+                "hint": "A function without return hands back None."
+              }
+            },
+            {
+              "id": "ict911-4-3",
+              "type": "text",
+              "content": "Good functions do **one job**, take what they need as parameters, and return a result instead of printing it. That is what makes them reusable and testable."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ict911-eb-4-1",
+              "type": "tap_target",
+              "question": "A function ends with print instead of return. What does the caller receive?",
+              "correctAnswer": "none",
+              "explanation": "A function with no return statement hands back None, whatever it printed on the way.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "none",
+                    "label": "None"
+                  },
+                  {
+                    "id": "value",
+                    "label": "The printed value"
+                  },
+                  {
+                    "id": "string",
+                    "label": "The text as a string"
+                  },
+                  {
+                    "id": "error",
+                    "label": "An error"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-eb-4-2",
+              "type": "drag_drop",
+              "question": "Match each part of a function to its job.",
+              "correctAnswer": "slot-call:name,slot-input:parameters,slot-output:return",
+              "explanation": "Name to call it, parameters for input, return for output.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "name",
+                    "label": "The name"
+                  },
+                  {
+                    "id": "parameters",
+                    "label": "The parameters"
+                  },
+                  {
+                    "id": "return",
+                    "label": "The return statement"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-call",
+                    "label": "How you call it"
+                  },
+                  {
+                    "id": "slot-input",
+                    "label": "What it needs to do the job"
+                  },
+                  {
+                    "id": "slot-output",
+                    "label": "What it gives back"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-eb-4-3",
+              "type": "toggle_switch",
+              "question": "Switch on the habits that make a function worth reusing.",
+              "correctAnswer": "global=off,one-job=on,returns=on",
+              "explanation": "A function that quietly changes outside state is the hardest kind to reuse, because calling it does more than it says.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "one-job",
+                    "label": "It does one job",
+                    "onLabel": "good habit",
+                    "offLabel": "bad habit"
+                  },
+                  {
+                    "id": "returns",
+                    "label": "It returns its result",
+                    "onLabel": "good habit",
+                    "offLabel": "bad habit"
+                  },
+                  {
+                    "id": "global",
+                    "label": "It reaches out and changes variables outside itself",
+                    "onLabel": "good habit",
+                    "offLabel": "bad habit"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Debugging by Evidence",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 60,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "ict911-5-1",
+              "type": "blob_dialog",
+              "content": "Wrong output with no error message is the hardest bug, because nothing points at the line.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Wrong output with no error message is the hardest bug, because nothing points at the line.",
+                    "mood": "thinking",
+                    "cta": "So how do I find it?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Stop guessing and gather evidence. Print what the variables actually hold at each step.",
+                    "mood": "happy",
+                    "cta": "Just print?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Just print. Compare what you expected with what is there, and the gap names the bug.",
+                    "mood": "cheer",
+                    "cta": "Simple"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-5-2",
+              "type": "python_runner",
+              "content": "def total_marks(marks):\n    total = 0\n    for mark in marks:\n        total = mark\n    return total\n\nprint(total_marks([10, 20, 30]))",
+              "metadata": {
+                "version": 1,
+                "title": "This gives the wrong total",
+                "instruction": "Run it. It should print 60. Add a print inside the loop to see what total holds each time round.",
+                "starterCode": "def total_marks(marks):\n    total = 0\n    for mark in marks:\n        total = mark\n    return total\n\nprint(total_marks([10, 20, 30]))",
+                "hint": "Look carefully at the line inside the loop. Is it adding, or replacing?"
+              }
+            },
+            {
+              "id": "ict911-5-3",
+              "type": "text",
+              "content": "The bug is `total = mark` where it should be `total = total + mark`. The code is valid Python, which is exactly why there is no error message to read."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ict911-eb-5-1",
+              "type": "order_steps",
+              "question": "Put the debugging method in order.",
+              "correctAnswer": "expect>observe>narrow>fix",
+              "explanation": "Knowing the expected value first is what makes the difference visible when you print.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "expect",
+                    "label": "Decide what the output should be"
+                  },
+                  {
+                    "id": "observe",
+                    "label": "Run it and note what it actually is"
+                  },
+                  {
+                    "id": "narrow",
+                    "label": "Print variables to find where they first differ"
+                  },
+                  {
+                    "id": "fix",
+                    "label": "Fix that line and run it again"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-eb-5-2",
+              "type": "tap_target",
+              "question": "Why does the broken total function raise no error?",
+              "correctAnswer": "valid",
+              "explanation": "Python only reports what it cannot do. Doing exactly the wrong thing correctly is a logic error, and only a test can catch it.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "valid",
+                    "label": "The line is valid Python, just not what was meant"
+                  },
+                  {
+                    "id": "caught",
+                    "label": "Python caught the error and hid it"
+                  },
+                  {
+                    "id": "empty",
+                    "label": "The list is empty"
+                  },
+                  {
+                    "id": "indent",
+                    "label": "The indentation is wrong"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-eb-5-3",
+              "type": "toggle_switch",
+              "question": "Switch on the techniques that actually locate a logic bug.",
+              "correctAnswer": "print-vars=on,rewrite=off,small-input=on",
+              "explanation": "Evidence narrows a bug down. Rewriting usually reproduces the same misunderstanding in new code.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "print-vars",
+                    "label": "Printing variables inside the loop",
+                    "onLabel": "helps",
+                    "offLabel": "does not help"
+                  },
+                  {
+                    "id": "small-input",
+                    "label": "Trying a tiny input you can check by hand",
+                    "onLabel": "helps",
+                    "offLabel": "does not help"
+                  },
+                  {
+                    "id": "rewrite",
+                    "label": "Rewriting the whole program from scratch",
+                    "onLabel": "helps",
+                    "offLabel": "does not help"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Reading Code You Did Not Write",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 65,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 12,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "ict911-6-1",
+              "type": "blob_dialog",
+              "content": "Most of your programming life is spent reading, not typing.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Most of your programming life is spent reading, not typing.",
+                    "mood": "thinking",
+                    "cta": "How do I read faster?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Do not read line by line. Find the loops and the branches first, then fill in the detail.",
+                    "mood": "happy",
+                    "cta": "Shape first?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Shape first, detail second. That is how you understand a program in a minute instead of an hour.",
+                    "mood": "cheer",
+                    "cta": "Trying that"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-6-2",
+              "type": "python_runner",
+              "content": "marks = [12, 27, 34, 45, 58, 63, 79, 88]\ntarget = 63\n\nlow = 0\nhigh = len(marks) - 1\nsteps = 0\n\nwhile low <= high:\n    steps = steps + 1\n    mid = (low + high) // 2\n    if marks[mid] == target:\n        print('Found', target, 'after', steps, 'checks')\n        break\n    if marks[mid] < target:\n        low = mid + 1\n    else:\n        high = mid - 1",
+              "metadata": {
+                "version": 1,
+                "title": "Read this before you run it",
+                "instruction": "Predict what it prints, then run it and check whether you were right.",
+                "starterCode": "marks = [12, 27, 34, 45, 58, 63, 79, 88]\ntarget = 63\n\nlow = 0\nhigh = len(marks) - 1\nsteps = 0\n\nwhile low <= high:\n    steps = steps + 1\n    mid = (low + high) // 2\n    if marks[mid] == target:\n        print('Found', target, 'after', steps, 'checks')\n        break\n    if marks[mid] < target:\n        low = mid + 1\n    else:\n        high = mid - 1",
+                "hint": "Find the loop, then the branches inside it, before reading any single line closely."
+              }
+            },
+            {
+              "id": "ict911-6-3",
+              "type": "text",
+              "content": "A quick reading order: **what goes in**, **what comes out**, **the loops**, **the branches**, and only then the individual lines."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ict911-eb-6-1",
+              "type": "order_steps",
+              "question": "Put the reading order that gets you to understanding fastest.",
+              "correctAnswer": "inputs>outputs>loops>lines",
+              "explanation": "Inputs and outputs frame the program, the loops give it shape, and the lines only make sense inside that shape.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "inputs",
+                    "label": "What data goes in"
+                  },
+                  {
+                    "id": "outputs",
+                    "label": "What it prints or returns"
+                  },
+                  {
+                    "id": "loops",
+                    "label": "Where the loops are"
+                  },
+                  {
+                    "id": "lines",
+                    "label": "The detail of individual lines"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-eb-6-2",
+              "type": "tap_target",
+              "question": "In the binary search program, what does the variable mid hold?",
+              "correctAnswer": "middle-index",
+              "explanation": "mid is computed from low and high with integer division, so it is the middle position, not a value.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "middle-index",
+                    "label": "The index halfway between low and high"
+                  },
+                  {
+                    "id": "target",
+                    "label": "The value being searched for"
+                  },
+                  {
+                    "id": "count",
+                    "label": "The number of checks so far"
+                  },
+                  {
+                    "id": "last",
+                    "label": "The last item in the list"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ict911-eb-6-3",
+              "type": "drag_drop",
+              "question": "Match each variable to its role.",
+              "correctAnswer": "slot-low:bounds,slot-steps:counter,slot-target:goal",
+              "explanation": "Naming the role of each variable is most of what reading unfamiliar code means.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "bounds",
+                    "label": "Marks the edge of the region still being searched"
+                  },
+                  {
+                    "id": "counter",
+                    "label": "Counts how much work was done"
+                  },
+                  {
+                    "id": "goal",
+                    "label": "The value being looked for"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-low",
+                    "label": "low and high"
+                  },
+                  {
+                    "id": "slot-steps",
+                    "label": "steps"
+                  },
+                  {
+                    "id": "slot-target",
+                    "label": "target"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
