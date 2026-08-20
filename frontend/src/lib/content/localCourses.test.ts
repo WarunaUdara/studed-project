@@ -196,6 +196,17 @@ describe("every shipped course", () => {
     expect(grades.has("AL")).toBe(true);
   });
 
+  it("carries both subject ladders through to A/L", () => {
+    const bySubject = (needle: string) =>
+      localCourseNodes().filter((course) => course.slug.startsWith(needle));
+    expect(bySubject("physics").length).toBeGreaterThanOrEqual(5);
+    expect(bySubject("ict").length).toBeGreaterThanOrEqual(4);
+    for (const prefix of ["physics", "ict"]) {
+      expect(bySubject(prefix).some((course) => course.gradeLevel === "AL")).toBe(true);
+      expect(bySubject(prefix).some((course) => course.gradeLevel === "OL")).toBe(true);
+    }
+  });
+
   it("gives each course a distinct slug and a non-empty syllabus", () => {
     const slugs = localCourseNodes().map((course) => course.slug);
     expect(new Set(slugs).size).toBe(slugs.length);

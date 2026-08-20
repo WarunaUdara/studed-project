@@ -1,3 +1,4 @@
+import ictAL from "@content/courses/ict-al/course.json";
 import ictGrade68 from "@content/courses/ict-grade-6-8/course.json";
 import ictGrade911 from "@content/courses/ict-grade-9-11/course.json";
 import ictOL from "@content/courses/ict-ol/course.json";
@@ -24,6 +25,7 @@ const LOCAL_MANIFESTS: CourseManifest[] = [
   ictGrade68 as CourseManifest,
   ictGrade911 as CourseManifest,
   ictOL as CourseManifest,
+  ictAL as CourseManifest,
   physicsGrade68 as CourseManifest,
   physicsGrade911 as CourseManifest,
   physicsOL as CourseManifest,
