@@ -8,12 +8,12 @@ import type {
   DiscoveryOutput,
   FaultSeverity,
   ScreenSnapshot,
-  StyledElementFingerprint,
 } from "./types";
 
-const SNAPSHOTS_DIR = path.resolve(import.meta.dir, "snapshots");
-const DISCOVERY_FILE = path.resolve(import.meta.dir, "discovery.json");
-const AUDIT_OUTPUT_FILE = path.resolve(import.meta.dir, "audit.json");
+const LOOP_DIR = path.resolve(__dirname);
+const SNAPSHOTS_DIR = path.resolve(LOOP_DIR, "snapshots");
+const DISCOVERY_FILE = path.resolve(LOOP_DIR, "discovery.json");
+const AUDIT_OUTPUT_FILE = path.resolve(LOOP_DIR, "audit.json");
 
 /**
  * Known OKLCH Hue palettes from index.css:
@@ -299,7 +299,7 @@ export class DeterministicAuditor {
       const colorOklch = elem.styles.color;
       if (colorOklch.startsWith("oklch(")) {
         const parsed = parseCssColor(colorOklch);
-        if (parsed.h !== undefined && parsed.c > 0.05) {
+        if (parsed.h !== undefined && parsed.c !== undefined && parsed.c > 0.05) {
           // Check if hue matches one of our defined palettes (within tolerance)
           const isKnown = KNOWN_HUES.some((kh) => Math.abs(kh - parsed.h!) < 20);
           if (!isKnown) {
@@ -364,8 +364,6 @@ export class DeterministicAuditor {
    * 7. Dead Links & Routing Integrity
    */
   private auditDeadLinksAndRoutes(discovery: DiscoveryOutput): void {
-    const validStaticPatterns = discovery.staticRoutes.map((r) => r.routePattern);
-
     for (const [roleName, roleData] of Object.entries(discovery.roles)) {
       for (const err404 of roleData.errors404) {
         this.faults.push({
