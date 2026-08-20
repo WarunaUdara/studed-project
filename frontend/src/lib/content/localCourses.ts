@@ -1,3 +1,4 @@
+import ictGrade68 from "@content/courses/ict-grade-6-8/course.json";
 import mathFoundation from "@content/courses/math-foundation/course.json";
 import physicsGrade45 from "@content/courses/physics-grade-4-5/course.json";
 import type { CourseManifest } from "./manifest";
@@ -14,6 +15,7 @@ import { manifestWaveId, toCourseDetail, toCourseNode, toPlayerWave } from "./ma
 const LOCAL_MANIFESTS: CourseManifest[] = [
   physicsGrade45 as CourseManifest,
   mathFoundation as CourseManifest,
+  ictGrade68 as CourseManifest,
 ];
 
 export function findLocalCourse(courseId: string): CourseManifest | null {

@@ -97,6 +97,41 @@ describe("Math Foundation course", () => {
   });
 });
 
+describe("Computers and Code course", () => {
+  const ICT = "ict-grade-6-8";
+
+  it("ships two full lessons of coding waves", () => {
+    const detail = localCourseDetail(ICT);
+    expect(detail?.lessons).toHaveLength(2);
+    expect(detail?.lessons.every((lesson) => lesson.waves.length === 3)).toBe(true);
+  });
+
+  it("puts a runnable Python exercise in the waves that teach code", () => {
+    const wave = findLocalWave(manifestWaveId(ICT, 2, 2));
+    const runner = wave?.learnBlocks.find((block) => block.type === "python_runner");
+    expect(runner).toBeDefined();
+
+    // The error-reading wave opens with a program that is broken on purpose.
+    expect(runner?.content).toContain("totl");
+    const config = JSON.parse(runner?.metadata ?? "{}");
+    expect(config.starterCode).toBe(runner?.content);
+    expect(config.hint).toContain("NameError");
+  });
+
+  it("keeps every question manipulative here too", () => {
+    const manipulative = new Set(["tap_target", "drag_drop", "order_steps", "toggle_switch", "slider_target"]);
+    const detail = localCourseDetail(ICT);
+    for (const lesson of detail?.lessons ?? []) {
+      for (const summary of lesson.waves) {
+        const wave = findLocalWave(summary.id);
+        for (const block of wave?.evaluateBlocks ?? []) {
+          expect(manipulative.has(block.type)).toBe(true);
+        }
+      }
+    }
+  });
+});
+
 describe("local grading", () => {
   const blocks = [
     { id: "a", correctAnswer: "wire-left", explanation: "It closes the loop." },
