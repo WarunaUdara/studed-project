@@ -239,7 +239,7 @@ function EducatorDashboardPage() {
                         strokeWidth={4}
                         className="text-primary shrink-0"
                       >
-                        <span className="text-[9px] font-bold">{completionRatio}%</span>
+                        <span className="text-xs font-bold">{completionRatio}%</span>
                       </ProgressRing>
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-medium text-sm">{course.title}</p>

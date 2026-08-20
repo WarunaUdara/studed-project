@@ -136,7 +136,7 @@ export function DailySparkStreakScreen({
                   )}
                 </div>
                 <span
-                  className={`text-[11px] font-bold ${
+                  className={`text-xs font-bold ${
                     isToday ? "text-lime-400" : "text-neutral-500"
                   }`}
                 >

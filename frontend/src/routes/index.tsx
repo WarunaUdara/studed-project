@@ -597,7 +597,7 @@ function StreakWeek() {
             >
               <Check className="h-3.5 w-3.5" strokeWidth={3} />
             </motion.span>
-            <span className="text-[9px] font-medium text-muted-foreground">{day.label}</span>
+            <span className="text-xs font-medium text-muted-foreground">{day.label}</span>
           </div>
         ))}
       </div>
@@ -688,7 +688,7 @@ function FeaturedCourseCard({ course, delay }: { course: FeaturedCourse; delay: 
         <div className="mt-auto flex items-center justify-between pt-2">
           <div className="flex items-center gap-2">
             <ProgressRing value={percent} size={36} strokeWidth={4} className="text-primary">
-              <span className="text-[9px] font-bold">{percent}%</span>
+              <span className="text-xs font-bold">{percent}%</span>
             </ProgressRing>
             <span className="text-xs text-muted-foreground">
               {completed}/{total}

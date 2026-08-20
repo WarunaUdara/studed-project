@@ -292,11 +292,11 @@ function AchievementsPage() {
 
                           <div className="w-full mt-4">
                             {b.earned ? (
-                              <span className="text-[9px] font-bold text-success uppercase tracking-wider bg-success/10 px-2 py-0.5 rounded-full inline-block">
+                              <span className="text-xs font-bold text-success uppercase tracking-wider bg-success/10 px-2 py-0.5 rounded-full inline-block">
                                 Unlocked
                               </span>
                             ) : (
-                              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider bg-muted px-2 py-0.5 rounded-full inline-block">
+                              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider bg-muted px-2 py-0.5 rounded-full inline-block">
                                 Locked
                               </span>
                             )}

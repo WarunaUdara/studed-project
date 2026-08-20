@@ -285,7 +285,7 @@ export function CourseJourneyMap({
             >
               <div className="text-center">
                 <span className="text-base font-black">{progressPct}%</span>
-                <span className="block text-[9px] uppercase font-bold text-muted-foreground">
+                <span className="block text-xs uppercase font-bold text-muted-foreground">
                   Mastery
                 </span>
               </div>

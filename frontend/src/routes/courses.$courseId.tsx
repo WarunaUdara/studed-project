@@ -227,7 +227,7 @@ function CoursePlayerPage() {
           >
             <div className="text-center">
               <span className="text-lg font-bold">{progress}%</span>
-              <span className="block text-[10px] text-muted-foreground">complete</span>
+              <span className="block text-xs text-muted-foreground">complete</span>
             </div>
           </ProgressRing>
           <div className="min-w-0 flex-1 space-y-3">
@@ -288,7 +288,7 @@ function CoursePlayerPage() {
                         strokeWidth={4}
                         className="text-primary shrink-0"
                       >
-                        <span className="text-[9px] font-bold">{pct}%</span>
+                        <span className="text-xs font-bold">{pct}%</span>
                       </ProgressRing>
                     );
                   })()}

@@ -49,11 +49,11 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
           </span>
 
           {course.isNew ? (
-            <span className="flex items-center gap-0.5 rounded-full bg-emerald-500/20 px-2 py-0.5 text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400">
+            <span className="flex items-center gap-0.5 rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
               <Sparkles className="size-2.5" /> NEW
             </span>
           ) : isEnrolled ? (
-            <span className="flex items-center gap-0.5 rounded-full bg-primary/20 px-2 py-0.5 text-[9px] font-extrabold text-primary">
+            <span className="flex items-center gap-0.5 rounded-full bg-primary/20 px-2 py-0.5 text-xs font-extrabold text-primary">
               <CheckCircle2 className="size-2.5" /> {percent}%
             </span>
           ) : null}

@@ -205,7 +205,7 @@ function LeaderboardPage() {
                     <span className="text-4xl font-serif font-semibold italic text-muted-foreground mb-1">
                       2
                     </span>
-                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
                       Silver
                     </span>
                   </div>
@@ -226,7 +226,7 @@ function LeaderboardPage() {
                     <span className="text-5xl font-serif font-semibold italic text-amber-600 mb-1">
                       1
                     </span>
-                    <span className="text-[9px] font-bold text-amber-700 uppercase tracking-widest">
+                    <span className="text-xs font-bold text-amber-700 uppercase tracking-widest">
                       Gold
                     </span>
                   </div>
@@ -246,7 +246,7 @@ function LeaderboardPage() {
                     <span className="text-3xl font-serif font-semibold italic text-amber-800 mb-1">
                       3
                     </span>
-                    <span className="text-[9px] font-bold text-amber-800 uppercase tracking-widest">
+                    <span className="text-xs font-bold text-amber-800 uppercase tracking-widest">
                       Bronze
                     </span>
                   </div>

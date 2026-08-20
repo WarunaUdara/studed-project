@@ -296,7 +296,7 @@ export function PomodoroTimer(_props: PomodoroTimerProps) {
                 >
                   {formatTime(timeLeft)}
                 </span>
-                <span className="text-[9px] uppercase font-bold text-muted-foreground tracking-wider mt-0.5">
+                <span className="text-xs uppercase font-bold text-muted-foreground tracking-wider mt-0.5">
                   {mode === "focus" ? "focusing" : "on break"}
                 </span>
               </div>
