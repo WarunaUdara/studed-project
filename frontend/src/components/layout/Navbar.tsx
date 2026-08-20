@@ -177,14 +177,14 @@ export function Navbar() {
           subtitle: "Explore gear train physics, angular velocity, and mechanical parity with interactive 3D simulations.",
           href: "/courses/science-thinking",
           gradient: "bg-gradient-to-tr from-amber-600/30 via-orange-500/20 to-yellow-400/20",
-          icon: <span className="text-xl">💡⚙️</span>,
+          icon: <Brain className="size-6 text-amber-400" />,
         },
         {
           title: "Thinking in Python",
           subtitle: "Master algorithmic thinking by guiding the Blob Mascot through dynamic code mazes.",
           href: "/courses",
           gradient: "bg-gradient-to-tr from-emerald-600/30 via-teal-500/20 to-cyan-400/20",
-          icon: <span className="text-xl">🐍</span>,
+          icon: <Code className="size-6 text-emerald-400" />,
         },
       ],
     },
@@ -311,7 +311,7 @@ export function Navbar() {
                   title={`${keys} Keys Available`}
                 >
                   <span>{keys}</span>
-                  <span className="text-xs">🗝️</span>
+                  <Key className="size-3.5 text-amber-500 dark:text-amber-300" />
                 </Link>
 
                 <span className="text-border">|</span>
@@ -323,7 +323,7 @@ export function Navbar() {
                   title={`${streak} Day Streak`}
                 >
                   <span>{streak}</span>
-                  <span className="text-xs">⚡</span>
+                  <Zap className="size-3.5 text-orange-500 dark:text-orange-300" />
                 </Link>
               </div>
             )}
