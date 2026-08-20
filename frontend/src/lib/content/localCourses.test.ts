@@ -68,6 +68,35 @@ describe("manifest-backed courses", () => {
   });
 });
 
+describe("Math Foundation course", () => {
+  const MATH = "math-foundation";
+
+  it("ships a plan of lessons with the first one fully built", () => {
+    const detail = localCourseDetail(MATH);
+    expect(detail?.lessons.length).toBeGreaterThanOrEqual(5);
+
+    const published = detail?.lessons.filter((lesson) => lesson.isPublished) ?? [];
+    expect(published).toHaveLength(1);
+    expect(published[0].waves).toHaveLength(3);
+
+    // Planned lessons are visible as a roadmap but carry no waves yet.
+    const planned = detail?.lessons.filter((lesson) => !lesson.isPublished) ?? [];
+    expect(planned.length).toBeGreaterThan(0);
+    for (const lesson of planned) expect(lesson.waves).toHaveLength(0);
+  });
+
+  it("counts only built waves towards progress, not planned lessons", () => {
+    const node = localCourseNodes().find((course) => course.slug === MATH);
+    expect(node?.myProgress?.totalWaves).toBe(3);
+  });
+
+  it("teaches fractions with a manipulable bar rather than prose", () => {
+    const wave = findLocalWave(manifestWaveId(MATH, 1, 1));
+    expect(wave?.learnBlocks.some((block) => block.type === "fraction_lab")).toBe(true);
+    expect(wave?.learnBlocks.some((block) => block.type === "blob_dialog")).toBe(true);
+  });
+});
+
 describe("local grading", () => {
   const blocks = [
     { id: "a", correctAnswer: "wire-left", explanation: "It closes the loop." },

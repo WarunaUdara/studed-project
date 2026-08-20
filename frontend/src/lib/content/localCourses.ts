@@ -1,3 +1,4 @@
+import mathFoundation from "@content/courses/math-foundation/course.json";
 import physicsGrade45 from "@content/courses/physics-grade-4-5/course.json";
 import type { CourseManifest } from "./manifest";
 import { manifestWaveId, toCourseDetail, toCourseNode, toPlayerWave } from "./manifest";
@@ -10,7 +11,10 @@ import { manifestWaveId, toCourseDetail, toCourseNode, toPlayerWave } from "./ma
  * backend is running, and the seeded version stays identical because both come
  * from one file.
  */
-const LOCAL_MANIFESTS: CourseManifest[] = [physicsGrade45 as CourseManifest];
+const LOCAL_MANIFESTS: CourseManifest[] = [
+  physicsGrade45 as CourseManifest,
+  mathFoundation as CourseManifest,
+];
 
 export function findLocalCourse(courseId: string): CourseManifest | null {
   return LOCAL_MANIFESTS.find((manifest) => manifest.slug === courseId) ?? null;

@@ -23,6 +23,7 @@ test.describe("Grade 4-5 Physics demo", () => {
   test("shows the course in the catalog and opens its syllabus", async ({ page }) => {
     await page.goto("/courses");
     await expect(page.getByText("Physics Adventures").first()).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText("Math Foundation").first()).toBeVisible();
 
     await page.goto("/courses/physics-grade-4-5");
     await expect(page.getByText("Lesson 1: Forces and Motion").first()).toBeVisible();
