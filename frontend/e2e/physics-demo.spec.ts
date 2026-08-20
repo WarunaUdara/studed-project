@@ -58,6 +58,20 @@ test.describe("Grade 4-5 Physics demo", () => {
     await expect(page.getByText(/100%|Passed|Well done/i).first()).toBeVisible();
   });
 
+  test("opens a coding wave with a runnable editor", async ({ page }) => {
+    await page.goto("/waves/ict-grade-6-8-l2-w2");
+
+    await expect(page.getByText("Your program will break. Mine breaks too, every single day.")).toBeVisible({
+      timeout: 20000,
+    });
+
+    // The editor opens with the deliberately broken program.
+    const editor = page.locator("#python-runner-code");
+    await expect(editor).toBeVisible();
+    await expect(editor).toHaveValue(/totl/);
+    await expect(page.getByRole("button", { name: "Run" })).toBeEnabled();
+  });
+
   test("lights the bulb in the electricity wave and warns on a short circuit", async ({ page }) => {
     await page.goto("/waves/physics-grade-4-5-l2-w1");
 
