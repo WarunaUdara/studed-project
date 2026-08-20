@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-20T09:12:22.708Z",
+  "timestamp": "2026-08-20T12:33:44.713Z",
   "staticRoutes": [
     {
       "routeFile": "frontend/src/routes/settings.tsx",
@@ -204,24 +204,24 @@
           "parentPath": "/courses"
         },
         {
-          "path": "/login",
-          "routeFile": "frontend/src/routes/login.tsx",
+          "path": "/waves/science-gears-1",
+          "routeFile": "frontend/src/routes/waves.$waveId.tsx",
           "depth": 2,
           "title": "StudEd",
           "role": "student",
           "parentPath": "/courses/science-thinking"
         },
         {
-          "path": "/login",
-          "routeFile": "frontend/src/routes/login.tsx",
+          "path": "/leaderboard",
+          "routeFile": "frontend/src/routes/leaderboard.tsx",
           "depth": 1,
           "title": "StudEd",
           "role": "student",
           "parentPath": "/dashboard"
         },
         {
-          "path": "/login",
-          "routeFile": "frontend/src/routes/login.tsx",
+          "path": "/achievements",
+          "routeFile": "frontend/src/routes/achievements.tsx",
           "depth": 1,
           "title": "StudEd",
           "role": "student",
@@ -236,8 +236,8 @@
           "parentPath": "/dashboard"
         },
         {
-          "path": "/login",
-          "routeFile": "frontend/src/routes/login.tsx",
+          "path": "/settings",
+          "routeFile": "frontend/src/routes/settings.tsx",
           "depth": 1,
           "title": "StudEd",
           "role": "student",
@@ -268,52 +268,15 @@
           "parentPath": "/dashboard"
         },
         {
-          "path": "/login",
-          "routeFile": "frontend/src/routes/login.tsx",
+          "path": "/waves/science-gears-2",
+          "routeFile": "frontend/src/routes/waves.$waveId.tsx",
           "depth": 2,
           "title": "StudEd",
           "role": "student",
           "parentPath": "/courses/science-thinking"
-        },
-        {
-          "path": "/",
-          "routeFile": "frontend/src/routes/index.tsx",
-          "depth": 3,
-          "title": "StudEd",
-          "role": "student",
-          "parentPath": "/login"
-        },
-        {
-          "path": "/register",
-          "routeFile": "frontend/src/routes/register.tsx",
-          "depth": 3,
-          "title": "StudEd",
-          "role": "student",
-          "parentPath": "/login"
         }
       ],
-      "redirects": [
-        {
-          "from": "/waves/science-gears-1",
-          "to": "/login"
-        },
-        {
-          "from": "/leaderboard",
-          "to": "/login"
-        },
-        {
-          "from": "/achievements",
-          "to": "/login"
-        },
-        {
-          "from": "/settings",
-          "to": "/login"
-        },
-        {
-          "from": "/waves/science-gears-2",
-          "to": "/login"
-        }
-      ],
+      "redirects": [],
       "errors404": []
     },
     "educator": {
@@ -366,16 +329,16 @@
           "parentPath": "/"
         },
         {
-          "path": "/login",
-          "routeFile": "frontend/src/routes/login.tsx",
+          "path": "/leaderboard",
+          "routeFile": "frontend/src/routes/leaderboard.tsx",
           "depth": 1,
           "title": "StudEd",
           "role": "educator",
           "parentPath": "/"
         },
         {
-          "path": "/login",
-          "routeFile": "frontend/src/routes/login.tsx",
+          "path": "/achievements",
+          "routeFile": "frontend/src/routes/achievements.tsx",
           "depth": 1,
           "title": "StudEd",
           "role": "educator",
@@ -454,14 +417,6 @@
         {
           "from": "/educator/settings",
           "to": "/"
-        },
-        {
-          "from": "/leaderboard",
-          "to": "/login"
-        },
-        {
-          "from": "/achievements",
-          "to": "/login"
         }
       ],
       "errors404": []

@@ -1,0 +1,152 @@
+{
+  "timestamp": "2026-08-20T12:53:25.029Z",
+  "passA": [
+    {
+      "id": "contrast-student-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "severity": "P0",
+      "screen": "/dashboard",
+      "component": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": "{\"foreground\":\"oklch(0.484 0.164 145)\",\"background\":\"oklab(0.484 -0.134341 0.0940665 / 0.2)\",\"measuredRatio\":1.38,\"requiredRatio\":4.5,\"fontSize\":\"12px\",\"fontWeight\":\"700\",\"textSnippet\":\"D\"}",
+      "rootCause": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "a11y-name-_dashboard-_root___div___main___div___div___div___div_nth-of-type_1____div_nth-of-type_3____div_nth-of-type_1____a",
+      "severity": "P1",
+      "screen": "/dashboard",
+      "component": "#root > div > main > div > div > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > a",
+      "evidence": "{\"tag\":\"a\",\"tabIndex\":0}",
+      "rootCause": "Interactive <a> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "contrast-student-_courses_science-thinking-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_1____a",
+      "severity": "P0",
+      "screen": "/courses/science-thinking",
+      "component": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
+      "evidence": "{\"foreground\":\"oklch(0.484 0.164 145)\",\"background\":\"oklab(0.484 -0.134341 0.0940665 / 0.1)\",\"measuredRatio\":1.38,\"requiredRatio\":4.5,\"fontSize\":\"12px\",\"fontWeight\":\"700\",\"textSnippet\":\"Courses\"}",
+      "rootCause": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Courses\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_courses_science-thinking-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "component": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": "{\"foreground\":\"oklch(0.666 0.179 58.318)\",\"background\":\"oklab(0.769 0.0640531 0.176752 / 0.1)\",\"measuredRatio\":3.6,\"requiredRatio\":4.5,\"fontSize\":\"12px\",\"fontWeight\":\"700\",\"textSnippet\":\"Go Premium\"}",
+      "rootCause": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_courses_science-thinking-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "severity": "P0",
+      "screen": "/courses/science-thinking",
+      "component": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": "{\"foreground\":\"oklch(0.484 0.164 145)\",\"background\":\"oklab(0.484 -0.134341 0.0940665 / 0.2)\",\"measuredRatio\":1.38,\"requiredRatio\":4.5,\"fontSize\":\"12px\",\"fontWeight\":\"700\",\"textSnippet\":\"D\"}",
+      "rootCause": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_2____button",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "component": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(2) > button",
+      "evidence": "{\"tag\":\"button\",\"tabIndex\":0}",
+      "rootCause": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_3____button",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "component": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(3) > button",
+      "evidence": "{\"tag\":\"button\",\"tabIndex\":0}",
+      "rootCause": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_4____button",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "component": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(4) > button",
+      "evidence": "{\"tag\":\"button\",\"tabIndex\":0}",
+      "rootCause": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_5____button",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "component": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(5) > button",
+      "evidence": "{\"tag\":\"button\",\"tabIndex\":0}",
+      "rootCause": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_6____button",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "component": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(6) > button",
+      "evidence": "{\"tag\":\"button\",\"tabIndex\":0}",
+      "rootCause": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "contrast-student-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_3____a",
+      "severity": "P0",
+      "screen": "/dashboard",
+      "component": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(3) > a",
+      "evidence": "{\"foreground\":\"oklch(0.484 0.164 145)\",\"background\":\"oklab(0.484 -0.134341 0.0940665 / 0.1)\",\"measuredRatio\":1.38,\"requiredRatio\":4.5,\"fontSize\":\"12px\",\"fontWeight\":\"700\",\"textSnippet\":\"Quests\"}",
+      "rootCause": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Quests\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "severity": "P1",
+      "screen": "/dashboard",
+      "component": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": "{\"foreground\":\"oklch(0.666 0.179 58.318)\",\"background\":\"oklab(0.769 0.0640531 0.176752 / 0.1)\",\"measuredRatio\":3.6,\"requiredRatio\":4.5,\"fontSize\":\"12px\",\"fontWeight\":\"700\",\"textSnippet\":\"Go Premium\"}",
+      "rootCause": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "severity": "P0",
+      "screen": "/dashboard",
+      "component": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": "{\"foreground\":\"oklch(0.484 0.164 145)\",\"background\":\"oklab(0.484 -0.134341 0.0940665 / 0.2)\",\"measuredRatio\":1.38,\"requiredRatio\":4.5,\"fontSize\":\"12px\",\"fontWeight\":\"700\",\"textSnippet\":\"D\"}",
+      "rootCause": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "a11y-name-_dashboard-_root___div___main___div___div___div___div_nth-of-type_1____div_nth-of-type_3____div_nth-of-type_1____a",
+      "severity": "P1",
+      "screen": "/dashboard",
+      "component": "#root > div > main > div > div > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > a",
+      "evidence": "{\"tag\":\"a\",\"tabIndex\":0}",
+      "rootCause": "Interactive <a> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    }
+  ],
+  "passB": [],
+  "passC": [
+    {
+      "id": "creative-mascot-haptic-cheer",
+      "title": "Interactive Helmet Companion Haptic Celebration",
+      "screen": "/waves/$waveId",
+      "category": "delight",
+      "description": "When solving a 7-gear cluster network wave on mobile, trigger subtle Web Haptic vibration and animated helmet bounce.",
+      "rationale": "Strengthens the multi-sensory dopamine release upon completing complex kinetic physics challenges.",
+      "humanApprovalRequired": true
+    },
+    {
+      "id": "creative-sinhala-audio-narration",
+      "title": "Bilingual Step-by-Step Voice Guidance Toggle",
+      "screen": "/courses/$courseId",
+      "category": "pedagogy",
+      "description": "Provide optional Sinhala voiceover explanations for scientific parity and gear mechanical principles.",
+      "rationale": "Lowers cognitive barrier for young Grade 6-9 students learning kinematic mechanics for the first time.",
+      "humanApprovalRequired": true
+    }
+  ]
+}

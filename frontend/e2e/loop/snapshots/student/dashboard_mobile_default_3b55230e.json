@@ -10,7 +10,7 @@
       "height": 844
     },
     "state": "default",
-    "timestamp": "2026-08-20T09:12:26.578Z"
+    "timestamp": "2026-08-20T12:33:47.464Z"
   },
   "domOutline": [
     {
@@ -121,7 +121,7 @@
                               "box": {
                                 "x": 16,
                                 "y": 16,
-                                "width": 83,
+                                "width": 91,
                                 "height": 32
                               }
                             },
@@ -308,11 +308,11 @@
       "box": {
         "x": 16,
         "y": 16,
-        "width": 83,
+        "width": 91,
         "height": 32,
         "isClipped": false,
-        "scrollWidth": 83,
-        "clientWidth": 83,
+        "scrollWidth": 91,
+        "clientWidth": 91,
         "scrollHeight": 32,
         "clientHeight": 32
       },
@@ -737,13 +737,13 @@
       "tag": "h2",
       "textSnippet": "Fractions",
       "box": {
-        "x": 142,
+        "x": 139,
         "y": 828,
-        "width": 107,
+        "width": 112,
         "height": 32,
         "isClipped": false,
-        "scrollWidth": 107,
-        "clientWidth": 107,
+        "scrollWidth": 112,
+        "clientWidth": 112,
         "scrollHeight": 32,
         "clientHeight": 32
       },
@@ -824,13 +824,13 @@
       "tag": "h2",
       "textSnippet": "Thinking in Python",
       "box": {
-        "x": 119,
+        "x": 115,
         "y": 834,
-        "width": 211,
+        "width": 218,
         "height": 36,
         "isClipped": false,
-        "scrollWidth": 219,
-        "clientWidth": 219,
+        "scrollWidth": 226,
+        "clientWidth": 226,
         "scrollHeight": 32,
         "clientHeight": 32
       },
@@ -1224,11 +1224,11 @@
       "box": {
         "x": 16,
         "y": 16,
-        "width": 83,
+        "width": 91,
         "height": 32,
         "isClipped": false,
-        "scrollWidth": 83,
-        "clientWidth": 83,
+        "scrollWidth": 91,
+        "clientWidth": 91,
         "scrollHeight": 32,
         "clientHeight": 32
       }
@@ -1432,13 +1432,13 @@
     {
       "selector": "#root > div > main > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > h2",
       "box": {
-        "x": 142,
+        "x": 139,
         "y": 828,
-        "width": 107,
+        "width": 112,
         "height": 32,
         "isClipped": false,
-        "scrollWidth": 107,
-        "clientWidth": 107,
+        "scrollWidth": 112,
+        "clientWidth": 112,
         "scrollHeight": 32,
         "clientHeight": 32
       }
@@ -1474,13 +1474,13 @@
     {
       "selector": "#root > div > main > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > h2",
       "box": {
-        "x": 119,
+        "x": 115,
         "y": 834,
-        "width": 211,
+        "width": 218,
         "height": 36,
         "isClipped": false,
-        "scrollWidth": 219,
-        "clientWidth": 219,
+        "scrollWidth": 226,
+        "clientWidth": 226,
         "scrollHeight": 32,
         "clientHeight": 32
       }

@@ -10,7 +10,7 @@
       "height": 800
     },
     "state": "default",
-    "timestamp": "2026-08-20T09:12:25.338Z"
+    "timestamp": "2026-08-20T12:33:46.623Z"
   },
   "domOutline": [
     {
@@ -121,7 +121,7 @@
                               "box": {
                                 "x": 24,
                                 "y": 16,
-                                "width": 402,
+                                "width": 412,
                                 "height": 32
                               }
                             },
@@ -130,9 +130,9 @@
                               "classes": "flex items-center gap-3",
                               "textSnippet": "LVL 3425✦|2🗝️|3⚡Go PremiumD",
                               "box": {
-                                "x": 872,
+                                "x": 871,
                                 "y": 14,
-                                "width": 384,
+                                "width": 385,
                                 "height": 36
                               }
                             }
@@ -308,11 +308,11 @@
       "box": {
         "x": 24,
         "y": 16,
-        "width": 83,
+        "width": 91,
         "height": 32,
         "isClipped": false,
-        "scrollWidth": 83,
-        "clientWidth": 83,
+        "scrollWidth": 91,
+        "clientWidth": 91,
         "scrollHeight": 32,
         "clientHeight": 32
       },
@@ -335,13 +335,13 @@
       "tag": "nav",
       "textSnippet": "Courses Leagues Quests",
       "box": {
-        "x": 139,
+        "x": 147,
         "y": 18,
-        "width": 287,
+        "width": 289,
         "height": 28,
         "isClipped": false,
-        "scrollWidth": 287,
-        "clientWidth": 287,
+        "scrollWidth": 289,
+        "clientWidth": 289,
         "scrollHeight": 28,
         "clientHeight": 28
       },
@@ -364,13 +364,13 @@
       "tag": "a",
       "textSnippet": "Courses",
       "box": {
-        "x": 139,
+        "x": 147,
         "y": 18,
-        "width": 95,
+        "width": 96,
         "height": 28,
         "isClipped": false,
-        "scrollWidth": 95,
-        "clientWidth": 95,
+        "scrollWidth": 96,
+        "clientWidth": 96,
         "scrollHeight": 28,
         "clientHeight": 28
       },
@@ -393,7 +393,7 @@
       "tag": "a",
       "textSnippet": "Leagues",
       "box": {
-        "x": 239,
+        "x": 247,
         "y": 18,
         "width": 96,
         "height": 28,
@@ -422,13 +422,13 @@
       "tag": "a",
       "textSnippet": "Quests",
       "box": {
-        "x": 339,
+        "x": 347,
         "y": 18,
-        "width": 88,
+        "width": 89,
         "height": 28,
         "isClipped": false,
-        "scrollWidth": 88,
-        "clientWidth": 88,
+        "scrollWidth": 89,
+        "clientWidth": 89,
         "scrollHeight": 28,
         "clientHeight": 28
       },
@@ -450,7 +450,7 @@
       "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > button",
       "tag": "button",
       "box": {
-        "x": 872,
+        "x": 871,
         "y": 14,
         "width": 36,
         "height": 36,
@@ -479,13 +479,13 @@
       "tag": "a",
       "textSnippet": "LVL 3 425 ✦",
       "box": {
-        "x": 929,
+        "x": 928,
         "y": 24,
-        "width": 80,
+        "width": 81,
         "height": 16,
         "isClipped": false,
-        "scrollWidth": 80,
-        "clientWidth": 80,
+        "scrollWidth": 81,
+        "clientWidth": 81,
         "scrollHeight": 16,
         "clientHeight": 16
       },
@@ -508,7 +508,7 @@
       "tag": "a",
       "textSnippet": "2 🗝️",
       "box": {
-        "x": 1026,
+        "x": 1024,
         "y": 24,
         "width": 25,
         "height": 16,
@@ -537,7 +537,7 @@
       "tag": "a",
       "textSnippet": "3 ⚡",
       "box": {
-        "x": 1067,
+        "x": 1065,
         "y": 24,
         "width": 25,
         "height": 16,
@@ -566,13 +566,13 @@
       "tag": "a",
       "textSnippet": "Go Premium",
       "box": {
-        "x": 1113,
+        "x": 1111,
         "y": 17,
-        "width": 97,
+        "width": 99,
         "height": 30,
         "isClipped": false,
-        "scrollWidth": 97,
-        "clientWidth": 97,
+        "scrollWidth": 99,
+        "clientWidth": 99,
         "scrollHeight": 30,
         "clientHeight": 30
       },
@@ -595,13 +595,13 @@
       "tag": "button",
       "textSnippet": "Go Premium",
       "box": {
-        "x": 1113,
+        "x": 1111,
         "y": 17,
-        "width": 97,
+        "width": 99,
         "height": 30,
         "isClipped": false,
-        "scrollWidth": 95,
-        "clientWidth": 95,
+        "scrollWidth": 97,
+        "clientWidth": 97,
         "scrollHeight": 28,
         "clientHeight": 28
       },
@@ -741,11 +741,11 @@
       "box": {
         "x": 137,
         "y": 351,
-        "width": 223,
+        "width": 226,
         "height": 20,
         "isClipped": false,
-        "scrollWidth": 223,
-        "clientWidth": 223,
+        "scrollWidth": 226,
+        "clientWidth": 226,
         "scrollHeight": 20,
         "clientHeight": 20
       },
@@ -770,11 +770,11 @@
       "box": {
         "x": 137,
         "y": 371,
-        "width": 223,
+        "width": 226,
         "height": 17,
         "isClipped": false,
-        "scrollWidth": 223,
-        "clientWidth": 223,
+        "scrollWidth": 226,
+        "clientWidth": 226,
         "scrollHeight": 17,
         "clientHeight": 17
       },
@@ -857,11 +857,11 @@
       "box": {
         "x": 137,
         "y": 511,
-        "width": 145,
+        "width": 146,
         "height": 16,
         "isClipped": false,
-        "scrollWidth": 145,
-        "clientWidth": 145,
+        "scrollWidth": 146,
+        "clientWidth": 146,
         "scrollHeight": 16,
         "clientHeight": 16
       },
@@ -886,11 +886,11 @@
       "box": {
         "x": 137,
         "y": 527,
-        "width": 145,
+        "width": 146,
         "height": 17,
         "isClipped": false,
-        "scrollWidth": 145,
-        "clientWidth": 145,
+        "scrollWidth": 146,
+        "clientWidth": 146,
         "scrollHeight": 17,
         "clientHeight": 17
       },
@@ -941,13 +941,13 @@
       "tag": "a",
       "textSnippet": "View all rankings",
       "box": {
-        "x": 241,
+        "x": 239,
         "y": 720,
-        "width": 107,
+        "width": 111,
         "height": 17,
         "isClipped": false,
-        "scrollWidth": 107,
-        "clientWidth": 107,
+        "scrollWidth": 111,
+        "clientWidth": 111,
         "scrollHeight": 17,
         "clientHeight": 17
       },
@@ -970,13 +970,13 @@
       "tag": "h2",
       "textSnippet": "Fractions",
       "box": {
-        "x": 833,
+        "x": 830,
         "y": 137,
-        "width": 107,
+        "width": 112,
         "height": 32,
         "isClipped": false,
-        "scrollWidth": 107,
-        "clientWidth": 107,
+        "scrollWidth": 112,
+        "clientWidth": 112,
         "scrollHeight": 32,
         "clientHeight": 32
       },
@@ -1000,9 +1000,9 @@
       "textSnippet": "Start",
       "box": {
         "x": 692,
-        "y": 532,
+        "y": 533,
         "width": 390,
-        "height": 20,
+        "height": 18,
         "isClipped": false,
         "scrollWidth": 0,
         "clientWidth": 0,
@@ -1057,13 +1057,13 @@
       "tag": "h2",
       "textSnippet": "Thinking in Python",
       "box": {
-        "x": 810,
+        "x": 807,
         "y": 143,
-        "width": 211,
+        "width": 218,
         "height": 36,
         "isClipped": false,
-        "scrollWidth": 219,
-        "clientWidth": 219,
+        "scrollWidth": 226,
+        "clientWidth": 226,
         "scrollHeight": 32,
         "clientHeight": 32
       },
@@ -1086,10 +1086,10 @@
       "tag": "a",
       "textSnippet": "Start",
       "box": {
-        "x": 718,
-        "y": 520,
+        "x": 719,
+        "y": 521,
         "width": 375,
-        "height": 29,
+        "height": 27,
         "isClipped": false,
         "scrollWidth": 0,
         "clientWidth": 0,
@@ -1144,13 +1144,13 @@
       "tag": "h2",
       "textSnippet": "Logic & Coordinate Systems",
       "box": {
-        "x": 792,
+        "x": 784,
         "y": 147,
-        "width": 289,
-        "height": 44,
+        "width": 303,
+        "height": 45,
         "isClipped": false,
-        "scrollWidth": 312,
-        "clientWidth": 312,
+        "scrollWidth": 329,
+        "clientWidth": 329,
         "scrollHeight": 32,
         "clientHeight": 32
       },
@@ -1174,9 +1174,9 @@
       "textSnippet": "Start",
       "box": {
         "x": 738,
-        "y": 508,
+        "y": 509,
         "width": 359,
-        "height": 37,
+        "height": 35,
         "isClipped": false,
         "scrollWidth": 0,
         "clientWidth": 0,
@@ -1457,11 +1457,11 @@
       "box": {
         "x": 24,
         "y": 16,
-        "width": 83,
+        "width": 91,
         "height": 32,
         "isClipped": false,
-        "scrollWidth": 83,
-        "clientWidth": 83,
+        "scrollWidth": 91,
+        "clientWidth": 91,
         "scrollHeight": 32,
         "clientHeight": 32
       }
@@ -1469,13 +1469,13 @@
     {
       "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav",
       "box": {
-        "x": 139,
+        "x": 147,
         "y": 18,
-        "width": 287,
+        "width": 289,
         "height": 28,
         "isClipped": false,
-        "scrollWidth": 287,
-        "clientWidth": 287,
+        "scrollWidth": 289,
+        "clientWidth": 289,
         "scrollHeight": 28,
         "clientHeight": 28
       }
@@ -1483,13 +1483,13 @@
     {
       "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
       "box": {
-        "x": 139,
+        "x": 147,
         "y": 18,
-        "width": 95,
+        "width": 96,
         "height": 28,
         "isClipped": false,
-        "scrollWidth": 95,
-        "clientWidth": 95,
+        "scrollWidth": 96,
+        "clientWidth": 96,
         "scrollHeight": 28,
         "clientHeight": 28
       }
@@ -1497,7 +1497,7 @@
     {
       "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(2) > a",
       "box": {
-        "x": 239,
+        "x": 247,
         "y": 18,
         "width": 96,
         "height": 28,
@@ -1511,13 +1511,13 @@
     {
       "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(3) > a",
       "box": {
-        "x": 339,
+        "x": 347,
         "y": 18,
-        "width": 88,
+        "width": 89,
         "height": 28,
         "isClipped": false,
-        "scrollWidth": 88,
-        "clientWidth": 88,
+        "scrollWidth": 89,
+        "clientWidth": 89,
         "scrollHeight": 28,
         "clientHeight": 28
       }
@@ -1525,7 +1525,7 @@
     {
       "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > button",
       "box": {
-        "x": 872,
+        "x": 871,
         "y": 14,
         "width": 36,
         "height": 36,
@@ -1539,13 +1539,13 @@
     {
       "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(1)",
       "box": {
-        "x": 929,
+        "x": 928,
         "y": 24,
-        "width": 80,
+        "width": 81,
         "height": 16,
         "isClipped": false,
-        "scrollWidth": 80,
-        "clientWidth": 80,
+        "scrollWidth": 81,
+        "clientWidth": 81,
         "scrollHeight": 16,
         "clientHeight": 16
       }
@@ -1553,7 +1553,7 @@
     {
       "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(2)",
       "box": {
-        "x": 1026,
+        "x": 1024,
         "y": 24,
         "width": 25,
         "height": 16,
@@ -1567,7 +1567,7 @@
     {
       "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(3)",
       "box": {
-        "x": 1067,
+        "x": 1065,
         "y": 24,
         "width": 25,
         "height": 16,
@@ -1581,13 +1581,13 @@
     {
       "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a",
       "box": {
-        "x": 1113,
+        "x": 1111,
         "y": 17,
-        "width": 97,
+        "width": 99,
         "height": 30,
         "isClipped": false,
-        "scrollWidth": 97,
-        "clientWidth": 97,
+        "scrollWidth": 99,
+        "clientWidth": 99,
         "scrollHeight": 30,
         "clientHeight": 30
       }
@@ -1595,13 +1595,13 @@
     {
       "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
       "box": {
-        "x": 1113,
+        "x": 1111,
         "y": 17,
-        "width": 97,
+        "width": 99,
         "height": 30,
         "isClipped": false,
-        "scrollWidth": 95,
-        "clientWidth": 95,
+        "scrollWidth": 97,
+        "clientWidth": 97,
         "scrollHeight": 28,
         "clientHeight": 28
       }
@@ -1667,11 +1667,11 @@
       "box": {
         "x": 137,
         "y": 351,
-        "width": 223,
+        "width": 226,
         "height": 20,
         "isClipped": false,
-        "scrollWidth": 223,
-        "clientWidth": 223,
+        "scrollWidth": 226,
+        "clientWidth": 226,
         "scrollHeight": 20,
         "clientHeight": 20
       }
@@ -1681,11 +1681,11 @@
       "box": {
         "x": 137,
         "y": 371,
-        "width": 223,
+        "width": 226,
         "height": 17,
         "isClipped": false,
-        "scrollWidth": 223,
-        "clientWidth": 223,
+        "scrollWidth": 226,
+        "clientWidth": 226,
         "scrollHeight": 17,
         "clientHeight": 17
       }
@@ -1723,11 +1723,11 @@
       "box": {
         "x": 137,
         "y": 511,
-        "width": 145,
+        "width": 146,
         "height": 16,
         "isClipped": false,
-        "scrollWidth": 145,
-        "clientWidth": 145,
+        "scrollWidth": 146,
+        "clientWidth": 146,
         "scrollHeight": 16,
         "clientHeight": 16
       }
@@ -1737,11 +1737,11 @@
       "box": {
         "x": 137,
         "y": 527,
-        "width": 145,
+        "width": 146,
         "height": 17,
         "isClipped": false,
-        "scrollWidth": 145,
-        "clientWidth": 145,
+        "scrollWidth": 146,
+        "clientWidth": 146,
         "scrollHeight": 17,
         "clientHeight": 17
       }
@@ -1763,13 +1763,13 @@
     {
       "selector": "#root > div > main > div > div > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(3) > a",
       "box": {
-        "x": 241,
+        "x": 239,
         "y": 720,
-        "width": 107,
+        "width": 111,
         "height": 17,
         "isClipped": false,
-        "scrollWidth": 107,
-        "clientWidth": 107,
+        "scrollWidth": 111,
+        "clientWidth": 111,
         "scrollHeight": 17,
         "clientHeight": 17
       }
@@ -1777,13 +1777,13 @@
     {
       "selector": "#root > div > main > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > h2",
       "box": {
-        "x": 833,
+        "x": 830,
         "y": 137,
-        "width": 107,
+        "width": 112,
         "height": 32,
         "isClipped": false,
-        "scrollWidth": 107,
-        "clientWidth": 107,
+        "scrollWidth": 112,
+        "clientWidth": 112,
         "scrollHeight": 32,
         "clientHeight": 32
       }
@@ -1792,9 +1792,9 @@
       "selector": "#root > div > main > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(4) > a",
       "box": {
         "x": 692,
-        "y": 532,
+        "y": 533,
         "width": 390,
-        "height": 20,
+        "height": 18,
         "isClipped": false,
         "scrollWidth": 0,
         "clientWidth": 0,
@@ -1819,13 +1819,13 @@
     {
       "selector": "#root > div > main > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > h2",
       "box": {
-        "x": 810,
+        "x": 807,
         "y": 143,
-        "width": 211,
+        "width": 218,
         "height": 36,
         "isClipped": false,
-        "scrollWidth": 219,
-        "clientWidth": 219,
+        "scrollWidth": 226,
+        "clientWidth": 226,
         "scrollHeight": 32,
         "clientHeight": 32
       }
@@ -1833,10 +1833,10 @@
     {
       "selector": "#root > div > main > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(4) > a",
       "box": {
-        "x": 718,
-        "y": 520,
+        "x": 719,
+        "y": 521,
         "width": 375,
-        "height": 29,
+        "height": 27,
         "isClipped": false,
         "scrollWidth": 0,
         "clientWidth": 0,
@@ -1861,13 +1861,13 @@
     {
       "selector": "#root > div > main > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > h2",
       "box": {
-        "x": 792,
+        "x": 784,
         "y": 147,
-        "width": 289,
-        "height": 44,
+        "width": 303,
+        "height": 45,
         "isClipped": false,
-        "scrollWidth": 312,
-        "clientWidth": 312,
+        "scrollWidth": 329,
+        "clientWidth": 329,
         "scrollHeight": 32,
         "clientHeight": 32
       }
@@ -1876,9 +1876,9 @@
       "selector": "#root > div > main > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(4) > a",
       "box": {
         "x": 738,
-        "y": 508,
+        "y": 509,
         "width": 359,
-        "height": 37,
+        "height": 35,
         "isClipped": false,
         "scrollWidth": 0,
         "clientWidth": 0,

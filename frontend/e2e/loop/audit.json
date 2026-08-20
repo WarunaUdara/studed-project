@@ -1,0 +1,266 @@
+{
+  "timestamp": "2026-08-20T12:51:29.315Z",
+  "summary": {
+    "totalFaults": 14,
+    "p0Count": 5,
+    "p1Count": 9,
+    "p2Count": 0,
+    "byCategory": {
+      "contrast": 7,
+      "token-drift": 0,
+      "typography": 0,
+      "overlap": 0,
+      "dead-links": 0,
+      "a11y": 7,
+      "state-coverage": 0,
+      "spacing-rhythm": 0
+    }
+  },
+  "faults": [
+    {
+      "id": "contrast-student-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/dashboard",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "a11y-name-_dashboard-_root___div___main___div___div___div___div_nth-of-type_1____div_nth-of-type_3____div_nth-of-type_1____a",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/dashboard",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > a",
+      "evidence": {
+        "tag": "a",
+        "tabIndex": 0
+      },
+      "message": "Interactive <a> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "contrast-student-_courses_science-thinking-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_1____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Courses"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Courses\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_courses_science-thinking-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_courses_science-thinking-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_2____button",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "tag": "button",
+        "tabIndex": 0
+      },
+      "message": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_3____button",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(3) > button",
+      "evidence": {
+        "tag": "button",
+        "tabIndex": 0
+      },
+      "message": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_4____button",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(4) > button",
+      "evidence": {
+        "tag": "button",
+        "tabIndex": 0
+      },
+      "message": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_5____button",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(5) > button",
+      "evidence": {
+        "tag": "button",
+        "tabIndex": 0
+      },
+      "message": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_6____button",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(6) > button",
+      "evidence": {
+        "tag": "button",
+        "tabIndex": 0
+      },
+      "message": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "contrast-student-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_3____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/dashboard",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(3) > a",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Quests"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Quests\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/dashboard",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/dashboard",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "a11y-name-_dashboard-_root___div___main___div___div___div___div_nth-of-type_1____div_nth-of-type_3____div_nth-of-type_1____a",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/dashboard",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > a",
+      "evidence": {
+        "tag": "a",
+        "tabIndex": 0
+      },
+      "message": "Interactive <a> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    }
+  ]
+}

@@ -127,3 +127,87 @@ export function formatColorToOklch(colorStr: string): string {
   const oklch = rgbToOklch(parsed[0], parsed[1], parsed[2], parsed[3]);
   return oklch.raw;
 }
+
+export interface ParsedColor {
+  r: number;
+  g: number;
+  b: number;
+  alpha: number;
+  l?: number;
+  c?: number;
+  h?: number;
+}
+
+/**
+ * Parses OKLCH, RGB, RGBA, or Hex strings into color components.
+ */
+export function parseCssColor(colorStr: string): ParsedColor {
+  if (!colorStr) return { r: 0, g: 0, b: 0, alpha: 1 };
+
+  const trimmed = colorStr.trim().toLowerCase();
+
+  // oklch(0.5 0.15 145 / 0.8)
+  if (trimmed.startsWith("oklch(")) {
+    const parts = trimmed.replace("oklch(", "").replace(")", "").split(/[\s/]+/);
+    const l = parseFloat(parts[0]) || 0;
+    const c = parseFloat(parts[1]) || 0;
+    const h = parseFloat(parts[2]) || 0;
+    const alpha = parts[3] ? parseFloat(parts[3]) : 1;
+
+    // Approximate sRGB conversion for luminance calculation
+    const hRad = (h * Math.PI) / 180;
+    const a = c * Math.cos(hRad);
+    const b = c * Math.sin(hRad);
+    const l_ = l + 0.3963377774 * a + 0.2158037573 * b;
+    const m_ = l - 0.1055613458 * a - 0.0638541728 * b;
+    const s_ = l - 0.0894841775 * a - 1.291485548 * b;
+    const lCubed = l_ * l_ * l_;
+    const mCubed = m_ * m_ * m_;
+    const sCubed = s_ * s_ * s_;
+    const rLin = +4.0767416621 * lCubed - 3.3077115913 * mCubed + 0.2309699292 * sCubed;
+    const gLin = -1.2684380046 * lCubed + 2.6097574011 * mCubed - 0.3413193965 * sCubed;
+    const bLin = -0.0041960863 * lCubed - 0.7034186147 * mCubed + 1.707614701 * sCubed;
+
+    const r = Math.min(255, Math.max(0, Math.round(rLin * 255)));
+    const g = Math.min(255, Math.max(0, Math.round(gLin * 255)));
+    const bColor = Math.min(255, Math.max(0, Math.round(bLin * 255)));
+
+    return { r, g, b: bColor, alpha, l, c, h };
+  }
+
+  const rgb = parseRgbString(trimmed);
+  if (rgb) {
+    const oklch = rgbToOklch(rgb[0], rgb[1], rgb[2], rgb[3]);
+    return { r: rgb[0], g: rgb[1], b: rgb[2], alpha: rgb[3], l: oklch.l, c: oklch.c, h: oklch.h };
+  }
+
+  return { r: 0, g: 0, b: 0, alpha: 1 };
+}
+
+/**
+ * Calculates WCAG 2.2 Relative Luminance of an sRGB color.
+ */
+export function getRelativeLuminance(r: number, g: number, b: number): number {
+  const rLin = sRgbToLinear(r);
+  const gLin = sRgbToLinear(g);
+  const bLin = sRgbToLinear(b);
+  return 0.2126 * rLin + 0.7152 * gLin + 0.0722 * bLin;
+}
+
+/**
+ * Calculates WCAG 2.2 contrast ratio between two colors (Foreground on Background).
+ * Returns ratio from 1.0 to 21.0.
+ */
+export function calculateContrastRatio(fgStr: string, bgStr: string): number {
+  const fg = parseCssColor(fgStr);
+  const bg = parseCssColor(bgStr);
+
+  const lumFg = getRelativeLuminance(fg.r, fg.g, fg.b);
+  const lumBg = getRelativeLuminance(bg.r, bg.g, bg.b);
+
+  const l1 = Math.max(lumFg, lumBg);
+  const l2 = Math.min(lumFg, lumBg);
+
+  return (l1 + 0.05) / (l2 + 0.05);
+}
+
