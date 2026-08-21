@@ -6,6 +6,7 @@ import type { SparkTask } from "./types";
 
 interface DailySparkTaskCardProps {
   task: SparkTask;
+  courseTitle?: string;
   currentIndex: number;
   totalTasks: number;
   currentXp: number;
@@ -15,6 +16,7 @@ interface DailySparkTaskCardProps {
 
 export function DailySparkTaskCard({
   task,
+  courseTitle,
   currentIndex,
   totalTasks,
   currentXp,
@@ -135,6 +137,14 @@ export function DailySparkTaskCard({
 
         {/* Challenge Prompt */}
         <div className="mb-6 text-center">
+          {courseTitle && (
+            <div className="mb-2.5 flex items-center justify-center">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-0.5 text-xs font-bold text-emerald-400">
+                <Sparkles className="size-3 text-emerald-400" />
+                {courseTitle}
+              </span>
+            </div>
+          )}
           <h2 className="flex items-center justify-center gap-1.5 text-lg font-bold text-neutral-100 sm:text-xl">
             <span>Color</span>
             <span className="inline-flex flex-col items-center px-1 text-sm leading-none font-extrabold text-white">
