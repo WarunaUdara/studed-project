@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Code, Send } from "lucide-react";
 import { LanguageToggle } from "@/components/public/LanguageToggle";
+import { Link001 } from "@/components/ui/animated-link";
 import { RuixenGradientFooter } from "@/components/ui/ruixen-gradient-footer";
 import { usePublicI18n } from "@/lib/i18n";
 
@@ -83,12 +84,12 @@ export function PublicFooter() {
               <ul className="space-y-2 text-sm">
                 {col.links.map((link) => (
                   <li key={`${col.heading}-${link.label}`}>
-                    <Link
+                    <Link001
                       to={link.to}
                       className="text-muted-foreground transition-colors hover:text-primary"
                     >
                       {link.label}
-                    </Link>
+                    </Link001>
                   </li>
                 ))}
               </ul>

@@ -2,6 +2,7 @@
 // That's what users will see in the preview
 // Create new files in this directory to add more demos
 
+import { Link001 } from "@/components/ui/animated-link";
 import { RuixenGradientFooter } from "@/components/ui/ruixen-gradient-footer";
 
 const columns = [
@@ -71,12 +72,12 @@ export default function DemoOne() {
                   <ul className="mt-4 flex flex-col gap-3">
                     {col.links.map((link) => (
                       <li key={link}>
-                        <a
+                        <Link001
                           href="#"
                           className="text-muted-foreground transition-colors hover:text-foreground"
                         >
                           {link}
-                        </a>
+                        </Link001>
                       </li>
                     ))}
                   </ul>
