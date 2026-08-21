@@ -16,8 +16,11 @@ export function InteractiveHeroCard() {
   const [characterPos, setCharacterPos] = useState(0);
   const [terminalLog, setTerminalLog] = useState("Initialized interpreter...");
 
-  // Math Trigonometry Theta value (0 to 4pi mapped to SVG coordinates)
-  const [thetaPercent, setThetaPercent] = useState(0.4);
+  // Math Trigonometry SVG element refs
+  const waveSliderRef = useRef<SVGGElement>(null);
+  const waveDotRef = useRef<SVGCircleElement>(null);
+  const circleArmRef = useRef<SVGLineElement>(null);
+  const circleDotRef = useRef<SVGCircleElement>(null);
 
   // Auto-switch tabs periodically (every 7 seconds)
   useEffect(() => {
@@ -31,7 +34,7 @@ export function InteractiveHeroCard() {
     return () => clearInterval(interval);
   }, []);
 
-  // GSAP Math Sine/Cosine Animation
+  // GSAP Math Sine/Cosine Animation - direct SVG attribute mutation with 0 React re-renders
   useEffect(() => {
     if (activeTab !== "math") return;
     if (prefersReducedMotion()) return;
@@ -44,7 +47,27 @@ export function InteractiveHeroCard() {
         yoyo: true,
         ease: "sine.inOut",
         onUpdate: () => {
-          setThetaPercent(obj.val);
+          const waveX = 30 + obj.val * 170;
+          const normalized = ((waveX - 30) / 130) * Math.PI * 2;
+          const waveY = 70 - Math.cos(normalized) * 40;
+          const angle = obj.val * Math.PI * 4;
+          const armX = Math.cos(angle) * 40;
+          const armY = -Math.sin(angle) * 40;
+
+          if (waveSliderRef.current) {
+            waveSliderRef.current.setAttribute("transform", `translate(${waveX.toFixed(1)}, 0)`);
+          }
+          if (waveDotRef.current) {
+            waveDotRef.current.setAttribute("cy", waveY.toFixed(1));
+          }
+          if (circleArmRef.current) {
+            circleArmRef.current.setAttribute("x2", armX.toFixed(1));
+            circleArmRef.current.setAttribute("y2", armY.toFixed(1));
+          }
+          if (circleDotRef.current) {
+            circleDotRef.current.setAttribute("cx", armX.toFixed(1));
+            circleDotRef.current.setAttribute("cy", armY.toFixed(1));
+          }
         },
       });
     }, mathRef);
@@ -198,32 +221,26 @@ export function InteractiveHeroCard() {
                   </text>
 
                   {/* Slider Indicator along wave */}
-                  {(() => {
-                    const waveX = 30 + thetaPercent * 170;
-                    const normalized = ((waveX - 30) / 130) * Math.PI * 2;
-                    const waveY = 70 - Math.cos(normalized) * 40;
-                    return (
-                      <g transform={`translate(${waveX}, 0)`}>
-                        <line
-                          x1="0"
-                          y1="20"
-                          x2="0"
-                          y2="120"
-                          stroke="#ec4899"
-                          strokeWidth="2"
-                          strokeDasharray="3 3"
-                        />
-                        <circle
-                          cx="0"
-                          cy={waveY}
-                          r="5"
-                          fill="#3b82f6"
-                          stroke="#ffffff"
-                          strokeWidth="2"
-                        />
-                      </g>
-                    );
-                  })()}
+                  <g ref={waveSliderRef} transform="translate(98, 0)">
+                    <line
+                      x1="0"
+                      y1="20"
+                      x2="0"
+                      y2="120"
+                      stroke="#ec4899"
+                      strokeWidth="2"
+                      strokeDasharray="3 3"
+                    />
+                    <circle
+                      ref={waveDotRef}
+                      cx="0"
+                      cy="30"
+                      r="5"
+                      fill="#3b82f6"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    />
+                  </g>
 
                   {/* Unit Circle (Right Side) */}
                   <g transform="translate(260, 70)">
@@ -259,25 +276,17 @@ export function InteractiveHeroCard() {
                     />
 
                     {/* Rotating Radius Arm */}
-                    {(() => {
-                      const angle = thetaPercent * Math.PI * 4;
-                      const armX = Math.cos(angle) * 40;
-                      const armY = -Math.sin(angle) * 40;
-                      return (
-                        <>
-                          <line
-                            x1="0"
-                            y1="0"
-                            x2={armX}
-                            y2={armY}
-                            stroke="#3b82f6"
-                            strokeWidth="2.5"
-                          />
-                          <circle cx={armX} cy={armY} r="4" fill="#ec4899" />
-                          <circle cx="0" cy="0" r="3" fill="#1e293b" />
-                        </>
-                      );
-                    })()}
+                    <line
+                      ref={circleArmRef}
+                      x1="0"
+                      y1="0"
+                      x2="28.2"
+                      y2="-28.2"
+                      stroke="#3b82f6"
+                      strokeWidth="2.5"
+                    />
+                    <circle ref={circleDotRef} cx="28.2" cy="-28.2" r="4" fill="#ec4899" />
+                    <circle cx="0" cy="0" r="3" fill="#1e293b" />
                   </g>
                 </svg>
               </div>

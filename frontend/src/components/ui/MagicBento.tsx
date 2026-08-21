@@ -186,16 +186,6 @@ export function MagicBentoCard({
       isHoveredRef.current = true;
       animateParticles();
       onMouseEnter?.();
-
-      if (enableTilt) {
-        gsap.to(element, {
-          rotateX: 4,
-          rotateY: 4,
-          duration: 0.3,
-          ease: "power2.out",
-          transformPerspective: 1000,
-        });
-      }
     };
 
     const handleMouseLeave = () => {
@@ -207,7 +197,8 @@ export function MagicBentoCard({
         gsap.to(element, {
           rotateX: 0,
           rotateY: 0,
-          duration: 0.3,
+          scale: 1,
+          duration: 0.5,
           ease: "power2.out",
         });
       }
@@ -216,7 +207,7 @@ export function MagicBentoCard({
         gsap.to(element, {
           x: 0,
           y: 0,
-          duration: 0.3,
+          duration: 0.5,
           ease: "power2.out",
         });
       }
@@ -232,27 +223,28 @@ export function MagicBentoCard({
       const centerY = rect.height / 2;
 
       if (enableTilt) {
-        const rotateX = ((y - centerY) / centerY) * -8;
-        const rotateY = ((x - centerX) / centerX) * 8;
+        const rotateX = ((y - centerY) / centerY) * -14;
+        const rotateY = ((x - centerX) / centerX) * 14;
 
         gsap.to(element, {
           rotateX,
           rotateY,
-          duration: 0.1,
-          ease: "power2.out",
-          transformPerspective: 1000,
+          duration: 0.15,
+          ease: "power1.out",
+          transformPerspective: 900,
+          transformOrigin: "center center",
         });
       }
 
       if (enableMagnetism) {
-        const magnetX = (x - centerX) * 0.04;
-        const magnetY = (y - centerY) * 0.04;
+        const magnetX = (x - centerX) * 0.05;
+        const magnetY = (y - centerY) * 0.05;
 
         magnetismAnimationRef.current = gsap.to(element, {
           x: magnetX,
           y: magnetY,
-          duration: 0.3,
-          ease: "power2.out",
+          duration: 0.25,
+          ease: "power1.out",
         });
       }
     };
@@ -333,7 +325,7 @@ export function MagicBentoCard({
       style={{
         ...style,
         position: "relative",
-        overflow: "hidden",
+        transformStyle: "preserve-3d",
         ["--glow-color" as string]: glowColor,
       }}
     >
