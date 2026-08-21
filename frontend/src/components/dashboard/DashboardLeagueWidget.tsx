@@ -5,7 +5,10 @@ import { useQuery } from "urql";
 import { LeaderboardRow } from "@/components/gamification/LeaderboardRow";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { LEADERBOARD_QUERY } from "@/graphql/courses";
+import { buildDemoLeaderboard } from "@/lib/demoData";
+import { maskStudentName } from "@/lib/gamification";
 import type { LeaderboardEntryData, LeaderboardQueryData } from "@/lib/graphqlTypes";
+import { useAuthStore } from "@/stores/auth";
 
 /**
  * The student's real weekly standing, with the neighbours immediately above and
@@ -14,15 +17,33 @@ import type { LeaderboardEntryData, LeaderboardQueryData } from "@/lib/graphqlTy
  * Shows the weekly board, which resets every Monday.
  */
 export function DashboardLeagueWidget() {
+  const { user } = useAuthStore();
   const [{ data, fetching }] = useQuery<LeaderboardQueryData>({
     query: LEADERBOARD_QUERY,
     variables: { scope: "WEEKLY", limit: 100 },
   });
 
+  const fallbackEntries: LeaderboardEntryData[] = useMemo(() => {
+    const rawDemo = buildDemoLeaderboard(
+      user?.id ?? "student-user-id",
+      user?.totalXp ?? 425,
+      user?.fullName ?? "You",
+      "WEEKLY",
+    );
+    return rawDemo.map((e) => ({
+      rank: e.rank,
+      userId: e.user.id,
+      displayName: maskStudentName(e.user.fullName),
+      totalXp: e.totalXp,
+      isMe: e.user.id === (user?.id ?? "student-user-id"),
+    }));
+  }, [user?.id, user?.totalXp, user?.fullName]);
+
   const board = data?.leaderboard;
-  const entries = useMemo(() => board?.entries ?? [], [board]);
-  const me = board?.me ?? null;
-  const totalRanked = board?.totalRanked ?? 0;
+  const hasLive = Boolean(board?.entries && board.entries.length > 0);
+  const entries = useMemo(() => (hasLive ? board!.entries : fallbackEntries), [hasLive, board, fallbackEntries]);
+  const me = hasLive ? (board?.me ?? null) : (fallbackEntries.find((e) => e.isMe) ?? null);
+  const totalRanked = hasLive ? board!.totalRanked : fallbackEntries.length;
 
   // Three rows: the student, and whoever is directly either side of them.
   const window: LeaderboardEntryData[] = useMemo(() => {

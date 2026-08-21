@@ -231,6 +231,8 @@ export function privateLeaderboardName(fullName: string | null | undefined): str
   return `${first} ${lastInitial}.`;
 }
 
+export const maskStudentName = privateLeaderboardName;
+
 export function leaderboardDisplayName(displayName: string | null | undefined): string {
   const trimmed = (displayName ?? "").trim();
   return trimmed === "" ? "Student Scholar" : trimmed;

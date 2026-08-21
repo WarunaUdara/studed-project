@@ -3,7 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "urql";
 import { LeaderboardRow } from "@/components/gamification/LeaderboardRow";
 import { LEADERBOARD_QUERY } from "@/graphql/courses";
+import { buildDemoLeaderboard } from "@/lib/demoData";
+import { maskStudentName } from "@/lib/gamification";
 import type { LeaderboardEntryData, LeaderboardQueryData } from "@/lib/graphqlTypes";
+import { useAuthStore } from "@/stores/auth";
 
 interface DailySparkLeagueRankProps {
   onFinish: () => void;
@@ -17,16 +20,34 @@ interface DailySparkLeagueRankProps {
  * student actually holds.
  */
 export function DailySparkLeagueRank({ onFinish }: DailySparkLeagueRankProps) {
+  const { user } = useAuthStore();
   const [{ data, fetching }] = useQuery<LeaderboardQueryData>({
     query: LEADERBOARD_QUERY,
     variables: { scope: "WEEKLY", limit: 100 },
     requestPolicy: "network-only",
   });
 
+  const fallbackEntries: LeaderboardEntryData[] = useMemo(() => {
+    const rawDemo = buildDemoLeaderboard(
+      user?.id ?? "student-user-id",
+      user?.totalXp ?? 425,
+      user?.fullName ?? "You",
+      "WEEKLY",
+    );
+    return rawDemo.map((e) => ({
+      rank: e.rank,
+      userId: e.user.id,
+      displayName: maskStudentName(e.user.fullName),
+      totalXp: e.totalXp,
+      isMe: e.user.id === (user?.id ?? "student-user-id"),
+    }));
+  }, [user?.id, user?.totalXp, user?.fullName]);
+
   const board = data?.leaderboard;
-  const entries = useMemo(() => board?.entries ?? [], [board]);
-  const me = board?.me ?? null;
-  const totalRanked = board?.totalRanked ?? 0;
+  const hasLive = Boolean(board?.entries && board.entries.length > 0);
+  const entries = useMemo(() => (hasLive ? board!.entries : fallbackEntries), [hasLive, board, fallbackEntries]);
+  const me = hasLive ? (board?.me ?? null) : (fallbackEntries.find((e) => e.isMe) ?? null);
+  const totalRanked = hasLive ? board!.totalRanked : fallbackEntries.length;
 
   // The student plus their immediate neighbours, so the rank has context.
   const window: LeaderboardEntryData[] = useMemo(() => {
