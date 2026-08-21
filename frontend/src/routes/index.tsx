@@ -38,7 +38,6 @@ import { CardContent } from "@/components/ui/Card";
 import { CTASection } from "@/components/ui/hero-dithering-card";
 import { MagicBento, MagicBentoCard } from "@/components/ui/MagicBento";
 import { ProgressRing } from "@/components/ui/ProgressRing";
-import { SplitText } from "@/components/ui/SplitText";
 import { TextLoop } from "@/components/ui/TextLoop";
 import { FEATURED_COURSES, type FeaturedCourse } from "@/lib/demoData";
 import { type ProficiencyLevel, proficiencyMeta } from "@/lib/gamification";
@@ -122,26 +121,46 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.06 }}
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.12,
+                  delayChildren: 0.05,
+                },
+              },
+            }}
             className="text-balance font-serif font-bold text-4xl leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl"
           >
-            <span>{t("heroTitleA")}</span>
-            <br />
-            <span className="italic text-primary">
-              <SplitText
-                text={effectiveHeroTitleB}
-                tag="span"
-                splitType="chars"
-                delay={30}
-                duration={0.6}
-                ease="power3.out"
-                from={{ opacity: 0, y: 24 }}
-                to={{ opacity: 1, y: 0 }}
-                className="inline-block"
-              />
-            </span>
+            <motion.span
+              variants={{
+                hidden: { opacity: 0, y: 16 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+                },
+              }}
+              className="block"
+            >
+              {t("heroTitleA")}
+            </motion.span>
+            <motion.span
+              variants={{
+                hidden: { opacity: 0, y: 18 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+                },
+              }}
+              className="block italic text-primary"
+            >
+              {effectiveHeroTitleB}
+            </motion.span>
           </motion.h1>
 
           <motion.p

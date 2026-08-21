@@ -79,10 +79,10 @@ export function InteractiveHeroCard() {
       {/* Subtle Glow */}
       <div className="absolute -inset-1 rounded-[32px] bg-gradient-to-tr from-primary/20 via-emerald-500/10 to-teal-500/20 blur-xl opacity-60 pointer-events-none" />
 
-      {/* Main Clean Card */}
-      <div className="relative overflow-hidden rounded-[28px] border border-border/80 bg-card p-6 shadow-2xl backdrop-blur-xl transition-all">
+      {/* Main Clean Card with locked static height to prevent layout shift */}
+      <div className="relative h-[440px] flex flex-col justify-between overflow-hidden rounded-[28px] border border-border/80 bg-card p-6 shadow-2xl backdrop-blur-xl transition-all">
         {/* Subject Switcher Header */}
-        <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
+        <div className="flex items-center justify-between border-b border-border/60 pb-3.5 shrink-0">
           <div className="flex items-center gap-1.5 rounded-full bg-muted/70 p-1">
             <button
               type="button"
@@ -129,18 +129,18 @@ export function InteractiveHeroCard() {
           </div>
         </div>
 
-        {/* Interactive Canvas Body */}
-        <div className="py-5 min-h-[300px] flex flex-col items-center justify-center">
+        {/* Interactive Canvas Body - fixed height container */}
+        <div className="relative w-full flex-1 py-3 overflow-hidden flex flex-col items-center justify-center">
           {/* TAB 1: MATH TRIGONOMETRIC WAVE & UNIT CIRCLE */}
           {activeTab === "math" && (
-            <div ref={mathRef} className="flex flex-col items-center space-y-4 w-full">
+            <div ref={mathRef} className="flex flex-col items-center justify-between h-full w-full py-1">
               {/* Formula Badge */}
               <div className="rounded-lg border border-border/80 bg-muted/50 px-3 py-1 font-mono text-xs font-bold text-foreground shadow-2xs">
                 f(θ) = cos(θ)
               </div>
 
               {/* Trigonometric Wave & Unit Circle Diagram */}
-              <div className="relative w-full max-w-sm h-40 flex items-center justify-center">
+              <div className="relative w-full max-w-sm h-36 flex items-center justify-center">
                 <svg viewBox="0 0 320 140" className="w-full h-full overflow-visible">
                   {/* Grid Lines */}
                   <line
@@ -282,7 +282,7 @@ export function InteractiveHeroCard() {
                 </svg>
               </div>
 
-              <p className="text-xs font-semibold text-muted-foreground">
+              <p className="text-xs font-semibold text-muted-foreground text-center">
                 Harmonic motion mapped to angular unit circle rotation.
               </p>
             </div>
@@ -290,14 +290,14 @@ export function InteractiveHeroCard() {
 
           {/* TAB 2: SCIENCE INTERACTIVE GEARS & MECHANICAL PARITY */}
           {activeTab === "science" && (
-            <div ref={scienceRef} className="flex flex-col items-center space-y-4 w-full">
-              <p className="text-xs font-medium text-muted-foreground">
+            <div ref={scienceRef} className="flex flex-col items-center justify-between h-full w-full py-1">
+              <p className="text-xs font-medium text-muted-foreground text-center">
                 Adjacent gears in a mechanical train rotate in opposite directions
               </p>
 
               {/* 2 Meshed Rotating Gears */}
-              <div className="relative flex items-center justify-center p-2">
-                <svg viewBox="0 0 240 130" className="w-60 h-32 overflow-visible">
+              <div className="relative flex items-center justify-center p-1 h-36">
+                <svg viewBox="0 0 240 130" className="w-56 h-30 overflow-visible">
                   {/* Left Gear (Lime Driver: Counter-Clockwise ↺) */}
                   <g transform="translate(68, 65)">
                     <g
@@ -384,85 +384,85 @@ export function InteractiveHeroCard() {
 
           {/* TAB 3: CODING ALGORITHM INTERPRETER RUNNING LINE BY LINE */}
           {activeTab === "code" && (
-            <div ref={codeRef} className="flex flex-col items-center space-y-3.5 w-full">
+            <div ref={codeRef} className="flex flex-col items-center justify-between h-full w-full py-1">
               {/* Code blocks with animated active line indicator */}
-              <div className="w-full rounded-2xl border border-border/80 bg-muted/30 p-3.5 space-y-1.5 font-mono text-xs text-left shadow-inner">
+              <div className="w-full rounded-2xl border border-border/80 bg-muted/30 p-2.5 space-y-1 font-mono text-[11px] text-left shadow-inner">
                 {/* Line 1 */}
                 <div
-                  className={`flex items-center gap-2.5 rounded-lg px-2.5 py-1 transition-all duration-300 ${
+                  className={`flex items-center gap-2 rounded-md px-2 py-0.5 transition-all duration-300 ${
                     codeActiveLine === 1
-                      ? "bg-primary/20 text-foreground font-bold border-l-3 border-primary"
+                      ? "bg-primary/20 text-foreground font-bold border-l-2 border-primary"
                       : "text-muted-foreground"
                   }`}
                 >
-                  <span className="w-3 text-[10px] opacity-60">1</span>
+                  <span className="w-3 text-[9px] opacity-60">1</span>
                   <span className="text-primary font-bold">while</span>
                   <span>gems_remaining &gt; 0:</span>
                 </div>
 
                 {/* Line 2 */}
                 <div
-                  className={`flex items-center gap-2.5 pl-6 rounded-lg px-2.5 py-1 transition-all duration-300 ${
+                  className={`flex items-center gap-2 pl-4 rounded-md px-2 py-0.5 transition-all duration-300 ${
                     codeActiveLine === 2
-                      ? "bg-emerald-500/20 text-foreground font-bold border-l-3 border-emerald-500"
+                      ? "bg-emerald-500/20 text-foreground font-bold border-l-2 border-emerald-500"
                       : "text-muted-foreground"
                   }`}
                 >
-                  <span className="w-3 text-[10px] opacity-60">2</span>
+                  <span className="w-3 text-[9px] opacity-60">2</span>
                   <span className="text-emerald-500 font-semibold">move_forward()</span>
                 </div>
 
                 {/* Line 3 */}
                 <div
-                  className={`flex items-center gap-2.5 pl-6 rounded-lg px-2.5 py-1 transition-all duration-300 ${
+                  className={`flex items-center gap-2 pl-4 rounded-md px-2 py-0.5 transition-all duration-300 ${
                     codeActiveLine === 3
-                      ? "bg-amber-500/20 text-foreground font-bold border-l-3 border-amber-500"
+                      ? "bg-amber-500/20 text-foreground font-bold border-l-2 border-amber-500"
                       : "text-muted-foreground"
                   }`}
                 >
-                  <span className="w-3 text-[10px] opacity-60">3</span>
+                  <span className="w-3 text-[9px] opacity-60">3</span>
                   <span className="text-amber-500 font-bold">if</span>
                   <span>is_at_gem():</span>
                 </div>
 
                 {/* Line 4 */}
                 <div
-                  className={`flex items-center gap-2.5 pl-10 rounded-lg px-2.5 py-1 transition-all duration-300 ${
+                  className={`flex items-center gap-2 pl-7 rounded-md px-2 py-0.5 transition-all duration-300 ${
                     codeActiveLine === 4
-                      ? "bg-purple-500/20 text-foreground font-bold border-l-3 border-purple-500"
+                      ? "bg-purple-500/20 text-foreground font-bold border-l-2 border-purple-500"
                       : "text-muted-foreground"
                   }`}
                 >
-                  <span className="w-3 text-[10px] opacity-60">4</span>
+                  <span className="w-3 text-[9px] opacity-60">4</span>
                   <span className="text-purple-500 font-semibold">collect_gem()</span>
                 </div>
               </div>
 
               {/* Live Mini Visual Grid Arena */}
-              <div className="w-full flex items-center justify-between gap-2 px-2">
+              <div className="w-full flex items-center justify-between gap-2 px-1">
                 {/* 3-Tile Mini Arena */}
-                <div className="flex items-center gap-1.5 rounded-xl bg-background border border-border/70 p-1.5">
+                <div className="flex items-center gap-1 rounded-xl bg-background border border-border/70 p-1">
                   {[0, 1, 2].map((idx) => {
                     const isHero = characterPos === idx;
                     const hasGem = idx === 1 && gemCount === 0;
                     return (
                       <div
                         key={idx}
-                        className={`size-9 rounded-lg flex items-center justify-center text-sm font-bold transition-all ${
+                        className={`size-7.5 rounded-md flex items-center justify-center text-xs font-bold transition-all ${
                           isHero
                             ? "bg-emerald-500/20 border border-emerald-500 shadow-xs scale-105"
                             : "bg-muted/40 border border-border/40"
                         }`}
                       >
-                        {isHero ? <Bot className="size-4" /> : hasGem ? <Gem className="size-4" /> : null}
+                        {isHero ? <Bot className="size-3.5" /> : hasGem ? <Gem className="size-3.5" /> : null}
                       </div>
                     );
                   })}
                 </div>
 
                 {/* Live Console Output Bar */}
-                <div className="flex-1 flex items-center gap-1.5 rounded-xl border border-border/70 bg-background/90 px-2.5 py-2 font-mono text-[11px] text-foreground truncate shadow-2xs">
-                  <Terminal className="size-3.5 text-primary shrink-0" />
+                <div className="flex-1 flex items-center gap-1.5 rounded-xl border border-border/70 bg-background/90 px-2 py-1.5 font-mono text-[10.5px] text-foreground truncate shadow-2xs">
+                  <Terminal className="size-3 text-primary shrink-0" />
                   <span className="truncate text-muted-foreground">{terminalLog}</span>
                 </div>
               </div>
@@ -471,7 +471,7 @@ export function InteractiveHeroCard() {
         </div>
 
         {/* Footer Tagline */}
-        <div className="border-t border-border/50 pt-3 text-center">
+        <div className="border-t border-border/50 pt-3 text-center shrink-0">
           <p className="text-[11px] font-medium text-muted-foreground">
             Intuitive step-by-step problem solving for all grade levels.
           </p>
