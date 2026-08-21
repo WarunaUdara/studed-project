@@ -260,7 +260,9 @@ function validateWave(issues: ValidationIssue[], path: string, wave: WaveDef) {
   assertString(issues, path, wave.title, "title");
   assertInt(issues, path, wave.sequenceOrder, "sequenceOrder", 1, 1000);
   assertInt(issues, path, wave.xpReward, "xpReward", 0, 100000);
-  assertInt(issues, path, wave.maxReattempts, "maxReattempts", 1, 100);
+  // 0 means unlimited, which is the platform default (issue #52). The floor
+  // used to be 1, so unlimited could not be expressed at all.
+  assertInt(issues, path, wave.maxReattempts, "maxReattempts", 0, 100);
   assertInt(issues, path, wave.passingThreshold, "passingThreshold", 0, 100);
   assertInt(issues, path, wave.estimatedDuration, "estimatedDuration", 1, 600);
 
