@@ -45,7 +45,7 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
     await physicsCard.click();
 
     // Enroll in the course (sheet shows Enroll Free when not enrolled)
-    const enrollBtn = page.getByRole("button", { name: /Enroll Free/i });
+    const enrollBtn = page.getByRole("button", { name: /Enroll for Free/i });
     await expect(enrollBtn).toBeVisible({ timeout: 5000 });
     await enrollBtn.click();
 

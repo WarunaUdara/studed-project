@@ -40,26 +40,19 @@ test.describe("Student Course Search, Filter, and Enrollment Flow", () => {
     await searchInput.fill("");
     await expect(mathCard).toBeVisible({ timeout: 5000 });
 
-    // 3. Test Grade Filters
-    const filterToggleBtn = page.getByRole("button", { name: /Filter/i });
-    await filterToggleBtn.click();
+    // 3. Test the learning path category tabs, which replaced the grade filter
+    // panel when the catalog became Learning Paths.
+    const scienceTab = page.getByRole("button", { name: /Science & Physics/ });
+    await expect(scienceTab).toBeVisible({ timeout: 5000 });
+    await scienceTab.click();
 
-    // Click A/L grade filter chip
-    const alFilterBtn = page.getByRole("button", { name: "A/L", exact: true });
-    await expect(alFilterBtn).toBeVisible({ timeout: 5000 });
-    await alFilterBtn.click();
-
-    // Verify AL Physics is visible, Grade 10 Math is NOT
+    // The science path shows physics and hides the maths path entirely.
     await expect(physicsCard).toBeVisible();
     await expect(mathCard).not.toBeVisible();
 
-    // Click "All Grades" to reset grade filter
-    const allGradesFilterBtn = page.getByRole("button", { name: "All Grades", exact: true });
-    await allGradesFilterBtn.click();
+    // Back to every path.
+    await page.getByRole("button", { name: /All Paths/ }).click();
     await expect(mathCard).toBeVisible({ timeout: 5000 });
-
-    // Close filters panel
-    await filterToggleBtn.click();
 
     // 4. Test Course Enrollment Flow
     // Find a G10 course card to enroll/view
@@ -78,7 +71,7 @@ test.describe("Student Course Search, Filter, and Enrollment Flow", () => {
     // The detail sheet shows Enroll Free when not enrolled, else Continue
     // Learning. Wait for the sheet to settle into one of the two states
     // before branching (isVisible() alone is a non-waiting check).
-    const enrollBtn = page.getByRole("button", { name: /Enroll Free/i });
+    const enrollBtn = page.getByRole("button", { name: /Enroll for Free/i });
     const continueLink = page.getByRole("link", { name: "Continue Learning" });
     await expect(enrollBtn.or(continueLink)).toBeVisible({ timeout: 10000 });
 
