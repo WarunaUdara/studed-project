@@ -30,7 +30,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
-	"syscall"
 	"time"
 )
 
@@ -109,11 +108,13 @@ func New(cfg Config) *Runner {
 	}
 	if r.python == "" {
 		for _, candidate := range []string{"python3", "python"} {
-			if path, err := exec.LookPath(candidate); err == nil {
+			if path, err := exec.LookPath(candidate); err == nil && pythonUsable(path) {
 				r.python = path
 				break
 			}
 		}
+	} else if !pythonUsable(r.python) {
+		r.python = ""
 	}
 	if r.timeout <= 0 {
 		r.timeout = DefaultTimeout
@@ -138,6 +139,12 @@ func New(cfg Config) *Runner {
 	return r
 }
 
+func pythonUsable(path string) bool {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	return exec.CommandContext(ctx, path, "-c", "import sys").Run() == nil
+}
+
 // Available reports whether programs can actually be executed here.
 func (r *Runner) Available() bool { return r.python != "" }
 
@@ -145,11 +152,11 @@ func (r *Runner) Available() bool { return r.python != "" }
 // the runner failing, never for the student's program failing: a syntax error
 // is a successful run with a traceback on stderr.
 func (r *Runner) Run(ctx context.Context, req Request) (Result, error) {
-	if !r.Available() {
-		return Result{}, ErrUnavailable
-	}
 	if len(req.Code) > r.maxCodeBytes {
 		return Result{}, ErrCodeTooLarge
+	}
+	if !r.Available() {
+		return Result{}, ErrUnavailable
 	}
 
 	workDir, err := os.MkdirTemp("", "studed-run-")
@@ -201,15 +208,7 @@ func (r *Runner) Run(ctx context.Context, req Request) (Result, error) {
 	cmd.Stdout = stdout
 	cmd.Stderr = stderr
 
-	// A new process group, killed as a group, so a program that spawns
-	// children cannot leave them running after the deadline.
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
-	cmd.Cancel = func() error {
-		if cmd.Process == nil {
-			return nil
-		}
-		return syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
-	}
+	configureProcess(cmd)
 
 	started := time.Now()
 	runErr := cmd.Run()
