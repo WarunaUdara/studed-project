@@ -23,10 +23,10 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { LoginModal } from "@/components/auth/LoginModal";
+import { SearchAskModal } from "@/components/search/SearchAskModal";
 import { BlobAvatar } from "@/components/ui/BlobAvatar";
 import { Button } from "@/components/ui/button";
 import { FloatingCardNav, type MegaMenuItem } from "@/components/ui/CardNav";
-import { SearchAskModal } from "@/components/search/SearchAskModal";
 import { levelFromXp } from "@/lib/gamification";
 import { useAuthStore } from "@/stores/auth";
 import { useUiPrefs } from "@/stores/uiPrefs";
@@ -175,14 +175,16 @@ export function Navbar() {
       previewCards: [
         {
           title: "Scientific Thinking",
-          subtitle: "Explore gear train physics, angular velocity, and mechanical parity with interactive 3D simulations.",
+          subtitle:
+            "Explore gear train physics, angular velocity, and mechanical parity with interactive 3D simulations.",
           href: "/courses/science-thinking",
           gradient: "bg-gradient-to-tr from-amber-600/30 via-orange-500/20 to-yellow-400/20",
           icon: <Brain className="size-6 text-amber-400" />,
         },
         {
           title: "Thinking in Python",
-          subtitle: "Master algorithmic thinking by guiding the Blob Mascot through dynamic code mazes.",
+          subtitle:
+            "Master algorithmic thinking by guiding the Blob Mascot through dynamic code mazes.",
           href: "/courses",
           gradient: "bg-gradient-to-tr from-emerald-600/30 via-teal-500/20 to-cyan-400/20",
           icon: <Code className="size-6 text-emerald-400" />,
@@ -217,7 +219,8 @@ export function Navbar() {
       previewCards: [
         {
           title: "Weekly Hydrogen League",
-          subtitle: "You're in the Top 5 this week! Complete today's daily wave to earn promotion into Helium League.",
+          subtitle:
+            "You're in the Top 5 this week! Complete today's daily wave to earn promotion into Helium League.",
           href: "/leaderboard",
           gradient: "bg-gradient-to-tr from-indigo-600/30 via-purple-500/20 to-pink-500/20",
           icon: <Trophy className="size-6 text-amber-400" />,
@@ -252,7 +255,8 @@ export function Navbar() {
       previewCards: [
         {
           title: "Daily Spark Challenge",
-          subtitle: "Earn extra XP and maintain your 7-day study streak with daily bite-sized puzzles.",
+          subtitle:
+            "Earn extra XP and maintain your 7-day study streak with daily bite-sized puzzles.",
           href: "/dashboard",
           gradient: "bg-gradient-to-tr from-lime-600/30 via-emerald-500/20 to-teal-400/20",
           icon: <Zap className="size-6 text-lime-400" />,

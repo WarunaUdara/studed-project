@@ -87,108 +87,110 @@ export function DailySparkStreakCharge({
                 </linearGradient>
 
                 {/* Glass Inner Glow */}
-                <filter
-                  id="battery-glow"
-                  x="-30%"
-                  y="-30%"
-                  width="160%"
-                  height="160%"
-                >
+                <filter id="battery-glow" x="-30%" y="-30%" width="160%" height="160%">
                   <feDropShadow
                     dx="0"
                     dy="8"
                     stdDeviation="14"
-                    floodColor="rgba(190, 242, 100, 0.45)"
+                    floodColor="rgba(190, 242, 100, 0.4)"
                   />
                 </filter>
               </defs>
 
-              {/* Rotated 45-degree 3D Capsule */}
-              <g transform="translate(100, 100) rotate(-35) translate(-100, -100)">
-                {/* Top Cap Terminal */}
-                <rect
-                  x="88"
-                  y="32"
-                  width="24"
-                  height="10"
-                  rx="3"
-                  fill="oklch(0.765 0.025 255.1)"
-                />
-                {/* Top Main Cap */}
-                <rect
-                  x="70"
-                  y="40"
-                  width="60"
-                  height="24"
-                  rx="8"
-                  fill="url(#battery-cap)"
-                />
+              {/* Shadow Base below Capsule */}
+              <ellipse
+                cx="100"
+                cy="176"
+                rx="38"
+                ry="9"
+                fill="oklch(0.245 0 0)"
+                opacity="0.35"
+              />
 
-                {/* Glowing Active Battery Body */}
-                <rect
-                  x="72"
-                  y="62"
-                  width="56"
-                  height="76"
-                  rx="6"
-                  fill="url(#battery-body)"
-                  filter="url(#battery-glow)"
-                />
+              {/* Cylindrical Glass Chamber Tube */}
+              {/* Outer Capsule Glow Layer */}
+              <rect
+                x="56"
+                y="38"
+                width="88"
+                height="126"
+                rx="44"
+                fill="url(#battery-body)"
+                filter="url(#battery-glow)"
+              />
 
-                {/* High-contrast White Lightning Emblem inside body */}
-                <path
-                  d="M 104,74 L 88,102 L 98,102 L 94,124 L 112,96 L 102,96 Z"
-                  fill="oklch(1 0 89.9)"
-                  stroke="oklch(0.972 0.069 102.1)"
-                  strokeWidth="1.5"
-                  strokeLinejoin="round"
-                />
+              {/* Front Gloss / Specular Arc */}
+              <path
+                d="M 68,54 C 68,48 76,44 88,44 C 74,44 72,56 72,98 C 72,140 74,152 88,152 C 76,152 68,148 68,142 Z"
+                fill="oklch(1 0 89.9)"
+                opacity="0.35"
+              />
 
-                {/* Bottom Main Cap */}
-                <rect
-                  x="70"
-                  y="136"
-                  width="60"
-                  height="24"
-                  rx="8"
-                  fill="url(#battery-cap)"
-                />
-                {/* Bottom Terminal */}
-                <rect
-                  x="84"
-                  y="158"
-                  width="32"
-                  height="6"
-                  rx="2"
-                  fill="oklch(0.628 0.032 253.7)"
-                />
-              </g>
+              {/* Metal Contact Top / Bottom Bands */}
+              <rect
+                x="68"
+                y="34"
+                width="64"
+                height="10"
+                rx="5"
+                fill="url(#battery-cap)"
+              />
+              {/* Terminal Tip */}
+              <rect
+                x="88"
+                y="26"
+                width="24"
+                height="10"
+                rx="4"
+                fill="url(#battery-cap)"
+              />
+
+              {/* Bottom Metal Base Band */}
+              <rect
+                x="68"
+                y="158"
+                width="64"
+                height="10"
+                rx="5"
+                fill="url(#battery-cap)"
+              />
+
+              {/* Intense Lightning Spark Emblem Inside Glass */}
+              <path
+                d="M 106,62 L 86,102 L 102,102 L 94,138 L 120,94 L 102,94 Z"
+                fill="oklch(0.245 0 0)"
+                opacity="0.75"
+              />
+              <path
+                d="M 104,60 L 84,100 L 100,100 L 92,136 L 118,92 L 100,92 Z"
+                fill="oklch(1 0 89.9)"
+              />
             </svg>
           </motion.div>
         </div>
 
-        {/* Headline & Subtitle */}
+        {/* Headings & Descriptions (Matching Screenshot 3) */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
+          transition={{ delay: 0.2 }}
           className="space-y-2"
         >
           <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            You earned a Streak Charge!
+            You earned 1 streak charge
           </h2>
-          <p className="text-sm font-medium text-neutral-400 sm:text-base">
-            Charges save your streak if you miss a day
+          <p className="text-sm text-neutral-400 font-medium sm:text-base">
+            Complete daily sparks to protect your streak against misses
           </p>
         </motion.div>
       </div>
 
-      {/* Bottom Continue Action */}
+      {/* Bottom Continue Button */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="w-full max-w-sm pt-4"
+        transition={{ delay: 0.35 }}
+        className="w-full max-w-sm pt-6"
       >
         <button
           type="button"

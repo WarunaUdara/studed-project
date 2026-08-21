@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Sparkles, X, XCircle } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { GearTrainSvg, SingleGear } from "./GearTrainSvg";
 import { InteractiveGearTrain } from "./InteractiveGearTrain";
-import { Button } from "@/components/ui/button";
 
 export interface ScienceGearsWaveProps {
   onComplete?: (xpEarned: number) => void;
@@ -11,11 +11,7 @@ export interface ScienceGearsWaveProps {
   className?: string;
 }
 
-export function ScienceGearsWave({
-  onComplete,
-  onClose,
-  className = "",
-}: ScienceGearsWaveProps) {
+export function ScienceGearsWave({ onComplete, onClose, className = "" }: ScienceGearsWaveProps) {
   // Steps: 0 = Intro, 1 = 2-Gear Principle, 2 = 3-Gear Opposite Neighbors, 3 = 3-Gear Evaluate, 4 = 5-Gear Interactive Tap Challenge
   const [currentStep, setCurrentStep] = useState<0 | 1 | 2 | 3 | 4>(0);
 
@@ -244,10 +240,7 @@ export function ScienceGearsWave({
             </div>
 
             <div className="py-2">
-              <GearTrainSvg
-                mode="evaluate_3gears"
-                isRotating={evalState3 === "correct"}
-              />
+              <GearTrainSvg mode="evaluate_3gears" isRotating={evalState3 === "correct"} />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-md">
@@ -306,9 +299,7 @@ export function ScienceGearsWave({
               <h3 className="text-sm sm:text-base font-semibold text-neutral-200">
                 Which gears turn in the same direction as the yellow gear?
               </h3>
-              <p className="text-xs text-neutral-400 font-medium">
-                Tap a gear to select it.
-              </p>
+              <p className="text-xs text-neutral-400 font-medium">Tap a gear to select it.</p>
             </div>
 
             {/* Interactive 5-Gear Train */}
@@ -507,18 +498,21 @@ export function ScienceGearsWave({
               </div>
 
               <div className="space-y-3 text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                <p>
-                  In a linear gear chain, each gear inverts the direction of rotation:
-                </p>
+                <p>In a linear gear chain, each gear inverts the direction of rotation:</p>
                 <div className="rounded-2xl border border-border/60 bg-muted/40 p-3 font-mono text-xs space-y-1">
                   <div>1st Gear (Yellow): Counter-Clockwise (↺)</div>
                   <div>2nd Gear: Clockwise (↻)</div>
-                  <div className="text-emerald-500 font-bold">3rd Gear: Counter-Clockwise (↺) ✓</div>
+                  <div className="text-emerald-500 font-bold">
+                    3rd Gear: Counter-Clockwise (↺) ✓
+                  </div>
                   <div>4th Gear: Clockwise (↻)</div>
-                  <div className="text-emerald-500 font-bold">5th Gear: Counter-Clockwise (↺) ✓</div>
+                  <div className="text-emerald-500 font-bold">
+                    5th Gear: Counter-Clockwise (↺) ✓
+                  </div>
                 </div>
                 <p>
-                  Therefore, every <strong>odd-numbered gear</strong> (3rd and 5th) turns in the <strong>same direction</strong> as the initial yellow gear!
+                  Therefore, every <strong>odd-numbered gear</strong> (3rd and 5th) turns in the{" "}
+                  <strong>same direction</strong> as the initial yellow gear!
                 </p>
               </div>
 

@@ -10,8 +10,8 @@ import (
 
 func TestGenerateVisualization(t *testing.T) {
 	expectedBlock := map[string]any{
-		"id":   "viz-1",
-		"type": "html_simulation",
+		"id":       "viz-1",
+		"type":     "html_simulation",
 		"metadata": map[string]any{"title": "Projectile", "html": "<!doctype html><html><body><canvas></canvas></body></html>"},
 	}
 

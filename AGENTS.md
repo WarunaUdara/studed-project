@@ -12,6 +12,14 @@ Core concepts:
 - Educators build content with a visual **Puck-based MDX Editor** with AI assistance.
 - Students earn **XP**, climb **leaderboards**, and achieve proficiency as they progress.
 
+**Before touching XP, levels, streaks, achievements, leaderboards or progress,
+read [`docs/PROGRESSION-SYSTEM.md`](docs/PROGRESSION-SYSTEM.md).** It is
+authoritative and names one owner per signal. It exists because these features
+were built by several independent passes that disagreed with each other: six
+leaderboard renderings, three name-masking implementations, two badge rule sets
+and two reattempt policies. Run `make eval-progression` after changing any of
+them; it fails on invented data and on duplicated rules.
+
 Reference documentation lives in the Obsidian folders at the repo root:
 - `00-Project-Overview/` - value proposition, target audience, monetization.
 - `01-Architecture/` - system, backend, frontend, database designs.
@@ -188,8 +196,12 @@ Examples:
 6. **Prefer explicit types** over `var`/`dynamic` in Dart and be explicit in TypeScript.
 7. **Prefer early returns** over deep nesting.
 8. **Write minimal changes.** Do not over-engineer. Build only what is asked for.
-9. **Test what you build (`make ci-local`).** Before pushing to `main` or opening Pull Requests, execute `make ci-local` to verify all pre-flight checks (Bun typecheck, Vitest, Go microservices tests, Kyverno policy validation, IaC plan) pass 100%. Fix any failures locally before pushing code.
-10. **Update docs.** If you change architecture, tech choices, or workflow, update the relevant markdown docs and this `AGENTS.md`.
+9. **Never invent data.** A surface shows a real value or an empty state.
+   Hardcoded names, placeholder ranks, and trend arrows derived from arithmetic
+   on the rank are defects, not placeholders. The marketing landing page is the
+   only exception, and its demo widgets must be labelled as examples.
+10. **Test what you build (`make ci-local`).** Before pushing to `main` or opening Pull Requests, execute `make ci-local` to verify all pre-flight checks (Bun typecheck, Vitest, Go microservices tests, Kyverno policy validation, IaC plan) pass 100%. Fix any failures locally before pushing code.
+11. **Update docs.** If you change architecture, tech choices, or workflow, update the relevant markdown docs and this `AGENTS.md`.
 
 ## Service Conventions
 

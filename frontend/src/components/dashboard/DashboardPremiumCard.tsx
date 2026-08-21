@@ -20,9 +20,7 @@ export function DashboardPremiumCard() {
 
       <div className="mt-4">
         <Link to="/subscription" className="w-full block">
-          <Button
-            className="w-full rounded-full font-bold text-xs bg-gradient-to-r from-blue-500 via-indigo-500 to-amber-400 hover:opacity-95 text-white shadow-sm"
-          >
+          <Button className="w-full rounded-full font-bold text-xs bg-gradient-to-r from-blue-500 via-indigo-500 to-amber-400 hover:opacity-95 text-white shadow-sm">
             Explore Premium
           </Button>
         </Link>

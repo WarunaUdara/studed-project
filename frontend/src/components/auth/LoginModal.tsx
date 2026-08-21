@@ -1,8 +1,8 @@
+import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Link } from "@tanstack/react-router";
 import { LoginForm } from "@/components/auth/LoginForm";
 
 export interface LoginModalProps {
@@ -83,6 +83,6 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
         </div>
       )}
     </AnimatePresence>,
-    document.body
+    document.body,
   );
 }

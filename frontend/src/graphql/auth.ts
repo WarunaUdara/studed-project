@@ -69,6 +69,8 @@ export const ME_QUERY = `
       preferredLanguage
       totalXp
       streak
+      longestStreak
+      lastActiveAt
     }
   }
 ` as const;

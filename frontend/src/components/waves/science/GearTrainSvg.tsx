@@ -127,11 +127,7 @@ export function SingleGear({
       <motion.svg
         viewBox={`0 0 ${size} ${size}`}
         className="size-full overflow-visible drop-shadow-xl"
-        animate={
-          isRotating
-            ? { rotate: direction === 1 ? [0, 360] : [0, -360] }
-            : { rotate: 0 }
-        }
+        animate={isRotating ? { rotate: direction === 1 ? [0, 360] : [0, -360] } : { rotate: 0 }}
         transition={
           isRotating && !reduce
             ? { repeat: Infinity, duration: speed, ease: "linear" }
@@ -278,10 +274,7 @@ export function GearTrainSvg({
         >
           <title>Hand on gear</title>
           <rect x="15" y="45" width="45" height="35" rx="10" fill="#eab308" />
-          <path
-            d="M 50,45 C 55,30 75,32 75,48 C 75,60 55,68 50,75 Z"
-            fill="#b45309"
-          />
+          <path d="M 50,45 C 55,30 75,32 75,48 C 75,60 55,68 50,75 Z" fill="#b45309" />
         </svg>
         <SingleGear
           teeth={16}

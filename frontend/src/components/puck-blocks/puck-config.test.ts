@@ -3,11 +3,11 @@ import { describe, expect, it } from "vitest";
 import {
   agentBlocksToPuckItems,
   applyBlockOpsToData,
+  type EvaluateBlockRaw,
+  type LearnBlockRaw,
+  type PuckData,
   puckToWaveData,
   waveDataToPuck,
-  type LearnBlockRaw,
-  type EvaluateBlockRaw,
-  type PuckData,
 } from "@/components/puck-blocks/puck-config";
 
 // Realistic agent output covering EVERY learn and evaluate type the agent
@@ -15,14 +15,53 @@ import {
 const AGENT_LEARN: LearnBlockRaw[] = [
   { id: "learn-1", type: "text", content: "Gravity pulls objects toward Earth." },
   { id: "learn-2", type: "math", content: "F = G(m1 m2)/r^2" },
-  { id: "learn-3", type: "image", content: "https://cdn.example.com/gravity.png", metadata: "Diagram of falling objects" },
-  { id: "learn-4", type: "video", content: "https://www.youtube.com/watch?v=abc123", metadata: "Gravity explained" },
+  {
+    id: "learn-3",
+    type: "image",
+    content: "https://cdn.example.com/gravity.png",
+    metadata: "Diagram of falling objects",
+  },
+  {
+    id: "learn-4",
+    type: "video",
+    content: "https://www.youtube.com/watch?v=abc123",
+    metadata: "Gravity explained",
+  },
   { id: "learn-5", type: "callout", content: "Remember: mass attracts mass." },
   { id: "learn-6", type: "example", content: "A 70kg person weighs 686N on Earth." },
-  { id: "learn-7", type: "mathviz_manim", content: "Pendulum animation", metadata: JSON.stringify({ title: "Pendulum", scene_spec: { beats: [{ time: 0, action: "create" }] } }) },
-  { id: "learn-8", type: "html_simulation", content: "Water molecule", metadata: JSON.stringify({ title: "Sodium and water", html: "<!doctype html><html><body><canvas></canvas></body></html>" }) },
-  { id: "learn-9", type: "elecsim_tscircuit", content: "LED circuit", metadata: JSON.stringify({ title: "LED", circuit_code: "..." }) },
-  { id: "learn-10", type: "html_simulation", content: "Bouncing ball", metadata: JSON.stringify({ title: "Ball", html: "<!doctype html><html><body><canvas></canvas><script>requestAnimationFrame(()=>{});</script></body></html>" }) },
+  {
+    id: "learn-7",
+    type: "mathviz_manim",
+    content: "Pendulum animation",
+    metadata: JSON.stringify({
+      title: "Pendulum",
+      scene_spec: { beats: [{ time: 0, action: "create" }] },
+    }),
+  },
+  {
+    id: "learn-8",
+    type: "html_simulation",
+    content: "Water molecule",
+    metadata: JSON.stringify({
+      title: "Sodium and water",
+      html: "<!doctype html><html><body><canvas></canvas></body></html>",
+    }),
+  },
+  {
+    id: "learn-9",
+    type: "elecsim_tscircuit",
+    content: "LED circuit",
+    metadata: JSON.stringify({ title: "LED", circuit_code: "..." }),
+  },
+  {
+    id: "learn-10",
+    type: "html_simulation",
+    content: "Bouncing ball",
+    metadata: JSON.stringify({
+      title: "Ball",
+      html: "<!doctype html><html><body><canvas></canvas><script>requestAnimationFrame(()=>{});</script></body></html>",
+    }),
+  },
 ];
 
 const AGENT_EVALUATE: EvaluateBlockRaw[] = [
@@ -30,7 +69,12 @@ const AGENT_EVALUATE: EvaluateBlockRaw[] = [
     id: "eval-1",
     type: "mcq",
     question: "What does gravity do?",
-    options: ["Pulls objects together", "Pushes objects apart", "Does nothing", "Makes things float"],
+    options: [
+      "Pulls objects together",
+      "Pushes objects apart",
+      "Does nothing",
+      "Makes things float",
+    ],
     correctAnswer: "Pulls objects together",
     explanation: "Gravity is an attractive force.",
   },
@@ -100,7 +144,10 @@ describe("agentBlocksToPuckItems", () => {
   it("handles empty input without error", () => {
     expect(agentBlocksToPuckItems([], [])).toHaveLength(0);
     expect(
-      agentBlocksToPuckItems(undefined as unknown as LearnBlockRaw[], undefined as unknown as EvaluateBlockRaw[]),
+      agentBlocksToPuckItems(
+        undefined as unknown as LearnBlockRaw[],
+        undefined as unknown as EvaluateBlockRaw[],
+      ),
     ).toHaveLength(0);
   });
 });
@@ -108,7 +155,9 @@ describe("agentBlocksToPuckItems", () => {
 describe("insert-then-save round trip (the chat agent auto-insert flow)", () => {
   it("all agent block types survive save serialization with field parity", () => {
     const existing: PuckData = {
-      content: [{ type: "TextBlock", props: { id: "existing-1", content: "Existing intro text." } }],
+      content: [
+        { type: "TextBlock", props: { id: "existing-1", content: "Existing intro text." } },
+      ],
       root: {},
       zones: {},
     };
@@ -127,12 +176,42 @@ describe("insert-then-save round trip (the chat agent auto-insert flow)", () => 
     expect(evaluateBlocks).toHaveLength(5);
 
     // Verify every type round-trips with exact field parity.
-    expect(learnBlocks[1]).toEqual({ id: "learn-1", type: "text", content: "Gravity pulls objects toward Earth.", metadata: null });
-    expect(learnBlocks[2]).toEqual({ id: "learn-2", type: "formula", content: "F = G(m1 m2)/r^2", metadata: null });
-    expect(learnBlocks[3]).toEqual({ id: "learn-3", type: "image", content: "https://cdn.example.com/gravity.png", metadata: "Diagram of falling objects" });
-    expect(learnBlocks[4]).toEqual({ id: "learn-4", type: "video", content: "https://www.youtube.com/watch?v=abc123", metadata: "Gravity explained" });
-    expect(learnBlocks[5]).toEqual({ id: "learn-5", type: "callout", content: "Remember: mass attracts mass.", metadata: null });
-    expect(learnBlocks[6]).toEqual({ id: "learn-6", type: "example", content: "A 70kg person weighs 686N on Earth.", metadata: null });
+    expect(learnBlocks[1]).toEqual({
+      id: "learn-1",
+      type: "text",
+      content: "Gravity pulls objects toward Earth.",
+      metadata: null,
+    });
+    expect(learnBlocks[2]).toEqual({
+      id: "learn-2",
+      type: "formula",
+      content: "F = G(m1 m2)/r^2",
+      metadata: null,
+    });
+    expect(learnBlocks[3]).toEqual({
+      id: "learn-3",
+      type: "image",
+      content: "https://cdn.example.com/gravity.png",
+      metadata: "Diagram of falling objects",
+    });
+    expect(learnBlocks[4]).toEqual({
+      id: "learn-4",
+      type: "video",
+      content: "https://www.youtube.com/watch?v=abc123",
+      metadata: "Gravity explained",
+    });
+    expect(learnBlocks[5]).toEqual({
+      id: "learn-5",
+      type: "callout",
+      content: "Remember: mass attracts mass.",
+      metadata: null,
+    });
+    expect(learnBlocks[6]).toEqual({
+      id: "learn-6",
+      type: "example",
+      content: "A 70kg person weighs 686N on Earth.",
+      metadata: null,
+    });
     expect(learnBlocks[7].type).toBe("mathviz_manim");
     expect(learnBlocks[7].metadata).toContain("Pendulum");
     expect(learnBlocks[8].type).toBe("html_simulation");
@@ -143,7 +222,12 @@ describe("insert-then-save round trip (the chat agent auto-insert flow)", () => 
       id: "eval-1",
       type: "multiple_choice",
       question: "What does gravity do?",
-      options: ["Pulls objects together", "Pushes objects apart", "Does nothing", "Makes things float"],
+      options: [
+        "Pulls objects together",
+        "Pushes objects apart",
+        "Does nothing",
+        "Makes things float",
+      ],
       correctAnswer: "Pulls objects together",
       explanation: "Gravity is an attractive force.",
       metadata: null,
@@ -204,13 +288,19 @@ describe("insert-then-save round trip (the chat agent auto-insert flow)", () => 
     expect(byType.get("VideoBlock")?.props.src).toBe(AGENT_LEARN[3].content);
     expect(byType.get("CalloutBlock")?.props.content).toBe(AGENT_LEARN[4].content);
     expect(byType.get("ExampleBlock")?.props.content).toBe(AGENT_LEARN[5].content);
-    const manimViz = rebuilt.content.find((i) => i.type === "VizBlock" && i.props.vizType === "mathviz_manim");
+    const manimViz = rebuilt.content.find(
+      (i) => i.type === "VizBlock" && i.props.vizType === "mathviz_manim",
+    );
     expect(manimViz?.props.vizType).toBe("mathviz_manim");
     expect(manimViz?.props.id).toBe("learn-7");
     // All interactive simulations use the unified HtmlSimulationBlock.
-    const chemViz = rebuilt.content.find((i) => i.type === "HtmlSimulationBlock" && i.props.id === "learn-8");
+    const chemViz = rebuilt.content.find(
+      (i) => i.type === "HtmlSimulationBlock" && i.props.id === "learn-8",
+    );
     expect(chemViz?.type).toBe("HtmlSimulationBlock");
-    const circuitViz = rebuilt.content.find((i) => i.type === "CircuitBlock" && i.props.vizType === "elecsim_tscircuit");
+    const circuitViz = rebuilt.content.find(
+      (i) => i.type === "CircuitBlock" && i.props.vizType === "elecsim_tscircuit",
+    );
     expect(circuitViz?.props.vizType).toBe("elecsim_tscircuit");
     expect(circuitViz?.props.circuitCode).toBe("...");
     const physicsViz = rebuilt.content.find((i) => i.type === "HtmlSimulationBlock");
@@ -326,7 +416,10 @@ describe("interactive blocks round-trip through the editor", () => {
       question: "Which one is a pull?",
       correctAnswer: "drawer",
       explanation: "It comes towards you.",
-      metadata: JSON.stringify({ version: 1, targets: [{ id: "drawer", label: "Opening a drawer" }] }),
+      metadata: JSON.stringify({
+        version: 1,
+        targets: [{ id: "drawer", label: "Opening a drawer" }],
+      }),
     },
     {
       id: "eb-order",
@@ -365,7 +458,9 @@ describe("interactive blocks round-trip through the editor", () => {
     for (const original of INTERACTIVE_LEARN) {
       const round = saved.learnBlocks.find((block) => block.id === original.id);
       expect(round?.content).toBe(original.content);
-      expect(JSON.parse(round?.metadata ?? "{}")).toMatchObject(JSON.parse(original.metadata ?? "{}"));
+      expect(JSON.parse(round?.metadata ?? "{}")).toMatchObject(
+        JSON.parse(original.metadata ?? "{}"),
+      );
     }
 
     expect(saved.evaluateBlocks.map((block) => block.type)).toEqual(["tap_target", "order_steps"]);

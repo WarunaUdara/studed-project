@@ -21,7 +21,10 @@ export function LearningPathRibbon({ path, onSelectCourse }: LearningPathRibbonP
   // Compute aggregate progress for the track
   const enrolledCourses = path.courses.filter((c) => c.myProgress != null);
   const totalWaves = path.courses.reduce((acc, c) => acc + (c.myProgress?.totalWaves ?? 0), 0);
-  const completedWaves = path.courses.reduce((acc, c) => acc + (c.myProgress?.completedWaves ?? 0), 0);
+  const completedWaves = path.courses.reduce(
+    (acc, c) => acc + (c.myProgress?.completedWaves ?? 0),
+    0,
+  );
   const overallPercent = totalWaves > 0 ? Math.round((completedWaves / totalWaves) * 100) : 0;
 
   const scroll = (direction: "left" | "right") => {
@@ -40,8 +43,12 @@ export function LearningPathRibbon({ path, onSelectCourse }: LearningPathRibbonP
           <div className="shrink-0 pt-0.5">
             {path.category === "MATH" && <MathIsometricIcon className="size-12 drop-shadow-sm" />}
             {path.category === "CS" && <CodeIsometricIcon className="size-12 drop-shadow-sm" />}
-            {path.category === "SCIENCE" && <ScienceIsometricIcon className="size-12 drop-shadow-sm" />}
-            {path.category === "LANGUAGES" && <LanguageIsometricIcon className="size-12 drop-shadow-sm" />}
+            {path.category === "SCIENCE" && (
+              <ScienceIsometricIcon className="size-12 drop-shadow-sm" />
+            )}
+            {path.category === "LANGUAGES" && (
+              <LanguageIsometricIcon className="size-12 drop-shadow-sm" />
+            )}
           </div>
 
           {/* Title & Subhead */}
@@ -52,9 +59,7 @@ export function LearningPathRibbon({ path, onSelectCourse }: LearningPathRibbonP
             <h2 className="text-xl font-bold font-serif tracking-tight text-foreground sm:text-2xl">
               {path.title}
             </h2>
-            <p className="text-xs text-muted-foreground sm:text-sm max-w-xl">
-              {path.subtitle}
-            </p>
+            <p className="text-xs text-muted-foreground sm:text-sm max-w-xl">{path.subtitle}</p>
           </div>
         </div>
 
@@ -73,9 +78,7 @@ export function LearningPathRibbon({ path, onSelectCourse }: LearningPathRibbonP
             className="flex size-9 items-center justify-center rounded-full border border-border/50 bg-background/80 text-muted-foreground transition-all hover:scale-105 hover:text-amber-400"
             aria-label="Star learning path"
           >
-            <Star
-              className={`size-4 ${isStarred ? "fill-amber-400 text-amber-400" : ""}`}
-            />
+            <Star className={`size-4 ${isStarred ? "fill-amber-400 text-amber-400" : ""}`} />
           </button>
         </div>
       </div>

@@ -1,8 +1,8 @@
+import { JellyBlobMascot } from "feral-blob";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { JellyBlobMascot } from "feral-blob";
 import "feral-blob/blob.css";
 import { playClickSound, playSuccessSound } from "@/lib/sounds";
 
@@ -31,11 +31,7 @@ export function LogoutConfirmModal({
   // 1. Clicked character -> "hmm"
   // 2. Hover Log Out button -> "sad"
   // 3. Normal / default / Cancel hover -> "neutral"
-  const mood = isPoked
-    ? "hmm"
-    : hoverTarget === "confirm"
-      ? "sad"
-      : "neutral";
+  const mood = isPoked ? "hmm" : hoverTarget === "confirm" ? "sad" : "neutral";
 
   const speech = isPoked
     ? "Hmm?"
@@ -166,9 +162,29 @@ export function LogoutConfirmModal({
                 onClick={handleMascotPoke}
                 className="jelly-mint relative my-3 inline-flex h-32 w-32 cursor-pointer flex-col items-center justify-center select-none"
                 animate={{
-                  scale: hoverTarget === "cancel" ? 1.08 : hoverTarget === "confirm" ? 0.94 : isPoked ? 1.1 : 1,
-                  y: hoverTarget === "cancel" ? -4 : hoverTarget === "confirm" ? 4 : isPoked ? -6 : 0,
-                  rotate: isPoked ? [0, -12, 12, -6, 6, 0] : hoverTarget === "cancel" ? -3 : hoverTarget === "confirm" ? 3 : 0,
+                  scale:
+                    hoverTarget === "cancel"
+                      ? 1.08
+                      : hoverTarget === "confirm"
+                        ? 0.94
+                        : isPoked
+                          ? 1.1
+                          : 1,
+                  y:
+                    hoverTarget === "cancel"
+                      ? -4
+                      : hoverTarget === "confirm"
+                        ? 4
+                        : isPoked
+                          ? -6
+                          : 0,
+                  rotate: isPoked
+                    ? [0, -12, 12, -6, 6, 0]
+                    : hoverTarget === "cancel"
+                      ? -3
+                      : hoverTarget === "confirm"
+                        ? 3
+                        : 0,
                 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
@@ -234,6 +250,6 @@ export function LogoutConfirmModal({
         </div>
       )}
     </AnimatePresence>,
-    document.body
+    document.body,
   );
 }

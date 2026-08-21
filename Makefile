@@ -1,3 +1,4 @@
+.PHONY: eval-progression
 .PHONY: dev-up dev-down dev dev-stop launch test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint frontend-e2e go-build go-test shared-test proto-gen seed content-validate content-sync demo-public
 
 # Development
@@ -251,3 +252,8 @@ dev-up: docker-mem-check docker-buildx-check
 	@IP=$$(cd ${PROD_TF_DIR:-infra/gcp/terraform-prod} && tofu output -raw ingress_static_ip 2>/dev/null || echo ""); \
 	URL=$$(if [ -n "$$IP" ]; then echo "https://api.$${IP}.sslip.io"; else echo "http://localhost:8080"; fi); \
 	STUDED_API_URL="$${STUDED_API_URL:-$$URL}" STUDED_DATABASE_URL="$${STUDED_DATABASE_URL:-$${DATABASE_URL:-}}" ./scripts/mock-data-loader.sh
+
+eval-progression:
+	@echo "Running the progression eval (leaderboard, XP, streak, achievements, progress)."
+	@echo "Pass A checks the source; pass B drives the live API and is skipped if no stack is up."
+	cd frontend && bun run eval:progression

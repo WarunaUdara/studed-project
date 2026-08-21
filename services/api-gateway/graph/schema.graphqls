@@ -65,7 +65,11 @@ type User {
   preferredLanguage: String!
   subscription: UserSubscription
   totalXp: Int!
+  "Consecutive days of learning. Advanced by activity, never by page loads."
   streak: Int!
+  longestStreak: Int!
+  "The last day the student learned. Lets a week view mark real days."
+  lastActiveAt: DateTime
   createdAt: DateTime!
 }
 
@@ -146,11 +150,30 @@ type LessonProgress {
   totalWaves: Int!
 }
 
+"""
+One place on a leaderboard. It carries a display name rather than a User:
+a ranked row is not a user profile, and building a half-empty User to hold a
+name invited the rest of the profile to leak alongside it.
+"""
 type LeaderboardEntry {
+  "Competition standard: equal XP shares a rank, the next total skips."
   rank: Int!
-  user: User!
+  userId: ID!
+  "Masked for display, e.g. \"Nimal P.\" — never the student's legal name."
+  displayName: String!
   totalXp: Int!
-  course: Course
+  isMe: Boolean!
+}
+
+type LeaderboardPage {
+  entries: [LeaderboardEntry!]!
+  "Everyone ranked in this scope, not just this page. Drives top-N% badges."
+  totalRanked: Int!
+  """
+  The viewer's own standing, present even when they fall outside the page.
+  Null only when they have not scored in this scope yet.
+  """
+  me: LeaderboardEntry
 }
 
 type UserSubscription {
@@ -161,12 +184,18 @@ type UserSubscription {
   endDate: DateTime!
 }
 
+"""
+An achievement from the server-owned catalog. Locked ones are returned too, so
+the UI can show what is still to earn without duplicating the unlock rules.
+"""
 type Achievement {
   id: ID!
   name: String!
   description: String!
   iconUrl: String
-  unlockedAt: DateTime!
+  unlocked: Boolean!
+  "Null while the achievement is still locked."
+  unlockedAt: DateTime
 }
 
 input CourseFilter {
@@ -307,12 +336,16 @@ input CreateSubscriptionInput {
   tier: Tier!
 }
 
+"""
+Leaderboard scopes. WEEKLY resets itself every Monday 00:00 UTC.
+There is no FRIENDS scope: the platform has no friends model, and a scope that
+can only ever return an empty board is a broken feature, not a pending one.
+"""
 enum LeaderboardScope {
   GLOBAL
   COURSE
   GRADE
   WEEKLY
-  FRIENDS
 }
 
 type XpEvent {
@@ -335,7 +368,7 @@ type Query {
   progress(courseId: ID): [LessonProgress!]!
   waveProgress(waveId: ID!): WaveProgress
 
-  leaderboard(scope: LeaderboardScope!, courseId: ID, grade: Grade): [LeaderboardEntry!]!
+  leaderboard(scope: LeaderboardScope!, courseId: ID, grade: Grade, limit: Int = 50, offset: Int = 0): LeaderboardPage!
   myRank(scope: LeaderboardScope!, courseId: ID): Int
 
   achievements: [Achievement!]!

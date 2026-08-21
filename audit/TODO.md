@@ -7,6 +7,30 @@ Effort: `XS` <30min · `S` <2h · `M` <1d · `L` 1-3d
 
 ---
 
+## 🎮 Progression (leaderboard, XP, streak, achievements, progress)
+
+Audited and rebuilt on one contract: [`docs/PROGRESSION-SYSTEM.md`](../docs/PROGRESSION-SYSTEM.md).
+Guarded by `make eval-progression` (24 invariants, source + live API).
+
+- [x] 🔴 `M` **PROG-01** — Weekly boards never reset and were never written; FRIENDS had no backend. Weekly is now an ISO-week bucket with a TTL; FRIENDS is gone.
+- [x] 🔴 `S` **PROG-02** — A leaderboard write could fail a graded submission. Ranking is now a logged side effect.
+- [x] 🔴 `S` **PROG-03** — The reattempt cap was enforced while the response reported "unlimited". One policy now, and attempts are unlimited per issue #52.
+- [x] 🔴 `M` **PROG-04** — Four UI surfaces rendered invented students, schools, leagues and rank climbs. All now read the real API.
+- [x] 🔴 `S` **PROG-05** — The gateway rewrote every leaderboard user id to `anon-rank-N`, so the "You" highlight never matched anyone.
+- [x] 🟠 `M` **PROG-06** — A Redis flush renamed every ranked student to "Student Scholar". Names live in Postgres and every scope rebuilds on boot.
+- [x] 🟠 `S` **PROG-07** — Course boards ranked by global XP, so unrelated XP decided a subject competition.
+- [x] 🟠 `S` **PROG-08** — `me` advanced the streak, so a streak grew by loading a page. Split into a pure read and a TouchStreak driven by wave passes.
+- [x] 🟠 `M` **PROG-09** — Progress was resolved per wave, each walking the whole course: work quadratic in wave count per page. Added a batched RPC.
+- [x] 🟠 `S` **PROG-10** — Achievement unlock rules were duplicated client-side against a different XP total. The API now returns the catalog with an `unlocked` flag.
+- [x] 🟡 `S` **PROG-11** — A student outside the fetched page saw nothing about their own standing.
+- [x] 🟡 `S` **PROG-12** — An idempotent replay reported 0 total XP, so a client retrying after a timeout was told it had none.
+- [x] 🟡 `XS` **PROG-13** — Dead modules: `gamificationUtils.ts` (no importers, contents copy-pasted inline) and `LeaderboardTable.tsx` (a table containing only an interface).
+- [ ] 🟠 `M` **PROG-14** — **course-service ignores its `migrations/` directory.** It runs GORM `AutoMigrate`, so the SQL files there are dead and it has no home for data or schema changes. Wire golang-migrate as gamification-service does.
+- [ ] 🟡 `S` **PROG-15** — Student-facing course leaderboards need a course picker; only educators can select one today.
+- [ ] 🟡 `S` **PROG-16** — Educator cohort views show the same masked names as students. A permissioned unmasked view is now possible (names are stored unmasked) but not built.
+
+---
+
 ## ⚡ Phase 0 — Do these first (≈3 hours, 4 blockers removed)
 
 - [x] 🟠 `XS` **FLOW-02** — Fix `make go-test` exit status; add `-race`. *Until this is done, no test result in this repo means anything.* → [04](04-CORRECTNESS-FLOWS.md#-flow-02--ci-silently-ignores-go-test-failures)

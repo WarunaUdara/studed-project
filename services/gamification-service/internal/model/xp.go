@@ -7,10 +7,14 @@ import (
 )
 
 type UserXp struct {
-	UserID    string `gorm:"primaryKey"`
-	TotalXp   int32
-	UpdatedAt time.Time
-	CreatedAt time.Time
+	UserID  string `gorm:"primaryKey"`
+	TotalXp int32
+	// DisplayName and Grade are held here, not only in Redis, so a Redis flush
+	// cannot erase who a ranked student is. See docs/PROGRESSION-SYSTEM.md.
+	DisplayName string
+	Grade       int32
+	UpdatedAt   time.Time
+	CreatedAt   time.Time
 }
 
 func (UserXp) TableName() string {
@@ -18,11 +22,14 @@ func (UserXp) TableName() string {
 }
 
 type XpHistory struct {
-	ID        string `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	UserID    string `gorm:"index"`
-	Amount    int32
-	Reason    string
-	SourceID  string
+	ID       string `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
+	UserID   string `gorm:"index"`
+	Amount   int32
+	Reason   string
+	SourceID string
+	// CourseID attributes an award to a course so the course leaderboard can
+	// rank by XP earned in that course rather than by the global total.
+	CourseID  string
 	CreatedAt time.Time
 }
 

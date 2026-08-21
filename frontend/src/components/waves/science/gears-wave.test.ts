@@ -1,11 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { DailyLessonLimitGate } from "./DailyLessonLimitGate";
 import { GearGraphSvg } from "./GearGraphSvg";
-import {
-  SCIENCE_GEAR_PUZZLES,
-  solveGearDirections,
-} from "./gear-network-engine";
-import { generateGearPath, GearTrainSvg, SingleGear } from "./GearTrainSvg";
+import { GearTrainSvg, generateGearPath, SingleGear } from "./GearTrainSvg";
+import { SCIENCE_GEAR_PUZZLES, solveGearDirections } from "./gear-network-engine";
 import { InteractiveGearTrain } from "./InteractiveGearTrain";
 import { LessonCompleteCelebration } from "./LessonCompleteCelebration";
 import { ScienceGearsWave } from "./ScienceGearsWave";

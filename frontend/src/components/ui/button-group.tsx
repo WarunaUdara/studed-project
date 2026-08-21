@@ -32,10 +32,7 @@ export function ButtonGroup({ children, className, size = "sm" }: ButtonGroupPro
       {Children.map(children, (child, i) => (
         <div
           key={i}
-          className={cn(
-            "flex items-stretch",
-            i < count - 1 && "border-r border-border",
-          )}
+          className={cn("flex items-stretch", i < count - 1 && "border-r border-border")}
         >
           {child}
         </div>

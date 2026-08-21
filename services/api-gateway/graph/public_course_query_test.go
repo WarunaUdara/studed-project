@@ -56,6 +56,14 @@ func (m *mockPublicProgressPBClient) GetWaveProgress(ctx context.Context, in *pr
 	}, nil
 }
 
+func (m *mockPublicProgressPBClient) GetCourseWaveProgress(ctx context.Context, in *progresspb.GetCourseWaveProgressRequest, opts ...grpc.CallOption) (*progresspb.GetCourseWaveProgressResponse, error) {
+	return &progresspb.GetCourseWaveProgressResponse{
+		Entries: []*progresspb.WaveProgressEntry{
+			{WaveId: "wave-1", Status: "COMPLETED", HighestScore: 100},
+		},
+	}, nil
+}
+
 func setupPublicCourseTest() *queryResolver {
 	courses := map[string]*coursepb.Course{
 		"published-course-1": {

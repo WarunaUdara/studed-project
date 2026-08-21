@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/studed/progress-service/internal/model"
+	"github.com/studed/progress-service/internal/repository"
 	coursepb "github.com/studed/shared/proto/gen/go/course"
 	gampb "github.com/studed/shared/proto/gen/go/gamification"
 	progresspb "github.com/studed/shared/proto/gen/go/progress"
@@ -306,10 +307,22 @@ func (c *fakeCourseClient) ListLessons(ctx context.Context, in *coursepb.ListLes
 // failure injection for exercising the robustness paths.
 type fakeGamificationClient struct {
 	gampb.GamificationServiceClient
-	totalXp   map[string]int32
-	awarded   map[string]bool
-	calcErr   error
-	calcCalls int
+	totalXp     map[string]int32
+	awarded     map[string]bool
+	calcErr     error
+	calcCalls   int
+	touchCalls  int
+	touchErr    error
+	courseIDs   []string
+	unlockedIDs []string
+}
+
+func (c *fakeGamificationClient) TouchStreak(ctx context.Context, in *gampb.GetUserStreakRequest, opts ...grpc.CallOption) (*gampb.GetUserStreakResponse, error) {
+	c.touchCalls++
+	if c.touchErr != nil {
+		return nil, c.touchErr
+	}
+	return &gampb.GetUserStreakResponse{CurrentStreak: 1, LongestStreak: 1}, nil
 }
 
 func newFakeGamificationClient() *fakeGamificationClient {
@@ -321,6 +334,7 @@ func newFakeGamificationClient() *fakeGamificationClient {
 
 func (c *fakeGamificationClient) CalculateAndAwardXp(ctx context.Context, in *gampb.XpCalculationRequest, opts ...grpc.CallOption) (*gampb.XpCalculationResponse, error) {
 	c.calcCalls++
+	c.courseIDs = append(c.courseIDs, in.CourseId)
 	if c.calcErr != nil {
 		return nil, c.calcErr
 	}
@@ -341,6 +355,7 @@ func (c *fakeGamificationClient) GetUserXp(ctx context.Context, in *gampb.GetUse
 }
 
 func (c *fakeGamificationClient) UnlockAchievement(ctx context.Context, in *gampb.UnlockAchievementRequest, opts ...grpc.CallOption) (*gampb.UnlockAchievementResponse, error) {
+	c.unlockedIDs = append(c.unlockedIDs, in.AchievementId)
 	return &gampb.UnlockAchievementResponse{Unlocked: true}, nil
 }
 
@@ -704,8 +719,8 @@ func TestGetWaveProgress_UnlockedWhenPriorWaveAttemptsExhausted(t *testing.T) {
 			ID:            fmt.Sprintf("att-%d", i),
 			UserID:        "u1",
 			WaveID:        "wave-1",
-			LessonID:      "l1",
-			CourseID:      "c1",
+			LessonID:      "lesson-1",
+			CourseID:      "course-1",
 			AttemptNumber: int32(i),
 			Passed:        false,
 			Score:         30,
@@ -810,4 +825,33 @@ func TestGetCourseProgress_RejectsUnenrolledUser(t *testing.T) {
 	if _, err := svc.GetCourseProgress(context.Background(), "u1", "course-1"); err == nil {
 		t.Fatal("expected an error for an unenrolled user")
 	}
+}
+
+// SummariseCourseAttempts mirrors the SQL rollup: one row per wave, with the
+// attempt count, the best score, whether any attempt passed, the first passing
+// time and the latest attempt time.
+func (r *fakeProgressRepo) SummariseCourseAttempts(ctx context.Context, userID, courseID string) (map[string]repository.WaveSummary, error) {
+	summaries := make(map[string]repository.WaveSummary)
+	for _, a := range r.attempts {
+		if a.UserID != userID || a.CourseID != courseID {
+			continue
+		}
+		summary := summaries[a.WaveID]
+		summary.WaveID = a.WaveID
+		summary.AttemptCount++
+		if a.Score > summary.HighestScore {
+			summary.HighestScore = a.Score
+		}
+		if a.Passed {
+			summary.Passed = true
+			if summary.FirstPassedAt.IsZero() || a.CreatedAt.Before(summary.FirstPassedAt) {
+				summary.FirstPassedAt = a.CreatedAt
+			}
+		}
+		if a.CreatedAt.After(summary.LastAttemptedAt) {
+			summary.LastAttemptedAt = a.CreatedAt
+		}
+		summaries[a.WaveID] = summary
+	}
+	return summaries, nil
 }

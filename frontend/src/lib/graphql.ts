@@ -1,11 +1,11 @@
-import { createClient as createWsClient } from "graphql-ws";
 import { authExchange } from "@urql/exchange-auth";
+import { createClient as createWsClient } from "graphql-ws";
 import {
   cacheExchange,
   createClient,
   fetchExchange,
-  subscriptionExchange,
   type OperationResult,
+  subscriptionExchange,
 } from "urql";
 
 const REFRESH_TOKEN_MUTATION = `

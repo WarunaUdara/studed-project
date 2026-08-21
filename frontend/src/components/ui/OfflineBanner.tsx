@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { WifiOff } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export function OfflineBanner() {
   const [isOffline, setIsOffline] = useState(
-    typeof navigator !== "undefined" ? !navigator.onLine : false
+    typeof navigator !== "undefined" ? !navigator.onLine : false,
   );
 
   useEffect(() => {
@@ -31,7 +31,9 @@ export function OfflineBanner() {
           role="alert"
         >
           <WifiOff className="w-4 h-4 shrink-0 animate-pulse" />
-          <span>You are currently offline. Some features and live wave updates may be delayed.</span>
+          <span>
+            You are currently offline. Some features and live wave updates may be delayed.
+          </span>
         </motion.div>
       )}
     </AnimatePresence>

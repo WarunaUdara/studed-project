@@ -42,13 +42,7 @@ export function DailySparkMascotMotivation({
                   <stop offset="0%" stopColor="oklch(0.906 0.047 247.2)" />
                   <stop offset="100%" stopColor="oklch(0.783 0.107 251.3)" />
                 </linearGradient>
-                <filter
-                  id="blob-glow"
-                  x="-20%"
-                  y="-20%"
-                  width="140%"
-                  height="140%"
-                >
+                <filter id="blob-glow" x="-20%" y="-20%" width="140%" height="140%">
                   <feDropShadow
                     dx="0"
                     dy="8"
@@ -59,69 +53,92 @@ export function DailySparkMascotMotivation({
               </defs>
 
               {/* Main Blob Body */}
-              <motion.path
-                d="M 60,100 C 60,60 140,60 140,100 C 140,140 130,155 100,155 C 70,155 60,140 60,100 Z"
+              <path
+                d="M 100,28 C 152,28 178,65 178,110 C 178,155 145,178 100,178 C 55,178 22,155 22,110 C 22,65 48,28 100,28 Z"
                 fill="url(#blob-grad)"
                 filter="url(#blob-glow)"
-                animate={
-                  reduce
-                    ? undefined
-                    : {
-                        d: [
-                          "M 60,100 C 60,60 140,60 140,100 C 140,140 130,155 100,155 C 70,155 60,140 60,100 Z",
-                          "M 55,100 C 55,55 145,55 145,100 C 145,145 135,150 100,150 C 65,150 55,145 55,100 Z",
-                          "M 60,100 C 60,60 140,60 140,100 C 140,140 130,155 100,155 C 70,155 60,140 60,100 Z",
-                        ],
-                      }
-                }
-                transition={{
-                  repeat: Infinity,
-                  duration: 2.6,
-                  ease: "easeInOut",
-                }}
               />
 
-              {/* Happy Eyes */}
-              <circle cx="85" cy="95" r="4.5" fill="oklch(0.447 0.051 261.4)" />
-              <circle
-                cx="115"
-                cy="95"
-                r="4.5"
-                fill="oklch(0.447 0.051 261.4)"
+              {/* Blob Cheek Highlights */}
+              <ellipse
+                cx="58"
+                cy="118"
+                rx="9"
+                ry="5"
+                fill="oklch(0.718 0.127 158.8)"
+                opacity="0.6"
+              />
+              <ellipse
+                cx="142"
+                cy="118"
+                rx="9"
+                ry="5"
+                fill="oklch(0.718 0.127 158.8)"
+                opacity="0.6"
               />
 
-              {/* Cute Smile */}
+              {/* Big Happy Anime Eyes (Matching Screenshot 4) */}
+              {/* Left Eye */}
+              <ellipse cx="76" cy="98" rx="8.5" ry="12" fill="oklch(0.245 0 0)" />
+              <circle cx="79" cy="93" r="4.5" fill="oklch(1 0 89.9)" />
+              <circle cx="73" cy="103" r="2.2" fill="oklch(1 0 89.9)" />
+
+              {/* Right Eye */}
+              <ellipse cx="124" cy="98" rx="8.5" ry="12" fill="oklch(0.245 0 0)" />
+              <circle cx="127" cy="93" r="4.5" fill="oklch(1 0 89.9)" />
+              <circle cx="121" cy="103" r="2.2" fill="oklch(1 0 89.9)" />
+
+              {/* Cheerful Open Smile */}
               <path
-                d="M 92,108 Q 100,116 108,108"
-                stroke="oklch(0.447 0.051 261.4)"
-                strokeWidth="3.5"
+                d="M 88,116 Q 100,132 112,116"
+                stroke="oklch(0.245 0 0)"
+                strokeWidth="4"
                 strokeLinecap="round"
-                fill="none"
+                fill="oklch(0.686 0.187 18.2)"
               />
 
-              {/* Dumbbell held up proudly */}
-              <g transform="translate(68, 30) rotate(-15)">
+              {/* Dumbbell Being Lifted Overhead */}
+              <g className="drop-shadow-lg">
+                {/* Dumbbell Bar */}
                 <rect
-                  x="0"
-                  y="14"
-                  width="64"
-                  height="6"
-                  rx="3"
-                  fill="oklch(0.94 0.009 252)"
+                  x="20"
+                  y="46"
+                  width="160"
+                  height="7"
+                  rx="3.5"
+                  fill="oklch(0.864 0.007 248.8)"
                 />
-                {/* Left Weight */}
+
+                {/* Left Weight Plates */}
                 <rect
-                  x="-8"
-                  y="4"
+                  x="14"
+                  y="30"
+                  width="16"
+                  height="38"
+                  rx="6"
+                  fill="url(#dumbbell-grad)"
+                />
+                <rect
+                  x="30"
+                  y="36"
                   width="12"
                   height="26"
                   rx="5"
                   fill="url(#dumbbell-grad)"
                 />
-                {/* Right Weight */}
+
+                {/* Right Weight Plates */}
                 <rect
-                  x="60"
-                  y="4"
+                  x="170"
+                  y="30"
+                  width="16"
+                  height="38"
+                  rx="6"
+                  fill="url(#dumbbell-grad)"
+                />
+                <rect
+                  x="158"
+                  y="36"
                   width="12"
                   height="26"
                   rx="5"
@@ -166,31 +183,24 @@ export function DailySparkMascotMotivation({
           </p>
         </motion.div>
 
-        {/* Total XP Score Badge */}
+        {/* Floating Sparkle Micro-pill */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.35 }}
-          className="pt-2"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.35, type: "spring" }}
+          className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-bold text-emerald-300"
         >
-          <p className="text-[11px] font-bold tracking-widest text-neutral-500 uppercase">
-            Total XP
-          </p>
-          <div className="mt-1 flex items-center justify-center gap-2">
-            <span className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-              {totalXp}
-            </span>
-            <Sparkles className="size-6 fill-emerald-400 text-emerald-400 animate-pulse" />
-          </div>
+          <Sparkles className="size-3.5 text-emerald-400" />
+          <span>+{totalXp} XP Streak Bonus</span>
         </motion.div>
       </div>
 
-      {/* Bottom Action Button */}
+      {/* Bottom Continue Button */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="w-full max-w-sm pt-4"
+        transition={{ delay: 0.4 }}
+        className="w-full max-w-sm pt-6"
       >
         <button
           type="button"

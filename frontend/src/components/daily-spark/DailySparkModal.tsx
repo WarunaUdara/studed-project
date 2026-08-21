@@ -165,12 +165,7 @@ export function DailySparkModal({ isOpen, onClose }: DailySparkModalProps) {
               <DailySparkStreakCharge onContinue={handleChargeContinue} />
             )}
 
-            {screenState === "league" && (
-              <DailySparkLeagueRank
-                totalXp={totalXpEarned || 55}
-                onFinish={handleLeagueFinish}
-              />
-            )}
+            {screenState === "league" && <DailySparkLeagueRank onFinish={handleLeagueFinish} />}
           </motion.div>
         </motion.div>
       )}

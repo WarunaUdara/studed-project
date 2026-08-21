@@ -1,15 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import {
-  ArrowRight,
-  Check,
-  Compass,
-  Lock,
-  Play,
-  Sparkles,
-  Trophy,
-  Zap,
-} from "lucide-react";
+import { ArrowRight, Check, Compass, Lock, Play, Sparkles, Trophy, Zap } from "lucide-react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
@@ -137,7 +128,12 @@ export function CourseJourneyMap({
   const [hoveredWaveId, setHoveredWaveId] = useState<string | null>(null);
 
   // Flatten lessons & waves into a single sequential journey list
-  const { waves: flattenedWaves, completedCount, totalCount, currentWaveId } = useMemo(() => {
+  const {
+    waves: flattenedWaves,
+    completedCount,
+    totalCount,
+    currentWaveId,
+  } = useMemo(() => {
     const list: JourneyWave[] = [];
     let completed = 0;
     let currentFound = false;
@@ -272,17 +268,13 @@ export function CourseJourneyMap({
               {courseTitle}
             </h1>
             <p className="text-xs text-muted-foreground max-w-xl">
-              Traverse the interactive wave map. Complete 5-minute atomic waves to earn XP and climb the national leaderboard.
+              Traverse the interactive wave map. Complete 5-minute atomic waves to earn XP and climb
+              the national leaderboard.
             </p>
           </div>
 
           <div className="flex items-center gap-6 shrink-0 justify-between md:justify-end">
-            <ProgressRing
-              value={progressPct}
-              size={80}
-              strokeWidth={7}
-              className="text-primary"
-            >
+            <ProgressRing value={progressPct} size={80} strokeWidth={7} className="text-primary">
               <div className="text-center">
                 <span className="text-base font-black">{progressPct}%</span>
                 <span className="block text-xs uppercase font-bold text-muted-foreground">
@@ -325,8 +317,12 @@ export function CourseJourneyMap({
           <div className="flex items-center gap-3">
             <StreakFlame dayCount={7} size="sm" />
             <span className="inline-flex items-center gap-1 rounded-full bg-gold/10 px-3 py-1 text-xs font-bold text-gold border border-gold/30">
-              <Zap className="h-3.5 w-3.5 fill-gold text-gold" />
-              +{flattenedWaves.reduce((acc, w) => acc + (w.state === "completed" ? w.xpReward : 0), 0)} XP
+              <Zap className="h-3.5 w-3.5 fill-gold text-gold" />+
+              {flattenedWaves.reduce(
+                (acc, w) => acc + (w.state === "completed" ? w.xpReward : 0),
+                0,
+              )}{" "}
+              XP
             </span>
           </div>
         </div>
@@ -370,7 +366,6 @@ export function CourseJourneyMap({
                 animate={{ pathLength: completedFraction }}
                 transition={{ duration: 1.5, ease: "easeOut" }}
               />
-
             </svg>
 
             {/* Traveling Mascot & Node Buttons along Path */}

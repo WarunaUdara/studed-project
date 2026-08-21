@@ -1,15 +1,15 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Lightbulb, Sparkles, X, XCircle } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { DailyLessonLimitGate } from "./DailyLessonLimitGate";
 import { GearGraphSvg } from "./GearGraphSvg";
 import {
-  GearNetworkPuzzle,
+  type GearNetworkPuzzle,
   SCIENCE_GEAR_PUZZLES,
   solveGearDirections,
 } from "./gear-network-engine";
 import { LessonCompleteCelebration } from "./LessonCompleteCelebration";
-import { Button } from "@/components/ui/button";
 
 export interface ScientificThinkingGearsMasterProps {
   puzzles?: GearNetworkPuzzle[];
@@ -178,9 +178,7 @@ export function ScientificThinkingGearsMaster({
       <div className="my-auto w-full flex flex-col items-center justify-center text-center py-2 space-y-4">
         {/* Title & Subtitle */}
         <div className="space-y-1 max-w-xl">
-          <h2 className="text-base sm:text-lg font-bold text-neutral-100">
-            {puzzle.subtitle}
-          </h2>
+          <h2 className="text-base sm:text-lg font-bold text-neutral-100">{puzzle.subtitle}</h2>
           {puzzle.teachingNote && (
             <p className="text-xs text-neutral-400 font-medium">{puzzle.teachingNote}</p>
           )}

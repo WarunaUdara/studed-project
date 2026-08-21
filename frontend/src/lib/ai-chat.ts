@@ -60,7 +60,10 @@ export interface AIChatHandlers {
 
 // streamAgentChat POSTs the prompt to /ai/chat and parses the SSE stream,
 // calling onEvent for every agent event. Resolves when the stream ends.
-export async function streamAgentChat(request: AIChatRequest, handlers: AIChatHandlers): Promise<void> {
+export async function streamAgentChat(
+  request: AIChatRequest,
+  handlers: AIChatHandlers,
+): Promise<void> {
   return streamFrom("/ai/chat", request, handlers);
 }
 

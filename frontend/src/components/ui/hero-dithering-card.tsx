@@ -1,12 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Sparkles, Zap } from "lucide-react";
-import { Suspense, lazy, useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { usePublicI18n } from "@/lib/i18n";
 import { playSuccessSound } from "@/lib/sounds";
 import { useAuthStore } from "@/stores/auth";
 
 const Dithering = lazy(() =>
-  import("@paper-design/shaders-react").then((mod) => ({ default: mod.Dithering }))
+  import("@paper-design/shaders-react").then((mod) => ({ default: mod.Dithering })),
 );
 
 interface CTASectionProps {
@@ -32,7 +32,7 @@ export function CTASection({ authed: propAuthed }: CTASectionProps) {
             <div className="absolute inset-0 z-0 pointer-events-none opacity-40 dark:opacity-30 mix-blend-multiply dark:mix-blend-screen">
               <Dithering
                 colorBack="#00000000" // Transparent
-                colorFront="#10b981"  // StudEd Emerald Green
+                colorFront="#10b981" // StudEd Emerald Green
                 shape="warp"
                 type="4x4"
                 speed={isHovered ? 0.6 : 0.2}
@@ -66,7 +66,8 @@ export function CTASection({ authed: propAuthed }: CTASectionProps) {
 
             {/* Description */}
             <p className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-2xl mb-10 leading-relaxed">
-              Join thousands of Sri Lankan students learning math, science, and coding through interactive simulations, instant feedback, and gamified progress.
+              Join thousands of Sri Lankan students learning math, science, and coding through
+              interactive simulations, instant feedback, and gamified progress.
             </p>
 
             {/* CTA Actions */}

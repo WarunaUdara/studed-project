@@ -44,6 +44,7 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		IconURL     func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Unlocked    func(childComplexity int) int
 		UnlockedAt  func(childComplexity int) int
 	}
 
@@ -95,10 +96,17 @@ type ComplexityRoot struct {
 	}
 
 	LeaderboardEntry struct {
-		Course  func(childComplexity int) int
-		Rank    func(childComplexity int) int
-		TotalXp func(childComplexity int) int
-		User    func(childComplexity int) int
+		DisplayName func(childComplexity int) int
+		IsMe        func(childComplexity int) int
+		Rank        func(childComplexity int) int
+		TotalXp     func(childComplexity int) int
+		UserID      func(childComplexity int) int
+	}
+
+	LeaderboardPage struct {
+		Entries     func(childComplexity int) int
+		Me          func(childComplexity int) int
+		TotalRanked func(childComplexity int) int
 	}
 
 	LearnBlock struct {
@@ -162,7 +170,7 @@ type ComplexityRoot struct {
 		Achievements  func(childComplexity int) int
 		Course        func(childComplexity int, id string) int
 		Courses       func(childComplexity int, filter *model.CourseFilter, pagination *model.PaginationInput) int
-		Leaderboard   func(childComplexity int, scope model.LeaderboardScope, courseID *string, grade *model.Grade) int
+		Leaderboard   func(childComplexity int, scope model.LeaderboardScope, courseID *string, grade *model.Grade, limit *int, offset *int) int
 		Lesson        func(childComplexity int, id string) int
 		Me            func(childComplexity int) int
 		MyEnrollments func(childComplexity int) int
@@ -192,6 +200,8 @@ type ComplexityRoot struct {
 		FullName          func(childComplexity int) int
 		Grade             func(childComplexity int) int
 		ID                func(childComplexity int) int
+		LastActiveAt      func(childComplexity int) int
+		LongestStreak     func(childComplexity int) int
 		PreferredLanguage func(childComplexity int) int
 		Role              func(childComplexity int) int
 		Streak            func(childComplexity int) int
@@ -290,7 +300,7 @@ type QueryResolver interface {
 	Wave(ctx context.Context, id string) (*model.Wave, error)
 	Progress(ctx context.Context, courseID *string) ([]*model.LessonProgress, error)
 	WaveProgress(ctx context.Context, waveID string) (*model.WaveProgress, error)
-	Leaderboard(ctx context.Context, scope model.LeaderboardScope, courseID *string, grade *model.Grade) ([]*model.LeaderboardEntry, error)
+	Leaderboard(ctx context.Context, scope model.LeaderboardScope, courseID *string, grade *model.Grade, limit *int, offset *int) (*model.LeaderboardPage, error)
 	MyRank(ctx context.Context, scope model.LeaderboardScope, courseID *string) (*int, error)
 	Achievements(ctx context.Context) ([]*model.Achievement, error)
 }
@@ -343,6 +353,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Achievement.Name(childComplexity), true
+	case "Achievement.unlocked":
+		if e.ComplexityRoot.Achievement.Unlocked == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Achievement.Unlocked(childComplexity), true
 	case "Achievement.unlockedAt":
 		if e.ComplexityRoot.Achievement.UnlockedAt == nil {
 			break
@@ -530,12 +546,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.ComplexityRoot.EvaluateBlock.Type(childComplexity), true
 
-	case "LeaderboardEntry.course":
-		if e.ComplexityRoot.LeaderboardEntry.Course == nil {
+	case "LeaderboardEntry.displayName":
+		if e.ComplexityRoot.LeaderboardEntry.DisplayName == nil {
 			break
 		}
 
-		return e.ComplexityRoot.LeaderboardEntry.Course(childComplexity), true
+		return e.ComplexityRoot.LeaderboardEntry.DisplayName(childComplexity), true
+	case "LeaderboardEntry.isMe":
+		if e.ComplexityRoot.LeaderboardEntry.IsMe == nil {
+			break
+		}
+
+		return e.ComplexityRoot.LeaderboardEntry.IsMe(childComplexity), true
 	case "LeaderboardEntry.rank":
 		if e.ComplexityRoot.LeaderboardEntry.Rank == nil {
 			break
@@ -548,12 +570,31 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.LeaderboardEntry.TotalXp(childComplexity), true
-	case "LeaderboardEntry.user":
-		if e.ComplexityRoot.LeaderboardEntry.User == nil {
+	case "LeaderboardEntry.userId":
+		if e.ComplexityRoot.LeaderboardEntry.UserID == nil {
 			break
 		}
 
-		return e.ComplexityRoot.LeaderboardEntry.User(childComplexity), true
+		return e.ComplexityRoot.LeaderboardEntry.UserID(childComplexity), true
+
+	case "LeaderboardPage.entries":
+		if e.ComplexityRoot.LeaderboardPage.Entries == nil {
+			break
+		}
+
+		return e.ComplexityRoot.LeaderboardPage.Entries(childComplexity), true
+	case "LeaderboardPage.me":
+		if e.ComplexityRoot.LeaderboardPage.Me == nil {
+			break
+		}
+
+		return e.ComplexityRoot.LeaderboardPage.Me(childComplexity), true
+	case "LeaderboardPage.totalRanked":
+		if e.ComplexityRoot.LeaderboardPage.TotalRanked == nil {
+			break
+		}
+
+		return e.ComplexityRoot.LeaderboardPage.TotalRanked(childComplexity), true
 
 	case "LearnBlock.content":
 		if e.ComplexityRoot.LearnBlock.Content == nil {
@@ -976,7 +1017,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.ComplexityRoot.Query.Leaderboard(childComplexity, args["scope"].(model.LeaderboardScope), args["courseId"].(*string), args["grade"].(*model.Grade)), true
+		return e.ComplexityRoot.Query.Leaderboard(childComplexity, args["scope"].(model.LeaderboardScope), args["courseId"].(*string), args["grade"].(*model.Grade), args["limit"].(*int), args["offset"].(*int)), true
 	case "Query.lesson":
 		if e.ComplexityRoot.Query.Lesson == nil {
 			break
@@ -1130,6 +1171,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.User.ID(childComplexity), true
+	case "User.lastActiveAt":
+		if e.ComplexityRoot.User.LastActiveAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.User.LastActiveAt(childComplexity), true
+	case "User.longestStreak":
+		if e.ComplexityRoot.User.LongestStreak == nil {
+			break
+		}
+
+		return e.ComplexityRoot.User.LongestStreak(childComplexity), true
 	case "User.preferredLanguage":
 		if e.ComplexityRoot.User.PreferredLanguage == nil {
 			break
@@ -1508,6 +1561,8 @@ func (ec *executionContext) childFields_Achievement(ctx context.Context, field g
 		return ec.fieldContext_Achievement_description(ctx, field)
 	case "iconUrl":
 		return ec.fieldContext_Achievement_iconUrl(ctx, field)
+	case "unlocked":
+		return ec.fieldContext_Achievement_unlocked(ctx, field)
 	case "unlockedAt":
 		return ec.fieldContext_Achievement_unlockedAt(ctx, field)
 	}
@@ -1612,14 +1667,28 @@ func (ec *executionContext) childFields_LeaderboardEntry(ctx context.Context, fi
 	switch field.Name {
 	case "rank":
 		return ec.fieldContext_LeaderboardEntry_rank(ctx, field)
-	case "user":
-		return ec.fieldContext_LeaderboardEntry_user(ctx, field)
+	case "userId":
+		return ec.fieldContext_LeaderboardEntry_userId(ctx, field)
+	case "displayName":
+		return ec.fieldContext_LeaderboardEntry_displayName(ctx, field)
 	case "totalXp":
 		return ec.fieldContext_LeaderboardEntry_totalXp(ctx, field)
-	case "course":
-		return ec.fieldContext_LeaderboardEntry_course(ctx, field)
+	case "isMe":
+		return ec.fieldContext_LeaderboardEntry_isMe(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type LeaderboardEntry", field.Name)
+}
+
+func (ec *executionContext) childFields_LeaderboardPage(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "entries":
+		return ec.fieldContext_LeaderboardPage_entries(ctx, field)
+	case "totalRanked":
+		return ec.fieldContext_LeaderboardPage_totalRanked(ctx, field)
+	case "me":
+		return ec.fieldContext_LeaderboardPage_me(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type LeaderboardPage", field.Name)
 }
 
 func (ec *executionContext) childFields_LearnBlock(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
@@ -1710,6 +1779,10 @@ func (ec *executionContext) childFields_User(ctx context.Context, field graphql.
 		return ec.fieldContext_User_totalXp(ctx, field)
 	case "streak":
 		return ec.fieldContext_User_streak(ctx, field)
+	case "longestStreak":
+		return ec.fieldContext_User_longestStreak(ctx, field)
+	case "lastActiveAt":
+		return ec.fieldContext_User_lastActiveAt(ctx, field)
 	case "createdAt":
 		return ec.fieldContext_User_createdAt(ctx, field)
 	}
@@ -2467,6 +2540,22 @@ func (ec *executionContext) field_Query_leaderboard_args(ctx context.Context, ra
 		return nil, err
 	}
 	args["grade"] = arg2
+	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "limit",
+		func(ctx context.Context, v any) (*int, error) {
+			return ec.unmarshalOInt2ᚖint(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg3
+	arg4, err := graphql.ProcessArgField(ctx, rawArgs, "offset",
+		func(ctx context.Context, v any) (*int, error) {
+			return ec.unmarshalOInt2ᚖint(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["offset"] = arg4
 	return args, nil
 }
 
@@ -2722,6 +2811,29 @@ func (ec *executionContext) fieldContext_Achievement_iconUrl(_ context.Context, 
 	return graphql.NewScalarFieldContext("Achievement", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
+func (ec *executionContext) _Achievement_unlocked(ctx context.Context, field graphql.CollectedField, obj *model.Achievement) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Achievement_unlocked(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Unlocked, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v bool) graphql.Marshaler {
+			return ec.marshalNBoolean2bool(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Achievement_unlocked(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Achievement", field, false, false, errors.New("field of type Boolean does not have child fields"))
+}
+
 func (ec *executionContext) _Achievement_unlockedAt(ctx context.Context, field graphql.CollectedField, obj *model.Achievement) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -2734,11 +2846,11 @@ func (ec *executionContext) _Achievement_unlockedAt(ctx context.Context, field g
 			return obj.UnlockedAt, nil
 		},
 		nil,
-		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
-			return ec.marshalNDateTime2timeᚐTime(ctx, selections, v)
+		func(ctx context.Context, selections ast.SelectionSet, v *time.Time) graphql.Marshaler {
+			return ec.marshalODateTime2ᚖtimeᚐTime(ctx, selections, v)
 		},
 		true,
-		true,
+		false,
 	)
 }
 func (ec *executionContext) fieldContext_Achievement_unlockedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3498,36 +3610,50 @@ func (ec *executionContext) fieldContext_LeaderboardEntry_rank(_ context.Context
 	return graphql.NewScalarFieldContext("LeaderboardEntry", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
-func (ec *executionContext) _LeaderboardEntry_user(ctx context.Context, field graphql.CollectedField, obj *model.LeaderboardEntry) (ret graphql.Marshaler) {
+func (ec *executionContext) _LeaderboardEntry_userId(ctx context.Context, field graphql.CollectedField, obj *model.LeaderboardEntry) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
 		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return ec.fieldContext_LeaderboardEntry_user(ctx, field)
+			return ec.fieldContext_LeaderboardEntry_userId(ctx, field)
 		},
 		func(ctx context.Context) (any, error) {
-			return obj.User, nil
+			return obj.UserID, nil
 		},
 		nil,
-		func(ctx context.Context, selections ast.SelectionSet, v *model.User) graphql.Marshaler {
-			return ec.marshalNUser2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐUser(ctx, selections, v)
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
 		},
 		true,
 		true,
 	)
 }
-func (ec *executionContext) fieldContext_LeaderboardEntry_user(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "LeaderboardEntry",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return ec.childFields_User(ctx, field)
+func (ec *executionContext) fieldContext_LeaderboardEntry_userId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("LeaderboardEntry", field, false, false, errors.New("field of type ID does not have child fields"))
+}
+
+func (ec *executionContext) _LeaderboardEntry_displayName(ctx context.Context, field graphql.CollectedField, obj *model.LeaderboardEntry) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_LeaderboardEntry_displayName(ctx, field)
 		},
-	}
-	return fc, nil
+		func(ctx context.Context) (any, error) {
+			return obj.DisplayName, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_LeaderboardEntry_displayName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("LeaderboardEntry", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _LeaderboardEntry_totalXp(ctx context.Context, field graphql.CollectedField, obj *model.LeaderboardEntry) (ret graphql.Marshaler) {
@@ -3553,33 +3679,111 @@ func (ec *executionContext) fieldContext_LeaderboardEntry_totalXp(_ context.Cont
 	return graphql.NewScalarFieldContext("LeaderboardEntry", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
-func (ec *executionContext) _LeaderboardEntry_course(ctx context.Context, field graphql.CollectedField, obj *model.LeaderboardEntry) (ret graphql.Marshaler) {
+func (ec *executionContext) _LeaderboardEntry_isMe(ctx context.Context, field graphql.CollectedField, obj *model.LeaderboardEntry) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
 		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return ec.fieldContext_LeaderboardEntry_course(ctx, field)
+			return ec.fieldContext_LeaderboardEntry_isMe(ctx, field)
 		},
 		func(ctx context.Context) (any, error) {
-			return obj.Course, nil
+			return obj.IsMe, nil
 		},
 		nil,
-		func(ctx context.Context, selections ast.SelectionSet, v *model.Course) graphql.Marshaler {
-			return ec.marshalOCourse2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐCourse(ctx, selections, v)
+		func(ctx context.Context, selections ast.SelectionSet, v bool) graphql.Marshaler {
+			return ec.marshalNBoolean2bool(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_LeaderboardEntry_isMe(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("LeaderboardEntry", field, false, false, errors.New("field of type Boolean does not have child fields"))
+}
+
+func (ec *executionContext) _LeaderboardPage_entries(ctx context.Context, field graphql.CollectedField, obj *model.LeaderboardPage) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_LeaderboardPage_entries(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Entries, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v []*model.LeaderboardEntry) graphql.Marshaler {
+			return ec.marshalNLeaderboardEntry2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLeaderboardEntryᚄ(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_LeaderboardPage_entries(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LeaderboardPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_LeaderboardEntry(ctx, field)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LeaderboardPage_totalRanked(ctx context.Context, field graphql.CollectedField, obj *model.LeaderboardPage) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_LeaderboardPage_totalRanked(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.TotalRanked, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_LeaderboardPage_totalRanked(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("LeaderboardPage", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
+func (ec *executionContext) _LeaderboardPage_me(ctx context.Context, field graphql.CollectedField, obj *model.LeaderboardPage) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_LeaderboardPage_me(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Me, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *model.LeaderboardEntry) graphql.Marshaler {
+			return ec.marshalOLeaderboardEntry2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLeaderboardEntry(ctx, selections, v)
 		},
 		true,
 		false,
 	)
 }
-func (ec *executionContext) fieldContext_LeaderboardEntry_course(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_LeaderboardPage_me(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "LeaderboardEntry",
+		Object:     "LeaderboardPage",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return ec.childFields_Course(ctx, field)
+			return ec.childFields_LeaderboardEntry(ctx, field)
 		},
 	}
 	return fc, nil
@@ -5450,11 +5654,11 @@ func (ec *executionContext) _Query_leaderboard(ctx context.Context, field graphq
 		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.Resolvers.Query().Leaderboard(ctx, fc.Args["scope"].(model.LeaderboardScope), fc.Args["courseId"].(*string), fc.Args["grade"].(*model.Grade))
+			return ec.Resolvers.Query().Leaderboard(ctx, fc.Args["scope"].(model.LeaderboardScope), fc.Args["courseId"].(*string), fc.Args["grade"].(*model.Grade), fc.Args["limit"].(*int), fc.Args["offset"].(*int))
 		},
 		nil,
-		func(ctx context.Context, selections ast.SelectionSet, v []*model.LeaderboardEntry) graphql.Marshaler {
-			return ec.marshalNLeaderboardEntry2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLeaderboardEntryᚄ(ctx, selections, v)
+		func(ctx context.Context, selections ast.SelectionSet, v *model.LeaderboardPage) graphql.Marshaler {
+			return ec.marshalNLeaderboardPage2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLeaderboardPage(ctx, selections, v)
 		},
 		true,
 		true,
@@ -5467,7 +5671,7 @@ func (ec *executionContext) fieldContext_Query_leaderboard(ctx context.Context, 
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return ec.childFields_LeaderboardEntry(ctx, field)
+			return ec.childFields_LeaderboardPage(ctx, field)
 		},
 	}
 	defer func() {
@@ -6082,6 +6286,52 @@ func (ec *executionContext) _User_streak(ctx context.Context, field graphql.Coll
 }
 func (ec *executionContext) fieldContext_User_streak(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	return graphql.NewScalarFieldContext("User", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
+func (ec *executionContext) _User_longestStreak(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_User_longestStreak(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.LongestStreak, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_User_longestStreak(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("User", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
+func (ec *executionContext) _User_lastActiveAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_User_lastActiveAt(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.LastActiveAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *time.Time) graphql.Marshaler {
+			return ec.marshalODateTime2ᚖtimeᚐTime(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_User_lastActiveAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("User", field, false, false, errors.New("field of type DateTime does not have child fields"))
 }
 
 func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -8793,9 +9043,14 @@ func (ec *executionContext) _Achievement(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.RequiredNull {
 				out.Invalids++
 			}
+		case "unlocked":
+			out.Values[i] = ec._Achievement_unlocked(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "unlockedAt":
 			out.Values[i] = ec._Achievement_unlockedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
+			if out.Values[i] == graphql.RequiredNull {
 				out.Invalids++
 			}
 		default:
@@ -9179,8 +9434,13 @@ func (ec *executionContext) _LeaderboardEntry(ctx context.Context, sel ast.Selec
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user":
-			out.Values[i] = ec._LeaderboardEntry_user(ctx, field, obj)
+		case "userId":
+			out.Values[i] = ec._LeaderboardEntry_userId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "displayName":
+			out.Values[i] = ec._LeaderboardEntry_displayName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -9189,8 +9449,56 @@ func (ec *executionContext) _LeaderboardEntry(ctx context.Context, sel ast.Selec
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "course":
-			out.Values[i] = ec._LeaderboardEntry_course(ctx, field, obj)
+		case "isMe":
+			out.Values[i] = ec._LeaderboardEntry_isMe(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
+
+	ec.ProcessDeferredGroup(graphql.DeferredGroup{
+		Defers:   deferLabelToView,
+		Path:     graphql.GetPath(ctx),
+		FieldSet: deferredFieldSet,
+		Context:  ctx,
+	})
+
+	return out
+}
+
+var leaderboardPageImplementors = []string{"LeaderboardPage"}
+
+func (ec *executionContext) _LeaderboardPage(ctx context.Context, sel ast.SelectionSet, obj *model.LeaderboardPage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, leaderboardPageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferredFieldSet := graphql.NewFieldSet(nil)
+	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LeaderboardPage")
+		case "entries":
+			out.Values[i] = ec._LeaderboardPage_entries(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalRanked":
+			out.Values[i] = ec._LeaderboardPage_totalRanked(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "me":
+			out.Values[i] = ec._LeaderboardPage_me(ctx, field, obj)
 			if out.Values[i] == graphql.RequiredNull {
 				out.Invalids++
 			}
@@ -10083,6 +10391,16 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 		case "streak":
 			out.Values[i] = ec._User_streak(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "longestStreak":
+			out.Values[i] = ec._User_longestStreak(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "lastActiveAt":
+			out.Values[i] = ec._User_lastActiveAt(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
 				out.Invalids++
 			}
 		case "createdAt":
@@ -11132,6 +11450,20 @@ func (ec *executionContext) marshalNLeaderboardEntry2ᚖgithubᚗcomᚋstudedᚋ
 	return ec._LeaderboardEntry(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNLeaderboardPage2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLeaderboardPage(ctx context.Context, sel ast.SelectionSet, v model.LeaderboardPage) graphql.Marshaler {
+	return ec._LeaderboardPage(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNLeaderboardPage2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLeaderboardPage(ctx context.Context, sel ast.SelectionSet, v *model.LeaderboardPage) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LeaderboardPage(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNLeaderboardScope2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLeaderboardScope(ctx context.Context, v any) (model.LeaderboardScope, error) {
 	var res model.LeaderboardScope
 	err := res.UnmarshalGQL(v)
@@ -11773,6 +12105,13 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	_ = ctx
 	res := graphql.MarshalInt(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOLeaderboardEntry2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLeaderboardEntry(ctx context.Context, sel ast.SelectionSet, v *model.LeaderboardEntry) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LeaderboardEntry(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOLearnBlockInput2ᚕᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐLearnBlockInputᚄ(ctx context.Context, v any) ([]*model.LearnBlockInput, error) {

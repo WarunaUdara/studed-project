@@ -52,18 +52,26 @@ export function HtmlSimulationBlock({ content, metadata }: HtmlSimulationBlockPr
   }
 
   return (
-    <section className="overflow-hidden rounded-2xl border bg-slate-950 shadow-sm" aria-label={title}>
+    <section
+      className="overflow-hidden rounded-2xl border bg-slate-950 shadow-sm"
+      aria-label={title}
+    >
       <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3 text-white">
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold">{title}</p>
-          {meta.description && <p className="truncate text-xs text-slate-400">{meta.description}</p>}
+          {meta.description && (
+            <p className="truncate text-xs text-slate-400">{meta.description}</p>
+          )}
         </div>
         <span className="shrink-0 rounded-full bg-white/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-300">
           Interactive
         </span>
       </div>
       {failed ? (
-        <div className="flex items-center justify-center bg-white p-6 text-sm text-destructive" style={{ height }}>
+        <div
+          className="flex items-center justify-center bg-white p-6 text-sm text-destructive"
+          style={{ height }}
+        >
           The simulation document could not be loaded. Regenerate this simulation to try again.
         </div>
       ) : (

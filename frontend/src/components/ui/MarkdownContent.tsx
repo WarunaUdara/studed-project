@@ -1,7 +1,7 @@
 import ReactMarkdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import { cn } from "@/lib/utils";
 
@@ -32,10 +32,19 @@ export function MarkdownContent({ content, className }: MarkdownContentProps) {
                 </span>
               );
             }
-            return <span className={cn_} {...props}>{children}</span>;
+            return (
+              <span className={cn_} {...props}>
+                {children}
+              </span>
+            );
           },
           a: ({ href, children }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
-            <a href={href} target="_blank" rel="noreferrer" className="text-primary underline underline-offset-2">
+            <a
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary underline underline-offset-2"
+            >
               {children}
             </a>
           ),
@@ -48,10 +57,7 @@ export function MarkdownContent({ content, className }: MarkdownContentProps) {
             const isBlock = cn_?.includes("language-");
             return (
               <code
-                className={cn(
-                  isBlock ? "" : "rounded bg-muted px-1 py-0.5 text-[0.85em]",
-                  cn_,
-                )}
+                className={cn(isBlock ? "" : "rounded bg-muted px-1 py-0.5 text-[0.85em]", cn_)}
               >
                 {children}
               </code>
@@ -65,7 +71,9 @@ export function MarkdownContent({ content, className }: MarkdownContentProps) {
           th: ({ children }: React.ThHTMLAttributes<HTMLTableCellElement>) => (
             <th className="border bg-muted/50 px-2 py-1 text-left font-semibold">{children}</th>
           ),
-          td: ({ children }: React.TdHTMLAttributes<HTMLTableCellElement>) => <td className="border px-2 py-1">{children}</td>,
+          td: ({ children }: React.TdHTMLAttributes<HTMLTableCellElement>) => (
+            <td className="border px-2 py-1">{children}</td>
+          ),
         }}
       >
         {content}

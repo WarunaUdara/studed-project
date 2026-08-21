@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/studed/progress-service/internal/model"
 	"gorm.io/gorm"
@@ -19,6 +20,7 @@ type ProgressRepository interface {
 	CountPassedWavesInCourse(ctx context.Context, userID, courseID string) (int64, error)
 	CountPassedWavesInLesson(ctx context.Context, userID, lessonID string) (int64, error)
 	CountPassedWavesGroupedByLesson(ctx context.Context, userID, courseID string) (map[string]int64, error)
+	SummariseCourseAttempts(ctx context.Context, userID, courseID string) (map[string]WaveSummary, error)
 }
 
 type progressRepository struct {
@@ -124,4 +126,57 @@ func (r *progressRepository) CountPassedWavesGroupedByLesson(ctx context.Context
 		counts[row.LessonID] = row.Count
 	}
 	return counts, nil
+}
+
+// WaveSummary is one wave's attempt rollup for a single student.
+type WaveSummary struct {
+	WaveID          string
+	AttemptCount    int32
+	HighestScore    int32
+	Passed          bool
+	FirstPassedAt   time.Time
+	LastAttemptedAt time.Time
+}
+
+// SummariseCourseAttempts rolls up every wave in a course in one query.
+// Resolving progress wave by wave meant a page paid one query per wave, and
+// the lesson-proficiency check re-read every wave's attempts individually.
+func (r *progressRepository) SummariseCourseAttempts(ctx context.Context, userID, courseID string) (map[string]WaveSummary, error) {
+	var rows []struct {
+		WaveID          string
+		AttemptCount    int32
+		HighestScore    int32
+		Passed          bool
+		FirstPassedAt   *time.Time
+		LastAttemptedAt time.Time
+	}
+
+	if err := r.db.WithContext(ctx).Model(&model.WaveAttempt{}).
+		Select(`wave_id,
+			COUNT(*) AS attempt_count,
+			COALESCE(MAX(score), 0) AS highest_score,
+			BOOL_OR(passed) AS passed,
+			MIN(created_at) FILTER (WHERE passed) AS first_passed_at,
+			MAX(created_at) AS last_attempted_at`).
+		Where("user_id = ? AND course_id = ?", userID, courseID).
+		Group("wave_id").
+		Scan(&rows).Error; err != nil {
+		return nil, err
+	}
+
+	summaries := make(map[string]WaveSummary, len(rows))
+	for _, row := range rows {
+		summary := WaveSummary{
+			WaveID:          row.WaveID,
+			AttemptCount:    row.AttemptCount,
+			HighestScore:    row.HighestScore,
+			Passed:          row.Passed,
+			LastAttemptedAt: row.LastAttemptedAt,
+		}
+		if row.FirstPassedAt != nil {
+			summary.FirstPassedAt = *row.FirstPassedAt
+		}
+		summaries[row.WaveID] = summary
+	}
+	return summaries, nil
 }

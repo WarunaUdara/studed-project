@@ -45,7 +45,10 @@ export function PublicFooter() {
   ];
 
   return (
-    <RuixenGradientFooter gradientHeight="55vh" className="border-t border-border/40 bg-transparent">
+    <RuixenGradientFooter
+      gradientHeight="55vh"
+      className="border-t border-border/40 bg-transparent"
+    >
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-3">

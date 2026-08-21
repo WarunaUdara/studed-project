@@ -1,8 +1,8 @@
 // Streak scene, sliced from FeralUI Scenes (https://feralui.dev/#/scenes).
 // Generated file: regenerate with scripts/gen-scene-packs.cjs, do not hand-edit.
 
-import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const SOFT_EASE = [0.22, 1, 0.3, 1] as const;
 
@@ -16,8 +16,7 @@ const SOFT_EASE = [0.22, 1, 0.3, 1] as const;
 
 // Chromium supports SVG filter references inside backdrop-filter; Safari does
 // not, so it falls back to plain blur via the --lg custom-property default.
-const LG_SUPPORTED =
-  typeof CSS !== "undefined" && CSS.supports("backdrop-filter", "url(#lg)");
+const LG_SUPPORTED = typeof CSS !== "undefined" && CSS.supports("backdrop-filter", "url(#lg)");
 
 // The map, computed per-pixel from the shape's signed distance field (the
 // "small PNG built on the fly from the glass's shape and size"):
@@ -89,13 +88,7 @@ export function useLiquidGlass(hostRef: { current: HTMLElement | null }) {
     host.appendChild(defs);
 
     let seq = 0;
-    type Rec = {
-      img: SVGElement;
-      disp: SVGElement;
-      f: SVGElement;
-      w: number;
-      h: number;
-    };
+    type Rec = { img: SVGElement; disp: SVGElement; f: SVGElement; w: number; h: number };
     const filters = new Map<HTMLElement, Rec>();
 
     const update = (el: HTMLElement) => {
@@ -125,10 +118,7 @@ export function useLiquidGlass(hostRef: { current: HTMLElement | null }) {
         // displacement first, then the iOS material: soft blur, a whisper of
         // saturation, a slight lift — real materials lighten the backdrop,
         // they never amplify its colour
-        el.style.setProperty(
-          "--lg",
-          `url(#${id}) blur(3px) saturate(1.08) brightness(1.05)`,
-        );
+        el.style.setProperty("--lg", `url(#${id}) blur(3px) saturate(1.08) brightness(1.05)`);
       }
       if (rec.w === w && rec.h === h) return;
       rec.w = w;
@@ -136,9 +126,7 @@ export function useLiquidGlass(hostRef: { current: HTMLElement | null }) {
       // resolve the CSS radius against the real box (handles the 50% circles)
       const raw = getComputedStyle(el).borderTopLeftRadius;
       const r = Math.min(
-        raw.endsWith("%")
-          ? (parseFloat(raw) / 100) * Math.min(w, h)
-          : parseFloat(raw) || 0,
+        raw.endsWith("%") ? (parseFloat(raw) / 100) * Math.min(w, h) : parseFloat(raw) || 0,
         w / 2,
         h / 2,
       );
@@ -155,9 +143,7 @@ export function useLiquidGlass(hostRef: { current: HTMLElement | null }) {
       for (const entry of entries) update(entry.target as HTMLElement);
     });
     const scan = () => {
-      const live = new Set(
-        Array.from(host.querySelectorAll<HTMLElement>(".glass")),
-      );
+      const live = new Set(Array.from(host.querySelectorAll<HTMLElement>(".glass")));
       live.forEach((el) => {
         if (!filters.has(el)) {
           update(el);
@@ -202,27 +188,14 @@ const STREAK_CONFETTI = Array.from({ length: 30 }, (_, i) => {
     size: 5 + ((i * 29) % 5),
     strip: i % 3 === 0,
     rot: spread * 320,
-    color: [
-      "oklch(0.79 0.16 66)",
-      "oklch(0.78 0.17 48)",
-      "oklch(0.88 0.14 85)",
-      "oklch(0.72 0.16 36)",
-      "oklch(0.9 0.12 92)",
-      "oklch(0.82 0.15 55)",
-    ][i % 6],
+    color: ["#f5a814", "#ff9d4d", "#ffcf67", "#e77c4f", "#ffd97a", "#ffb36b"][i % 6],
     delay: 0.55 + ((i * 17) % 12) * 0.02,
   };
 });
 
 // The count-up lives in its own component so its ~50 re-renders during the
 // 850ms ramp touch only this span, not the flame SVG and confetti field.
-function StreakCount({
-  reduce,
-  streak = 7,
-}: {
-  reduce: boolean;
-  streak?: number;
-}) {
+function StreakCount({ reduce, streak = 7 }: { reduce: boolean; streak?: number }) {
   const [count, setCount] = useState(1);
   // count-up: eases out hard so the last digits land with weight
   useEffect(() => {
@@ -236,18 +209,14 @@ function StreakCount({
     const delta = streak - startVal;
     const tick = (now: number) => {
       const p = Math.min(1, Math.max(0, (now - t0) / 850));
-      setCount(startVal + Math.round(delta * (1 - Math.pow(1 - p, 3))));
+      setCount(startVal + Math.round(delta * (1 - (1 - p) ** 3)));
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [reduce, streak]);
   // one-shot thump timed to the count-up LANDING, so the target arrives with weight
-  return (
-    <span className={reduce ? "st-num-value" : "st-num-value st-num-thump"}>
-      {count}
-    </span>
-  );
+  return <span className={reduce ? "st-num-value" : "st-num-value st-num-thump"}>{count}</span>;
 }
 
 export function StreakScreen({
@@ -307,11 +276,7 @@ export function StreakScreen({
           className="st-flame"
           initial={{ scale: 0, rotate: -8 }}
           animate={{ scale: 1, rotate: 0 }}
-          transition={{
-            delay: 0.15,
-            duration: 0.6,
-            ease: [0.34, 1.45, 0.5, 1],
-          }}
+          transition={{ delay: 0.15, duration: 0.6, ease: [0.34, 1.45, 0.5, 1] }}
         >
           {/* liquid-glass flame mark: warm inner flame + blurred glow clone behind a
               frosted outer shell that catches light along its top edge */}
@@ -327,8 +292,8 @@ export function StreakScreen({
                 y2="21"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stopColor="oklch(0.875 0.105 74.4)" />
-                <stop offset="1" stopColor="oklch(0.751 0.145 54.6)" />
+                <stop stopColor="#ff9a3d" />
+                <stop offset="1" stopColor="#e64a12" />
               </linearGradient>
               <linearGradient
                 id="stf-shell"
@@ -349,8 +314,8 @@ export function StreakScreen({
                 y2="13.233"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stopColor="oklch(1 0 89.9)" />
-                <stop offset="1" stopColor="oklch(1 0 89.9)" stopOpacity="0" />
+                <stop stopColor="#ffffff" />
+                <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
               </linearGradient>
               <filter
                 id="stf-blur"
@@ -361,20 +326,16 @@ export function StreakScreen({
                 filterUnits="objectBoundingBox"
                 primitiveUnits="userSpaceOnUse"
               >
-                <feGaussianBlur
-                  stdDeviation="2"
-                  in="SourceGraphic"
-                  result="blur"
-                />
+                <feGaussianBlur stdDeviation="2" in="SourceGraphic" result="blur" />
               </filter>
               <clipPath id="stf-clip">
                 <path d="M12.3555 1.17975C12.6333 1.22007 12.8835 1.42661 13.3828 1.8399C14.5704 2.8229 15.6975 3.87361 16.7432 5.01569C17.7733 6.14079 18.827 7.46472 19.627 8.88092C20.4224 10.2894 21.0058 11.8567 21.0059 13.4503C21.0058 18.9618 16.2992 22 12.0059 22.0001C7.71247 22.0001 3.00593 18.9618 3.00586 13.4503C3.00601 11.6543 3.31206 9.81195 3.64062 7.99908C3.79551 7.14453 3.87278 6.71677 4.0918 6.49615C4.28495 6.30176 4.54241 6.19717 4.81641 6.20123C5.1273 6.20598 5.47988 6.45692 6.18457 6.95807L8.20117 8.39166L10.9971 2.40631C11.2819 1.79667 11.4252 1.49135 11.6592 1.336C11.8588 1.20356 12.1184 1.1454 12.3555 1.17975ZM12 11.0001C10.8333 11.0001 8.50023 14.7613 8.5 16.6251C8.50004 18.4372 9.98124 19.9144 11.8398 19.9952C11.8929 19.998 11.9463 20.0001 12 20.0001C12.0534 20.0001 12.1065 19.9979 12.1592 19.9952C14.0182 19.9149 15.5 18.4375 15.5 16.6251C15.4998 14.7613 13.1667 11.0001 12 11.0001Z" />
               </clipPath>
               <mask id="stf-mask">
-                <rect width="100%" height="100%" fill="oklch(1 0 89.9)" />
+                <rect width="100%" height="100%" fill="#FFF" />
                 <path
                   d="M12.3555 1.17975C12.6333 1.22007 12.8835 1.42661 13.3828 1.8399C14.5704 2.8229 15.6975 3.87361 16.7432 5.01569C17.7733 6.14079 18.827 7.46472 19.627 8.88092C20.4224 10.2894 21.0058 11.8567 21.0059 13.4503C21.0058 18.9618 16.2992 22 12.0059 22.0001C7.71247 22.0001 3.00593 18.9618 3.00586 13.4503C3.00601 11.6543 3.31206 9.81195 3.64062 7.99908C3.79551 7.14453 3.87278 6.71677 4.0918 6.49615C4.28495 6.30176 4.54241 6.19717 4.81641 6.20123C5.1273 6.20598 5.47988 6.45692 6.18457 6.95807L8.20117 8.39166L10.9971 2.40631C11.2819 1.79667 11.4252 1.49135 11.6592 1.336C11.8588 1.20356 12.1184 1.1454 12.3555 1.17975ZM12 11.0001C10.8333 11.0001 8.50023 14.7613 8.5 16.6251C8.50004 18.4372 9.98124 19.9144 11.8398 19.9952C11.8929 19.998 11.9463 20.0001 12 20.0001C12.0534 20.0001 12.1065 19.9979 12.1592 19.9952C14.0182 19.9149 15.5 18.4375 15.5 16.6251C15.4998 14.7613 13.1667 11.0001 12 11.0001Z"
-                  fill="oklch(0 0 0)"
+                  fill="#000"
                 />
               </mask>
             </defs>
@@ -435,15 +396,12 @@ export function StreakScreen({
             const dayOfWeek = now.getDay();
             const todayIdx = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
             const isToday = i === todayIdx;
-            const isCompleted =
-              i <= todayIdx ? todayIdx - i < Math.max(1, streakCount) : false;
+            const isCompleted = i <= todayIdx ? todayIdx - i < Math.max(1, streakCount) : false;
 
             return (
               <div className="st-day" key={i}>
                 <span
-                  className={
-                    isToday ? "st-day-l font-bold text-primary" : "st-day-l"
-                  }
+                  className={isToday ? "st-day-l font-bold text-primary" : "st-day-l"}
                   aria-hidden="true"
                 >
                   {d}

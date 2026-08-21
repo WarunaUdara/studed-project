@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cumulativeXpForLevel, levelFromXp, computeProficiency } from "./gamification";
+import { computeProficiency, cumulativeXpForLevel, levelFromXp } from "./gamification";
 
 describe("Gamification Regression Matrix", () => {
   it("validates cumulative XP bounds across level curve matrix", () => {

@@ -10,12 +10,16 @@ import (
 	"time"
 )
 
+// An achievement from the server-owned catalog. Locked ones are returned too, so
+// the UI can show what is still to earn without duplicating the unlock rules.
 type Achievement struct {
-	ID          string    `json:"id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	IconURL     *string   `json:"iconUrl,omitempty"`
-	UnlockedAt  time.Time `json:"unlockedAt"`
+	ID          string  `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	IconURL     *string `json:"iconUrl,omitempty"`
+	Unlocked    bool    `json:"unlocked"`
+	// Null while the achievement is still locked.
+	UnlockedAt *time.Time `json:"unlockedAt,omitempty"`
 }
 
 type AnswerInput struct {
@@ -116,11 +120,26 @@ type EvaluateBlockInput struct {
 	Metadata      *string  `json:"metadata,omitempty"`
 }
 
+// One place on a leaderboard. It carries a display name rather than a User:
+// a ranked row is not a user profile, and building a half-empty User to hold a
+// name invited the rest of the profile to leak alongside it.
 type LeaderboardEntry struct {
-	Rank    int     `json:"rank"`
-	User    *User   `json:"user"`
-	TotalXp int     `json:"totalXp"`
-	Course  *Course `json:"course,omitempty"`
+	// Competition standard: equal XP shares a rank, the next total skips.
+	Rank   int    `json:"rank"`
+	UserID string `json:"userId"`
+	// Masked for display, e.g. "Nimal P." — never the student's legal name.
+	DisplayName string `json:"displayName"`
+	TotalXp     int    `json:"totalXp"`
+	IsMe        bool   `json:"isMe"`
+}
+
+type LeaderboardPage struct {
+	Entries []*LeaderboardEntry `json:"entries"`
+	// Everyone ranked in this scope, not just this page. Drives top-N% badges.
+	TotalRanked int `json:"totalRanked"`
+	// The viewer's own standing, present even when they fall outside the page.
+	// Null only when they have not scored in this scope yet.
+	Me *LeaderboardEntry `json:"me,omitempty"`
 }
 
 type LearnBlock struct {
@@ -231,8 +250,12 @@ type User struct {
 	PreferredLanguage string            `json:"preferredLanguage"`
 	Subscription      *UserSubscription `json:"subscription,omitempty"`
 	TotalXp           int               `json:"totalXp"`
-	Streak            int               `json:"streak"`
-	CreatedAt         time.Time         `json:"createdAt"`
+	// Consecutive days of learning. Advanced by activity, never by page loads.
+	Streak        int `json:"streak"`
+	LongestStreak int `json:"longestStreak"`
+	// The last day the student learned. Lets a week view mark real days.
+	LastActiveAt *time.Time `json:"lastActiveAt,omitempty"`
+	CreatedAt    time.Time  `json:"createdAt"`
 }
 
 type UserSubscription struct {
@@ -417,14 +440,16 @@ func (e Grade) MarshalJSON() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// Leaderboard scopes. WEEKLY resets itself every Monday 00:00 UTC.
+// There is no FRIENDS scope: the platform has no friends model, and a scope that
+// can only ever return an empty board is a broken feature, not a pending one.
 type LeaderboardScope string
 
 const (
-	LeaderboardScopeGlobal  LeaderboardScope = "GLOBAL"
-	LeaderboardScopeCourse  LeaderboardScope = "COURSE"
-	LeaderboardScopeGrade   LeaderboardScope = "GRADE"
-	LeaderboardScopeWeekly  LeaderboardScope = "WEEKLY"
-	LeaderboardScopeFriends LeaderboardScope = "FRIENDS"
+	LeaderboardScopeGlobal LeaderboardScope = "GLOBAL"
+	LeaderboardScopeCourse LeaderboardScope = "COURSE"
+	LeaderboardScopeGrade  LeaderboardScope = "GRADE"
+	LeaderboardScopeWeekly LeaderboardScope = "WEEKLY"
 )
 
 var AllLeaderboardScope = []LeaderboardScope{
@@ -432,12 +457,11 @@ var AllLeaderboardScope = []LeaderboardScope{
 	LeaderboardScopeCourse,
 	LeaderboardScopeGrade,
 	LeaderboardScopeWeekly,
-	LeaderboardScopeFriends,
 }
 
 func (e LeaderboardScope) IsValid() bool {
 	switch e {
-	case LeaderboardScopeGlobal, LeaderboardScopeCourse, LeaderboardScopeGrade, LeaderboardScopeWeekly, LeaderboardScopeFriends:
+	case LeaderboardScopeGlobal, LeaderboardScopeCourse, LeaderboardScopeGrade, LeaderboardScopeWeekly:
 		return true
 	}
 	return false

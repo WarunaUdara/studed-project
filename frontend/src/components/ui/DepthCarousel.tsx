@@ -1,14 +1,14 @@
+import gsap from "gsap";
 import {
   type KeyboardEvent as ReactKeyboardEvent,
-  type PointerEvent as ReactPointerEvent,
   type ReactNode,
+  type PointerEvent as ReactPointerEvent,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import gsap from "gsap";
 
 export type DepthCarouselItem =
   | string
@@ -340,7 +340,8 @@ export function DepthCarousel({
 
   useEffect(() => {
     reducedRef.current =
-      typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!autoplay || reducedRef.current || count < 2) return;
     const root = rootRef.current;
     let hovered = false;
@@ -512,7 +513,9 @@ export function DepthCarousel({
               aria-selected={active === i}
               aria-label={`Go to slide ${i + 1}`}
               className={`h-2 cursor-pointer rounded-full transition-all duration-300 ${
-                active === i ? "w-6 bg-primary" : "size-2 bg-muted-foreground/40 hover:bg-muted-foreground/60"
+                active === i
+                  ? "w-6 bg-primary"
+                  : "size-2 bg-muted-foreground/40 hover:bg-muted-foreground/60"
               }`}
               onClick={() => setFocus(i, true)}
             />
