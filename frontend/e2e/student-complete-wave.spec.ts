@@ -109,7 +109,12 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
     await page.getByRole("link", { name: "Leagues", exact: true }).first().click();
     await expect(page).toHaveURL(/\/leaderboard/);
 
-    const userLeaderboardRow = page.locator("main, [role='main']").getByText(studentName).first();
+    // The leaderboard masks names on purpose: privateLeaderboardName renders
+    // "AL Student 1787282181376" as "AL 1.". Asserting the full name here would
+    // only pass if that privacy rule were broken.
+    const [firstWord, , lastWord] = studentName.split(" ");
+    const maskedName = `${firstWord} ${lastWord.charAt(0)}.`;
+    const userLeaderboardRow = page.locator("main, [role='main']").getByText(maskedName).first();
     await expect(userLeaderboardRow).toBeVisible({ timeout: 10000 });
   });
 });
