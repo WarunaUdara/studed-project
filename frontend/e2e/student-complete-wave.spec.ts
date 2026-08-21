@@ -37,7 +37,9 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
     // Locate the A/L Physics card
     const physicsCard = page
       .locator("[data-testid='course-card']")
-      .filter({ hasText: "A/L Physics" })
+      // Exact match: the catalog also ships "A/L Physics: Mechanics and
+      // Circuits", which a substring match would pick up instead.
+      .filter({ has: page.getByRole("heading", { name: "A/L Physics", exact: true }) })
       .first();
     await expect(physicsCard).toBeVisible({ timeout: 5000 });
 

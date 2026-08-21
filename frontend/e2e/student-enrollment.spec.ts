@@ -26,7 +26,9 @@ test.describe("Student Course Search, Filter, and Enrollment Flow", () => {
     // Verify only Physics course card is visible, and Mathematics is NOT visible
     const physicsCard = page
       .locator("[data-testid='course-card']")
-      .filter({ hasText: "A/L Physics" })
+      // Exact match: the catalog also ships "A/L Physics: Mechanics and
+      // Circuits", which a substring match would pick up instead.
+      .filter({ has: page.getByRole("heading", { name: "A/L Physics", exact: true }) })
       .first();
     const mathCard = page
       .locator("[data-testid='course-card']")
