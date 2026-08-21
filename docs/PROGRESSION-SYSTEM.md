@@ -159,10 +159,25 @@ progress-service owns it. `WaveProgress.status` is one of `LOCKED`,
   passing attempt.
 - `CourseProgress.completedAt` is set when completed waves equal total waves.
 
-**Reattempts.** One policy: the cap is `wave.maxReattempts`, and
-`maxReattempts <= 0` means unlimited. `remainingAttempts` is `-1` when
-unlimited and otherwise `max(0, cap - used)` — reported identically on the
-first submission and on an idempotent replay.
+**Reattempts.** Unlimited by default, per issue #52. `wave.maxReattempts` is an
+opt-in cap that an educator may set deliberately; `0` means unlimited and is the
+platform default. `remainingAttempts` is `-1` when unlimited and otherwise
+`max(0, cap - used)` — reported identically on the first submission and on an
+idempotent replay. The cap used to be enforced while the response claimed
+attempts were unlimited, so a student was refused a fourth attempt they had been
+promised.
+
+A consequence worth stating: wave unlocking advances on a pass, or on a spent
+cap. With unlimited attempts no cap is ever spent, so a student must pass a wave
+to reach the next one — which they always can, because they may retry forever.
+
+The model default and every content manifest are already `0`. Waves seeded
+before the change need a one-off update, in
+`scripts/data/unlimited-attempts.sql`. It is a script and not a migration
+because **course-service does not run its `migrations/` directory** — it calls
+GORM `AutoMigrate`, and the SQL files sitting there are dead. That is a real gap
+for anything needing a data or schema change in that service, and it should be
+closed by wiring golang-migrate the way gamification-service does.
 
 **Proficiency** (frontend label over backend scores): not started / in progress
 / completed / proficient (mean ≥ 80) / expert (mean = 100).

@@ -63,7 +63,7 @@
         "title": { "type": "string", "minLength": 1 },
         "sequenceOrder": { "type": "integer", "minimum": 1 },
         "xpReward": { "type": "integer", "minimum": 0 },
-        "maxReattempts": { "type": "integer", "minimum": 1 },
+        "maxReattempts": { "type": "integer", "minimum": 0, "description": "Attempt cap. 0 means unlimited, which is the default (issue #52)." },
         "passingThreshold": { "type": "integer", "minimum": 0, "maximum": 100 },
         "estimatedDuration": { "type": "integer", "minimum": 1 },
         "difficulty": { "type": "string", "enum": ["EASY", "MEDIUM", "HARD"] },
