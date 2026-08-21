@@ -20,8 +20,20 @@ test.describe("Achievements Page", () => {
       timeout: 10000,
     });
 
-    // Level info should be visible (XP bar / level label)
-    await expect(page.getByText(/level|xp|badge/i).first()).toBeVisible({ timeout: 10000 });
+    // The catalog comes from the server and includes what is still locked, so
+    // the page can show progress without owning the unlock rules. The previous
+    // assertion matched /level|xp|badge/ and resolved to a hidden SVG <title>,
+    // so it passed without ever looking at an achievement.
+    const cards = page.locator("[data-testid^='achievement-']");
+    await expect(cards.first()).toBeVisible({ timeout: 10000 });
+    expect(await cards.count()).toBeGreaterThanOrEqual(8);
+
+    // Demo Student has earned some and not others; both states must render.
+    await expect(page.locator("[data-unlocked='true']").first()).toBeVisible();
+    await expect(page.locator("[data-unlocked='false']").first()).toBeVisible();
+
+    // The tally is over the real catalog, not a hardcoded length.
+    await expect(page.getByText(/\d+ of \d+ unlocked/i)).toBeVisible();
   });
 });
 
