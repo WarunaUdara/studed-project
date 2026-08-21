@@ -28,6 +28,9 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
 
   return (
     <motion.div
+      // The end-to-end suite reaches student course cards through this hook,
+      // exactly as it does the educator list.
+      data-testid="course-card"
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}

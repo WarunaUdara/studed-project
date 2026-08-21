@@ -1,5 +1,9 @@
 import { expect, type Page } from "@playwright/test";
 
+/**
+ * Page object for the student dashboard as it stands after the two-rail
+ * redesign: a search and Ask rail, the widget stack, and the course deck.
+ */
 export class StudentDashboardPage {
   readonly page: Page;
 
@@ -11,33 +15,25 @@ export class StudentDashboardPage {
     await expect(this.page).toHaveURL(/\/dashboard/);
   }
 
-  async assertCurriculumTrackerVisible() {
-    await expect(this.page.getByText("Curriculum & Exam Tracker")).toBeVisible();
+  async assertSearchRailVisible() {
+    await expect(this.page.getByPlaceholder("What do you want to learn?")).toBeVisible();
+    await expect(this.page.getByRole("button", { name: "Ask" })).toBeVisible();
   }
 
-  async selectGlobalCurriculum() {
-    const globalBtn = this.page.locator("[data-testid='curriculum-global']");
-    await globalBtn.click();
-    await expect(this.page.getByText("Target: UK Pearson/Edexcel")).toBeVisible();
+  async assertWidgetRailVisible() {
+    await expect(this.page.getByText("View all rankings")).toBeVisible();
   }
 
-  async selectLocalCurriculum() {
-    const localBtn = this.page.locator("[data-testid='curriculum-local']");
-    await localBtn.click();
-    await expect(this.page.getByText("Target: SL Syllabus")).toBeVisible();
+  async askAbout(topic: string) {
+    await this.page.getByPlaceholder("What do you want to learn?").fill(topic);
+    await this.page.getByRole("button", { name: "Ask" }).click();
+    await expect(
+      this.page.getByRole("dialog", { name: "Search lessons and ask a question" }),
+    ).toBeVisible();
   }
 
-  async startPomodoroTimer(taskName = "Solving Equations") {
-    const taskInput = this.page.locator("[data-testid='pomodoro-task-input']");
-    await taskInput.fill(taskName);
-
-    const playBtn = this.page.locator("[data-testid='pomodoro-play-pause']");
-    await playBtn.click();
-    await expect(playBtn).toContainText("Pause");
-  }
-
-  async switchGamificationTab(tab: "stats" | "badges" | "timeline") {
-    const tabLocator = this.page.locator(`[data-testid='tab-${tab}']`);
-    await tabLocator.click();
+  async goToCourses() {
+    await this.page.getByRole("link", { name: "Courses", exact: true }).first().click();
+    await expect(this.page).toHaveURL(/\/courses/);
   }
 }
