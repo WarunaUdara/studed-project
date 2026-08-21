@@ -64,6 +64,9 @@
   "trustedDependencies": [
     "@swc/core",
   ],
+  "patchedDependencies": {
+    "feral-blob@0.1.0": "patches/feral-blob@0.1.0.patch",
+  },
   "overrides": {
     "postcss": "^8.5.26",
   },
