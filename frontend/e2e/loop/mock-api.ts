@@ -17,6 +17,8 @@ export async function setupMockGraphQL(page: Page) {
   if (routedPages.has(page)) return;
   routedPages.add(page);
 
+  let authenticatedUser: any = null;
+
   await page.route("**/graphql", async (route) => {
     try {
       const req = route.request();
@@ -31,6 +33,17 @@ export async function setupMockGraphQL(page: Page) {
         const email = vars?.input?.email || "demo.student@studed.lk";
         const isEducator = email.includes("educator");
 
+        authenticatedUser = {
+          id: isEducator ? "demo-educator-id" : "demo-student-id",
+          email,
+          fullName: isEducator ? "Demo Educator" : "Demo Student",
+          role: isEducator ? "EDUCATOR" : "STUDENT",
+          grade: isEducator ? null : "G9",
+          preferredLanguage: "en",
+          totalXp: isEducator ? 1200 : 425,
+          streak: isEducator ? 5 : 3,
+        };
+
         return route.fulfill({
           status: 200,
           contentType: "application/json",
@@ -38,17 +51,22 @@ export async function setupMockGraphQL(page: Page) {
             data: {
               login: {
                 token: "mock-jwt-token-for-ux-loop",
-                user: {
-                  id: isEducator ? "demo-educator-id" : "demo-student-id",
-                  email,
-                  fullName: isEducator ? "Demo Educator" : "Demo Student",
-                  role: isEducator ? "EDUCATOR" : "STUDENT",
-                  grade: isEducator ? null : "G9",
-                  preferredLanguage: "en",
-                  totalXp: isEducator ? 1200 : 425,
-                  streak: isEducator ? 5 : 3,
-                },
+                user: authenticatedUser,
               },
+            },
+          }),
+        });
+      }
+
+      // Logout Mutation
+      if (query.includes("logout") || query.includes("Logout")) {
+        authenticatedUser = null;
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              logout: true,
             },
           }),
         });
@@ -61,16 +79,7 @@ export async function setupMockGraphQL(page: Page) {
           contentType: "application/json",
           body: JSON.stringify({
             data: {
-              me: {
-                id: "demo-student-id",
-                email: "demo.student@studed.lk",
-                fullName: "Demo Student",
-                role: "STUDENT",
-                grade: "G9",
-                preferredLanguage: "en",
-                totalXp: 425,
-                streak: 3,
-              },
+              me: authenticatedUser,
             },
           }),
         });

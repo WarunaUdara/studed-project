@@ -22,11 +22,13 @@ import {
   Zap,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { LoginModal } from "@/components/auth/LoginModal";
+import { useMutation } from "urql";
+import { LogoutConfirmModal } from "@/components/auth/LogoutConfirmModal";
 import { SearchAskModal } from "@/components/search/SearchAskModal";
 import { BlobAvatar } from "@/components/ui/BlobAvatar";
 import { Button } from "@/components/ui/button";
 import { FloatingCardNav, type MegaMenuItem } from "@/components/ui/CardNav";
+import { LOGOUT_MUTATION } from "@/graphql/auth";
 import { levelFromXp } from "@/lib/gamification";
 import { useAuthStore } from "@/stores/auth";
 import { useUiPrefs } from "@/stores/uiPrefs";
@@ -35,10 +37,26 @@ export function Navbar() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const theme = useUiPrefs((s) => s.theme);
   const toggleTheme = useUiPrefs((s) => s.toggleTheme);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [, logoutMutation] = useMutation(LOGOUT_MUTATION);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logoutMutation({});
+    } catch (err) {
+      console.error("Logout failed:", err);
+    } finally {
+      logout();
+      setIsLoggingOut(false);
+      setLogoutModalOpen(false);
+      window.location.assign("/");
+    }
+  };
 
   const pathname = useRouterState().location.pathname;
   const isLandingPage = pathname === "/";
@@ -100,12 +118,12 @@ export function Navbar() {
             {/* Right: Sign in (always) + Get started (revealed on scroll) */}
             <div className="flex items-center gap-3">
               <Button
+                asChild
                 variant="outline"
                 size="sm"
-                onClick={() => setLoginModalOpen(true)}
                 className="rounded-full border-border/80 px-5 text-sm font-semibold text-foreground hover:bg-muted"
               >
-                Sign in
+                <Link to="/login">Sign in</Link>
               </Button>
 
               <AnimatePresence>
@@ -131,8 +149,7 @@ export function Navbar() {
           </header>
         </div>
 
-        {/* Modals */}
-        <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
+        {/* Search Modal */}
         <SearchAskModal isOpen={searchModalOpen} onClose={() => setSearchModalOpen(false)} />
       </>
     );
@@ -461,8 +478,7 @@ export function Navbar() {
                           type="button"
                           onClick={() => {
                             setUserDropdownOpen(false);
-                            logout();
-                            window.location.assign("/");
+                            setLogoutModalOpen(true);
                           }}
                           className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition-colors"
                         >
@@ -476,11 +492,11 @@ export function Navbar() {
               </div>
             ) : (
               <Button
+                asChild
                 size="sm"
-                onClick={() => setLoginModalOpen(true)}
                 className="rounded-full font-bold text-xs px-4"
               >
-                Log In
+                <Link to="/login">Log In</Link>
               </Button>
             )}
           </div>
@@ -488,7 +504,12 @@ export function Navbar() {
       />
 
       {/* Modals */}
-      <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
+      <LogoutConfirmModal
+        isOpen={logoutModalOpen}
+        onClose={() => setLogoutModalOpen(false)}
+        onConfirm={handleLogout}
+        isSubmitting={isLoggingOut}
+      />
       <SearchAskModal isOpen={searchModalOpen} onClose={() => setSearchModalOpen(false)} />
     </>
   );
