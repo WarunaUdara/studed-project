@@ -111,9 +111,7 @@ export function InteractiveGearTrain({
                 className="overflow-visible drop-shadow-xl"
                 style={{ width: gearSize, height: gearSize }}
                 animate={
-                  isRotating
-                    ? { rotate: gearDir === 1 ? [0, 360] : [0, -360] }
-                    : { rotate: 0 }
+                  isRotating ? { rotate: gearDir === 1 ? [0, 360] : [0, -360] } : { rotate: 0 }
                 }
                 transition={
                   isRotating && !reduce

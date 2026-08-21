@@ -1,10 +1,7 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { RotateCcw } from "lucide-react";
-import {
-  type GearNetworkPuzzle,
-  solveGearDirections,
-} from "./gear-network-engine";
 import { generateGearPath } from "./GearTrainSvg";
+import { type GearNetworkPuzzle, solveGearDirections } from "./gear-network-engine";
 
 export interface GearGraphSvgProps {
   puzzle: GearNetworkPuzzle;
@@ -27,7 +24,6 @@ export function GearGraphSvg({
   wrongIds = [],
   className = "",
 }: GearGraphSvgProps) {
-  const reduce = useReducedMotion();
   const { directions } = solveGearDirections(
     puzzle.nodes,
     puzzle.edges,
@@ -88,11 +84,11 @@ export function GearGraphSvg({
         <svg
           viewBox={`${minX} ${minY} ${width} ${height}`}
           className="overflow-visible max-w-full drop-shadow-2xl"
-          style={{ width: `${Math.min(480, width * 1.3)}px`, height: `${Math.min(320, height * 1.2)}px` }}
-          role="img"
-          aria-label="Gear puzzle diagram"
+          style={{
+            width: `${Math.min(480, width * 1.3)}px`,
+            height: `${Math.min(320, height * 1.2)}px`,
+          }}
         >
-          <title>Gear puzzle diagram</title>
           {/* Render Gears */}
           {puzzle.nodes.map((node) => {
             const { fill, shadow } = getGearColors(node.id);
@@ -108,30 +104,15 @@ export function GearGraphSvg({
                 key={node.id}
                 transform={`translate(${node.x}, ${node.y})`}
                 className={`transition-opacity ${isInteractive ? "cursor-pointer" : "cursor-default"}`}
-                role={isInteractive ? "button" : undefined}
-                tabIndex={isInteractive ? 0 : undefined}
                 onClick={() => isInteractive && onToggleNode?.(node.id)}
-                onKeyDown={
-                  isInteractive
-                    ? (e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          onToggleNode?.(node.id);
-                        }
-                      }
-                    : undefined
-                }
-                aria-label={isInteractive ? `${node.id} gear` : undefined}
               >
                 {/* Rotating SVG Gear Group centered at local (0, 0) */}
                 <motion.g
                   animate={
-                    isRotating
-                      ? { rotate: dir === 1 ? [0, 360] : [0, -360] }
-                      : { rotate: 0 }
+                    isRotating ? { rotate: dir === 1 ? [0, 360] : [0, -360] } : { rotate: 0 }
                   }
                   transition={
-                    isRotating && !reduce
+                    isRotating
                       ? { repeat: Infinity, duration: 4, ease: "linear" }
                       : { duration: 0.3 }
                   }
@@ -153,12 +134,7 @@ export function GearGraphSvg({
                       fill={shadow}
                       opacity="0.35"
                     />
-                    <circle
-                      cx={node.radius}
-                      cy={node.radius}
-                      r={node.radius * 0.28}
-                      fill={fill}
-                    />
+                    <circle cx={node.radius} cy={node.radius} r={node.radius * 0.28} fill={fill} />
                     <circle
                       cx={node.radius}
                       cy={node.radius}
@@ -197,7 +173,10 @@ export function GearGraphSvg({
 
                 {/* Driver Rotation Arrow Indicator */}
                 {node.isDriver && (
-                  <g className="text-white drop-shadow-md pointer-events-none" transform={`translate(0, ${-node.radius - 12})`}>
+                  <g
+                    className="text-white drop-shadow-md pointer-events-none"
+                    transform={`translate(0, ${-node.radius - 12})`}
+                  >
                     <path
                       d="M -16 0 A 20 20 0 0 1 16 0"
                       fill="none"
@@ -205,10 +184,7 @@ export function GearGraphSvg({
                       strokeWidth="3.5"
                       strokeLinecap="round"
                     />
-                    <polygon
-                      points="-20,-2 -14,6 -12,-4"
-                      fill="#ffffff"
-                    />
+                    <polygon points="-20,-2 -14,6 -12,-4" fill="#ffffff" />
                   </g>
                 )}
 

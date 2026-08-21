@@ -11,6 +11,9 @@ message XpCalculationRequest {
   int32 score = 3;
   int32 xp_reward = 4;
   int32 passing_threshold = 5;
+  // Attributes the award to a course so the course leaderboard can rank by XP
+  // earned inside that course rather than by the student's global total.
+  string course_id = 6;
 }
 
 message XpCalculationResponse {
@@ -52,18 +55,24 @@ message GetLeaderboardRequest {
   string course_id = 2;
   auth.Grade grade = 3;
   int32 limit = 4;
+  int32 offset = 5;
 }
 
 message GetLeaderboardResponse {
   repeated LeaderboardEntry entries = 1;
   string error = 2;
+  // Total ranked members in this scope, for "top N%" rank badges.
+  int32 total_ranked = 3;
 }
 
+// UpdateLeaderboardRequest syncs every scope a user appears on. The caller
+// supplies identity only: XP totals are read from gamification's own store so
+// a caller can never publish a total that disagrees with the ledger.
 message UpdateLeaderboardRequest {
   string user_id = 1;
   string full_name = 2;
-  int32 total_xp = 3;
-  string scope = 4;
+  int32 total_xp = 3 [deprecated = true];
+  string scope = 4 [deprecated = true];
   string course_id = 5;
   auth.Grade grade = 6;
 }
@@ -80,8 +89,11 @@ message GetRankRequest {
 }
 
 message GetRankResponse {
+  // Competition-standard rank, or 0 when the user is not ranked in this scope.
   int32 rank = 1;
   string error = 2;
+  int32 total_xp = 3;
+  int32 total_ranked = 4;
 }
 
 service GamificationService {
@@ -94,6 +106,9 @@ service GamificationService {
   rpc GetAchievements(GetAchievementsRequest) returns (GetAchievementsResponse);
   rpc UnlockAchievement(UnlockAchievementRequest) returns (UnlockAchievementResponse);
   rpc GetUserStreak(GetUserStreakRequest) returns (GetUserStreakResponse);
+  // TouchStreak advances the streak for real learning activity. GetUserStreak
+  // is a pure read and never mutates.
+  rpc TouchStreak(GetUserStreakRequest) returns (GetUserStreakResponse);
 }
 
 message GetAchievementsRequest {
@@ -105,7 +120,9 @@ message Achievement {
   string name = 2;
   string description = 3;
   string icon_url = 4;
+  // Zero when the achievement is still locked.
   int64 unlocked_at_unix = 5;
+  bool unlocked = 6;
 }
 
 message GetAchievementsResponse {

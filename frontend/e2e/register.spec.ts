@@ -33,4 +33,34 @@ test.describe("Register Page", () => {
     await page.getByRole("link", { name: "Sign in" }).click();
     await expect(page).toHaveURL(/\/login/);
   });
+
+  test("should independently scroll the right form panel while keeping left branding panel fixed", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 700 });
+    await page.goto("/register");
+
+    const brandPanel = page.locator("div.bg-login-panel-brand");
+    await expect(brandPanel).toBeVisible();
+
+    const formPanel = page.locator("div.bg-login-panel-sky");
+    await expect(formPanel).toBeVisible();
+
+    // Check that form panel is scrollable
+    const isScrollable = await formPanel.evaluate((el) => el.scrollHeight > el.clientHeight);
+    expect(isScrollable).toBe(true);
+
+    // Scroll form to bottom
+    await formPanel.evaluate((el) => {
+      el.scrollTop = el.scrollHeight;
+    });
+
+    // Check brand panel still at top of viewport
+    const brandBounding = await brandPanel.boundingBox();
+    expect(brandBounding).not.toBeNull();
+    expect(brandBounding?.y).toBe(0);
+
+    // Create account button is still accessible in right container
+    await expect(page.getByRole("button", { name: "Create account" })).toBeVisible();
+  });
 });

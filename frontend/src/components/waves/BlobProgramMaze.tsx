@@ -57,13 +57,7 @@ const DEFAULT_MAZE_CONFIG: MazeGridConfig = {
     { id: "c4", type: "move_forward", label: "move forward" },
     { id: "c5", type: "move_forward", label: "move forward" },
   ],
-  correctSolution: [
-    "move_forward",
-    "move_forward",
-    "turn_right",
-    "move_forward",
-    "move_forward",
-  ],
+  correctSolution: ["move_forward", "move_forward", "turn_right", "move_forward", "move_forward"],
   explanationSteps: [
     {
       title: "Step 1 & 2: Move Forward Twice",
@@ -543,9 +537,7 @@ export function BlobProgramMaze({
                     type="button"
                     disabled={explanationStep === config.explanationSteps.length - 1}
                     onClick={() =>
-                      setExplanationStep((p) =>
-                        Math.min(config.explanationSteps.length - 1, p + 1),
-                      )
+                      setExplanationStep((p) => Math.min(config.explanationSteps.length - 1, p + 1))
                     }
                     className="p-1 rounded-full text-muted-foreground hover:text-foreground disabled:opacity-30"
                   >

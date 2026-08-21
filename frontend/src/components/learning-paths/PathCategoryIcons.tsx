@@ -65,8 +65,24 @@ export function ScienceIsometricIcon({ className = "size-12" }: { className?: st
         </linearGradient>
       </defs>
       {/* 3D Flask / Atom Geometry */}
-      <ellipse cx="50" cy="50" rx="38" ry="16" stroke="#34d399" strokeWidth="3" transform="rotate(-30 50 50)" />
-      <ellipse cx="50" cy="50" rx="38" ry="16" stroke="#34d399" strokeWidth="3" transform="rotate(30 50 50)" />
+      <ellipse
+        cx="50"
+        cy="50"
+        rx="38"
+        ry="16"
+        stroke="#34d399"
+        strokeWidth="3"
+        transform="rotate(-30 50 50)"
+      />
+      <ellipse
+        cx="50"
+        cy="50"
+        rx="38"
+        ry="16"
+        stroke="#34d399"
+        strokeWidth="3"
+        transform="rotate(30 50 50)"
+      />
       <circle cx="50" cy="50" r="14" fill="url(#sci-grad-1)" />
       <circle cx="50" cy="50" r="6" fill="#ffffff" />
     </svg>
@@ -86,10 +102,42 @@ export function LanguageIsometricIcon({ className = "size-12" }: { className?: s
       <rect x="20" y="24" width="28" height="52" rx="4" fill="url(#lang-grad-1)" />
       <rect x="52" y="24" width="28" height="52" rx="4" fill="#b45309" />
       <path d="M 48,20 L 52,24 L 52,76 L 48,76 Z" fill="#78350f" />
-      <line x1="26" y1="36" x2="42" y2="36" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1="26" y1="46" x2="42" y2="46" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1="58" y1="36" x2="74" y2="36" stroke="#fef3c7" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1="58" y1="46" x2="74" y2="46" stroke="#fef3c7" strokeWidth="2.5" strokeLinecap="round" />
+      <line
+        x1="26"
+        y1="36"
+        x2="42"
+        y2="36"
+        stroke="#ffffff"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      <line
+        x1="26"
+        y1="46"
+        x2="42"
+        y2="46"
+        stroke="#ffffff"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      <line
+        x1="58"
+        y1="36"
+        x2="74"
+        y2="36"
+        stroke="#fef3c7"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      <line
+        x1="58"
+        y1="46"
+        x2="74"
+        y2="46"
+        stroke="#fef3c7"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }

@@ -9,12 +9,12 @@ export const Route = createFileRoute("/register")({
 
 function RegisterPage() {
   return (
-    <div className="flex min-h-[100dvh]">
-      {/* Left panel - branding */}
+    <div className="flex min-h-[100dvh] lg:h-screen lg:overflow-hidden">
+      {/* Left panel - branding (fixed to screen, non-scrollable) */}
       <RegisterBrandPanel />
 
-      {/* Right panel - form */}
-      <div className="bg-login-panel-sky relative flex w-full items-start justify-center px-6 pt-20 pb-6 lg:w-1/2">
+      {/* Right panel - form (independently scrollable on desktop) */}
+      <div className="bg-login-panel-sky relative flex w-full items-start justify-center px-6 pt-20 pb-12 lg:h-full lg:w-1/2 lg:overflow-y-auto">
         {/* Two textures, swapped by theme */}
         <img
           src="/covers/mascot/bg-light.png"

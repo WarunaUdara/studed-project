@@ -164,7 +164,8 @@ export function ScrollExpand({
     if (!root || !track || !stage) return undefined;
 
     const reduceMotion =
-      typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     let raf = 0;
     let current = 0;
@@ -258,10 +259,7 @@ export function ScrollExpand({
   }, [applyProgress, useWindowScroll]);
 
   const media = backgroundComponent ? (
-    <div
-      ref={mediaRef as React.RefObject<HTMLDivElement>}
-      className="scroll-expand__media"
-    >
+    <div ref={mediaRef as React.RefObject<HTMLDivElement>} className="scroll-expand__media">
       {backgroundComponent}
     </div>
   ) : mediaType === "video" ? (

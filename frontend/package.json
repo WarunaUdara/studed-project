@@ -15,7 +15,8 @@
     "test:e2e": "playwright test",
     "loop": "bun e2e/loop/run-loop.ts",
     "loop:audit": "bun e2e/loop/audit.ts",
-    "loop:critique": "bun e2e/loop/critique.ts"
+    "loop:critique": "bun e2e/loop/critique.ts",
+    "eval:progression": "bun e2e/loop/progression-eval.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import * as React from "react";
+import type * as React from "react";
 import { useEffect, useState } from "react";
 import { Slot } from "@/components/ui/slot";
 import { playClickSound } from "@/lib/sounds";
@@ -16,8 +16,7 @@ const buttonVariants = cva(
           "bg-gold text-gold-foreground border-b-4 border-amber-600 shadow-[0_4px_0_#d97706] hover:bg-gold/90 hover:-translate-y-[1px] active:border-b-0 dark:shadow-[0_4px_0_#b45309]",
         success:
           "bg-success text-success-foreground border-b-4 border-emerald-700 shadow-[0_4px_0_#047857] hover:bg-success/95 hover:-translate-y-[1px] active:border-b-0",
-        ai:
-          "bg-ai text-ai-foreground border-b-4 border-purple-700 shadow-[0_4px_0_#6d28d9] hover:bg-ai/90 hover:-translate-y-[1px] active:border-b-0",
+        ai: "bg-ai text-ai-foreground border-b-4 border-purple-700 shadow-[0_4px_0_#6d28d9] hover:bg-ai/90 hover:-translate-y-[1px] active:border-b-0",
         destructive:
           "bg-destructive text-white border-b-4 border-red-700 shadow-[0_4px_0_#b91c1c] hover:bg-destructive/95 hover:-translate-y-[1px] active:border-b-0",
         danger:
@@ -26,8 +25,7 @@ const buttonVariants = cva(
           "border-2 border-border/80 bg-card text-foreground shadow-[0_3px_0_var(--border)] hover:bg-accent hover:border-primary/50 hover:-translate-y-[1px] active:border-b-2 active:shadow-none dark:border-input dark:bg-card/50",
         ghost:
           "border-2 border-transparent text-foreground hover:bg-accent/80 hover:text-accent-foreground active:translate-y-0 shadow-none border-b-0",
-        link:
-          "text-primary underline-offset-4 hover:underline active:translate-y-0 shadow-none border-b-0",
+        link: "text-primary underline-offset-4 hover:underline active:translate-y-0 shadow-none border-b-0",
       },
       size: {
         default: "h-11 px-5 text-sm has-[>svg]:px-4",

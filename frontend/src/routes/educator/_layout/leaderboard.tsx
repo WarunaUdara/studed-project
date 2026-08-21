@@ -52,11 +52,13 @@ function EducatorLeaderboardPage() {
       pause: scope === "COURSE" && !selectedCourseId,
     });
 
-  const leaderboard = leaderboardData?.leaderboard ?? [];
+  const leaderboard = leaderboardData?.leaderboard?.entries ?? [];
 
   const trophyRankings = leaderboard.map((entry) => ({
-    userId: entry.user.id,
-    userName: entry.user.fullName,
+    userId: entry.userId,
+    // Masked by the gateway, the same as the student-facing board. An educator
+    // cohort view with real names is a separate, permissioned change.
+    userName: entry.displayName,
     rank: entry.rank,
     value: entry.totalXp,
     byline: `${entry.totalXp.toLocaleString()} XP`,

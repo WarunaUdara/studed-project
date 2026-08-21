@@ -25,7 +25,14 @@ const createTouchTexture = () => {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   };
-  const drawPoint = (p: { x: number; y: number; age: number; force: number; vx: number; vy: number }) => {
+  const drawPoint = (p: {
+    x: number;
+    y: number;
+    age: number;
+    force: number;
+    vx: number;
+    vy: number;
+  }) => {
     const pos = { x: p.x * size, y: (1 - p.y) * size };
     let intensity = 1;
     const easeOutSine = (t: number) => Math.sin((t * Math.PI) / 2);
@@ -89,7 +96,10 @@ const createTouchTexture = () => {
   };
 };
 
-const createLiquidEffect = (texture: THREE.Texture, opts?: { strength?: number; freq?: number }) => {
+const createLiquidEffect = (
+  texture: THREE.Texture,
+  opts?: { strength?: number; freq?: number },
+) => {
   const fragment = `
     uniform sampler2D uTexture;
     uniform float uStrength;
@@ -398,7 +408,8 @@ export function PixelBlast({
         t.composer?.dispose();
         t.renderer.dispose();
         t.renderer.forceContextLoss();
-        if (t.renderer.domElement.parentElement === container) container.removeChild(t.renderer.domElement);
+        if (t.renderer.domElement.parentElement === container)
+          container.removeChild(t.renderer.domElement);
         threeRef.current = null;
       }
       const canvas = document.createElement("canvas");
@@ -616,7 +627,8 @@ export function PixelBlast({
       t.composer?.dispose();
       t.renderer.dispose();
       t.renderer.forceContextLoss();
-      if (t.renderer.domElement.parentElement === container) container.removeChild(t.renderer.domElement);
+      if (t.renderer.domElement.parentElement === container)
+        container.removeChild(t.renderer.domElement);
       threeRef.current = null;
     };
   }, [

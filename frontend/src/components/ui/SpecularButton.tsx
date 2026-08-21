@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
 import { Color, Mesh, Program, Renderer, Triangle } from "ogl";
+import { useEffect, useRef } from "react";
 import { playClickSound } from "@/lib/sounds";
 import "./SpecularButton.css";
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, type MouseEvent } from "react";
+import React, { type MouseEvent, useEffect, useState } from "react";
 import { playClickSound } from "@/lib/sounds";
 import { cn } from "@/lib/utils";
 

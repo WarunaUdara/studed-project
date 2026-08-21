@@ -120,7 +120,11 @@ export function RegisterAuthCard() {
 
       <StarterRewardStrip />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4 short:mt-4 short:space-y-3" noValidate>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-6 space-y-4 short:mt-4 short:space-y-3"
+        noValidate
+      >
         {/* Full Name */}
         <div className="space-y-2">
           <div className="flex items-center gap-2.5">

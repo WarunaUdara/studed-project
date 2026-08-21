@@ -1,14 +1,25 @@
 import { Link } from "@tanstack/react-router";
-import { Bot, User as UserIcon } from "lucide-react";
-import type { LeaderboardEntry } from "@/components/gamification/LeaderboardTable";
+import { Bot } from "lucide-react";
 import { RankBadge } from "@/components/gamification/RankBadge";
 import { BlobAvatar } from "@/components/ui/BlobAvatar";
-import { privateLeaderboardName } from "@/lib/gamification";
+import { leaderboardDisplayName } from "@/lib/gamification";
 import { cn } from "@/lib/utils";
+
+/**
+ * One place on a leaderboard, exactly as the API returns it. The name arrives
+ * already masked from the gateway.
+ */
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  displayName: string;
+  totalXp: number;
+  isMe: boolean;
+}
 
 export interface LeaderboardRowProps {
   entry: LeaderboardEntry;
-  isYou: boolean;
+  /** Everyone ranked in this scope, so top-1% and top-10% badges are real. */
   total?: number;
   showXp?: boolean;
   to?: string;
@@ -16,24 +27,27 @@ export interface LeaderboardRowProps {
 }
 
 /**
- * LeaderboardRow - single leaderboard row per the spec. Highlighted when `isYou`
- * with a user icon indicator (spec: "You are #42"). The top-3 row uses the
- * gold/silver/bronze rank background, and rank >= 4 shows the spec glyph.
+ * LeaderboardRow — the single leaderboard row used everywhere a ranking is
+ * shown: the standings page, the dashboard widget, the daily spark summary and
+ * the marketing preview.
+ *
+ * Highlighted when the row is the viewer's (spec: "You are #42"). The top three
+ * take the gold/silver/bronze treatment; rank 4 and below show the spec glyph.
  */
 export function LeaderboardRow({
   entry,
-  isYou,
   total,
   showXp = true,
   to,
   className,
 }: LeaderboardRowProps) {
-  const rank = entry.rank;
-  const isBot = entry.user.id.startsWith("bot-");
+  const { rank, isMe } = entry;
+  const isBot = entry.userId.startsWith("bot-");
+  const name = leaderboardDisplayName(entry.displayName);
 
   const rowCls = cn(
     "flex items-center gap-3 rounded-xl px-3 py-2 transition-all",
-    isYou
+    isMe
       ? "bg-primary/10 ring-1 ring-primary/40 shadow-sm"
       : rank <= 3
         ? "bg-gradient-to-r from-gold/8 via-card to-card hover:from-gold/12"
@@ -51,18 +65,17 @@ export function LeaderboardRow({
           <Bot className="h-4 w-4" />
         </span>
       ) : (
-        <BlobAvatar name={entry.user.id} size={32} title={`${entry.user.fullName} avatar`} />
+        <BlobAvatar name={entry.userId} size={32} title={`${name} avatar`} />
       )}
       <span
         className={cn(
           "min-w-0 flex-1 truncate text-sm",
-          isYou ? "font-bold text-primary" : "font-medium text-foreground",
+          isMe ? "font-bold text-primary" : "font-medium text-foreground",
         )}
       >
-        {privateLeaderboardName(entry.user.fullName)}
-        {isYou && (
+        {name}
+        {isMe && (
           <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-            <UserIcon className="inline size-3.5 align-text-bottom" />{" "}
             <span className="text-primary">(You)</span>
           </span>
         )}

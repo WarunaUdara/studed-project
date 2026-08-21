@@ -20,11 +20,16 @@ import (
 	progresspb "github.com/studed/shared/proto/gen/go/progress"
 )
 
+// proficientMeanScore is the mean highest score a lesson needs for the
+// Proficient achievement. Mirrored by the frontend's proficiency label.
+const proficientMeanScore = 80.0
+
 type ProgressService interface {
 	EnrollInCourse(ctx context.Context, userID, courseID string) (*progresspb.EnrollResponse, error)
 	RecordAttempt(ctx context.Context, userID, waveID string, answers []*progresspb.Answer, submissionID string) (*progresspb.RecordAttemptResponse, error)
 	GetWaveProgress(ctx context.Context, userID, waveID string) (*progresspb.WaveProgressResponse, error)
 	GetCourseProgress(ctx context.Context, userID, courseID string) (*progresspb.CourseProgressResponse, error)
+	GetCourseWaveProgress(ctx context.Context, userID, courseID string) (*progresspb.GetCourseWaveProgressResponse, error)
 	IsEnrolled(ctx context.Context, userID, courseID string) (*progresspb.IsEnrolledResponse, error)
 	ListEnrollments(ctx context.Context, userID string) (*progresspb.ListEnrollmentsResponse, error)
 	ResetWaveAttempts(ctx context.Context, req *progresspb.ResetWaveAttemptsRequest) (*progresspb.ResetWaveAttemptsResponse, error)
@@ -94,13 +99,8 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 			_, feedback := scoreAnswers(evaluateBlocks, existingAnswers)
 
 			remaining := int32(-1)
-			if wave.MaxReattempts > 0 {
-				if attempts, err := s.repo.GetAttemptsByWave(ctx, userID, waveID); err == nil {
-					remaining = wave.MaxReattempts - int32(len(attempts))
-					if remaining < 0 {
-						remaining = 0
-					}
-				}
+			if attempts, err := s.repo.GetAttemptsByWave(ctx, userID, waveID); err == nil {
+				remaining = remainingAttempts(wave.MaxReattempts, int32(len(attempts)))
 			}
 
 			// Idempotent retry: an attempt that passed but never recorded XP
@@ -113,10 +113,22 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 			totalXp := int32(0)
 			if existing.Passed && existing.XPAwarded == 0 {
 				var earned int32
-				earned, totalXp, warnings = s.awardXpForWave(ctx, existing.UserID, existing.WaveID, existing.Score, wave.XpReward, wave.PassingThreshold, existing.ID)
+				earned, totalXp, warnings = s.awardXpForWave(ctx, existing.UserID, existing.WaveID, existing.CourseID, existing.Score, wave.XpReward, wave.PassingThreshold, existing.ID)
 				if earned > 0 {
 					existing.XPAwarded = earned
 					xpEarned = earned
+				}
+			}
+			// A replay that had nothing to reconcile still has to report the
+			// student's real total. Returning the zero value told a client
+			// retrying after a network timeout that they had 0 XP.
+			if totalXp == 0 {
+				if total, err := s.fetchTotalXp(ctx, existing.UserID); err != nil {
+					slog.Warn("could not read total xp on an idempotent replay",
+						slog.String("user_id", existing.UserID), slog.Any("error", err))
+					warnings = append(warnings, fmt.Sprintf("failed to fetch total xp: %v", err))
+				} else {
+					totalXp = total
 				}
 			}
 
@@ -198,7 +210,7 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 	totalXp := int32(0)
 	var warnings []string
 	if passed {
-		xpEarned, totalXp, warnings = s.awardXpForWave(ctx, userID, waveID, score, wave.XpReward, wave.PassingThreshold, attempt.ID)
+		xpEarned, totalXp, warnings = s.awardXpForWave(ctx, userID, waveID, lesson.CourseId, score, wave.XpReward, wave.PassingThreshold, attempt.ID)
 	} else {
 		total, err := s.fetchTotalXp(ctx, userID)
 		if err != nil {
@@ -210,73 +222,15 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 	}
 
 	if passed {
-		// 1. Check if lesson is complete
-		wavesResp, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: wave.LessonId, PublishedOnly: true})
-		if err == nil {
-			lessonTotal := int32(len(wavesResp.Waves))
-			lessonCompletedVal, err := s.repo.CountPassedWavesInLesson(ctx, userID, wave.LessonId)
-			if err == nil && int32(lessonCompletedVal) == lessonTotal {
-				// Unlock lesson_complete!
-				if _, err := s.gamification.UnlockAchievement(ctx, &gampb.UnlockAchievementRequest{
-					UserId:        userID,
-					AchievementId: "lesson_complete",
-				}); err != nil {
-					slog.Error("failed to unlock lesson_complete achievement", slog.String("user_id", userID), slog.String("wave_id", waveID), slog.Any("error", err))
-				}
-
-				// 2. Check if lesson is proficient (average score of all waves in lesson >= 80)
-				var sumScores int32
-				var countWaves int32
-				for _, w := range wavesResp.Waves {
-					var waveHighest int32
-					attempts, err := s.repo.GetAttemptsByWave(ctx, userID, w.Id)
-					if err == nil {
-						for _, a := range attempts {
-							if a.Score > waveHighest {
-								waveHighest = a.Score
-							}
-						}
-						sumScores += waveHighest
-						countWaves++
-					}
-				}
-				if countWaves == lessonTotal && lessonTotal > 0 {
-					avg := float64(sumScores) / float64(lessonTotal)
-					if avg >= 80 {
-						if _, err := s.gamification.UnlockAchievement(ctx, &gampb.UnlockAchievementRequest{
-							UserId:        userID,
-							AchievementId: "lesson_proficient",
-						}); err != nil {
-							slog.Error("failed to unlock lesson_proficient achievement", slog.String("user_id", userID), slog.String("wave_id", waveID), slog.Any("error", err))
-						}
-					}
-				}
-			}
+		// Learning happened, so the streak advances here rather than on a page
+		// load. Failures never affect the submission.
+		if _, err := s.gamification.TouchStreak(ctx, &gampb.GetUserStreakRequest{UserId: userID}); err != nil {
+			slog.Warn("failed to record streak activity", slog.String("user_id", userID), slog.Any("error", err))
 		}
 
-		// 3. Check if course is complete
-		lessonsResp, err := s.course.ListLessons(ctx, &coursepb.ListLessonsRequest{CourseId: lesson.CourseId, PublishedOnly: true})
-		if err == nil {
-			var courseTotalWaves int32
-			for _, l := range lessonsResp.Lessons {
-				lwaves, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: l.Id, PublishedOnly: true})
-				if err == nil {
-					courseTotalWaves += int32(len(lwaves.Waves))
-				}
-			}
-			courseCompletedVal, err := s.repo.CountPassedWavesInCourse(ctx, userID, lesson.CourseId)
-			if err == nil && int32(courseCompletedVal) == courseTotalWaves && courseTotalWaves > 0 {
-				// Unlock first_course!
-				if _, err := s.gamification.UnlockAchievement(ctx, &gampb.UnlockAchievementRequest{
-					UserId:        userID,
-					AchievementId: "first_course",
-				}); err != nil {
-					slog.Error("failed to unlock first_course achievement", slog.String("user_id", userID), slog.String("wave_id", waveID), slog.Any("error", err))
-				}
-			}
-		}
+		s.evaluateMilestones(ctx, userID, lesson.CourseId, wave.LessonId)
 
-		// Update totalXp to include any achievement milestone bonuses
+		// Refresh the total so it includes any achievement bonus just paid.
 		total, err := s.fetchTotalXp(ctx, userID)
 		if err != nil {
 			slog.Warn("failed to refresh total xp after achievement evaluation", slog.String("user_id", userID), slog.Any("error", err))
@@ -286,19 +240,92 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 		}
 	}
 
-	// Unlimited attempts: always indicate -1 (no limit)
-	remainingAttempts := int32(-1)
-
 	return &progresspb.RecordAttemptResponse{
 		AttemptId:         attempt.ID,
 		Score:             score,
 		Passed:            passed,
 		XpEarned:          xpEarned,
 		TotalXp:           totalXp,
-		RemainingAttempts: remainingAttempts,
+		RemainingAttempts: remainingAttempts(wave.MaxReattempts, attempt.AttemptNumber),
 		Feedback:          feedback,
 		Warnings:          warnings,
 	}, nil
+}
+
+// remainingAttempts is the one reattempt policy. A cap of zero or less means
+// unlimited, reported as -1; otherwise it is what is left of the cap, floored
+// at zero. Both the fresh submission and the idempotent replay answer from
+// here, because they used to disagree: the cap was enforced on submit while
+// the response claimed attempts were unlimited.
+func remainingAttempts(maxReattempts, used int32) int32 {
+	if maxReattempts <= 0 {
+		return -1
+	}
+	left := maxReattempts - used
+	if left < 0 {
+		return 0
+	}
+	return left
+}
+
+// evaluateMilestones unlocks the lesson- and course-level achievements a pass
+// may have earned. It reads the whole course once: the previous form issued a
+// ListWaves per lesson and a GetAttemptsByWave per wave on every submission.
+// Nothing here can fail the submission — the attempt and the XP are already
+// durable.
+func (s *progressService) evaluateMilestones(ctx context.Context, userID, courseID, lessonID string) {
+	courseWaves, err := s.orderedCourseWaves(ctx, courseID)
+	if err != nil {
+		slog.Warn("milestone check skipped: could not read course structure",
+			slog.String("course_id", courseID), slog.Any("error", err))
+		return
+	}
+	summaries, err := s.repo.SummariseCourseAttempts(ctx, userID, courseID)
+	if err != nil {
+		slog.Warn("milestone check skipped: could not read attempts",
+			slog.String("user_id", userID), slog.Any("error", err))
+		return
+	}
+
+	var lessonTotal, lessonPassed, lessonScoreSum int32
+	var courseTotal, coursePassed int32
+	for _, w := range courseWaves {
+		summary := summaries[w.Id]
+		courseTotal++
+		if summary.Passed {
+			coursePassed++
+		}
+		if w.LessonId != lessonID {
+			continue
+		}
+		lessonTotal++
+		if summary.Passed {
+			lessonPassed++
+		}
+		lessonScoreSum += summary.HighestScore
+	}
+
+	unlock := func(id string) {
+		if _, err := s.gamification.UnlockAchievement(ctx, &gampb.UnlockAchievementRequest{
+			UserId:        userID,
+			AchievementId: id,
+		}); err != nil {
+			slog.Error("failed to unlock achievement",
+				slog.String("user_id", userID), slog.String("achievement", id), slog.Any("error", err))
+		}
+	}
+
+	if lessonTotal > 0 && lessonPassed == lessonTotal {
+		unlock("lesson_complete")
+		// Proficient is a mean highest score of 80 or better across the lesson.
+		if float64(lessonScoreSum)/float64(lessonTotal) >= proficientMeanScore {
+			unlock("lesson_proficient")
+		}
+	}
+
+	if courseTotal > 0 && coursePassed == courseTotal {
+		unlock("first_course")
+	}
 }
 
 // awardXpForWave calls gamification to calculate and award XP for a passed
@@ -310,10 +337,11 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 // state is never silently reported as "0 XP earned". A failed attempt-row
 // update is surfaced the same way — the user keeps their awarded XP, and the
 // row is reconciled on a retry of the same submission.
-func (s *progressService) awardXpForWave(ctx context.Context, userID, waveID string, score, xpReward, passingThreshold int32, attemptID string) (int32, int32, []string) {
+func (s *progressService) awardXpForWave(ctx context.Context, userID, waveID, courseID string, score, xpReward, passingThreshold int32, attemptID string) (int32, int32, []string) {
 	xpResp, err := s.gamification.CalculateAndAwardXp(ctx, &gampb.XpCalculationRequest{
 		UserId:           userID,
 		WaveId:           waveID,
+		CourseId:         courseID,
 		Score:            score,
 		XpReward:         xpReward,
 		PassingThreshold: passingThreshold,
@@ -359,7 +387,6 @@ func (s *progressService) fetchTotalXp(ctx context.Context, userID string) (int3
 }
 
 func (s *progressService) GetWaveProgress(ctx context.Context, userID, waveID string) (*progresspb.WaveProgressResponse, error) {
-	// 1. Fetch current wave details to locate its course
 	waveResp, err := s.course.GetWave(ctx, &coursepb.GetWaveRequest{Id: waveID})
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch wave details: %w", err)
@@ -367,20 +394,107 @@ func (s *progressService) GetWaveProgress(ctx context.Context, userID, waveID st
 	if waveResp.Error != "" {
 		return nil, fmt.Errorf("failed to fetch wave details: %s", waveResp.Error)
 	}
-	wave := waveResp.Wave
 
-	// 2. Fetch the lesson to find course ID
-	lessonResp, err := s.course.GetLesson(ctx, &coursepb.GetLessonRequest{Id: wave.LessonId})
+	lessonResp, err := s.course.GetLesson(ctx, &coursepb.GetLessonRequest{Id: waveResp.Wave.LessonId})
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch lesson details: %w", err)
 	}
 	if lessonResp.Error != "" {
 		return nil, fmt.Errorf("failed to fetch lesson details: %s", lessonResp.Error)
 	}
-	lesson := lessonResp.Lesson
-	courseID := lesson.CourseId
 
-	// 3. Fetch all lessons in this course to reconstruct natural order
+	entries, err := s.courseWaveProgress(ctx, userID, lessonResp.Lesson.CourseId)
+	if err != nil {
+		return nil, err
+	}
+	for _, entry := range entries {
+		if entry.WaveId != waveID {
+			continue
+		}
+		return &progresspb.WaveProgressResponse{
+			Status:              entry.Status,
+			AttemptsCount:       entry.AttemptsCount,
+			HighestScore:        entry.HighestScore,
+			CompletedAtUnix:     entry.CompletedAtUnix,
+			LastAttemptedAtUnix: entry.LastAttemptedAtUnix,
+		}, nil
+	}
+
+	// The wave is not in the published course ordering (unpublished, or moved).
+	return &progresspb.WaveProgressResponse{
+		Status:        string(model.ProgressStatusAvailable),
+		AttemptsCount: 0,
+	}, nil
+}
+
+// GetCourseWaveProgress resolves every wave in a course at once.
+func (s *progressService) GetCourseWaveProgress(ctx context.Context, userID, courseID string) (*progresspb.GetCourseWaveProgressResponse, error) {
+	if userID == "" || courseID == "" {
+		return nil, fmt.Errorf("user id and course id are required")
+	}
+	entries, err := s.courseWaveProgress(ctx, userID, courseID)
+	if err != nil {
+		return nil, err
+	}
+	return &progresspb.GetCourseWaveProgressResponse{Entries: entries}, nil
+}
+
+// courseWaveProgress walks a course once and returns the status of every wave
+// in it. Progress used to be resolved a wave at a time, and each of those calls
+// re-walked the whole course to work out locking, so a catalog page cost work
+// quadratic in the number of waves.
+func (s *progressService) courseWaveProgress(ctx context.Context, userID, courseID string) ([]*progresspb.WaveProgressEntry, error) {
+	courseWaves, err := s.orderedCourseWaves(ctx, courseID)
+	if err != nil {
+		return nil, err
+	}
+
+	summaries, err := s.repo.SummariseCourseAttempts(ctx, userID, courseID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to summarise attempts: %w", err)
+	}
+
+	entries := make([]*progresspb.WaveProgressEntry, 0, len(courseWaves))
+	// A wave is reachable once the previous one is passed, or its reattempt
+	// cap is spent. The first wave is always reachable.
+	unlocked := true
+	for _, wave := range courseWaves {
+		summary, attempted := summaries[wave.Id]
+
+		entry := &progresspb.WaveProgressEntry{WaveId: wave.Id}
+		switch {
+		case !unlocked:
+			entry.Status = string(model.ProgressStatusLocked)
+		case !attempted:
+			entry.Status = string(model.ProgressStatusAvailable)
+		default:
+			entry.AttemptsCount = summary.AttemptCount
+			entry.HighestScore = summary.HighestScore
+			entry.LastAttemptedAtUnix = summary.LastAttemptedAt.Unix()
+			if summary.Passed {
+				entry.Status = string(model.ProgressStatusCompleted)
+				if !summary.FirstPassedAt.IsZero() {
+					entry.CompletedAtUnix = summary.FirstPassedAt.Unix()
+				}
+			} else {
+				entry.Status = string(model.ProgressStatusStarted)
+			}
+		}
+		entries = append(entries, entry)
+
+		if !unlocked {
+			continue
+		}
+		capSpent := wave.MaxReattempts > 0 && summary.AttemptCount >= wave.MaxReattempts
+		unlocked = summary.Passed || capSpent
+	}
+
+	return entries, nil
+}
+
+// orderedCourseWaves returns every published wave in a course in the order a
+// student meets them: by lesson sequence, then wave sequence.
+func (s *progressService) orderedCourseWaves(ctx context.Context, courseID string) ([]*coursepb.Wave, error) {
 	lessonsResp, err := s.course.ListLessons(ctx, &coursepb.ListLessonsRequest{CourseId: courseID, PublishedOnly: true})
 	if err != nil {
 		return nil, fmt.Errorf("failed to list lessons: %w", err)
@@ -390,91 +504,28 @@ func (s *progressService) GetWaveProgress(ctx context.Context, userID, waveID st
 		return lessons[i].SequenceOrder < lessons[j].SequenceOrder
 	})
 
-	// 4. Collect and sort all waves across the sorted lessons
-	var courseWaves []*coursepb.Wave
-	for _, l := range lessons {
-		wavesResp, err := s.course.ListWaves(ctx, &coursepb.ListWavesRequest{LessonId: l.Id, PublishedOnly: true})
-		if err != nil {
-			return nil, fmt.Errorf("failed to list waves: %w", err)
-		}
-		lwaves := wavesResp.Waves
-		sort.Slice(lwaves, func(i, j int) bool {
-			return lwaves[i].SequenceOrder < lwaves[j].SequenceOrder
-		})
-		courseWaves = append(courseWaves, lwaves...)
+	lessonIDs := make([]string, len(lessons))
+	lessonOrder := make(map[string]int32, len(lessons))
+	for i, l := range lessons {
+		lessonIDs[i] = l.Id
+		lessonOrder[l.Id] = l.SequenceOrder
 	}
 
-	// 5. Find current wave index
-	currentIndex := -1
-	for i, w := range courseWaves {
-		if w.Id == waveID {
-			currentIndex = i
-			break
-		}
-	}
-
-	// 6. Check if locked by previous wave completion
-	if currentIndex > 0 {
-		prevWave := courseWaves[currentIndex-1]
-		prevAttempts, err := s.repo.GetAttemptsByWave(ctx, userID, prevWave.Id)
-		if err != nil {
-			return nil, fmt.Errorf("failed to fetch previous wave attempts: %w", err)
-		}
-		prevUnlockedNext := false
-		for _, a := range prevAttempts {
-			if a.Passed {
-				prevUnlockedNext = true
-				break
-			}
-		}
-		if !prevUnlockedNext && prevWave.MaxReattempts > 0 && int32(len(prevAttempts)) >= prevWave.MaxReattempts {
-			prevUnlockedNext = true
-		}
-		if !prevUnlockedNext {
-			return &progresspb.WaveProgressResponse{
-				Status:        string(model.ProgressStatusLocked),
-				AttemptsCount: 0,
-			}, nil
-		}
-	}
-
-	attempts, err := s.repo.GetAttemptsByWave(ctx, userID, waveID)
+	// One batched call, not one per lesson.
+	wavesResp, err := s.course.ListWavesByLessonIds(ctx, &coursepb.ListWavesByLessonIdsRequest{LessonIds: lessonIDs, PublishedOnly: true})
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch attempts: %w", err)
+		return nil, fmt.Errorf("failed to list waves: %w", err)
 	}
 
-	if len(attempts) == 0 {
-		return &progresspb.WaveProgressResponse{
-			Status:        string(model.ProgressStatusAvailable),
-			AttemptsCount: 0,
-		}, nil
-	}
-
-	var highestScore int32
-	var completedAt int64
-	var lastAttemptedAt int64
-	status := model.ProgressStatusStarted
-
-	for _, a := range attempts {
-		if a.Score > highestScore {
-			highestScore = a.Score
+	waves := wavesResp.Waves
+	sort.SliceStable(waves, func(i, j int) bool {
+		li, lj := lessonOrder[waves[i].LessonId], lessonOrder[waves[j].LessonId]
+		if li != lj {
+			return li < lj
 		}
-		if a.Passed && completedAt == 0 {
-			completedAt = a.CreatedAt.Unix()
-			status = model.ProgressStatusCompleted
-		}
-		if a.CreatedAt.Unix() > lastAttemptedAt {
-			lastAttemptedAt = a.CreatedAt.Unix()
-		}
-	}
-
-	return &progresspb.WaveProgressResponse{
-		Status:              string(status),
-		AttemptsCount:       int32(len(attempts)),
-		HighestScore:        highestScore,
-		CompletedAtUnix:     completedAt,
-		LastAttemptedAtUnix: lastAttemptedAt,
-	}, nil
+		return waves[i].SequenceOrder < waves[j].SequenceOrder
+	})
+	return waves, nil
 }
 
 func (s *progressService) GetCourseProgress(ctx context.Context, userID, courseID string) (*progresspb.CourseProgressResponse, error) {
@@ -541,13 +592,32 @@ func (s *progressService) GetCourseProgress(ctx context.Context, userID, courseI
 	}
 
 	_ = course
-	_ = enrollment
+
+	// A finished course needs a finish date, or nothing downstream can tell a
+	// completed course from one still in progress.
+	var completedAtUnix int64
+	if totalWaves > 0 && completedWaves == totalWaves {
+		summaries, err := s.repo.SummariseCourseAttempts(ctx, userID, courseID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to summarise attempts: %w", err)
+		}
+		for _, summary := range summaries {
+			if !summary.Passed || summary.FirstPassedAt.IsZero() {
+				continue
+			}
+			// The course completed when its last remaining wave was passed.
+			if at := summary.FirstPassedAt.Unix(); at > completedAtUnix {
+				completedAtUnix = at
+			}
+		}
+	}
 
 	return &progresspb.CourseProgressResponse{
-		CompletedWaves: completedWaves,
-		TotalWaves:     totalWaves,
-		StartedAtUnix:  enrollment.EnrolledAt.Unix(),
-		LessonProgress: lessonProgressList,
+		CompletedWaves:  completedWaves,
+		TotalWaves:      totalWaves,
+		StartedAtUnix:   enrollment.EnrolledAt.Unix(),
+		CompletedAtUnix: completedAtUnix,
+		LessonProgress:  lessonProgressList,
 	}, nil
 }
 

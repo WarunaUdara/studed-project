@@ -20,8 +20,11 @@
   background: var(--card);
   color: var(--card-foreground);
   font-weight: 300;
-  overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition:
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
 
   --glow-x: 50%;
   --glow-y: 50%;
@@ -30,8 +33,7 @@
 }
 
 .magic-bento-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px -10px rgba(16, 185, 129, 0.12);
+  box-shadow: 0 16px 36px -10px rgba(16, 185, 129, 0.18);
 }
 
 .magic-bento-card__header,
@@ -84,7 +86,7 @@
 
 /* Border glow effect */
 .magic-bento-card--border-glow::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   padding: 2px;
@@ -119,7 +121,7 @@
 }
 
 .particle::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -2px;
   left: -2px;

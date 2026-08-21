@@ -8,10 +8,7 @@ interface DailySparkStreakScreenProps {
 
 const DAYS_OF_WEEK = ["M", "T", "W", "T", "F", "S", "S"];
 
-export function DailySparkStreakScreen({
-  streakCount = 1,
-  onFinish,
-}: DailySparkStreakScreenProps) {
+export function DailySparkStreakScreen({ streakCount = 1, onFinish }: DailySparkStreakScreenProps) {
   const now = new Date();
   const dayIndex = (now.getDay() + 6) % 7; // Monday = 0, Sunday = 6
 
@@ -54,13 +51,7 @@ export function DailySparkStreakScreen({
                   <stop offset="0%" stopColor="oklch(0.885 0.172 99.3)" />
                   <stop offset="100%" stopColor="oklch(0.737 0.149 124.5)" />
                 </linearGradient>
-                <filter
-                  id="bolt-shadow"
-                  x="-30%"
-                  y="-30%"
-                  width="160%"
-                  height="160%"
-                >
+                <filter id="bolt-shadow" x="-30%" y="-30%" width="160%" height="160%">
                   <feDropShadow
                     dx="0"
                     dy="10"
@@ -125,9 +116,7 @@ export function DailySparkStreakScreen({
           <div className="text-5xl font-extrabold tracking-tight text-white sm:text-6xl">
             {streakCount}
           </div>
-          <p className="text-xl font-bold text-neutral-100 sm:text-2xl">
-            A streak is born!
-          </p>
+          <p className="text-xl font-bold text-neutral-100 sm:text-2xl">A streak is born!</p>
         </motion.div>
 
         {/* Weekly Day Tracker Pills (M, T, W, T, F, S, S) */}

@@ -1,6 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowLeft, BookOpen, CheckCircle, Clock, Compass, Layers, Lock, PlayCircle, RotateCcw, Zap } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  CheckCircle,
+  Clock,
+  Compass,
+  Layers,
+  Lock,
+  PlayCircle,
+  RotateCcw,
+  Zap,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { CourseJourneyMap } from "@/components/gamification/CourseJourneyMap";
@@ -9,7 +20,11 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
-import { COURSE_PLAYER_QUERY, ENROLL_IN_COURSE_MUTATION, RESET_WAVE_ATTEMPTS_MUTATION } from "@/graphql/student";
+import {
+  COURSE_PLAYER_QUERY,
+  ENROLL_IN_COURSE_MUTATION,
+  RESET_WAVE_ATTEMPTS_MUTATION,
+} from "@/graphql/student";
 import { localCourseDetail } from "@/lib/content/localCourses";
 import { sanitizeGraphQLError } from "@/lib/errors";
 import { cn } from "@/lib/utils";
@@ -85,7 +100,11 @@ function CoursePlayerPage() {
       const e = sanitizeGraphQLError(result.error);
       toast({ type: "error", title: e.title, message: e.message });
     } else {
-      toast({ type: "success", title: "Attempts Reset!", message: "You can now try this wave again." });
+      toast({
+        type: "success",
+        title: "Attempts Reset!",
+        message: "You can now try this wave again.",
+      });
       reexecuteQuery({ requestPolicy: "network-only" });
     }
   };
@@ -201,195 +220,203 @@ function CoursePlayerPage() {
             transition={{ duration: 0.4 }}
             className="mb-8 overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-card to-card p-6"
           >
-        <div className="flex flex-wrap items-start gap-6">
-          <ProgressRing
-            value={progress}
-            size={88}
-            strokeWidth={7}
-            className="shrink-0 text-primary"
-          >
-            <div className="text-center">
-              <span className="text-lg font-bold">{progress}%</span>
-              <span className="block text-xs text-muted-foreground">complete</span>
-            </div>
-          </ProgressRing>
-          <div className="min-w-0 flex-1 space-y-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">
-                {course.gradeLevel}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {course.isPublished ? "Published" : "Draft"}
-              </span>
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{course.title}</h1>
-            <p className="max-w-2xl text-sm text-muted-foreground">{course.description}</p>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <CheckCircle className="h-4 w-4 text-success" /> {completedWaves} completed
-              </span>
-              <span className="flex items-center gap-1">
-                <BookOpen className="h-4 w-4 text-primary" /> {totalWaves} total waves
-              </span>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Lessons */}
-      <div className="space-y-6">
-        {lessons.length === 0 && (
-          <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed p-10 text-center">
-            <BookOpen className="h-8 w-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">No lessons in this course yet.</p>
-          </div>
-        )}
-        {lessons.map((lesson, lessonIdx) => (
-          <motion.div
-            key={lesson.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: lessonIdx * 0.05 }}
-          >
-            <Card className="overflow-hidden">
-              <div className="flex items-center gap-3 border-b bg-muted/30 px-6 py-4">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-sm font-bold text-primary">
-                  {lesson.sequenceOrder || lessonIdx + 1}
-                </span>
-                <h2 className="flex-1 text-lg font-semibold">{lesson.title}</h2>
-                {/* Lesson-level mini progress */}
-                {lesson.waves.length > 0 &&
-                  (() => {
-                    const done = lesson.waves.filter(
-                      (w) => w.myProgress?.status === "COMPLETED",
-                    ).length;
-                    const pct = Math.round((done / lesson.waves.length) * 100);
-                    return (
-                      <ProgressRing
-                        value={pct}
-                        size={36}
-                        strokeWidth={4}
-                        className="text-primary shrink-0"
-                      >
-                        <span className="text-xs font-bold">{pct}%</span>
-                      </ProgressRing>
-                    );
-                  })()}
+            <div className="flex flex-wrap items-start gap-6">
+              <ProgressRing
+                value={progress}
+                size={88}
+                strokeWidth={7}
+                className="shrink-0 text-primary"
+              >
+                <div className="text-center">
+                  <span className="text-lg font-bold">{progress}%</span>
+                  <span className="block text-[10px] text-muted-foreground">complete</span>
+                </div>
+              </ProgressRing>
+              <div className="min-w-0 flex-1 space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">
+                    {course.gradeLevel}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {course.isPublished ? "Published" : "Draft"}
+                  </span>
+                </div>
+                <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{course.title}</h1>
+                <p className="max-w-2xl text-sm text-muted-foreground">{course.description}</p>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <CheckCircle className="h-4 w-4 text-success" /> {completedWaves} completed
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <BookOpen className="h-4 w-4 text-primary" /> {totalWaves} total waves
+                  </span>
+                </div>
               </div>
-              <CardContent className="space-y-2 p-4">
-                {lesson.waves.length === 0 ? (
-                  <p className="px-2 py-3 text-sm text-muted-foreground">
-                    No waves in this lesson yet.
-                  </p>
-                ) : (
-                  lesson.waves.map((wave) => {
-                    const isCompleted = wave.myProgress?.status === "COMPLETED";
-                    const isStarted = wave.myProgress?.status === "STARTED";
-                    const isLocked = !isEnrolled || wave.myProgress?.status === "LOCKED";
-                    const isExhausted =
-                      !isCompleted &&
-                      wave.maxReattempts > 0 &&
-                      (wave.myProgress?.attemptsCount ?? 0) >= wave.maxReattempts;
-
-                    const content = (
-                      <div
-                        className={cn(
-                          "flex items-center justify-between rounded-xl border p-4 transition-all",
-                          isLocked
-                            ? "bg-muted/10 opacity-60 border-border"
-                            : "group hover:border-primary/30 hover:bg-primary/5 cursor-pointer",
-                        )}
-                      >
-                        <div className="flex items-center gap-3">
-                          {isLocked ? (
-                            <Lock className="h-5 w-5 shrink-0 text-muted-foreground" />
-                          ) : isCompleted ? (
-                            <CheckCircle className="h-5 w-5 shrink-0 text-success" />
-                          ) : isStarted ? (
-                            <Clock className="h-5 w-5 shrink-0 text-orange" />
-                          ) : (
-                            <PlayCircle className="h-5 w-5 shrink-0 text-primary" />
-                          )}
-                          <div>
-                            <p
-                              className={cn("font-medium", !isLocked && "group-hover:text-primary")}
-                            >
-                              {wave.title}
-                            </p>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
-                              <span className="rounded-full bg-muted px-2 py-0.5">
-                                {wave.difficulty}
-                              </span>
-                              <span className="flex items-center gap-0.5">
-                                <Zap className="h-3 w-3 text-amber-500" /> {wave.xpReward} XP
-                              </span>
-                              {wave.myProgress?.attemptsCount !== undefined &&
-                                wave.myProgress.attemptsCount > 0 && (
-                                  <span className="rounded-full bg-muted px-2 py-0.5">
-                                    {wave.myProgress.attemptsCount} attempt
-                                    {wave.myProgress.attemptsCount !== 1 ? "s" : ""}
-                                  </span>
-                                )}
-                              {wave.myProgress?.highestScore !== null &&
-                                wave.myProgress?.highestScore !== undefined && (
-                                  <span className="font-semibold text-success">
-                                    Best: {wave.myProgress.highestScore}%
-                                  </span>
-                                )}
-                            </div>
-                          </div>
-                        </div>
-                        {isLocked ? (
-                          <span className="text-sm font-medium text-muted-foreground">Locked</span>
-                        ) : isCompleted ? (
-                          <span className="text-sm font-medium text-success">Completed</span>
-                        ) : (
-                          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                            {isExhausted && (
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                disabled={resetResult.fetching}
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleResetWave(wave.id);
-                                }}
-                                className="text-xs text-primary hover:bg-primary/10"
-                                title="Reset attempts to try again"
-                              >
-                                <RotateCcw className="h-3.5 w-3.5 mr-1" /> Reset
-                              </Button>
-                            )}
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="group-hover:bg-primary group-hover:text-primary-foreground"
-                            >
-                              {isExhausted ? "Review" : "Start"}
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    );
-
-                    if (isLocked) {
-                      return <div key={wave.id}>{content}</div>;
-                    }
-
-                    return (
-                      <Link key={wave.id} to="/waves/$waveId" params={{ waveId: wave.id }}>
-                        {content}
-                      </Link>
-                    );
-                  })
-                )}
-              </CardContent>
-            </Card>
+            </div>
           </motion.div>
-        ))}
-        </div>
-      </>
+
+          {/* Lessons */}
+          <div className="space-y-6">
+            {lessons.length === 0 && (
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed p-10 text-center">
+                <BookOpen className="h-8 w-8 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">No lessons in this course yet.</p>
+              </div>
+            )}
+            {lessons.map((lesson, lessonIdx) => (
+              <motion.div
+                key={lesson.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: lessonIdx * 0.05 }}
+              >
+                <Card className="overflow-hidden">
+                  <div className="flex items-center gap-3 border-b bg-muted/30 px-6 py-4">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-sm font-bold text-primary">
+                      {lesson.sequenceOrder || lessonIdx + 1}
+                    </span>
+                    <h2 className="flex-1 text-lg font-semibold">{lesson.title}</h2>
+                    {/* Lesson-level mini progress */}
+                    {lesson.waves.length > 0 &&
+                      (() => {
+                        const done = lesson.waves.filter(
+                          (w) => w.myProgress?.status === "COMPLETED",
+                        ).length;
+                        const pct = Math.round((done / lesson.waves.length) * 100);
+                        return (
+                          <ProgressRing
+                            value={pct}
+                            size={36}
+                            strokeWidth={4}
+                            className="text-primary shrink-0"
+                          >
+                            <span className="text-[9px] font-bold">{pct}%</span>
+                          </ProgressRing>
+                        );
+                      })()}
+                  </div>
+                  <CardContent className="space-y-2 p-4">
+                    {lesson.waves.length === 0 ? (
+                      <p className="px-2 py-3 text-sm text-muted-foreground">
+                        No waves in this lesson yet.
+                      </p>
+                    ) : (
+                      lesson.waves.map((wave) => {
+                        const isCompleted = wave.myProgress?.status === "COMPLETED";
+                        const isStarted = wave.myProgress?.status === "STARTED";
+                        const isLocked = !isEnrolled || wave.myProgress?.status === "LOCKED";
+                        const isExhausted =
+                          !isCompleted &&
+                          wave.maxReattempts > 0 &&
+                          (wave.myProgress?.attemptsCount ?? 0) >= wave.maxReattempts;
+
+                        const content = (
+                          <div
+                            className={cn(
+                              "flex items-center justify-between rounded-xl border p-4 transition-all",
+                              isLocked
+                                ? "bg-muted/10 opacity-60 border-border"
+                                : "group hover:border-primary/30 hover:bg-primary/5 cursor-pointer",
+                            )}
+                          >
+                            <div className="flex items-center gap-3">
+                              {isLocked ? (
+                                <Lock className="h-5 w-5 shrink-0 text-muted-foreground" />
+                              ) : isCompleted ? (
+                                <CheckCircle className="h-5 w-5 shrink-0 text-success" />
+                              ) : isStarted ? (
+                                <Clock className="h-5 w-5 shrink-0 text-orange" />
+                              ) : (
+                                <PlayCircle className="h-5 w-5 shrink-0 text-primary" />
+                              )}
+                              <div>
+                                <p
+                                  className={cn(
+                                    "font-medium",
+                                    !isLocked && "group-hover:text-primary",
+                                  )}
+                                >
+                                  {wave.title}
+                                </p>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+                                  <span className="rounded-full bg-muted px-2 py-0.5">
+                                    {wave.difficulty}
+                                  </span>
+                                  <span className="flex items-center gap-0.5">
+                                    <Zap className="h-3 w-3 text-amber-500" /> {wave.xpReward} XP
+                                  </span>
+                                  {wave.myProgress?.attemptsCount !== undefined &&
+                                    wave.myProgress.attemptsCount > 0 && (
+                                      <span className="rounded-full bg-muted px-2 py-0.5">
+                                        {wave.myProgress.attemptsCount} attempt
+                                        {wave.myProgress.attemptsCount !== 1 ? "s" : ""}
+                                      </span>
+                                    )}
+                                  {wave.myProgress?.highestScore !== null &&
+                                    wave.myProgress?.highestScore !== undefined && (
+                                      <span className="font-semibold text-success">
+                                        Best: {wave.myProgress.highestScore}%
+                                      </span>
+                                    )}
+                                </div>
+                              </div>
+                            </div>
+                            {isLocked ? (
+                              <span className="text-sm font-medium text-muted-foreground">
+                                Locked
+                              </span>
+                            ) : isCompleted ? (
+                              <span className="text-sm font-medium text-success">Completed</span>
+                            ) : (
+                              <div
+                                className="flex items-center gap-2"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {isExhausted && (
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    disabled={resetResult.fetching}
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      handleResetWave(wave.id);
+                                    }}
+                                    className="text-xs text-primary hover:bg-primary/10"
+                                    title="Reset attempts to try again"
+                                  >
+                                    <RotateCcw className="h-3.5 w-3.5 mr-1" /> Reset
+                                  </Button>
+                                )}
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="group-hover:bg-primary group-hover:text-primary-foreground"
+                                >
+                                  {isExhausted ? "Review" : "Start"}
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        );
+
+                        if (isLocked) {
+                          return <div key={wave.id}>{content}</div>;
+                        }
+
+                        return (
+                          <Link key={wave.id} to="/waves/$waveId" params={{ waveId: wave.id }}>
+                            {content}
+                          </Link>
+                        );
+                      })
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

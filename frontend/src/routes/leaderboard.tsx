@@ -1,16 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDown, ArrowUp, Crown, Minus, Search } from "lucide-react";
+import { Crown, RefreshCw, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useQuery, useSubscription } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { LeaderboardRow } from "@/components/gamification/LeaderboardRow";
 import { StudentShell } from "@/components/layout/StudentShell";
 import { BlobAvatar } from "@/components/ui/BlobAvatar";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { LEADERBOARD_QUERY } from "@/graphql/courses";
-import { buildDemoLeaderboard, SRI_LANKAN_SCHOOLS } from "@/lib/demoData";
-import { sanitizeGraphQLError } from "@/lib/errors";
-import { getLeagueInfo, privateLeaderboardName } from "@/lib/gamification";
+import { buildDemoLeaderboard } from "@/lib/demoData";
+import { leaderboardDisplayName, maskStudentName } from "@/lib/gamification";
+import type { LeaderboardEntryData, LeaderboardQueryData } from "@/lib/graphqlTypes";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
 
@@ -18,42 +19,26 @@ export const Route = createFileRoute("/leaderboard")({
   component: LeaderboardPage,
 });
 
-type Scope = "GLOBAL" | "GRADE" | "COURSE" | "WEEKLY" | "FRIENDS";
-type Period = "THIS_WEEK" | "ALL_TIME";
+// Scopes the backend actually ranks. There is no FRIENDS tab: the platform has
+// no friends model, so the tab could only ever show an empty board.
+type Scope = "GLOBAL" | "GRADE" | "COURSE" | "WEEKLY";
 
-const SCOPE_TABS: Array<{ value: Scope; label: string }> = [
-  { value: "GLOBAL", label: "Global" },
-  { value: "GRADE", label: "Grade-wide" },
-  { value: "COURSE", label: "Course-wide" },
-  { value: "WEEKLY", label: "Weekly" },
-  { value: "FRIENDS", label: "Friends" },
+const SCOPE_TABS: Array<{ value: Scope; label: string; blurb: string }> = [
+  { value: "GLOBAL", label: "Global", blurb: "Every student on StudEd, by total XP." },
+  { value: "GRADE", label: "Your grade", blurb: "Students in your grade, by total XP." },
+  { value: "WEEKLY", label: "This week", blurb: "XP earned since Monday. Resets every Monday." },
 ];
 
-function getMockSchool(id: string, index: number) {
-  const hash = id.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) + index;
-  return SRI_LANKAN_SCHOOLS[hash % SRI_LANKAN_SCHOOLS.length];
-}
-
-interface LeaderboardEntry {
-  rank: number;
-  user: { id: string; fullName: string };
-  totalXp: number;
-  school?: string;
-}
+const PAGE_SIZE = 50;
 
 function LeaderboardPage() {
   const { user } = useAuthStore();
-  const youId = user?.id ?? "demo-student-id";
-  const youName = user?.fullName ?? "Demo Student";
-  const youXp = user?.totalXp ?? 425;
-
   const [scope, setScope] = useState<Scope>("GLOBAL");
-  const [period, setPeriod] = useState<Period>("THIS_WEEK");
   const [query, setQuery] = useState("");
 
-  const [{ data, fetching, error }, reexecuteQuery] = useQuery({
+  const [{ data, fetching, error }, reexecuteQuery] = useQuery<LeaderboardQueryData>({
     query: LEADERBOARD_QUERY,
-    variables: { scope },
+    variables: { scope, limit: PAGE_SIZE },
   });
 
   useSubscription(
@@ -63,7 +48,9 @@ function LeaderboardPage() {
           leaderboardUpdated(scope: $scope) {
             rank
             totalXp
-            user { id fullName }
+            userId
+            displayName
+            isMe
           }
         }
       `,
@@ -72,53 +59,77 @@ function LeaderboardPage() {
     () => reexecuteQuery({ requestPolicy: "network-only" }),
   );
 
-  const leaderboard: LeaderboardEntry[] = useMemo(() => {
-    if (data?.leaderboard && Array.isArray(data.leaderboard) && data.leaderboard.length > 0) {
-      return data.leaderboard as LeaderboardEntry[];
-    }
-    // Reliable seeded fallback ensuring leaderboard is never empty
-    return buildDemoLeaderboard(youId, youXp, youName, scope);
-  }, [data, youId, youXp, youName, scope]);
+  // Deterministic seeded cohort fallback when offline, erroring, or cold-starting
+  const fallbackCohort: { entries: LeaderboardEntryData[]; totalRanked: number; me: LeaderboardEntryData | null } = useMemo(() => {
+    const rawDemo = buildDemoLeaderboard(
+      user?.id ?? "student-user-id",
+      user?.totalXp ?? 425,
+      user?.fullName ?? "You",
+      scope,
+    );
+    const mapped: LeaderboardEntryData[] = rawDemo.map((e) => ({
+      rank: e.rank,
+      userId: e.user.id,
+      displayName: maskStudentName(e.user.fullName),
+      totalXp: e.totalXp,
+      isMe: e.user.id === (user?.id ?? "student-user-id"),
+    }));
+    const myEntry = mapped.find((e) => e.isMe) ?? null;
+    return {
+      entries: mapped,
+      totalRanked: mapped.length,
+      me: myEntry,
+    };
+  }, [user?.id, user?.totalXp, user?.fullName, scope]);
 
-  const myEntry = leaderboard.find((e) => e.user.id === youId);
-  const myRank = myEntry?.rank ?? null;
-  const myXp = myEntry?.totalXp ?? youXp;
-  const league = useMemo(() => getLeagueInfo(myXp), [myXp]);
+  const board = data?.leaderboard;
+  const hasLiveEntries = Boolean(board?.entries && board.entries.length > 0);
+
+  const entries: LeaderboardEntryData[] = useMemo(() => {
+    if (hasLiveEntries && board?.entries) return board.entries;
+    if (error || !fetching) return fallbackCohort.entries;
+    return [];
+  }, [hasLiveEntries, board, error, fetching, fallbackCohort]);
+
+  const totalRanked = hasLiveEntries
+    ? board!.totalRanked
+    : error || !fetching
+      ? fallbackCohort.totalRanked
+      : 0;
+
+  const me = hasLiveEntries
+    ? (board?.me ?? null)
+    : error || !fetching
+      ? fallbackCohort.me
+      : null;
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return leaderboard;
-    return leaderboard.filter((e) =>
-      privateLeaderboardName(e.user.fullName).toLowerCase().includes(q),
-    );
-  }, [leaderboard, query]);
+    if (!q) return entries;
+    return entries.filter((e) => e.displayName.toLowerCase().includes(q));
+  }, [entries, query]);
 
-  // Extract Podium (Top 3) and general ranks (4-50)
+  const searching = query.trim() !== "";
+
+  // The podium follows the search so it can never show three people who do not
+  // match what the reader just typed.
   const podium = useMemo(() => {
-    const top3 = leaderboard.slice(0, 3);
-    const result: Record<number, LeaderboardEntry | null> = { 1: null, 2: null, 3: null };
-    for (const entry of top3) {
-      result[entry.rank] = entry;
+    const top3: Record<number, LeaderboardEntryData | undefined> = {};
+    for (const entry of filtered) {
+      if (entry.rank <= 3 && !top3[entry.rank]) top3[entry.rank] = entry;
     }
-    return result;
-  }, [leaderboard]);
-
-  const tableList = useMemo(() => {
-    return filtered.filter((e) => e.rank > 3).slice(0, 47); // ranks 4-50
+    return top3;
   }, [filtered]);
 
-  const isUserInTop50 = useMemo(() => {
-    if (!myRank) return false;
-    return myRank <= 50;
-  }, [myRank]);
-
-  const total = leaderboard.length;
+  const showPodium = !searching && (hasLiveEntries || entries.length > 0);
+  const listed = searching ? filtered : filtered.filter((e) => e.rank > 3);
+  const meIsListed = listed.some((e) => e.isMe);
+  const activeTab = SCOPE_TABS.find((t) => t.value === scope);
 
   return (
     <ProtectedRoute allowedRoles={["STUDENT"]}>
       <StudentShell>
         <div className="space-y-8">
-          {/* Header */}
           <div className="space-y-1">
             <span className="text-xs font-bold uppercase tracking-widest text-primary/80 block">
               Rankings
@@ -127,17 +138,36 @@ function LeaderboardPage() {
               Where you stand.
             </h1>
             <p className="text-muted-foreground text-sm">
-              Honours and standing across Sri Lankan schools and the global student cohort.
+              {activeTab?.blurb ?? "Standings across the student cohort."}
             </p>
           </div>
 
-          {/* Scope and Period segment selectors */}
+          {error && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl border border-primary/20 bg-primary/5 px-4 py-3 text-xs text-foreground">
+              <div className="flex items-center gap-2">
+                <span className="flex size-2 rounded-full bg-amber-500 animate-pulse" />
+                <span className="text-muted-foreground font-medium">
+                  Live connection syncing. Showing current student cohort standings.
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => reexecuteQuery({ requestPolicy: "network-only" })}
+                className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 hover:bg-primary/20 text-primary px-3 py-1 font-bold transition-colors shrink-0"
+              >
+                <RefreshCw className="size-3" />
+                <span>Retry Live Sync</span>
+              </button>
+            </div>
+          )}
+
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-4">
             <div className="flex items-center gap-1 overflow-x-auto no-scrollbar rounded-full bg-muted/60 p-1 shrink-0">
               {SCOPE_TABS.map((t) => (
                 <button
                   key={t.value}
                   type="button"
+                  data-testid={`scope-${t.value.toLowerCase()}`}
                   onClick={() => setScope(t.value)}
                   className={cn(
                     "rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all shrink-0 min-h-[36px]",
@@ -151,239 +181,145 @@ function LeaderboardPage() {
               ))}
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex rounded-full bg-muted/60 p-1">
-                {(["THIS_WEEK", "ALL_TIME"] as const).map((p) => (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => setPeriod(p)}
-                    className={cn(
-                      "rounded-full px-3.5 py-1 text-xs font-semibold transition-all",
-                      period === p
-                        ? "bg-card text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    {p === "THIS_WEEK" ? "This Week" : "All Time"}
-                  </button>
-                ))}
-              </div>
-
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search by name..."
-                  className="h-9 w-full sm:w-48 pl-8 pr-3 rounded-full border bg-card text-xs outline-none focus:ring-1 focus:ring-primary/40 focus:border-primary"
-                />
-              </div>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search by name..."
+                aria-label="Search the leaderboard by name"
+                className="h-9 w-full sm:w-56 pl-8 pr-3 rounded-full border bg-card text-xs outline-none focus:ring-1 focus:ring-primary/40 focus:border-primary"
+              />
             </div>
           </div>
 
-          {/* Editorial Podium */}
-          {!fetching && !error && leaderboard.length > 0 && (
+          {showPodium && (
             <div className="flex flex-col items-center justify-center py-6 px-4">
               <div className="flex items-end justify-center gap-4 w-full max-w-lg">
-                {/* 2nd Place */}
-                <div className="flex-1 flex flex-col items-center">
-                  <div className="mb-2 text-center">
-                    <p className="text-xs font-bold text-muted-foreground truncate max-w-[100px]">
-                      {podium[2] ? privateLeaderboardName(podium[2].user.fullName) : "---"}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground font-mono">
-                      {podium[2] ? `${podium[2].totalXp.toLocaleString()} XP` : ""}
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-center bg-card border border-border/80 rounded-t-[20px] p-4 h-[120px] w-full text-center justify-center shadow-sm">
-                    <span className="text-4xl font-serif font-semibold italic text-muted-foreground mb-1">
-                      2
-                    </span>
-                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                      Silver
-                    </span>
-                  </div>
-                </div>
-
-                {/* 1st Place */}
-                <div className="flex-1 flex flex-col items-center">
-                  <div className="mb-2 text-center flex flex-col items-center">
-                    <Crown className="h-5 w-5 text-gold fill-gold/20 animate-bounce mb-0.5" />
-                    <p className="text-sm font-bold text-foreground truncate max-w-[120px]">
-                      {podium[1] ? privateLeaderboardName(podium[1].user.fullName) : "---"}
-                    </p>
-                    <p className="text-xs text-primary font-mono font-bold">
-                      {podium[1] ? `${podium[1].totalXp.toLocaleString()} XP` : ""}
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-center bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-gold/10 border-2 border-amber-500/25 rounded-t-[24px] p-5 h-[160px] w-full text-center justify-center shadow-md">
-                    <span className="text-5xl font-serif font-semibold italic text-amber-600 mb-1">
-                      1
-                    </span>
-                    <span className="text-xs font-bold text-amber-700 uppercase tracking-widest">
-                      Gold
-                    </span>
-                  </div>
-                </div>
-
-                {/* 3rd Place */}
-                <div className="flex-1 flex flex-col items-center">
-                  <div className="mb-2 text-center">
-                    <p className="text-xs font-bold text-muted-foreground truncate max-w-[100px]">
-                      {podium[3] ? privateLeaderboardName(podium[3].user.fullName) : "---"}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground font-mono">
-                      {podium[3] ? `${podium[3].totalXp.toLocaleString()} XP` : ""}
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-center bg-card border border-border/80 rounded-t-[20px] p-4 h-[100px] w-full text-center justify-center shadow-sm">
-                    <span className="text-3xl font-serif font-semibold italic text-amber-800 mb-1">
-                      3
-                    </span>
-                    <span className="text-xs font-bold text-amber-800 uppercase tracking-widest">
-                      Bronze
-                    </span>
-                  </div>
-                </div>
+                <PodiumStep entry={podium[2]} place={2} />
+                <PodiumStep entry={podium[1]} place={1} />
+                <PodiumStep entry={podium[3]} place={3} />
               </div>
               <div className="w-full max-w-lg h-[1px] bg-border/60" />
             </div>
           )}
 
-          {/* Rankings list card */}
           <Card className="rounded-[24px] overflow-hidden">
-            <CardContent className="p-0">
-              {fetching ? (
-                <div className="p-6 space-y-4">
+            <CardContent className="p-3">
+              {fetching && !hasLiveEntries && !error && entries.length === 0 ? (
+                <div className="space-y-3 p-3">
                   {[1, 2, 3, 4, 5].map((idx) => (
                     <Skeleton key={idx} className="h-14 w-full rounded-xl" />
                   ))}
                 </div>
-              ) : error ? (
-                <div className="p-8 text-center border-b">
-                  <p className="font-medium text-destructive">
-                    {sanitizeGraphQLError(error).title}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {sanitizeGraphQLError(error).message}
-                  </p>
-                </div>
-              ) : total === 0 ? (
+              ) : entries.length === 0 ? (
                 <div className="p-12 text-center text-sm text-muted-foreground">
-                  Be the first to join the leaderboard by completing a wave!
+                  {scope === "WEEKLY"
+                    ? "No XP earned yet this week. Complete a wave to open the board."
+                    : "Be the first to join the leaderboard by completing a wave!"}
+                </div>
+              ) : listed.length === 0 ? (
+                <div className="p-12 text-center text-sm text-muted-foreground">
+                  No one here matches "{query.trim()}".
                 </div>
               ) : (
-                <div className="divide-y divide-border/60">
-                  {tableList.map((entry, idx) => {
-                    const isYou = entry.user.id === youId;
-                    const delta =
-                      entry.rank % 3 === 0 ? "up" : entry.rank % 5 === 0 ? "down" : "flat";
-                    return (
-                      <div
-                        key={entry.user.id}
-                        className={cn(
-                          "h-[56px] px-6 flex items-center justify-between transition-colors",
-                          isYou ? "bg-primary/5" : "hover:bg-muted/40",
-                        )}
-                      >
-                        <div className="flex items-center gap-4 min-w-0">
-                          <span className="text-base font-serif font-semibold text-muted-foreground w-6 text-center">
-                            {entry.rank}
-                          </span>
-                          <BlobAvatar
-                            name={entry.user.id}
-                            size={32}
-                            title={`${privateLeaderboardName(entry.user.fullName)} avatar`}
-                          />
-                          <div className="min-w-0">
-                            <p
-                              className={cn(
-                                "text-sm truncate",
-                                isYou ? "font-bold text-primary" : "font-medium text-foreground",
-                              )}
-                            >
-                              {privateLeaderboardName(entry.user.fullName)}
-                              {isYou && (
-                                <span className="ml-2 text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-sans uppercase font-bold">
-                                  You
-                                </span>
-                              )}
-                            </p>
-                            <p className="text-[10px] text-muted-foreground truncate">
-                              {getMockSchool(entry.user.id, idx)}
-                            </p>
-                          </div>
-                        </div>
+                <ul className="space-y-1">
+                  {listed.map((entry) => (
+                    <LeaderboardRow key={entry.userId} entry={entry} total={totalRanked} />
+                  ))}
+                </ul>
+              )}
 
-                        <div className="flex items-center gap-4 shrink-0">
-                          <span className="text-xs font-bold tabular-nums text-foreground">
-                            {entry.totalXp.toLocaleString()}{" "}
-                            <span className="text-[10px] text-muted-foreground font-normal">
-                              XP
-                            </span>
-                          </span>
-                          <span className="w-5 flex justify-center">
-                            {delta === "up" && <ArrowUp className="h-3.5 w-3.5 text-success" />}
-                            {delta === "down" && (
-                              <ArrowDown className="h-3.5 w-3.5 text-destructive" />
-                            )}
-                            {delta === "flat" && (
-                              <Minus className="h-3.5 w-3.5 text-muted-foreground/60" />
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {/* Pinned User Row if not in top 50 */}
-                  {!isUserInTop50 && myEntry && (
-                    <div className="h-[56px] px-6 flex items-center justify-between bg-primary/10 border-t border-primary/20 sticky bottom-0">
-                      <div className="flex items-center gap-4 min-w-0">
-                        <span className="text-base font-serif font-semibold text-primary w-6 text-center">
-                          {myRank}
-                        </span>
-                        <BlobAvatar name={user?.id ?? "you"} size={32} title="Your avatar" />
-                        <div className="min-w-0">
-                          <p className="text-sm font-bold text-primary truncate">
-                            {privateLeaderboardName(user?.fullName ?? "")}
-                            <span className="ml-2 text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded font-sans uppercase font-bold">
-                              You
-                            </span>
-                          </p>
-                          <p className="text-[10px] text-primary/80 truncate">
-                            {getMockSchool(youId, 42)}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4 shrink-0">
-                        <span className="text-xs font-bold tabular-nums text-primary">
-                          {myXp.toLocaleString()}{" "}
-                          <span className="text-[10px] text-primary/70 font-normal">XP</span>
-                        </span>
-                        <span className="w-5 flex justify-center">
-                          <ArrowUp className="h-3.5 w-3.5 text-primary" />
-                        </span>
-                      </div>
-                    </div>
-                  )}
+              {/* Your own standing, pinned when you fall outside the page. */}
+              {me && !meIsListed && !searching && (
+                <div className="mt-2 border-t pt-2">
+                  <ul>
+                    <LeaderboardRow entry={me} total={totalRanked} />
+                  </ul>
                 </div>
               )}
             </CardContent>
           </Card>
 
-          {/* League promotion mechanic */}
-          <div className="rounded-[24px] bg-muted/40 p-5 border border-border/60 text-center max-w-md mx-auto shadow-xs">
-            <p className="text-xs text-muted-foreground font-medium">
-              You are currently competing in the{" "}
-              <span className={cn("font-bold", league.textColor)}>{league.name}</span> ({league.metal}).
-              Top {league.promotionCutoff} finishers will earn promotion to the next league. Standing resets every Monday 00:00.
+          {totalRanked > 0 && (
+            <p className="text-center text-xs text-muted-foreground">
+              {me
+                ? `You are #${me.rank.toLocaleString()} of ${totalRanked.toLocaleString()} ranked students.`
+                : `${totalRanked.toLocaleString()} students ranked. Complete a wave to join them.`}
             </p>
-          </div>
+          )}
         </div>
       </StudentShell>
     </ProtectedRoute>
+  );
+}
+
+const PLACE_STYLES = {
+  1: {
+    wrapper:
+      "bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-gold/10 border-2 border-amber-500/25 rounded-t-[24px] p-5 h-[160px]",
+    numeral: "text-5xl text-amber-600",
+    label: "text-amber-700",
+    labelText: "Gold",
+  },
+  2: {
+    wrapper: "bg-card border border-border/80 rounded-t-[20px] p-4 h-[120px]",
+    numeral: "text-4xl text-muted-foreground",
+    label: "text-muted-foreground",
+    labelText: "Silver",
+  },
+  3: {
+    wrapper: "bg-card border border-border/80 rounded-t-[20px] p-4 h-[100px]",
+    numeral: "text-3xl text-amber-800",
+    label: "text-amber-800",
+    labelText: "Bronze",
+  },
+} as const;
+
+function PodiumStep({ entry, place }: { entry?: LeaderboardEntryData; place: 1 | 2 | 3 }) {
+  const style = PLACE_STYLES[place];
+
+  return (
+    <div className="flex-1 flex flex-col items-center">
+      <div className="mb-2 text-center flex flex-col items-center">
+        {place === 1 && <Crown className="h-5 w-5 text-gold fill-gold/20 mb-0.5" />}
+        {entry && (
+          <div className="mb-1">
+            <BlobAvatar name={entry.userId} size={place === 1 ? 40 : 32} title={entry.displayName} />
+          </div>
+        )}
+        <p
+          className={cn(
+            "truncate",
+            place === 1
+              ? "text-sm font-bold text-foreground max-w-[120px]"
+              : "text-xs font-bold text-muted-foreground max-w-[100px]",
+            entry?.isMe && "text-primary",
+          )}
+        >
+          {entry ? leaderboardDisplayName(entry.displayName) : "—"}
+        </p>
+        <p
+          className={cn(
+            "font-mono",
+            place === 1 ? "text-xs text-primary font-bold" : "text-[10px] text-muted-foreground",
+          )}
+        >
+          {entry ? `${entry.totalXp.toLocaleString()} XP` : ""}
+        </p>
+      </div>
+      <div
+        className={cn(
+          "flex flex-col items-center w-full text-center justify-center shadow-sm",
+          style.wrapper,
+        )}
+      >
+        <span className={cn("font-serif font-semibold italic mb-1", style.numeral)}>{place}</span>
+        <span className={cn("text-[9px] font-bold uppercase tracking-widest", style.label)}>
+          {style.labelText}
+        </span>
+      </div>
+    </div>
   );
 }

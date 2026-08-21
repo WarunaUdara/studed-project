@@ -1,15 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import {
-  ArrowRight,
-  Check,
-  Compass,
-  Lock,
-  Play,
-  Sparkles,
-  Trophy,
-  Zap,
-} from "lucide-react";
+import { ArrowRight, Check, Compass, Lock, Play, Sparkles, Trophy, Zap } from "lucide-react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
@@ -72,17 +63,25 @@ function TravelingMascot({
   pathRef,
   viewWidth,
   viewHeight,
+  targetFraction,
+  isCompletedAll,
 }: {
   pathRef: React.RefObject<SVGPathElement | null>;
   viewWidth: number;
   viewHeight: number;
+  targetFraction: number;
+  isCompletedAll?: boolean;
 }) {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const [isStationary, setIsStationary] = useState(false);
 
   useEffect(() => {
     let animId: number;
-    const duration = 10000;
+    const travelDuration = 3500;
+    const pauseDuration = 3500;
+    const totalCycle = travelDuration + pauseDuration;
     const startTime = performance.now();
+    const maxTarget = Math.max(0, Math.min(1, targetFraction));
 
     const loop = (now: number) => {
       const path = pathRef.current;
@@ -90,9 +89,20 @@ function TravelingMascot({
         try {
           const len = path.getTotalLength();
           if (len > 0) {
-            const elapsed = (now - startTime) % duration;
-            const progress = elapsed / duration;
-            const p = path.getPointAtLength(progress * len);
+            const elapsed = (now - startTime) % totalCycle;
+            let currentFraction: number;
+
+            if (elapsed < travelDuration) {
+              const t = elapsed / travelDuration;
+              const ease = 1 - Math.pow(1 - t, 3);
+              currentFraction = ease * maxTarget;
+              setIsStationary(false);
+            } else {
+              currentFraction = maxTarget;
+              setIsStationary(true);
+            }
+
+            const p = path.getPointAtLength(currentFraction * len);
             setPos({
               x: (p.x / viewWidth) * 100,
               y: (p.y / viewHeight) * 100,
@@ -107,16 +117,30 @@ function TravelingMascot({
 
     animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
-  }, [pathRef, viewWidth, viewHeight]);
+  }, [pathRef, viewWidth, viewHeight, targetFraction]);
 
   if (!pos) return null;
 
   return (
     <div
-      className="absolute pointer-events-none z-30 -translate-x-1/2 -translate-y-1/2"
+      className={cn(
+        "absolute pointer-events-none z-30 -translate-x-1/2 -translate-y-1/2 transition-transform duration-300",
+        isStationary && "animate-bounce"
+      )}
       style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
     >
-      <HelmetCompanion size="sm" mood="happy" className="h-10 w-10 drop-shadow-lg" />
+      <div className="relative flex flex-col items-center">
+        {isStationary && (
+          <div className="absolute -top-6 whitespace-nowrap rounded-full bg-primary px-2 py-0.5 text-[10px] font-extrabold text-primary-foreground shadow-md border border-primary-foreground/20 animate-fade-in">
+            {isCompletedAll ? "Course Mastered!" : "Next Lesson!"}
+          </div>
+        )}
+        <HelmetCompanion
+          size="sm"
+          mood={isStationary ? "happy" : "neutral"}
+          className="h-10 w-10 drop-shadow-lg"
+        />
+      </div>
     </div>
   );
 }
@@ -137,7 +161,12 @@ export function CourseJourneyMap({
   const [hoveredWaveId, setHoveredWaveId] = useState<string | null>(null);
 
   // Flatten lessons & waves into a single sequential journey list
-  const { waves: flattenedWaves, completedCount, totalCount, currentWaveId } = useMemo(() => {
+  const {
+    waves: flattenedWaves,
+    completedCount,
+    totalCount,
+    currentWaveId,
+  } = useMemo(() => {
     const list: JourneyWave[] = [];
     let completed = 0;
     let currentFound = false;
@@ -272,17 +301,13 @@ export function CourseJourneyMap({
               {courseTitle}
             </h1>
             <p className="text-xs text-muted-foreground max-w-xl">
-              Traverse the interactive wave map. Complete 5-minute atomic waves to earn XP and climb the national leaderboard.
+              Traverse the interactive wave map. Complete 5-minute atomic waves to earn XP and climb
+              the national leaderboard.
             </p>
           </div>
 
           <div className="flex items-center gap-6 shrink-0 justify-between md:justify-end">
-            <ProgressRing
-              value={progressPct}
-              size={80}
-              strokeWidth={7}
-              className="text-primary"
-            >
+            <ProgressRing value={progressPct} size={80} strokeWidth={7} className="text-primary">
               <div className="text-center">
                 <span className="text-base font-black">{progressPct}%</span>
                 <span className="block text-xs uppercase font-bold text-muted-foreground">
@@ -325,8 +350,12 @@ export function CourseJourneyMap({
           <div className="flex items-center gap-3">
             <StreakFlame dayCount={7} size="sm" />
             <span className="inline-flex items-center gap-1 rounded-full bg-gold/10 px-3 py-1 text-xs font-bold text-gold border border-gold/30">
-              <Zap className="h-3.5 w-3.5 fill-gold text-gold" />
-              +{flattenedWaves.reduce((acc, w) => acc + (w.state === "completed" ? w.xpReward : 0), 0)} XP
+              <Zap className="h-3.5 w-3.5 fill-gold text-gold" />+
+              {flattenedWaves.reduce(
+                (acc, w) => acc + (w.state === "completed" ? w.xpReward : 0),
+                0,
+              )}{" "}
+              XP
             </span>
           </div>
         </div>
@@ -370,13 +399,18 @@ export function CourseJourneyMap({
                 animate={{ pathLength: completedFraction }}
                 transition={{ duration: 1.5, ease: "easeOut" }}
               />
-
             </svg>
 
             {/* Traveling Mascot & Node Buttons along Path */}
             <div className="absolute inset-0">
               {!reduce && (
-                <TravelingMascot pathRef={pathRef} viewWidth={VIEW_W} viewHeight={viewH} />
+                <TravelingMascot
+                  pathRef={pathRef}
+                  viewWidth={VIEW_W}
+                  viewHeight={viewH}
+                  targetFraction={completedFraction}
+                  isCompletedAll={completedCount === totalCount && totalCount > 0}
+                />
               )}
               {points.map((p, idx) => {
                 const wave = flattenedWaves[idx];

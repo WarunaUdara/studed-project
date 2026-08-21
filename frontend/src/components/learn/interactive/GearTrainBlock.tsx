@@ -1,7 +1,7 @@
-import type { GearTrainConfig } from "@/lib/content/interactiveBlocks";
-import { parseBlockConfig } from "@/lib/content/interactiveBlocks";
 import { SCIENCE_GEAR_PUZZLES } from "@/components/waves/science/gear-network-engine";
 import { ScientificThinkingGearsMaster } from "@/components/waves/science/ScientificThinkingGearsMaster";
+import type { GearTrainConfig } from "@/lib/content/interactiveBlocks";
+import { parseBlockConfig } from "@/lib/content/interactiveBlocks";
 
 interface GearTrainBlockProps {
   content: string;

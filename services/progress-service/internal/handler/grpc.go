@@ -67,3 +67,12 @@ func (h *ProgressGRPCHandler) ResetWaveAttempts(ctx context.Context, req *progre
 	}
 	return resp, nil
 }
+
+// GetCourseWaveProgress resolves every wave in a course in one call.
+func (h *ProgressGRPCHandler) GetCourseWaveProgress(ctx context.Context, req *progresspb.GetCourseWaveProgressRequest) (*progresspb.GetCourseWaveProgressResponse, error) {
+	resp, err := h.svc.GetCourseWaveProgress(ctx, req.UserId, req.CourseId)
+	if err != nil {
+		return &progresspb.GetCourseWaveProgressResponse{Error: err.Error()}, nil
+	}
+	return resp, nil
+}

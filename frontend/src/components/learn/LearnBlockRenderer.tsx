@@ -1,12 +1,12 @@
 import { Info } from "lucide-react";
 import { AnimationBlock } from "@/components/learn/interactive/AnimationBlock";
 import { BlobDialogBlock } from "@/components/learn/interactive/BlobDialogBlock";
+import { BlobMazeBlock } from "@/components/learn/interactive/BlobMazeBlock";
 import { CircuitLabBlock } from "@/components/learn/interactive/CircuitLabBlock";
 import { ForceLabBlock } from "@/components/learn/interactive/ForceLabBlock";
 import { FractionLabBlock } from "@/components/learn/interactive/FractionLabBlock";
-import { LeverLabBlock } from "@/components/learn/interactive/LeverLabBlock";
-import { BlobMazeBlock } from "@/components/learn/interactive/BlobMazeBlock";
 import { GearTrainBlock } from "@/components/learn/interactive/GearTrainBlock";
+import { LeverLabBlock } from "@/components/learn/interactive/LeverLabBlock";
 import { OhmsLawLabBlock } from "@/components/learn/interactive/OhmsLawLabBlock";
 import { PythonRunnerBlock } from "@/components/learn/interactive/PythonRunnerBlock";
 import { WaterFlowBlock } from "@/components/learn/interactive/WaterFlowBlock";

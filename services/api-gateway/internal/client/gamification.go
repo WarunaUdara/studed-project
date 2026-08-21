@@ -56,10 +56,14 @@ func (c *GamificationClient) GetUserXp(ctx context.Context, userID string) (int,
 	return int(resp.TotalXp), nil
 }
 
-func (c *GamificationClient) GetLeaderboard(ctx context.Context, scope model.LeaderboardScope, courseID *string, grade *model.Grade, limit int32) ([]*model.LeaderboardEntry, error) {
+// GetLeaderboard returns one page of a board. Display names are masked here —
+// once, on the way out — so the stored name stays intact and the masking rule
+// can change without rewriting every ranked row.
+func (c *GamificationClient) GetLeaderboard(ctx context.Context, viewerID string, scope model.LeaderboardScope, courseID *string, grade *model.Grade, limit, offset int32) ([]*model.LeaderboardEntry, int, error) {
 	req := &gampb.GetLeaderboardRequest{
-		Scope: string(scope),
-		Limit: limit,
+		Scope:  string(scope),
+		Limit:  limit,
+		Offset: offset,
 	}
 	if courseID != nil {
 		req.CourseId = *courseID
@@ -70,42 +74,57 @@ func (c *GamificationClient) GetLeaderboard(ctx context.Context, scope model.Lea
 
 	resp, err := c.client.GetLeaderboard(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("get leaderboard failed: %w", err)
+		return nil, 0, fmt.Errorf("get leaderboard failed: %w", err)
 	}
 	if resp.Error != "" {
-		return nil, fmt.Errorf("get leaderboard failed: %s", resp.Error)
+		return nil, 0, fmt.Errorf("get leaderboard failed: %s", resp.Error)
 	}
 
 	entries := make([]*model.LeaderboardEntry, len(resp.Entries))
 	for i, e := range resp.Entries {
-		name := strings.TrimSpace(e.FullName)
-		if name == "" || isUUIDString(name) {
-			name = "Student Scholar"
-		}
-		userID := e.UserId
-		if isUUIDString(userID) {
-			userID = fmt.Sprintf("anon-rank-%d", e.Rank)
-		}
 		entries[i] = &model.LeaderboardEntry{
-			Rank:    int(e.Rank),
-			User:    &model.User{ID: userID, FullName: name},
-			TotalXp: int(e.TotalXp),
+			Rank:        int(e.Rank),
+			UserID:      e.UserId,
+			DisplayName: MaskDisplayName(e.FullName),
+			TotalXp:     int(e.TotalXp),
+			IsMe:        e.UserId == viewerID,
 		}
 	}
 
-	return entries, nil
+	return entries, int(resp.TotalRanked), nil
+}
+
+// MaskDisplayName renders a student as "First L." for public ranking, per
+// 05-Gamification/Leaderboards.md. This is the only implementation: masking at
+// write time used to bake the rule into Redis, and two more copies of it had
+// grown in the frontend.
+func MaskDisplayName(fullName string) string {
+	name := strings.TrimSpace(fullName)
+	if name == "" || isUUIDString(name) {
+		return "Student Scholar"
+	}
+	parts := strings.Fields(name)
+	if len(parts) < 2 {
+		return parts[0]
+	}
+	last := []rune(parts[len(parts)-1])
+	if len(last) == 0 {
+		return parts[0]
+	}
+	return fmt.Sprintf("%s %s.", parts[0], string(last[0]))
 }
 
 func isUUIDString(s string) bool {
 	return len(s) == 36 && strings.Count(s, "-") == 4
 }
 
-func (c *GamificationClient) UpdateLeaderboard(ctx context.Context, userID, fullName string, totalXp int, scope model.LeaderboardScope, courseID string, grade *model.Grade) (*gampb.UpdateLeaderboardResponse, error) {
+// UpdateLeaderboard records who a ranked user is and refreshes every board they
+// stand on. It sends no XP total: gamification reads totals from its own ledger,
+// so the gateway cannot publish a figure that disagrees with it.
+func (c *GamificationClient) UpdateLeaderboard(ctx context.Context, userID, fullName, courseID string, grade *model.Grade) error {
 	req := &gampb.UpdateLeaderboardRequest{
 		UserId:   userID,
 		FullName: fullName,
-		TotalXp:  int32(totalXp),
-		Scope:    string(scope),
 		CourseId: courseID,
 	}
 	if grade != nil {
@@ -114,15 +133,17 @@ func (c *GamificationClient) UpdateLeaderboard(ctx context.Context, userID, full
 
 	resp, err := c.client.UpdateLeaderboard(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("update leaderboard failed: %w", err)
+		return fmt.Errorf("update leaderboard failed: %w", err)
 	}
 	if resp.Error != "" {
-		return nil, fmt.Errorf("update leaderboard failed: %s", resp.Error)
+		return fmt.Errorf("update leaderboard failed: %s", resp.Error)
 	}
-	return resp, nil
+	return nil
 }
 
-func (c *GamificationClient) GetMyRank(ctx context.Context, userID string, scope model.LeaderboardScope, courseID *string, grade *model.Grade) (int, error) {
+// GetMyRank returns the viewer's standing in a scope. Rank 0 means "not ranked
+// here yet", which is an ordinary answer rather than an error.
+func (c *GamificationClient) GetMyRank(ctx context.Context, userID string, scope model.LeaderboardScope, courseID *string, grade *model.Grade) (rank int, totalXp int, totalRanked int, err error) {
 	req := &gampb.GetRankRequest{
 		UserId: userID,
 		Scope:  string(scope),
@@ -136,27 +157,38 @@ func (c *GamificationClient) GetMyRank(ctx context.Context, userID string, scope
 
 	resp, err := c.client.GetRank(ctx, req)
 	if err != nil {
-		return 0, fmt.Errorf("get my rank failed: %w", err)
+		return 0, 0, 0, fmt.Errorf("get my rank failed: %w", err)
 	}
 	if resp.Error != "" {
-		if strings.Contains(resp.Error, "not found") {
-			return 0, nil
-		}
-		return 0, fmt.Errorf("get my rank failed: %s", resp.Error)
+		return 0, 0, 0, fmt.Errorf("get my rank failed: %s", resp.Error)
 	}
 
-	return int(resp.Rank), nil
+	return int(resp.Rank), int(resp.TotalXp), int(resp.TotalRanked), nil
 }
 
-func (c *GamificationClient) GetUserStreak(ctx context.Context, userID string) (int, error) {
+// Streak is a student's consecutive learning days. LastActiveAt is nil when
+// they have never recorded activity.
+type Streak struct {
+	Current      int
+	Longest      int
+	LastActiveAt *time.Time
+}
+
+func (c *GamificationClient) GetUserStreak(ctx context.Context, userID string) (Streak, error) {
 	resp, err := c.client.GetUserStreak(ctx, &gampb.GetUserStreakRequest{UserId: userID})
 	if err != nil {
-		return 0, fmt.Errorf("get user streak failed: %w", err)
+		return Streak{}, fmt.Errorf("get user streak failed: %w", err)
 	}
 	if resp.Error != "" {
-		return 0, fmt.Errorf("get user streak failed: %s", resp.Error)
+		return Streak{}, fmt.Errorf("get user streak failed: %s", resp.Error)
 	}
-	return int(resp.CurrentStreak), nil
+
+	streak := Streak{Current: int(resp.CurrentStreak), Longest: int(resp.LongestStreak)}
+	if resp.LastLoginDateUnix > 0 {
+		at := time.Unix(resp.LastLoginDateUnix, 0)
+		streak.LastActiveAt = &at
+	}
+	return streak, nil
 }
 
 func (c *GamificationClient) GetAchievements(ctx context.Context, userID string) ([]*model.Achievement, error) {
@@ -170,12 +202,17 @@ func (c *GamificationClient) GetAchievements(ctx context.Context, userID string)
 
 	achievements := make([]*model.Achievement, len(resp.Achievements))
 	for i, a := range resp.Achievements {
-		unlockedAt := time.Unix(a.UnlockedAtUnix, 0)
+		var unlockedAt *time.Time
+		if a.Unlocked && a.UnlockedAtUnix > 0 {
+			at := time.Unix(a.UnlockedAtUnix, 0)
+			unlockedAt = &at
+		}
 		achievements[i] = &model.Achievement{
 			ID:          a.Id,
 			Name:        a.Name,
 			Description: a.Description,
 			IconURL:     &a.IconUrl,
+			Unlocked:    a.Unlocked,
 			UnlockedAt:  unlockedAt,
 		}
 	}

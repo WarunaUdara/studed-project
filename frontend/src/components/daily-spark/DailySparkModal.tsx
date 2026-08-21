@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
+import { useQuery } from "urql";
+import { MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
 import { useAuthStore } from "@/stores/auth";
 import { DailySparkLeagueRank } from "./DailySparkLeagueRank";
 import { DailySparkMascotMotivation } from "./DailySparkMascotMotivation";
@@ -57,6 +59,19 @@ export function DailySparkModal({ isOpen, onClose }: DailySparkModalProps) {
   const [screenState, setScreenState] = useState<SparkScreenState>("task");
 
   const { user, updateTotalXp } = useAuthStore();
+
+  const [{ data: enrollData }] = useQuery({
+    query: MY_ENROLLMENTS_QUERY,
+    requestPolicy: "cache-first",
+  });
+
+  const activeCourseName = useMemo(() => {
+    const enrollments = enrollData?.myEnrollments ?? [];
+    if (enrollments.length > 0 && enrollments[0]?.title) {
+      return enrollments[0].title;
+    }
+    return user?.grade ? `Grade ${user.grade} Mathematics` : "Mathematics: Fractions";
+  }, [enrollData, user?.grade]);
 
   useEffect(() => {
     setMounted(true);
@@ -139,6 +154,7 @@ export function DailySparkModal({ isOpen, onClose }: DailySparkModalProps) {
             {screenState === "task" && (
               <DailySparkTaskCard
                 task={FRACTION_TASKS[taskIndex]}
+                courseTitle={activeCourseName}
                 currentIndex={taskIndex}
                 totalTasks={FRACTION_TASKS.length}
                 currentXp={totalXpEarned}
@@ -165,12 +181,7 @@ export function DailySparkModal({ isOpen, onClose }: DailySparkModalProps) {
               <DailySparkStreakCharge onContinue={handleChargeContinue} />
             )}
 
-            {screenState === "league" && (
-              <DailySparkLeagueRank
-                totalXp={totalXpEarned || 55}
-                onFinish={handleLeagueFinish}
-              />
-            )}
+            {screenState === "league" && <DailySparkLeagueRank onFinish={handleLeagueFinish} />}
           </motion.div>
         </motion.div>
       )}

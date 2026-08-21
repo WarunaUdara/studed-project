@@ -12,20 +12,41 @@ const REFRESH_TOKEN_MUTATION = `
 `;
 
 export function AuthInitializer({ children }: { children: React.ReactNode }) {
-  const { isLoading, setUser } = useAuthStore();
+  const { isLoading, setUser, setLoading } = useAuthStore();
+  const hasSession = typeof window !== "undefined" && localStorage.getItem("studed_has_session") === "true";
+
   const [{ data, fetching }, reexecuteQuery] = useQuery({
     query: ME_QUERY,
     requestPolicy: "network-only",
+    pause: !hasSession && !isLoading,
   });
   const [, refreshToken] = useMutation(REFRESH_TOKEN_MUTATION);
   const [refreshing, setRefreshing] = useState(false);
+
+  // If user has no active session marker, unblock the UI instantly on initial mount
+  useEffect(() => {
+    if (!hasSession && isLoading) {
+      setUser(null);
+    }
+  }, [hasSession, isLoading, setUser]);
+
+  // Safety fallback: never trap the user on a blank spinner for more than 2.5s
+  useEffect(() => {
+    if (!isLoading && !refreshing) return;
+    const timer = setTimeout(() => {
+      if (useAuthStore.getState().isLoading) {
+        setLoading(false);
+      }
+      setRefreshing(false);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [isLoading, refreshing, setLoading]);
 
   useEffect(() => {
     if (fetching || refreshing) return;
     if (!isLoading) return;
 
     const me = data?.me ?? null;
-    const hasSession = localStorage.getItem("studed_has_session") === "true";
 
     if (!me && hasSession) {
       setRefreshing(true);
@@ -46,9 +67,9 @@ export function AuthInitializer({ children }: { children: React.ReactNode }) {
     } else {
       setUser(me);
     }
-  }, [data, fetching, isLoading, setUser, refreshToken, reexecuteQuery, refreshing]);
+  }, [data, fetching, isLoading, setUser, refreshToken, reexecuteQuery, refreshing, hasSession]);
 
-  if (isLoading || refreshing) {
+  if (hasSession && (isLoading || refreshing)) {
     return (
       <div className="flex min-h-[100dvh] items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />

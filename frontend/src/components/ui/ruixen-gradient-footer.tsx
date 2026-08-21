@@ -8,21 +8,13 @@
 //
 // Gradient design inspired by Dia Browser — https://www.diabrowser.com
 
-import {
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  type CSSProperties,
-  type ReactNode,
-} from "react";
+import { type CSSProperties, type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export type Stop = { offset: number; color: string };
 
 const VBW = 1271;
 const VBH = 599;
-
 
 // StudEd refined low-saturation, theme-aligned palette stops, floor (0) → top (1):
 // Deep muted slate-emerald → Soft jade → Gentle mint → Soft cyan/sky → Warm champagne → Soft mist → Transparent
@@ -47,7 +39,7 @@ function bellHeights(n: number, peak: number, valley: number): number[] {
   const mid = (n - 1) / 2;
   for (let i = 0; i < n; i++) {
     const t = mid === 0 ? 0 : Math.abs(i - mid) / mid; // 0 center → 1 edge
-    const eased = 1 - Math.pow(t, 1.24);
+    const eased = 1 - t ** 1.24;
     out.push(peak * VBH * (valley + (1 - valley) * eased));
   }
   return out;
@@ -111,8 +103,7 @@ export function RuixenGradientFooter({
       // offsetHeight ignores the transform, so the band can measure itself.
       const h = el.offsetHeight || 1;
       // How much scroll is left before the exact end of the page.
-      const left =
-        doc.documentElement.scrollHeight - win.innerHeight - win.scrollY;
+      const left = doc.documentElement.scrollHeight - win.innerHeight - win.scrollY;
 
       if (left <= h) {
         // Glow starts rising once within its own height, reaching 1 at rock bottom.
@@ -178,13 +169,7 @@ export function RuixenGradientFooter({
                 <stop key={i} offset={s.offset} stopColor={s.color} />
               ))}
             </linearGradient>
-            <filter
-              id={`blur-${uid}`}
-              x="-50%"
-              y="-50%"
-              width="200%"
-              height="200%"
-            >
+            <filter id={`blur-${uid}`} x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation={blur} />
             </filter>
           </defs>

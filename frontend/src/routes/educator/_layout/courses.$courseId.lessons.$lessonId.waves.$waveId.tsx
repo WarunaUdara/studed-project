@@ -5,20 +5,20 @@ import { useMutation, useQuery } from "urql";
 
 import { AIAssistantPanel } from "@/components/educator/AIAssistantPanel";
 import { WavePreview } from "@/components/educator/WavePreview";
-import { pushPuckData, setPuckPanelsVisible } from "@/components/puck-blocks/PuckCanvas";
+import { pushPuckData, setPuckPanelsVisible } from "@/components/puck-blocks/puck-bridge";
 import {
   agentBlocksToPuckItems,
   applyBlockOpsToData,
+  type EvaluateBlockRaw,
+  type LearnBlockRaw,
   type PuckData,
   puckToWaveData,
   waveDataToPuck,
-  type LearnBlockRaw,
-  type EvaluateBlockRaw,
 } from "@/components/puck-blocks/puck-config";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { PUBLISH_WAVE_MUTATION, UPDATE_WAVE_MUTATION, WAVE_QUERY } from "@/graphql/courses";
-import { useAIAssistant, type AIBlockOps } from "@/stores/ai-assistant";
+import { type AIBlockOps, useAIAssistant } from "@/stores/ai-assistant";
 
 // @puckeditor/core (~large, plus its CSS) is code-split into its own chunk
 // and only fetched when an educator actually opens the wave editor.
@@ -83,7 +83,10 @@ function WaveEditorPage() {
     (ops: AIBlockOps) => {
       if (!puckData) return;
       const next = applyBlockOpsToData(puckData, ops);
-      if (next.content.length === puckData.content?.length && JSON.stringify(next) === JSON.stringify(puckData)) {
+      if (
+        next.content.length === puckData.content?.length &&
+        JSON.stringify(next) === JSON.stringify(puckData)
+      ) {
         return; // no-op (nothing to change)
       }
       setPuckData(next);
@@ -101,7 +104,12 @@ function WaveEditorPage() {
       const existing = puckData.content ?? [];
       const incomingHTML = newItems.find((item) => item.type === "HtmlSimulationBlock");
       const incomingItems = incomingHTML
-        ? [incomingHTML, ...newItems.filter((item) => item !== incomingHTML && item.type !== "HtmlSimulationBlock")]
+        ? [
+            incomingHTML,
+            ...newItems.filter(
+              (item) => item !== incomingHTML && item.type !== "HtmlSimulationBlock",
+            ),
+          ]
         : newItems;
       const existingIndexByID = new Map(
         existing.map((item, index) => [String(item.props?.id ?? ""), index]),
@@ -111,9 +119,10 @@ function WaveEditorPage() {
       for (const item of incomingItems) {
         const id = String(item.props?.id ?? "");
         if (!id) continue;
-        const existingIndex = item.type === "HtmlSimulationBlock"
-          ? nextContent.findIndex((candidate) => candidate.type === "HtmlSimulationBlock")
-          : existingIndexByID.get(id);
+        const existingIndex =
+          item.type === "HtmlSimulationBlock"
+            ? nextContent.findIndex((candidate) => candidate.type === "HtmlSimulationBlock")
+            : existingIndexByID.get(id);
         if (existingIndex !== undefined && existingIndex >= 0) {
           // A model retry or a later request may reuse the same generated id.
           // Replace in place rather than appending/renaming, which used to
@@ -207,7 +216,10 @@ function WaveEditorPage() {
   const moveDockDrag = (e: React.PointerEvent<HTMLDivElement>) => {
     const drag = dockDragRef.current;
     if (!drag) return;
-    const next = Math.min(MAX_DOCK_WIDTH, Math.max(MIN_DOCK_WIDTH, drag.startWidth + (drag.startX - e.clientX)));
+    const next = Math.min(
+      MAX_DOCK_WIDTH,
+      Math.max(MIN_DOCK_WIDTH, drag.startWidth + (drag.startX - e.clientX)),
+    );
     setDockWidth(next);
   };
   const endDockDrag = () => {
@@ -224,8 +236,14 @@ function WaveEditorPage() {
       `Difficulty: ${wave.difficulty} | XP: ${wave.xpReward}`,
       `Learn blocks: ${(wave.learnBlocks ?? []).length}`,
       `Evaluate blocks: ${(wave.evaluateBlocks ?? []).length}`,
-      ...(wave.learnBlocks ?? []).map((b: { id?: string; type: string; content: string }) => `- [learn/${b.type}] id=${b.id ?? "?"} ${b.content.slice(0, 120)}`),
-      ...(wave.evaluateBlocks ?? []).map((b: { id?: string; type: string; question: string }) => `- [evaluate/${b.type}] id=${b.id ?? "?"} ${b.question.slice(0, 120)}`),
+      ...(wave.learnBlocks ?? []).map(
+        (b: { id?: string; type: string; content: string }) =>
+          `- [learn/${b.type}] id=${b.id ?? "?"} ${b.content.slice(0, 120)}`,
+      ),
+      ...(wave.evaluateBlocks ?? []).map(
+        (b: { id?: string; type: string; question: string }) =>
+          `- [evaluate/${b.type}] id=${b.id ?? "?"} ${b.question.slice(0, 120)}`,
+      ),
     ].join("\n");
   }, [wave]);
 
@@ -386,11 +404,7 @@ function WaveEditorPage() {
                     </div>
                   }
                 >
-                  <PuckCanvas
-                    data={puckData}
-                    onChange={setPuckData}
-                    onPublish={handleSave}
-                  />
+                  <PuckCanvas data={puckData} onChange={setPuckData} onPublish={handleSave} />
                 </Suspense>
               )}
             </>

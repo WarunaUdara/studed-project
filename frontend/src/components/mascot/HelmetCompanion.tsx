@@ -1,5 +1,5 @@
-import { AnimatePresence, motion } from "framer-motion";
 import { JellyBlobMascot, type JellyBlobMood } from "feral-blob";
+import { AnimatePresence, motion } from "framer-motion";
 import "feral-blob/blob.css";
 import { useCallback, useRef, useState } from "react";
 import { playClickSound } from "@/lib/sounds";

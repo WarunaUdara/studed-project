@@ -122,7 +122,7 @@ export function ThemePullCord() {
       prevTime = now;
 
       const tc = prevDt > 0 ? dt / prevDt : 1;
-      const velCoef = tc * Math.pow(CONFIG.damping, dt * 60);
+      const velCoef = tc * CONFIG.damping ** (dt * 60);
       const accCoef = dt * dt;
 
       pts[last].fixed = draggingRef.current;

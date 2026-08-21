@@ -17,6 +17,8 @@ export async function setupMockGraphQL(page: Page) {
   if (routedPages.has(page)) return;
   routedPages.add(page);
 
+  let authenticatedUser: any = null;
+
   await page.route("**/graphql", async (route) => {
     try {
       const req = route.request();
@@ -31,6 +33,17 @@ export async function setupMockGraphQL(page: Page) {
         const email = vars?.input?.email || "demo.student@studed.lk";
         const isEducator = email.includes("educator");
 
+        authenticatedUser = {
+          id: isEducator ? "demo-educator-id" : "demo-student-id",
+          email,
+          fullName: isEducator ? "Demo Educator" : "Demo Student",
+          role: isEducator ? "EDUCATOR" : "STUDENT",
+          grade: isEducator ? null : "G9",
+          preferredLanguage: "en",
+          totalXp: isEducator ? 1200 : 425,
+          streak: isEducator ? 5 : 3,
+        };
+
         return route.fulfill({
           status: 200,
           contentType: "application/json",
@@ -38,17 +51,47 @@ export async function setupMockGraphQL(page: Page) {
             data: {
               login: {
                 token: "mock-jwt-token-for-ux-loop",
-                user: {
-                  id: isEducator ? "demo-educator-id" : "demo-student-id",
-                  email,
-                  fullName: isEducator ? "Demo Educator" : "Demo Student",
-                  role: isEducator ? "EDUCATOR" : "STUDENT",
-                  grade: isEducator ? null : "G9",
-                  preferredLanguage: "en",
-                  totalXp: isEducator ? 1200 : 425,
-                  streak: isEducator ? 5 : 3,
-                },
+                user: authenticatedUser,
               },
+            },
+          }),
+        });
+      }
+
+      // Logout Mutation
+      if (query.includes("logout") || query.includes("Logout")) {
+        authenticatedUser = null;
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              logout: true,
+            },
+          }),
+        });
+      }
+
+      // Password Reset Requests
+      if (query.includes("requestPasswordReset") || query.includes("RequestPasswordReset")) {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              requestPasswordReset: true,
+            },
+          }),
+        });
+      }
+
+      if (query.includes("resetPassword") || query.includes("ResetPassword")) {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              resetPassword: true,
             },
           }),
         });
@@ -61,16 +104,7 @@ export async function setupMockGraphQL(page: Page) {
           contentType: "application/json",
           body: JSON.stringify({
             data: {
-              me: {
-                id: "demo-student-id",
-                email: "demo.student@studed.lk",
-                fullName: "Demo Student",
-                role: "STUDENT",
-                grade: "G9",
-                preferredLanguage: "en",
-                totalXp: 425,
-                streak: 3,
-              },
+              me: authenticatedUser,
             },
           }),
         });
@@ -116,91 +150,153 @@ export async function setupMockGraphQL(page: Page) {
         });
       }
 
-      // 4. Leaderboard Query
-      if (query.includes("query Leaderboard") || query.includes("leaderboard(")) {
-        const scope = vars?.scope || "GLOBAL";
-        const youId = "demo-student-id";
-        const youXp = 425;
-        const youName = "Demo Student";
-
-        // Generate full 50-student realistic cohort
-        const SEEDED_STUDENTS_LIST = [
-          { id: "stu-001", fullName: "Senuri Wickramasinghe", totalXp: 12450 },
-          { id: "stu-002", fullName: "Kavindu Jayawardena", totalXp: 11820 },
-          { id: "stu-003", fullName: "Dinuka Perera", totalXp: 10950 },
-          { id: "stu-004", fullName: "Thisara Bandara", totalXp: 9800 },
-          { id: "stu-005", fullName: "Rashmi Gunasekara", totalXp: 9150 },
-          { id: "stu-006", fullName: "Akila Weerasinghe", totalXp: 8640 },
-          { id: "stu-007", fullName: "Sachini Fernando", totalXp: 8210 },
-          { id: "stu-008", fullName: "Praveen Seneviratne", totalXp: 7890 },
-          { id: "stu-009", fullName: "Nadeesha Alwis", totalXp: 7420 },
-          { id: "stu-010", fullName: "Tharindu Rathnayake", totalXp: 7100 },
-          { id: "stu-011", fullName: "Sivapalan Ketheeswaran", totalXp: 6850 },
-          { id: "stu-012", fullName: "Sanduni Dissanayake", totalXp: 6540 },
-          { id: "stu-013", fullName: "Gayan Mendis", totalXp: 6200 },
-          { id: "stu-014", fullName: "Chathuni Liyanage", totalXp: 5900 },
-          { id: "stu-015", fullName: "Bhanuka Rajapaksha", totalXp: 5620 },
-          { id: "stu-016", fullName: "Hiruni Senanayake", totalXp: 5310 },
-          { id: "stu-017", fullName: "Ravindu Gamage", totalXp: 5020 },
-          { id: "stu-018", fullName: "Yashodha Karunaratne", totalXp: 4780 },
-          { id: "stu-019", fullName: "Navin Pathirana", totalXp: 4510 },
-          { id: "stu-020", fullName: "Dilini Samarasinghe", totalXp: 4290 },
-          { id: "stu-021", fullName: "Thanushanth Selvarajah", totalXp: 4050 },
-          { id: "stu-022", fullName: "Imasha Abeykoon", totalXp: 3820 },
-          { id: "stu-023", fullName: "Isuru Ranasinghe", totalXp: 3600 },
-          { id: "stu-024", fullName: "Minoli Hettiarachchi", totalXp: 3410 },
-          { id: "stu-025", fullName: "Sanju Jayasuriya", totalXp: 3230 },
-          { id: "stu-026", fullName: "Anuki De Silva", totalXp: 3040 },
-          { id: "stu-027", fullName: "Hasitha Wijewardena", totalXp: 2890 },
-          { id: "stu-028", fullName: "Kasuni Kulatunga", totalXp: 2710 },
-          { id: "stu-029", fullName: "Ruwan Ekanayake", totalXp: 2550 },
-          { id: "stu-030", fullName: "Pavithra Sivakumar", totalXp: 2400 },
-          { id: "stu-031", fullName: "Oshada Madushan", totalXp: 2240 },
-          { id: "stu-032", fullName: "Malsha Fonseka", totalXp: 2090 },
-          { id: "stu-033", fullName: "Ashen Cooray", totalXp: 1950 },
-          { id: "stu-034", fullName: "Uthpala Vithanage", totalXp: 1810 },
-          { id: "stu-035", fullName: "Danushka Priyadarshana", totalXp: 1680 },
-          { id: "stu-036", fullName: "Nilupul Senarath", totalXp: 1540 },
-          { id: "stu-037", fullName: "Methmi Attanayake", totalXp: 1420 },
-          { id: "stu-038", fullName: "Janidu Premachandra", totalXp: 1300 },
-          { id: "stu-039", fullName: "Shalika Manamperi", totalXp: 1190 },
-          { id: "stu-040", fullName: "Pasan Liyanapathirana", totalXp: 1080 },
-          { id: "stu-041", fullName: "Vathsalan Arumugam", totalXp: 980 },
-          { id: "stu-042", fullName: "Nimesh Galahitiyawa", totalXp: 880 },
-          { id: "stu-043", fullName: "Thilini Dharmadasa", totalXp: 790 },
-          { id: "stu-044", fullName: "Manuja Wickramatunga", totalXp: 690 },
-          { id: "stu-045", fullName: "Sayuri Lokuge", totalXp: 610 },
-          { id: "stu-046", fullName: "Dulantha Hewapathirana", totalXp: 520 },
-          { id: "stu-047", fullName: "Lakshika Chandrasena", totalXp: 440 },
-          { id: "stu-048", fullName: "Suraj Jayakody", totalXp: 370 },
-          { id: "stu-049", fullName: "Hansika Jayawardhana", totalXp: 290 },
-          { id: "stu-050", fullName: "Chamod Edirisinghe", totalXp: 210 },
-        ];
-
-        const mult = scope === "WEEKLY" ? 0.35 : scope === "GRADE" ? 0.8 : 1.0;
-        const mapped = SEEDED_STUDENTS_LIST.map((s) => ({
-          user: { id: s.id, fullName: s.fullName },
-          totalXp: Math.round(s.totalXp * mult),
-        }));
-
-        mapped.push({
-          user: { id: youId, fullName: youName },
-          totalXp: youXp,
-        });
-
-        mapped.sort((a, b) => b.totalXp - a.totalXp);
-        const entries = mapped.map((m, idx) => ({
-          rank: idx + 1,
-          user: m.user,
-          totalXp: m.totalXp,
-        }));
-
+      // 4. Achievements Query
+      if (query.includes("achievements") || query.includes("GetAchievements")) {
         return route.fulfill({
           status: 200,
           contentType: "application/json",
           body: JSON.stringify({
             data: {
-              leaderboard: entries,
+              achievements: [
+                {
+                  id: "first_wave",
+                  name: "First Wave Complete",
+                  description: "Complete your first wave in any course.",
+                  iconUrl: null,
+                  unlocked: true,
+                  unlockedAt: "2026-08-01T12:00:00Z",
+                },
+                {
+                  id: "lesson_complete",
+                  name: "Lesson Pioneer",
+                  description: "Finish all waves in a single lesson.",
+                  iconUrl: null,
+                  unlocked: true,
+                  unlockedAt: "2026-08-05T15:30:00Z",
+                },
+                {
+                  id: "first_course",
+                  name: "Course Conqueror",
+                  description: "Complete an entire curriculum course.",
+                  iconUrl: null,
+                  unlocked: false,
+                  unlockedAt: null,
+                },
+                {
+                  id: "perfect_score",
+                  name: "Flawless Execution",
+                  description: "Achieve 100% on any evaluate section.",
+                  iconUrl: null,
+                  unlocked: true,
+                  unlockedAt: "2026-08-08T09:00:00Z",
+                },
+                {
+                  id: "lesson_proficient",
+                  name: "Mastery Badge",
+                  description: "Reach proficient level across 3 lessons.",
+                  iconUrl: null,
+                  unlocked: false,
+                  unlockedAt: null,
+                },
+                {
+                  id: "rising_star",
+                  name: "Rising Star",
+                  description: "Cross 500 XP in learning milestones.",
+                  iconUrl: null,
+                  unlocked: true,
+                  unlockedAt: "2026-08-10T18:00:00Z",
+                },
+                {
+                  id: "scholar",
+                  name: "Scholar",
+                  description: "Cross 2,500 XP in learning milestones.",
+                  iconUrl: null,
+                  unlocked: false,
+                  unlockedAt: null,
+                },
+                {
+                  id: "master",
+                  name: "Grand Master",
+                  description: "Cross 10,000 XP in learning milestones.",
+                  iconUrl: null,
+                  unlocked: false,
+                  unlockedAt: null,
+                },
+              ],
+            },
+          }),
+        });
+      }
+
+      // 5. Leaderboard Query
+      if (query.includes("query Leaderboard") || query.includes("leaderboard(")) {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              leaderboard: {
+                totalRanked: 15,
+                entries: [
+                  { rank: 1, userId: "u-1", displayName: "Senuri W.", totalXp: 12450, isMe: false },
+                  { rank: 2, userId: "u-2", displayName: "Kavindu J.", totalXp: 11820, isMe: false },
+                  { rank: 3, userId: "u-3", displayName: "Dinuka P.", totalXp: 10950, isMe: false },
+                  { rank: 4, userId: "u-4", displayName: "Thisara B.", totalXp: 9800, isMe: false },
+                  { rank: 5, userId: "u-5", displayName: "Rashmi G.", totalXp: 9150, isMe: false },
+                  { rank: 6, userId: "demo-student-id", displayName: "Demo S.", totalXp: 425, isMe: true },
+                ],
+                me: {
+                  rank: 6,
+                  userId: "demo-student-id",
+                  displayName: "Demo S.",
+                  totalXp: 425,
+                  isMe: true,
+                },
+              },
+            },
+          }),
+        });
+      }
+
+      // 6. My Enrollments Query
+      if (query.includes("myEnrollments") || query.includes("MyEnrollments")) {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              myEnrollments: [
+                {
+                  id: "science-thinking",
+                  title: "Scientific Thinking",
+                  description: "Learn mechanical physics and kinematics.",
+                  slug: "science-thinking",
+                  gradeLevel: "G9",
+                  price: 0,
+                  isPublished: true,
+                  myProgress: { completedWaves: 1, totalWaves: 5 },
+                  lessons: [],
+                },
+              ],
+            },
+          }),
+        });
+      }
+
+      // 7. My Subscription Query
+      if (query.includes("mySubscription") || query.includes("MySubscription")) {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              mySubscription: {
+                id: "sub-123",
+                planTier: "PREMIUM",
+                status: "ACTIVE",
+                currentPeriodEnd: "2027-01-01T00:00:00Z",
+                cancelAtPeriodEnd: false,
+              },
             },
           }),
         });

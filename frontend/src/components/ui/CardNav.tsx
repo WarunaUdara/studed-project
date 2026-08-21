@@ -246,7 +246,8 @@ export function FloatingCardNav({
                         {/* Thumbnail / Gradient Header */}
                         <div
                           className={`relative mb-3 flex h-28 w-full items-center justify-center rounded-xl overflow-hidden shadow-inner ${
-                            card.gradient || "bg-gradient-to-tr from-amber-500/20 via-primary/20 to-purple-500/20"
+                            card.gradient ||
+                            "bg-gradient-to-tr from-amber-500/20 via-primary/20 to-purple-500/20"
                           }`}
                         >
                           <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px]" />

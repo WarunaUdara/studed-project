@@ -87,9 +87,7 @@ function LessonDetailPage() {
   };
 
   const handleDeleteWave = async (id: string, title: string) => {
-    const confirmed = window.confirm(
-      `Delete wave "${title}"? This cannot be undone.`,
-    );
+    const confirmed = window.confirm(`Delete wave "${title}"? This cannot be undone.`);
     if (!confirmed) return;
 
     setDeletingWaveId(id);

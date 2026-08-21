@@ -26,39 +26,39 @@ func (m *matrixFailingCourseClient) GetCourse(ctx context.Context, in *coursepb.
 
 func TestGrpcFailureMatrix_ResolverErrorHandling(t *testing.T) {
 	failureCases := []struct {
-		name          string
-		code          codes.Code
-		msg           string
+		name           string
+		code           codes.Code
+		msg            string
 		expectContains string
 	}{
 		{
-			name:          "InvalidArgument error",
-			code:          codes.InvalidArgument,
-			msg:           "course_id cannot be blank",
+			name:           "InvalidArgument error",
+			code:           codes.InvalidArgument,
+			msg:            "course_id cannot be blank",
 			expectContains: "cannot be blank",
 		},
 		{
-			name:          "PermissionDenied error",
-			code:          codes.PermissionDenied,
-			msg:           "only educators can view draft course",
+			name:           "PermissionDenied error",
+			code:           codes.PermissionDenied,
+			msg:            "only educators can view draft course",
 			expectContains: "only educators",
 		},
 		{
-			name:          "Unauthenticated error",
-			code:          codes.Unauthenticated,
-			msg:           "token expired or missing",
+			name:           "Unauthenticated error",
+			code:           codes.Unauthenticated,
+			msg:            "token expired or missing",
 			expectContains: "token",
 		},
 		{
-			name:          "ResourceExhausted error",
-			code:          codes.ResourceExhausted,
-			msg:           "rate limit exceeded on API Gateway",
+			name:           "ResourceExhausted error",
+			code:           codes.ResourceExhausted,
+			msg:            "rate limit exceeded on API Gateway",
 			expectContains: "rate limit",
 		},
 		{
-			name:          "Internal error",
-			code:          codes.Internal,
-			msg:           "unexpected database connection pool failure",
+			name:           "Internal error",
+			code:           codes.Internal,
+			msg:            "unexpected database connection pool failure",
 			expectContains: "database",
 		},
 	}

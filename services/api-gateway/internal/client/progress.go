@@ -165,6 +165,45 @@ func (c *ProgressClient) GetWaveProgress(ctx context.Context, userID, waveID str
 	}, nil
 }
 
+// GetCourseWaveProgress resolves every wave in a course in one call, keyed by
+// wave ID. Asking per wave cost one round trip per wave, and each of those
+// re-walked the whole course to work out locking.
+func (c *ProgressClient) GetCourseWaveProgress(ctx context.Context, userID, courseID string) (map[string]*model.WaveProgress, error) {
+	resp, err := c.client.GetCourseWaveProgress(ctx, &progresspb.GetCourseWaveProgressRequest{
+		UserId:   userID,
+		CourseId: courseID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("get course wave progress failed: %w", err)
+	}
+	if resp.Error != "" {
+		return nil, fmt.Errorf("get course wave progress failed: %s", resp.Error)
+	}
+
+	out := make(map[string]*model.WaveProgress, len(resp.Entries))
+	for _, e := range resp.Entries {
+		var completedAt *time.Time
+		if e.CompletedAtUnix > 0 {
+			t := timeFromUnix(e.CompletedAtUnix)
+			completedAt = &t
+		}
+		var lastAttemptedAt *time.Time
+		if e.LastAttemptedAtUnix > 0 {
+			t := timeFromUnix(e.LastAttemptedAtUnix)
+			lastAttemptedAt = &t
+		}
+		highestScore := int(e.HighestScore)
+		out[e.WaveId] = &model.WaveProgress{
+			Status:          model.ProgressStatus(e.Status),
+			AttemptsCount:   int(e.AttemptsCount),
+			HighestScore:    &highestScore,
+			CompletedAt:     completedAt,
+			LastAttemptedAt: lastAttemptedAt,
+		}
+	}
+	return out, nil
+}
+
 func (c *ProgressClient) GetCourseProgress(ctx context.Context, userID, courseID string) ([]*model.LessonProgress, error) {
 	resp, err := c.client.GetCourseProgress(ctx, &progresspb.GetCourseProgressRequest{
 		UserId:   userID,

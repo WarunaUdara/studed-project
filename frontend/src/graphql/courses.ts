@@ -261,14 +261,23 @@ export const MY_ENROLLMENTS_QUERY = `
 ` as const;
 
 export const LEADERBOARD_QUERY = `
-  query Leaderboard($scope: LeaderboardScope!, $courseId: ID, $grade: Grade) {
-    leaderboard(scope: $scope, courseId: $courseId, grade: $grade) {
-      rank
-      user {
-        id
-        fullName
+  query Leaderboard($scope: LeaderboardScope!, $courseId: ID, $grade: Grade, $limit: Int, $offset: Int) {
+    leaderboard(scope: $scope, courseId: $courseId, grade: $grade, limit: $limit, offset: $offset) {
+      totalRanked
+      entries {
+        rank
+        userId
+        displayName
+        totalXp
+        isMe
       }
-      totalXp
+      me {
+        rank
+        userId
+        displayName
+        totalXp
+        isMe
+      }
     }
   }
 ` as const;
@@ -361,6 +370,7 @@ export const ACHIEVEMENTS_QUERY = `
       name
       description
       iconUrl
+      unlocked
       unlockedAt
     }
   }

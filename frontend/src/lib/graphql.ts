@@ -1,11 +1,11 @@
-import { createClient as createWsClient } from "graphql-ws";
 import { authExchange } from "@urql/exchange-auth";
+import { createClient as createWsClient } from "graphql-ws";
 import {
   cacheExchange,
   createClient,
   fetchExchange,
-  subscriptionExchange,
   type OperationResult,
+  subscriptionExchange,
 } from "urql";
 
 const REFRESH_TOKEN_MUTATION = `
@@ -20,7 +20,15 @@ const GRAPHQL_URL =
   import.meta.env.VITE_GRAPHQL_URL ||
   (import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/graphql` : "/graphql");
 
-const WS_URL = GRAPHQL_URL.replace(/^http/, "ws");
+const getWsUrl = () => {
+  if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL;
+  if (GRAPHQL_URL.startsWith("http")) return GRAPHQL_URL.replace(/^http/, "ws");
+  if (typeof window !== "undefined") {
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    return `${protocol}//${window.location.host}${GRAPHQL_URL}`;
+  }
+  return "ws://localhost:8080/graphql";
+};
 
 const subscriptionForwarder = (request: {
   query?: string;
@@ -32,7 +40,7 @@ const subscriptionForwarder = (request: {
     complete: () => void;
   }) {
     const client = createWsClient({
-      url: WS_URL,
+      url: getWsUrl(),
       lazy: true,
     });
     const dispose = client.subscribe(

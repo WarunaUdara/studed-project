@@ -1,6 +1,6 @@
+import { BlobProgramMaze, type MazeGridConfig } from "@/components/waves/BlobProgramMaze";
 import type { BlobMazeConfig } from "@/lib/content/interactiveBlocks";
 import { parseBlockConfig } from "@/lib/content/interactiveBlocks";
-import { BlobProgramMaze, type MazeGridConfig } from "@/components/waves/BlobProgramMaze";
 
 interface BlobMazeBlockProps {
   content: string;

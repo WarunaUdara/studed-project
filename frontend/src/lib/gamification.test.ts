@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
-  computeBadges,
+  achievementStyle,
   computeProficiency,
   cumulativeXpForLevel,
   earnedCount,
+  leaderboardDisplayName,
   levelFromXp,
-  privateLeaderboardName,
   rankBadgeGlyph,
 } from "@/lib/gamification";
 
@@ -86,54 +86,53 @@ describe("computeProficiency", () => {
   });
 });
 
-describe("computeBadges / earnedCount", () => {
-  const baseInputs = {
-    totalXp: 0,
-    completedWaves: 0,
-    hasPerfectScore: false,
-    completedLessons: 0,
-    proficientLessons: 0,
-    completedCourses: 0,
-  };
-
-  it("earns no badges with no activity", () => {
-    const badges = computeBadges(baseInputs);
-    expect(earnedCount(badges)).toBe(0);
+describe("earnedCount", () => {
+  // The unlock RULES moved to gamification-service; the frontend only counts
+  // what the API says was unlocked. Testing rules here again is what let a
+  // second, drifting copy of them exist.
+  it("counts nothing when nothing is unlocked", () => {
+    expect(earnedCount([{ unlocked: false }, { unlocked: false }])).toBe(0);
   });
 
-  it("earns xp-milestone badges at the correct thresholds", () => {
-    const badges = computeBadges({ ...baseInputs, totalXp: 2000 });
-    const earnedIds = badges.filter((b) => b.earned).map((b) => b.id);
-    expect(earnedIds).toContain("rising_star");
-    expect(earnedIds).toContain("scholar");
-    expect(earnedIds).not.toContain("master");
+  it("counts only the unlocked achievements", () => {
+    expect(earnedCount([{ unlocked: true }, { unlocked: false }, { unlocked: true }])).toBe(2);
   });
 
-  it("earns activity-based badges independently of xp", () => {
-    const badges = computeBadges({
-      ...baseInputs,
-      completedWaves: 1,
-      hasPerfectScore: true,
-      completedCourses: 1,
-    });
-    const earnedIds = badges.filter((b) => b.earned).map((b) => b.id);
-    expect(earnedIds).toEqual(
-      expect.arrayContaining(["first_wave", "perfect_score", "first_course"]),
-    );
+  it("counts nothing for an empty catalog", () => {
+    expect(earnedCount([])).toBe(0);
   });
 });
 
-describe("privateLeaderboardName", () => {
-  it("reduces a full name to first name + last initial", () => {
-    expect(privateLeaderboardName("Kavindi Perera")).toBe("Kavindi P.");
+describe("achievementStyle", () => {
+  it("gives each known achievement its tier", () => {
+    expect(achievementStyle("master").tier).toBe("purple");
+    expect(achievementStyle("scholar").tier).toBe("gold");
+    expect(achievementStyle("first_wave").tier).toBe("bronze");
   });
 
-  it("leaves a single-word name unchanged", () => {
-    expect(privateLeaderboardName("Kavindi")).toBe("Kavindi");
+  it("falls back for an achievement the frontend has not seen", () => {
+    // The server owns the catalog, so it can add one before the UI knows it.
+    const style = achievementStyle("some_future_badge");
+    expect(style.tier).toBe("bronze");
+    expect(style.icon).toBe("trophy");
+  });
+});
+
+describe("leaderboardDisplayName", () => {
+  // Names arrive already masked from the gateway. This is a display guard.
+  it("passes an already-masked name straight through", () => {
+    expect(leaderboardDisplayName("Kavindi P.")).toBe("Kavindi P.");
   });
 
-  it("handles multi-word names by using the last word's initial", () => {
-    expect(privateLeaderboardName("Anne Marie De Silva")).toBe("Anne S.");
+  it("never re-masks, which would strip the name twice", () => {
+    expect(leaderboardDisplayName("Kavindi Perera")).toBe("Kavindi Perera");
+  });
+
+  it("falls back when a name is missing", () => {
+    expect(leaderboardDisplayName("")).toBe("Student Scholar");
+    expect(leaderboardDisplayName("   ")).toBe("Student Scholar");
+    expect(leaderboardDisplayName(null)).toBe("Student Scholar");
+    expect(leaderboardDisplayName(undefined)).toBe("Student Scholar");
   });
 });
 

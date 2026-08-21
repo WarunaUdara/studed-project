@@ -117,15 +117,14 @@ func main() {
 	eventPublisher := events.NewPublisher(redisClient)
 	gamificationSvc := service.NewGamificationService(xpRepo, leaderboardRepo, achievementRepo, service.WithEventPublisher(eventPublisher))
 
-	// Self-healing rebuild for Redis leaderboards on start (REL-10)
+	// Redis holds leaderboards as a derived index, so a flush or a failover
+	// costs nothing but the time this takes. Rebuilds every scope — global,
+	// grade, weekly and per-course — from Postgres, display names included.
 	go func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 		defer cancel()
-		if allXp, err := xpRepo.GetAllUserXp(ctx); err == nil {
-			for _, u := range allXp {
-				_ = leaderboardRepo.UpdateLeaderboard(ctx, u.UserID, u.UserID, u.TotalXp, "GLOBAL", "", 0)
-			}
-			log.Info("self-healing leaderboard sync completed", slog.Int("count", len(allXp)))
+		if err := gamificationSvc.RebuildLeaderboards(ctx); err != nil {
+			log.Error("leaderboard rebuild failed", slog.Any("error", err))
 		}
 	}()
 

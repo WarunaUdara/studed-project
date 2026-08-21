@@ -1,21 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Award, CheckCircle2, HelpCircle, Sparkles, Trophy, Zap } from "lucide-react";
+import { useQuery } from "urql";
 import { AchievementBadge } from "@/components/ui/achievement-badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
-import { BADGE_DEFS } from "@/lib/gamification";
+import { ACHIEVEMENTS_QUERY } from "@/graphql/courses";
+import type { AchievementsQueryData } from "@/lib/graphqlTypes";
 
 export const Route = createFileRoute("/educator/_layout/achievements")({
   component: EducatorAchievementsPage,
 });
 
 function EducatorAchievementsPage() {
-  // Convert standard definitions into format expected by AchievementBadge
-  const achievements = BADGE_DEFS.map((badge) => ({
+  // The catalog is server-owned. This is a preview of what students can earn,
+  // so nothing here claims an achievement was actually unlocked.
+  const [{ data }] = useQuery<AchievementsQueryData>({ query: ACHIEVEMENTS_QUERY });
+  const catalog = data?.achievements ?? [];
+
+  const achievements = catalog.map((badge) => ({
     id: badge.id,
-    name: badge.label,
+    name: badge.name,
+    description: badge.description,
     trigger: "metric" as const,
-    // Display as unlocked preview in educator view
-    achievedAt: new Date().toISOString(),
+    // A catalog preview, not a record: nothing here has been unlocked.
+    achievedAt: null,
   }));
 
   return (
@@ -37,8 +44,7 @@ function EducatorAchievementsPage() {
                 Platform Achievement Badges
               </CardTitle>
               <CardDescription>
-                Preview of all 8 active student reward badges currently wired to lesson completion
-                triggers.
+                Every badge students can unlock, straight from the platform catalog.
               </CardDescription>
             </CardHeader>
             <CardContent>

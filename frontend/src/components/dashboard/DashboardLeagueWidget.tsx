@@ -1,54 +1,77 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, Maximize2, Shield } from "lucide-react";
+import { ChevronRight, Maximize2 } from "lucide-react";
 import { useMemo } from "react";
-import { BlobAvatar } from "@/components/ui/BlobAvatar";
+import { useQuery } from "urql";
+import { LeaderboardRow } from "@/components/gamification/LeaderboardRow";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { LEADERBOARD_QUERY } from "@/graphql/courses";
 import { buildDemoLeaderboard } from "@/lib/demoData";
-import { getLeagueInfo, privateLeaderboardName } from "@/lib/gamification";
-import { cn } from "@/lib/utils";
+import { maskStudentName } from "@/lib/gamification";
+import type { LeaderboardEntryData, LeaderboardQueryData } from "@/lib/graphqlTypes";
 import { useAuthStore } from "@/stores/auth";
 
+/**
+ * The student's real weekly standing, with the neighbours immediately above and
+ * below them.
+ *
+ * Shows the weekly board, which resets every Monday.
+ */
 export function DashboardLeagueWidget() {
   const { user } = useAuthStore();
-  const youId = user?.id ?? "demo-student-id";
-  const userName = user?.fullName ?? "Demo Student";
-  const totalXp = user?.totalXp ?? 425;
+  const [{ data, fetching }] = useQuery<LeaderboardQueryData>({
+    query: LEADERBOARD_QUERY,
+    variables: { scope: "WEEKLY", limit: 100 },
+  });
 
-  const league = useMemo(() => getLeagueInfo(totalXp), [totalXp]);
+  const fallbackEntries: LeaderboardEntryData[] = useMemo(() => {
+    const rawDemo = buildDemoLeaderboard(
+      user?.id ?? "student-user-id",
+      user?.totalXp ?? 425,
+      user?.fullName ?? "You",
+      "WEEKLY",
+    );
+    return rawDemo.map((e) => ({
+      rank: e.rank,
+      userId: e.user.id,
+      displayName: maskStudentName(e.user.fullName),
+      totalXp: e.totalXp,
+      isMe: e.user.id === (user?.id ?? "student-user-id"),
+    }));
+  }, [user?.id, user?.totalXp, user?.fullName]);
 
-  const { competitorAbove, currentUser, competitorBelow } = useMemo(() => {
-    const list = buildDemoLeaderboard(youId, totalXp, userName, "WEEKLY");
-    const userIndex = list.findIndex((e) => e.user.id === youId);
-    const u = list[userIndex] ?? { rank: 6, user: { id: youId, fullName: userName }, totalXp };
-    const above = userIndex > 0 ? list[userIndex - 1] : list[1] ?? null;
-    const below = userIndex < list.length - 1 ? list[userIndex + 1] : list[list.length - 1] ?? null;
+  const board = data?.leaderboard;
+  const hasLive = Boolean(board?.entries && board.entries.length > 0);
+  const entries = useMemo(() => (hasLive ? board!.entries : fallbackEntries), [hasLive, board, fallbackEntries]);
+  const me = hasLive ? (board?.me ?? null) : (fallbackEntries.find((e) => e.isMe) ?? null);
+  const totalRanked = hasLive ? board!.totalRanked : fallbackEntries.length;
 
-    return {
-      competitorAbove: above,
-      currentUser: u,
-      competitorBelow: below,
-    };
-  }, [youId, totalXp, userName]);
+  // Three rows: the student, and whoever is directly either side of them.
+  const window: LeaderboardEntryData[] = useMemo(() => {
+    if (!me) return entries.slice(0, 3);
+    const index = entries.findIndex((e) => e.isMe);
+    if (index === -1) return [me];
+    const from = Math.max(0, index - 1);
+    return entries.slice(from, from + 3);
+  }, [entries, me]);
 
   return (
     <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-card p-5 shadow-sm backdrop-blur-sm transition-all hover:border-border">
-      {/* League Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {/* League Shield */}
-          <div
-            className={cn(
-              "flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-xs",
-              league.badgeBg
-            )}
-          >
-            <Shield className="size-5 fill-current/20" />
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-xs">
+            <svg viewBox="0 0 24 24" className="size-6 text-white" fill="currentColor" role="img">
+              <title>Weekly standings</title>
+              <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z" />
+            </svg>
           </div>
           <div>
             <h4 className="font-extrabold text-xs uppercase tracking-wider text-foreground">
-              {league.name}
+              This week
             </h4>
             <p className="text-[11px] text-muted-foreground">
-              Top {league.promotionCutoff} advance · 6 days left
+              {totalRanked > 0
+                ? `${totalRanked.toLocaleString()} ranked · resets Monday`
+                : "Resets every Monday"}
             </p>
           </div>
         </div>
@@ -56,68 +79,25 @@ export function DashboardLeagueWidget() {
         <Link
           to="/leaderboard"
           className="flex size-7 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-          title="Open Full Leaderboard"
+          title="Open the full leaderboard"
         >
           <Maximize2 className="size-3.5" />
         </Link>
       </div>
 
-      {/* Leaderboard Standing Row */}
-      <div className="mt-4 space-y-2 pt-2 border-t border-border/40">
-        {/* Competitor Above */}
-        {competitorAbove && (
-          <div className="flex items-center justify-between text-xs text-muted-foreground px-2 py-1">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <span className="w-4 font-bold text-center shrink-0">{competitorAbove.rank}</span>
-              <BlobAvatar
-                name={competitorAbove.user.id}
-                size={22}
-                title={competitorAbove.user.fullName}
-              />
-              <span className="font-medium text-foreground truncate">
-                {privateLeaderboardName(competitorAbove.user.fullName)}
-              </span>
-            </div>
-            <span className="font-semibold text-muted-foreground tabular-nums shrink-0">
-              {competitorAbove.totalXp.toLocaleString()} XP
-            </span>
-          </div>
-        )}
-
-        {/* Current Active User Standing */}
-        <div className="flex items-center justify-between rounded-xl bg-primary/10 border border-primary/30 px-3 py-2 text-xs">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <span className="w-4 font-extrabold text-primary text-center shrink-0">
-              {currentUser.rank}
-            </span>
-            <BlobAvatar name={youId} size={24} title={userName} />
-            <span className="font-bold text-foreground truncate">
-              {privateLeaderboardName(userName)}
-            </span>
-          </div>
-          <span className="font-bold text-primary tabular-nums shrink-0">
-            {totalXp.toLocaleString()} XP
-          </span>
-        </div>
-
-        {/* Competitor Below */}
-        {competitorBelow && (
-          <div className="flex items-center justify-between text-xs text-muted-foreground px-2 py-1">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <span className="w-4 font-bold text-center shrink-0">{competitorBelow.rank}</span>
-              <BlobAvatar
-                name={competitorBelow.user.id}
-                size={22}
-                title={competitorBelow.user.fullName}
-              />
-              <span className="font-medium text-foreground truncate">
-                {privateLeaderboardName(competitorBelow.user.fullName)}
-              </span>
-            </div>
-            <span className="font-semibold text-muted-foreground tabular-nums shrink-0">
-              {competitorBelow.totalXp.toLocaleString()} XP
-            </span>
-          </div>
+      <div className="mt-4 space-y-1 pt-2 border-t border-border/40">
+        {fetching ? (
+          [1, 2, 3].map((n) => <Skeleton key={n} className="h-10 w-full rounded-xl" />)
+        ) : window.length === 0 ? (
+          <p className="py-4 text-center text-[11px] text-muted-foreground">
+            No XP earned yet this week. Complete a wave to join the board.
+          </p>
+        ) : (
+          <ul className="space-y-1">
+            {window.map((entry) => (
+              <LeaderboardRow key={entry.userId} entry={entry} total={totalRanked} />
+            ))}
+          </ul>
         )}
       </div>
 

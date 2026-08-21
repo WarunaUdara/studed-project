@@ -1,5 +1,4 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { gsap } from "gsap";
 import "./TextLoop.css";
 
 const VIEW_W = 1200;
@@ -97,7 +96,10 @@ export function TextLoop({
   const rawId = useId();
   const pathId = `text-loop-${rawId.replace(/:/g, "")}`;
 
-  const d = useMemo(() => path || buildPath(shape, curviness, ribbonWidth), [path, shape, curviness, ribbonWidth]);
+  const d = useMemo(
+    () => path || buildPath(shape, curviness, ribbonWidth),
+    [path, shape, curviness, ribbonWidth],
+  );
 
   const unit = useMemo(() => {
     const base = uppercase ? String(text).toUpperCase() : String(text);
@@ -125,54 +127,84 @@ export function TextLoop({
         length = pathEl.getTotalLength();
         unitWidth = measureEl.getComputedTextLength();
       } catch {
-        return;
+        // Fallback for SVG measurement
       }
-      if (!length) return;
+      if (!length || length < 10) {
+        length = VIEW_W * 1.5;
+      }
+      if (!unitWidth || unitWidth < 10) {
+        unitWidth = Math.max(50, unit.length * fontSize * 0.6);
+      }
 
-      const reps = unitWidth > 0 ? Math.max(1, Math.round(length / unitWidth)) : 1;
-      setMetrics((prev) => (prev.length === length && prev.reps === reps ? prev : { length, reps }));
+      const reps = Math.max(2, Math.ceil((length * 1.5) / unitWidth));
+      setMetrics((prev) =>
+        prev.length === length && prev.reps === reps ? prev : { length, reps },
+      );
     };
 
     measure();
+    const timer = setTimeout(measure, 60);
     if (typeof document !== "undefined" && document.fonts?.ready) {
       document.fonts.ready.then(measure).catch(() => {});
     }
+    window.addEventListener("resize", measure);
 
     return () => {
       cancelled = true;
+      clearTimeout(timer);
+      window.removeEventListener("resize", measure);
     };
   }, [d, unit, fontSize, fontWeight, letterSpacing]);
 
   useEffect(() => {
-    const { length } = metrics;
+    const length = metrics.length || VIEW_W * 1.5;
     const head = headRef.current;
     const tail = tailRef.current;
-    if (!head || !tail || !length) return undefined;
+    if (!head || !tail) return undefined;
 
     const apply = (offset: number) => {
-      const partner = offset >= 0 ? offset - length : offset + length;
-      head.setAttribute("startOffset", String(offset));
-      tail.setAttribute("startOffset", String(partner));
+      const normalized = ((offset % length) + length) % length;
+      const partner = normalized - length;
+      head.setAttribute("startOffset", `${normalized.toFixed(2)}`);
+      tail.setAttribute("startOffset", `${partner.toFixed(2)}`);
     };
 
     apply(0);
 
     const prefersReduced =
-      typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced || speed <= 0) return undefined;
 
-    const state = { offset: 0 };
-    const tween = gsap.to(state, {
-      offset: direction === "reverse" ? -length : length,
-      duration: length / speed,
-      ease: "none",
-      repeat: -1,
-      onUpdate: () => apply(state.offset),
-    });
+    let currentOffset = 0;
+    let animId: number;
+    let lastTime = performance.now();
+    let isPaused = false;
+
+    const dirMultiplier = direction === "reverse" ? -1 : 1;
+
+    const tick = (now: number) => {
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+
+      if (!isPaused && dt < 0.2) {
+        currentOffset += dirMultiplier * speed * dt;
+        apply(currentOffset);
+      }
+
+      animId = requestAnimationFrame(tick);
+    };
+
+    animId = requestAnimationFrame(tick);
 
     const root = rootRef.current;
-    const pause = () => tween.pause();
-    const resume = () => tween.resume();
+    const pause = () => {
+      isPaused = true;
+    };
+    const resume = () => {
+      isPaused = false;
+      lastTime = performance.now();
+    };
 
     if (pauseOnHover && root) {
       root.addEventListener("pointerenter", pause);
@@ -180,13 +212,13 @@ export function TextLoop({
     }
 
     return () => {
-      tween.kill();
+      cancelAnimationFrame(animId);
       if (pauseOnHover && root) {
         root.removeEventListener("pointerenter", pause);
         root.removeEventListener("pointerleave", resume);
       }
     };
-  }, [metrics, speed, direction, pauseOnHover]);
+  }, [metrics.length, speed, direction, pauseOnHover]);
 
   const loopText = unit.repeat(metrics.reps);
   const fitLength = metrics.length || undefined;
@@ -215,14 +247,38 @@ export function TextLoop({
           {unit}
         </text>
 
-        <text className="text-loop-text" style={textStyle} fill={color} dominantBaseline="central" aria-hidden="true">
-          <textPath ref={headRef} href={`#${pathId}`} startOffset={0} textLength={fitLength} lengthAdjust="spacing">
+        <text
+          className="text-loop-text"
+          style={textStyle}
+          fill={color}
+          dominantBaseline="central"
+          aria-hidden="true"
+        >
+          <textPath
+            ref={headRef}
+            href={`#${pathId}`}
+            startOffset={0}
+            textLength={fitLength}
+            lengthAdjust="spacing"
+          >
             {loopText}
           </textPath>
         </text>
 
-        <text className="text-loop-text" style={textStyle} fill={color} dominantBaseline="central" aria-hidden="true">
-          <textPath ref={tailRef} href={`#${pathId}`} startOffset={0} textLength={fitLength} lengthAdjust="spacing">
+        <text
+          className="text-loop-text"
+          style={textStyle}
+          fill={color}
+          dominantBaseline="central"
+          aria-hidden="true"
+        >
+          <textPath
+            ref={tailRef}
+            href={`#${pathId}`}
+            startOffset={0}
+            textLength={fitLength}
+            lengthAdjust="spacing"
+          >
             {loopText}
           </textPath>
         </text>

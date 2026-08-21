@@ -16,21 +16,25 @@ export default defineConfig(({ mode }) => {
   console.log("[vite.config] Proxy target resolved to:", target);
 
   return {
-    plugins: [TanStackRouterVite(), react(), tailwindcss()],
+    plugins: [
+      TanStackRouterVite({ autoCodeSplitting: true }),
+      react(),
+      tailwindcss(),
+    ],
     resolve: {
       dedupe: ["react", "react-dom"],
       alias: {
-        "@": path.resolve(__dirname, "./src"),
+        "@": path.resolve(import.meta.dirname, "./src"),
         // Course manifests live outside the frontend package so content-sync
         // and the app read the exact same files.
-        "@content": path.resolve(__dirname, "../content"),
+        "@content": path.resolve(import.meta.dirname, "../content"),
       },
     },
     server: {
       port: 5173,
       fs: {
         // Needed for the "@content" alias, which points above the Vite root.
-        allow: [path.resolve(__dirname), path.resolve(__dirname, "../content")],
+        allow: [path.resolve(import.meta.dirname), path.resolve(import.meta.dirname, "../content")],
       },
       allowedHosts: [
         "localhost",
@@ -58,15 +62,6 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
         },
       },
-      warmup: {
-        clientFiles: [
-          "./src/components/puck-blocks/puck-config.tsx",
-          "./src/routes/educator/_layout/courses.new.tsx",
-          "./src/routes/educator/_layout/courses.tsx",
-          "./src/routes/dashboard.tsx",
-          "./src/routes/waves.$waveId.tsx",
-        ],
-      },
     },
     build: {
       chunkSizeWarningLimit: 1000,
@@ -80,6 +75,9 @@ export default defineConfig(({ mode }) => {
               { name: "vendor-graphql", test: /node_modules[\\/](urql|@urql|graphql)[\\/]/ },
               { name: "vendor-baseui", test: /node_modules[\\/]@base-ui[\\/]/ },
               { name: "vendor-zod", test: /node_modules[\\/]zod[\\/]/ },
+              { name: "vendor-puck", test: /node_modules[\\/]@puckeditor[\\/]/ },
+              { name: "vendor-three", test: /node_modules[\\/](three|@types[\\/]three|ogl|postprocessing)[\\/]/ },
+              { name: "vendor-katex", test: /node_modules[\\/](katex|rehype-katex|remark-math)[\\/]/ },
             ],
           },
         },
