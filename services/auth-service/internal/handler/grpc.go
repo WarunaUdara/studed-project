@@ -48,6 +48,14 @@ func (h *AuthGRPCHandler) Login(ctx context.Context, req *authpb.LoginRequest) (
 	return resp, nil
 }
 
+func (h *AuthGRPCHandler) GoogleLogin(ctx context.Context, req *authpb.GoogleLoginRequest) (*authpb.AuthResponse, error) {
+	resp, err := h.svc.GoogleLogin(ctx, req.Code, req.CodeVerifier)
+	if err != nil {
+		return &authpb.AuthResponse{Error: err.Error()}, nil
+	}
+	return resp, nil
+}
+
 func (h *AuthGRPCHandler) ValidateToken(ctx context.Context, req *authpb.ValidateTokenRequest) (*authpb.ValidateTokenResponse, error) {
 	return h.svc.ValidateToken(ctx, req.AccessToken)
 }

@@ -34,9 +34,10 @@ const (
 type User struct {
 	ID                string `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	Email             string `gorm:"uniqueIndex;not null"`
-	PasswordHash      string `gorm:"not null"`
-	FullName          string `gorm:"not null"`
-	Role              Role   `gorm:"not null;default:'STUDENT'"`
+	PasswordHash      *string
+	GoogleID          *string `gorm:"uniqueIndex"`
+	FullName          string  `gorm:"not null"`
+	Role              Role    `gorm:"not null;default:'STUDENT'"`
 	Grade             *Grade
 	PreferredLanguage string    `gorm:"not null;default:'en'"`
 	TotalXp           int       `gorm:"not null;default:0"`

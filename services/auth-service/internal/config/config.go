@@ -7,13 +7,16 @@ import (
 )
 
 type Config struct {
-	ServiceAddr     string
-	DatabaseURL     string
-	AccessSecret    string
-	RefreshSecret   string
-	ServiceToken    string
-	AccessTokenTTL  time.Duration
-	RefreshTokenTTL time.Duration
+	ServiceAddr        string
+	DatabaseURL        string
+	AccessSecret       string
+	RefreshSecret      string
+	ServiceToken       string
+	AccessTokenTTL     time.Duration
+	RefreshTokenTTL    time.Duration
+	GoogleClientID     string
+	GoogleClientSecret string
+	GoogleRedirectURI  string
 }
 
 func Load() (*Config, error) {
@@ -38,13 +41,16 @@ func Load() (*Config, error) {
 	}
 
 	return &Config{
-		ServiceAddr:     getEnv("LISTEN_ADDR", ":8081"),
-		DatabaseURL:     getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable"),
-		AccessSecret:    accessSecret,
-		RefreshSecret:   refreshSecret,
-		ServiceToken:    getEnv("SERVICE_TOKEN", ""),
-		AccessTokenTTL:  accessTTL,
-		RefreshTokenTTL: refreshTTL,
+		ServiceAddr:        getEnv("LISTEN_ADDR", ":8081"),
+		DatabaseURL:        getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable"),
+		AccessSecret:       accessSecret,
+		RefreshSecret:      refreshSecret,
+		ServiceToken:       getEnv("SERVICE_TOKEN", ""),
+		AccessTokenTTL:     accessTTL,
+		RefreshTokenTTL:    refreshTTL,
+		GoogleClientID:     getEnv("GOOGLE_CLIENT_ID", ""),
+		GoogleClientSecret: getEnv("GOOGLE_CLIENT_SECRET", ""),
+		GoogleRedirectURI:  getEnv("GOOGLE_REDIRECT_URI", "http://localhost:5173"),
 	}, nil
 }
 

@@ -116,6 +116,11 @@ type EvaluateBlockInput struct {
 	Metadata      *string  `json:"metadata,omitempty"`
 }
 
+type GoogleLoginInput struct {
+	Code         string `json:"code"`
+	CodeVerifier string `json:"codeVerifier"`
+}
+
 type LeaderboardEntry struct {
 	Rank    int     `json:"rank"`
 	User    *User   `json:"user"`

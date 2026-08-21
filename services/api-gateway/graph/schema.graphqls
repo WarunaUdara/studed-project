@@ -209,6 +209,11 @@ input LoginInput {
   password: String!
 }
 
+input GoogleLoginInput {
+  code: String!
+  codeVerifier: String!
+}
+
 type AuthPayload {
   accessToken: String!
   refreshToken: String!
@@ -350,6 +355,7 @@ input UpdateMeInput {
 type Mutation {
   register(input: RegisterInput!): AuthPayload!
   login(input: LoginInput!): AuthPayload!
+  googleLogin(input: GoogleLoginInput!): AuthPayload!
   refreshToken(refreshToken: String!): AuthPayload!
   logout: Boolean!
 

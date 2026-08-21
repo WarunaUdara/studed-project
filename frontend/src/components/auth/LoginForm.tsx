@@ -1,3 +1,4 @@
+import { GoogleButton } from "@/components/auth/GoogleButton";
 import { useLoginForm } from "@/components/auth/useLoginForm";
 import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
 import { Button } from "@/components/ui/button";
@@ -60,6 +61,14 @@ export function LoginForm({ onSuccess }: LoginFormProps = {}) {
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? "Signing in..." : "Sign in"}
       </Button>
+
+      <div className="flex items-center gap-3">
+        <span aria-hidden="true" className="h-px flex-1 bg-border" />
+        <span className="text-xs text-muted-foreground">or</span>
+        <span aria-hidden="true" className="h-px flex-1 bg-border" />
+      </div>
+
+      <GoogleButton />
     </form>
   );
 }

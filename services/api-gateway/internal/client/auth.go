@@ -95,6 +95,21 @@ func (c *AuthClient) ValidateToken(ctx context.Context, accessToken string) (*au
 	return c.client.ValidateToken(ctx, &authpb.ValidateTokenRequest{AccessToken: accessToken})
 }
 
+func (c *AuthClient) GoogleLogin(ctx context.Context, input model.GoogleLoginInput) (*model.AuthPayload, error) {
+	resp, err := c.client.GoogleLogin(ctx, &authpb.GoogleLoginRequest{
+		Code:         input.Code,
+		CodeVerifier: input.CodeVerifier,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("google login failed: %w", err)
+	}
+	if resp.Error != "" {
+		return nil, fmt.Errorf("google login failed: %s", resp.Error)
+	}
+
+	return protoAuthResponseToModel(resp), nil
+}
+
 func (c *AuthClient) GetUser(ctx context.Context, userID string) (*model.User, error) {
 	user, err := c.client.GetUser(ctx, &authpb.GetUserRequest{UserId: userID})
 	if err != nil {
