@@ -74,3 +74,15 @@ export const ME_QUERY = `
     }
   }
 ` as const;
+
+export const REQUEST_PASSWORD_RESET_MUTATION = `
+  mutation RequestPasswordReset($email: String!) {
+    requestPasswordReset(email: $email)
+  }
+` as const;
+
+export const RESET_PASSWORD_MUTATION = `
+  mutation ResetPassword($token: String!, $newPassword: String!) {
+    resetPassword(token: $token, newPassword: $newPassword)
+  }
+` as const;

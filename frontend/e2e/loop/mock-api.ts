@@ -72,6 +72,31 @@ export async function setupMockGraphQL(page: Page) {
         });
       }
 
+      // Password Reset Requests
+      if (query.includes("requestPasswordReset") || query.includes("RequestPasswordReset")) {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              requestPasswordReset: true,
+            },
+          }),
+        });
+      }
+
+      if (query.includes("resetPassword") || query.includes("ResetPassword")) {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              resetPassword: true,
+            },
+          }),
+        });
+      }
+
       // 2. Me Query
       if (query.includes("me {") || query.includes("query Me")) {
         return route.fulfill({
