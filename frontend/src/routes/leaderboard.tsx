@@ -8,8 +8,9 @@ import { BlobAvatar } from "@/components/ui/BlobAvatar";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { LEADERBOARD_QUERY } from "@/graphql/courses";
+import { buildDemoLeaderboard, SRI_LANKAN_SCHOOLS } from "@/lib/demoData";
 import { sanitizeGraphQLError } from "@/lib/errors";
-import { privateLeaderboardName } from "@/lib/gamification";
+import { getLeagueInfo, privateLeaderboardName } from "@/lib/gamification";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
 
@@ -28,33 +29,23 @@ const SCOPE_TABS: Array<{ value: Scope; label: string }> = [
   { value: "FRIENDS", label: "Friends" },
 ];
 
-const MOCK_SCHOOLS = [
-  "Royal College, Colombo",
-  "Visakha Vidyalaya, Colombo",
-  "Ananda College, Colombo",
-  "Nalanda College, Colombo",
-  "Musaeus College, Colombo",
-  "St. Thomas' College, Mount Lavinia",
-  "Ladies' College, Colombo",
-  "Trinity College, Kandy",
-  "Mahamaya Girls' College, Kandy",
-  "Richmond College, Galle",
-];
-
 function getMockSchool(id: string, index: number) {
   const hash = id.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) + index;
-  return MOCK_SCHOOLS[hash % MOCK_SCHOOLS.length];
+  return SRI_LANKAN_SCHOOLS[hash % SRI_LANKAN_SCHOOLS.length];
 }
 
 interface LeaderboardEntry {
   rank: number;
   user: { id: string; fullName: string };
   totalXp: number;
+  school?: string;
 }
 
 function LeaderboardPage() {
   const { user } = useAuthStore();
-  const youId = user?.id ?? "";
+  const youId = user?.id ?? "demo-student-id";
+  const youName = user?.fullName ?? "Demo Student";
+  const youXp = user?.totalXp ?? 425;
 
   const [scope, setScope] = useState<Scope>("GLOBAL");
   const [period, setPeriod] = useState<Period>("THIS_WEEK");
@@ -81,14 +72,18 @@ function LeaderboardPage() {
     () => reexecuteQuery({ requestPolicy: "network-only" }),
   );
 
-  const leaderboard: LeaderboardEntry[] = useMemo(
-    () => (data?.leaderboard ?? []) as LeaderboardEntry[],
-    [data],
-  );
+  const leaderboard: LeaderboardEntry[] = useMemo(() => {
+    if (data?.leaderboard && Array.isArray(data.leaderboard) && data.leaderboard.length > 0) {
+      return data.leaderboard as LeaderboardEntry[];
+    }
+    // Reliable seeded fallback ensuring leaderboard is never empty
+    return buildDemoLeaderboard(youId, youXp, youName, scope);
+  }, [data, youId, youXp, youName, scope]);
 
   const myEntry = leaderboard.find((e) => e.user.id === youId);
   const myRank = myEntry?.rank ?? null;
-  const myXp = myEntry?.totalXp ?? user?.totalXp ?? 0;
+  const myXp = myEntry?.totalXp ?? youXp;
+  const league = useMemo(() => getLeagueInfo(myXp), [myXp]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -380,11 +375,11 @@ function LeaderboardPage() {
           </Card>
 
           {/* League promotion mechanic */}
-          <div className="rounded-[24px] bg-muted/40 p-5 border text-center max-w-md mx-auto">
+          <div className="rounded-[24px] bg-muted/40 p-5 border border-border/60 text-center max-w-md mx-auto shadow-xs">
             <p className="text-xs text-muted-foreground font-medium">
-              Top 10 finishers this week will earn promotion to the{" "}
-              <span className="font-bold text-amber-600">Gold League</span>. Standing resets every
-              Monday 00:00.
+              You are currently competing in the{" "}
+              <span className={cn("font-bold", league.textColor)}>{league.name}</span> ({league.metal}).
+              Top {league.promotionCutoff} finishers will earn promotion to the next league. Standing resets every Monday 00:00.
             </p>
           </div>
         </div>

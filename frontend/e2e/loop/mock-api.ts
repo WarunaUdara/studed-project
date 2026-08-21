@@ -104,6 +104,96 @@ export async function setupMockGraphQL(page: Page) {
         });
       }
 
+      // 4. Leaderboard Query
+      if (query.includes("query Leaderboard") || query.includes("leaderboard(")) {
+        const scope = vars?.scope || "GLOBAL";
+        const youId = "demo-student-id";
+        const youXp = 425;
+        const youName = "Demo Student";
+
+        // Generate full 50-student realistic cohort
+        const SEEDED_STUDENTS_LIST = [
+          { id: "stu-001", fullName: "Senuri Wickramasinghe", totalXp: 12450 },
+          { id: "stu-002", fullName: "Kavindu Jayawardena", totalXp: 11820 },
+          { id: "stu-003", fullName: "Dinuka Perera", totalXp: 10950 },
+          { id: "stu-004", fullName: "Thisara Bandara", totalXp: 9800 },
+          { id: "stu-005", fullName: "Rashmi Gunasekara", totalXp: 9150 },
+          { id: "stu-006", fullName: "Akila Weerasinghe", totalXp: 8640 },
+          { id: "stu-007", fullName: "Sachini Fernando", totalXp: 8210 },
+          { id: "stu-008", fullName: "Praveen Seneviratne", totalXp: 7890 },
+          { id: "stu-009", fullName: "Nadeesha Alwis", totalXp: 7420 },
+          { id: "stu-010", fullName: "Tharindu Rathnayake", totalXp: 7100 },
+          { id: "stu-011", fullName: "Sivapalan Ketheeswaran", totalXp: 6850 },
+          { id: "stu-012", fullName: "Sanduni Dissanayake", totalXp: 6540 },
+          { id: "stu-013", fullName: "Gayan Mendis", totalXp: 6200 },
+          { id: "stu-014", fullName: "Chathuni Liyanage", totalXp: 5900 },
+          { id: "stu-015", fullName: "Bhanuka Rajapaksha", totalXp: 5620 },
+          { id: "stu-016", fullName: "Hiruni Senanayake", totalXp: 5310 },
+          { id: "stu-017", fullName: "Ravindu Gamage", totalXp: 5020 },
+          { id: "stu-018", fullName: "Yashodha Karunaratne", totalXp: 4780 },
+          { id: "stu-019", fullName: "Navin Pathirana", totalXp: 4510 },
+          { id: "stu-020", fullName: "Dilini Samarasinghe", totalXp: 4290 },
+          { id: "stu-021", fullName: "Thanushanth Selvarajah", totalXp: 4050 },
+          { id: "stu-022", fullName: "Imasha Abeykoon", totalXp: 3820 },
+          { id: "stu-023", fullName: "Isuru Ranasinghe", totalXp: 3600 },
+          { id: "stu-024", fullName: "Minoli Hettiarachchi", totalXp: 3410 },
+          { id: "stu-025", fullName: "Sanju Jayasuriya", totalXp: 3230 },
+          { id: "stu-026", fullName: "Anuki De Silva", totalXp: 3040 },
+          { id: "stu-027", fullName: "Hasitha Wijewardena", totalXp: 2890 },
+          { id: "stu-028", fullName: "Kasuni Kulatunga", totalXp: 2710 },
+          { id: "stu-029", fullName: "Ruwan Ekanayake", totalXp: 2550 },
+          { id: "stu-030", fullName: "Pavithra Sivakumar", totalXp: 2400 },
+          { id: "stu-031", fullName: "Oshada Madushan", totalXp: 2240 },
+          { id: "stu-032", fullName: "Malsha Fonseka", totalXp: 2090 },
+          { id: "stu-033", fullName: "Ashen Cooray", totalXp: 1950 },
+          { id: "stu-034", fullName: "Uthpala Vithanage", totalXp: 1810 },
+          { id: "stu-035", fullName: "Danushka Priyadarshana", totalXp: 1680 },
+          { id: "stu-036", fullName: "Nilupul Senarath", totalXp: 1540 },
+          { id: "stu-037", fullName: "Methmi Attanayake", totalXp: 1420 },
+          { id: "stu-038", fullName: "Janidu Premachandra", totalXp: 1300 },
+          { id: "stu-039", fullName: "Shalika Manamperi", totalXp: 1190 },
+          { id: "stu-040", fullName: "Pasan Liyanapathirana", totalXp: 1080 },
+          { id: "stu-041", fullName: "Vathsalan Arumugam", totalXp: 980 },
+          { id: "stu-042", fullName: "Nimesh Galahitiyawa", totalXp: 880 },
+          { id: "stu-043", fullName: "Thilini Dharmadasa", totalXp: 790 },
+          { id: "stu-044", fullName: "Manuja Wickramatunga", totalXp: 690 },
+          { id: "stu-045", fullName: "Sayuri Lokuge", totalXp: 610 },
+          { id: "stu-046", fullName: "Dulantha Hewapathirana", totalXp: 520 },
+          { id: "stu-047", fullName: "Lakshika Chandrasena", totalXp: 440 },
+          { id: "stu-048", fullName: "Suraj Jayakody", totalXp: 370 },
+          { id: "stu-049", fullName: "Hansika Jayawardhana", totalXp: 290 },
+          { id: "stu-050", fullName: "Chamod Edirisinghe", totalXp: 210 },
+        ];
+
+        const mult = scope === "WEEKLY" ? 0.35 : scope === "GRADE" ? 0.8 : 1.0;
+        const mapped = SEEDED_STUDENTS_LIST.map((s) => ({
+          user: { id: s.id, fullName: s.fullName },
+          totalXp: Math.round(s.totalXp * mult),
+        }));
+
+        mapped.push({
+          user: { id: youId, fullName: youName },
+          totalXp: youXp,
+        });
+
+        mapped.sort((a, b) => b.totalXp - a.totalXp);
+        const entries = mapped.map((m, idx) => ({
+          rank: idx + 1,
+          user: m.user,
+          totalXp: m.totalXp,
+        }));
+
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              leaderboard: entries,
+            },
+          }),
+        });
+      }
+
       // Default continue to real server
       return route.continue();
     } catch {

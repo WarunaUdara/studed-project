@@ -33,11 +33,13 @@ export function GamifiedPreview() {
     };
   }, [reduce]);
 
-  const snapshot: LeaderboardEntry[] = demoLeaderboardSnapshot(YOU_ID).map((e) => ({
-    rank: e.rank,
-    user: e.user,
-    totalXp: e.totalXp,
-  }));
+  const snapshot: LeaderboardEntry[] = demoLeaderboardSnapshot(YOU_ID).map(
+    (e: { rank: number; user: { id: string; fullName: string }; totalXp: number }) => ({
+      rank: e.rank,
+      user: e.user,
+      totalXp: e.totalXp,
+    })
+  );
   const youRow = snapshot.find((e) => e.user.id === YOU_ID);
 
   return (

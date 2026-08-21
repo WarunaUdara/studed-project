@@ -12,31 +12,31 @@ interface DailySparkLeagueRankProps {
 const DEFAULT_MEMBERS: LeagueMember[] = [
   {
     rank: 3,
-    name: "Ankit K",
-    avatarLetter: "A",
+    name: "Dinuka P",
+    avatarLetter: "D",
     avatarColor: "bg-emerald-500",
     xp: 225,
   },
   {
     rank: 5,
-    name: "David E",
-    avatarLetter: "D",
+    name: "Senuri W",
+    avatarLetter: "S",
     avatarColor: "bg-emerald-500",
     xp: 200,
   },
   {
     rank: 6,
-    name: "Jeremy L",
-    avatarLetter: "J",
+    name: "Kavindu J",
+    avatarLetter: "K",
     avatarColor: "bg-amber-400 text-black",
     xp: 55,
   },
   {
-    rank: 6,
-    name: "Yolanda J",
-    avatarLetter: "Y",
+    rank: 7,
+    name: "Sachini F",
+    avatarLetter: "S",
     avatarColor: "bg-yellow-600 text-black",
-    xp: 55,
+    xp: 50,
   },
 ];
 
@@ -219,11 +219,7 @@ function LeaderboardRow({
             {member.rank}
           </span>
         )}
-        <div
-          className={`flex size-9 items-center justify-center rounded-full ${member.avatarColor} font-extrabold text-sm shadow-sm`}
-        >
-          {member.avatarLetter}
-        </div>
+        <BlobAvatar name={member.name} size={36} title={member.name} />
         <span className="font-medium text-sm text-neutral-200">
           {member.name}
         </span>

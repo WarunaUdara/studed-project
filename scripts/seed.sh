@@ -99,6 +99,11 @@ main() {
   register_or_login "educator@studed.lk" "password1234" "Demo Educator" "EDUCATOR"
   create_course "Demo Science" "demo-science" "G10"
 
+  register_or_login "demo.student@studed.lk" "password1234" "Demo Student" "STUDENT"
+  register_or_login "senuri.w@studed.lk" "password1234" "Senuri Wickramasinghe" "STUDENT"
+  register_or_login "kavindu.j@studed.lk" "password1234" "Kavindu Jayawardena" "STUDENT"
+  register_or_login "dinuka.p@studed.lk" "password1234" "Dinuka Perera" "STUDENT"
+
   echo "[seed] done"
 }
 
