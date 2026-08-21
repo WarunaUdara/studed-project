@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "role": "student",
+    "role": "educator",
     "path": "/dashboard",
     "routeFile": "frontend/src/routes/dashboard.tsx",
     "title": "StudEd",
@@ -10,7 +10,7 @@
       "height": 800
     },
     "state": "default",
-    "timestamp": "2026-08-21T05:44:46.561Z"
+    "timestamp": "2026-08-21T05:45:07.798Z"
   },
   "domOutline": [
     {

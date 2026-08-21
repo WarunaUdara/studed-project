@@ -1,9 +1,9 @@
+import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { DeterministicAuditor } from "./audit";
 import { CritiqueRunner } from "./critique";
 import { runDiscovery } from "./discover";
-import { runSnapshotEngine } from "./snapshot";
 import type { CritiqueOutput } from "./types";
 
 const LOOP_DIR = path.resolve(__dirname);
@@ -19,8 +19,19 @@ export async function executeLoop(iteration = 1, maxIterations = 3): Promise<voi
   await runDiscovery();
 
   // PHASE 1: SNAPSHOT
+  // Spawned rather than called: see snapshot-cli.ts for why sharing a process
+  // with discovery makes every capture time out.
   console.log(`[Phase 1] Capturing Structured Fingerprints...`);
-  await runSnapshotEngine();
+  const snapshotExit = await new Promise<number>((resolve) => {
+    const child = spawn("bun", [path.resolve(LOOP_DIR, "snapshot-cli.ts")], {
+      stdio: "inherit",
+      cwd: path.resolve(LOOP_DIR, "../.."),
+    });
+    child.on("close", (code) => resolve(code ?? 0));
+  });
+  if (snapshotExit !== 0) {
+    console.warn(`[Phase 1] Snapshot phase exited with code ${snapshotExit}`);
+  }
 
   // PHASE 2: AUDIT
   console.log(`[Phase 2] Executing Deterministic Rule Auditor...`);

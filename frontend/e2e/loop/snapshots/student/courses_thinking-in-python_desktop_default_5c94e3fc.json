@@ -1,7 +1,7 @@
 {
   "metadata": {
     "role": "student",
-    "path": "/courses/science-thinking",
+    "path": "/courses/thinking-in-python",
     "routeFile": "frontend/src/routes/courses.$courseId.tsx",
     "title": "StudEd",
     "viewport": "desktop",
@@ -10,41 +10,41 @@
       "height": 800
     },
     "state": "default",
-    "timestamp": "2026-08-21T05:44:49.271Z"
+    "timestamp": "2026-08-21T05:44:58.120Z"
   },
   "domOutline": [
     {
       "tag": "body",
       "classes": "",
-      "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumD Back to Courses Map Journ",
+      "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumDSomething went wrongAn une",
       "box": {
         "x": 0,
         "y": 0,
         "width": 1280,
-        "height": 1062
+        "height": 800
       },
       "children": [
         {
           "id": "root",
           "tag": "div",
           "classes": "",
-          "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumD Back to Courses Map Journ",
+          "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumDSomething went wrongAn une",
           "box": {
             "x": 0,
             "y": 0,
             "width": 1280,
-            "height": 1062
+            "height": 800
           },
           "children": [
             {
               "tag": "div",
               "classes": "relative min-h-screen bg-background text-foreground",
-              "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumD Back to Courses Map Journ",
+              "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumDSomething went wrongAn une",
               "box": {
                 "x": 0,
                 "y": 0,
                 "width": 1280,
-                "height": 1062
+                "height": 800
               },
               "children": [
                 {
@@ -145,91 +145,56 @@
                 {
                   "tag": "main",
                   "classes": "",
-                  "textSnippet": "Back to Courses Map Journey Classic ListG9Gamified Course JourneyScientific Thin",
+                  "textSnippet": "Something went wrongAn unexpected error occurred. Please try again.Try againBack",
                   "box": {
                     "x": 0,
                     "y": 64,
                     "width": 1280,
-                    "height": 998
+                    "height": 310
                   },
                   "children": [
                     {
-                      "tag": "div",
-                      "classes": "mx-auto max-w-6xl p-4 pt-6 sm:p-6 sm:pt-8",
-                      "textSnippet": "Back to Courses Map Journey Classic ListG9Gamified Course JourneyScientific Thin",
+                      "tag": "main",
+                      "classes": "mx-auto max-w-6xl p-6",
+                      "textSnippet": "Something went wrongAn unexpected error occurred. Please try again.Try againBack",
                       "box": {
                         "x": 64,
                         "y": 64,
                         "width": 1152,
-                        "height": 998
+                        "height": 310
                       },
                       "children": [
                         {
                           "tag": "div",
-                          "classes": "mb-6 flex flex-wrap items-center justify-between gap-4",
-                          "textSnippet": "Back to Courses Map Journey Classic List",
+                          "classes": "flex flex-col items-center gap-4 rounded-2xl border border-dashed p-12 text-center",
+                          "textSnippet": "Something went wrongAn unexpected error occurred. Please try again.Try againBack",
                           "box": {
                             "x": 88,
-                            "y": 96,
+                            "y": 88,
                             "width": 1104,
-                            "height": 38
-                          },
-                          "children": [
-                            {
-                              "tag": "a",
-                              "classes": "active",
-                              "textSnippet": "Back to Courses",
-                              "box": {
-                                "x": 88,
-                                "y": 97,
-                                "width": 160,
-                                "height": 36
-                              }
-                            },
-                            {
-                              "tag": "div",
-                              "classes": "flex rounded-full bg-muted/80 p-1 border",
-                              "textSnippet": "Map Journey Classic List",
-                              "box": {
-                                "x": 934,
-                                "y": 96,
-                                "width": 258,
-                                "height": 38
-                              }
-                            }
-                          ]
-                        },
-                        {
-                          "tag": "div",
-                          "classes": "space-y-6",
-                          "textSnippet": "G9Gamified Course JourneyScientific ThinkingTraverse the interactive wave map. C",
-                          "box": {
-                            "x": 88,
-                            "y": 158,
-                            "width": 1104,
-                            "height": 880
+                            "height": 262
                           },
                           "children": [
                             {
                               "tag": "div",
-                              "classes": "relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-",
-                              "textSnippet": "G9Gamified Course JourneyScientific ThinkingTraverse the interactive wave map. C",
+                              "classes": "",
+                              "textSnippet": "Something went wrongAn unexpected error occurred. Please try again.",
                               "box": {
-                                "x": 88,
-                                "y": 158,
-                                "width": 1104,
-                                "height": 160
+                                "x": 481,
+                                "y": 193,
+                                "width": 318,
+                                "height": 48
                               }
                             },
                             {
                               "tag": "div",
-                              "classes": "text-card-foreground relative overflow-visible rounded-3xl border bg-card/90 shadow-2xl backdrop-blu",
-                              "textSnippet": "Learning Path · 0 of 5 Waves Cleared7-day streak+0 XPLesson 1: Gears and Mechani",
+                              "classes": "flex gap-3",
+                              "textSnippet": "Try againBack to courses",
                               "box": {
-                                "x": 88,
-                                "y": 342,
-                                "width": 1104,
-                                "height": 696
+                                "x": 501,
+                                "y": 257,
+                                "width": 277,
+                                "height": 44
                               }
                             }
                           ]
@@ -278,28 +243,6 @@
                       {
                         "role": "button",
                         "name": "Toggle dark and light theme"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "role": "main",
-                "name": "main",
-                "children": [
-                  {
-                    "role": "div",
-                    "name": "div",
-                    "children": [
-                      {
-                        "role": "div",
-                        "name": "div",
-                        "children": [
-                          {
-                            "role": "a",
-                            "name": "a"
-                          }
-                        ]
                       }
                     ]
                   }
@@ -719,17 +662,17 @@
     {
       "selector": "#root > div > main",
       "tag": "main",
-      "textSnippet": "Back to Courses Map Journey Classic List G9 GAMIFIED COURSE ",
+      "textSnippet": "Something went wrong An unexpected error occurred. Please t",
       "box": {
         "x": 0,
         "y": 64,
         "width": 1280,
-        "height": 998,
+        "height": 310,
         "isClipped": false,
         "scrollWidth": 1280,
         "clientWidth": 1280,
-        "scrollHeight": 998,
-        "clientHeight": 998
+        "scrollHeight": 310,
+        "clientHeight": 310
       },
       "styles": {
         "color": "oklch(0.178 0.029 145)",
@@ -746,19 +689,19 @@
       }
     },
     {
-      "selector": "#root > div > main > div > div:nth-of-type(1) > a",
-      "tag": "a",
-      "textSnippet": "Back to Courses",
+      "selector": "#root > div > main > main",
+      "tag": "main",
+      "textSnippet": "Something went wrong An unexpected error occurred. Please t",
       "box": {
-        "x": 88,
-        "y": 97,
-        "width": 160,
-        "height": 36,
+        "x": 64,
+        "y": 64,
+        "width": 1152,
+        "height": 310,
         "isClipped": false,
-        "scrollWidth": 160,
-        "clientWidth": 160,
-        "scrollHeight": 36,
-        "clientHeight": 36
+        "scrollWidth": 1152,
+        "clientWidth": 1152,
+        "scrollHeight": 310,
+        "clientHeight": 310
       },
       "styles": {
         "color": "oklch(0.178 0.029 145)",
@@ -775,345 +718,147 @@
       }
     },
     {
-      "selector": "#root > div > main > div > div:nth-of-type(1) > a > button",
+      "selector": "#root > div > main > main > div > div:nth-of-type(1) > p:nth-of-type(1)",
+      "tag": "p",
+      "textSnippet": "Something went wrong",
+      "box": {
+        "x": 481,
+        "y": 193,
+        "width": 318,
+        "height": 24,
+        "isClipped": false,
+        "scrollWidth": 318,
+        "clientWidth": 318,
+        "scrollHeight": 24,
+        "clientHeight": 24
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "500",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > main > div > div:nth-of-type(1) > p:nth-of-type(2)",
+      "tag": "p",
+      "textSnippet": "An unexpected error occurred. Please try again.",
+      "box": {
+        "x": 481,
+        "y": 221,
+        "width": 318,
+        "height": 20,
+        "isClipped": false,
+        "scrollWidth": 318,
+        "clientWidth": 318,
+        "scrollHeight": 20,
+        "clientHeight": 20
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > main > div > div:nth-of-type(2) > button",
       "tag": "button",
-      "textSnippet": "Back to Courses",
+      "textSnippet": "Try again",
       "box": {
-        "x": 88,
-        "y": 97,
-        "width": 160,
-        "height": 36,
+        "x": 501,
+        "y": 257,
+        "width": 111,
+        "height": 44,
         "isClipped": false,
-        "scrollWidth": 156,
-        "clientWidth": 156,
-        "scrollHeight": 34,
-        "clientHeight": 34
+        "scrollWidth": 107,
+        "clientWidth": 107,
+        "scrollHeight": 40,
+        "clientHeight": 40
       },
       "styles": {
         "color": "oklch(0.178 0.029 145)",
-        "backgroundColor": "transparent",
+        "backgroundColor": "oklch(1 0 0)",
         "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
-        "fontSize": "12px",
-        "lineHeight": "16px",
+        "fontSize": "14px",
+        "lineHeight": "20px",
         "fontWeight": "700",
         "borderRadius": "16px",
-        "borderColor": "transparent",
-        "borderWidth": "2px 2px 0px",
-        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.8)",
+        "borderWidth": "2px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.88 0.03 145) 0px 3px 0px 0px",
         "opacity": "1"
       }
     },
     {
-      "selector": "#root > div > main > div > div:nth-of-type(1) > div > button:nth-of-type(1)",
-      "tag": "button",
-      "textSnippet": "Map Journey",
-      "box": {
-        "x": 939,
-        "y": 101,
-        "width": 129,
-        "height": 28,
-        "isClipped": false,
-        "scrollWidth": 129,
-        "clientWidth": 129,
-        "scrollHeight": 28,
-        "clientHeight": 28
-      },
-      "styles": {
-        "color": "oklch(0.988 0.003 145)",
-        "backgroundColor": "oklch(0.484 0.164 145)",
-        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
-        "fontSize": "12px",
-        "lineHeight": "16px",
-        "fontWeight": "700",
-        "borderRadius": "3.35544e+07px",
-        "borderColor": "oklch(0.88 0.03 145)",
-        "borderWidth": "0px",
-        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px",
-        "opacity": "1"
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(1) > div > button:nth-of-type(2)",
-      "tag": "button",
-      "textSnippet": "Classic List",
-      "box": {
-        "x": 1068,
-        "y": 101,
-        "width": 119,
-        "height": 28,
-        "isClipped": false,
-        "scrollWidth": 119,
-        "clientWidth": 119,
-        "scrollHeight": 28,
-        "clientHeight": 28
-      },
-      "styles": {
-        "color": "oklch(0.44 0.022 145)",
-        "backgroundColor": "transparent",
-        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
-        "fontSize": "12px",
-        "lineHeight": "16px",
-        "fontWeight": "700",
-        "borderRadius": "3.35544e+07px",
-        "borderColor": "oklch(0.88 0.03 145)",
-        "borderWidth": "0px",
-        "boxShadow": "none",
-        "opacity": "1"
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(1) > h1",
-      "tag": "h1",
-      "textSnippet": "Scientific Thinking",
-      "box": {
-        "x": 113,
-        "y": 217,
-        "width": 700,
-        "height": 36,
-        "isClipped": false,
-        "scrollWidth": 700,
-        "clientWidth": 700,
-        "scrollHeight": 36,
-        "clientHeight": 36
-      },
-      "styles": {
-        "color": "oklch(0.178 0.029 145)",
-        "backgroundColor": "transparent",
-        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
-        "fontSize": "30px",
-        "lineHeight": "36px",
-        "fontWeight": "900",
-        "borderRadius": "0px",
-        "borderColor": "oklch(0.88 0.03 145)",
-        "borderWidth": "0px",
-        "boxShadow": "none",
-        "opacity": "1"
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(1) > p",
-      "tag": "p",
-      "textSnippet": "Traverse the interactive wave map. Complete 5-minute atomic ",
-      "box": {
-        "x": 113,
-        "y": 261,
-        "width": 576,
-        "height": 32,
-        "isClipped": false,
-        "scrollWidth": 576,
-        "clientWidth": 576,
-        "scrollHeight": 32,
-        "clientHeight": 32
-      },
-      "styles": {
-        "color": "oklch(0.44 0.022 145)",
-        "backgroundColor": "transparent",
-        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
-        "fontSize": "12px",
-        "lineHeight": "16px",
-        "fontWeight": "400",
-        "borderRadius": "0px",
-        "borderColor": "oklch(0.88 0.03 145)",
-        "borderWidth": "0px",
-        "boxShadow": "none",
-        "opacity": "1"
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(2) > a",
+      "selector": "#root > div > main > main > div > div:nth-of-type(2) > a",
       "tag": "a",
-      "textSnippet": "Continue Journey",
-      "box": {
-        "x": 941,
-        "y": 212,
-        "width": 226,
-        "height": 52,
-        "isClipped": false,
-        "scrollWidth": 226,
-        "clientWidth": 226,
-        "scrollHeight": 52,
-        "clientHeight": 52
-      },
-      "styles": {
-        "color": "oklch(0.178 0.029 145)",
-        "backgroundColor": "transparent",
-        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
-        "fontSize": "16px",
-        "lineHeight": "24px",
-        "fontWeight": "400",
-        "borderRadius": "0px",
-        "borderColor": "oklch(0.88 0.03 145)",
-        "borderWidth": "0px",
-        "boxShadow": "none",
-        "opacity": "1"
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(2) > a > button",
-      "tag": "button",
-      "textSnippet": "Continue Journey",
-      "box": {
-        "x": 941,
-        "y": 212,
-        "width": 226,
-        "height": 52,
-        "isClipped": false,
-        "scrollWidth": 226,
-        "clientWidth": 226,
-        "scrollHeight": 48,
-        "clientHeight": 48
-      },
-      "styles": {
-        "color": "oklch(0.988 0.003 145)",
-        "backgroundColor": "oklch(0.484 0.164 145)",
-        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
-        "fontSize": "16px",
-        "lineHeight": "24px",
-        "fontWeight": "700",
-        "borderRadius": "3.35544e+07px",
-        "borderColor": "oklch(0.88 0.03 145)",
-        "borderWidth": "0px 0px 4px",
-        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0px 4px 6px -4px",
-        "opacity": "1"
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(2) > button",
-      "tag": "button",
+      "textSnippet": "Back to courses",
       "box": {
         "x": 624,
-        "y": 515,
-        "width": 32,
-        "height": 32,
-        "isClipped": true,
-        "scrollWidth": 63,
-        "clientWidth": 56,
-        "scrollHeight": 63,
-        "clientHeight": 56
+        "y": 257,
+        "width": 154,
+        "height": 44,
+        "isClipped": false,
+        "scrollWidth": 154,
+        "clientWidth": 154,
+        "scrollHeight": 44,
+        "clientHeight": 44
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > main > div > div:nth-of-type(2) > a > button",
+      "tag": "button",
+      "textSnippet": "Back to courses",
+      "box": {
+        "x": 624,
+        "y": 257,
+        "width": 154,
+        "height": 44,
+        "isClipped": false,
+        "scrollWidth": 154,
+        "clientWidth": 154,
+        "scrollHeight": 40,
+        "clientHeight": 40
       },
       "styles": {
         "color": "oklch(0.988 0.003 145)",
         "backgroundColor": "oklch(0.484 0.164 145)",
         "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
-        "fontSize": "16px",
-        "lineHeight": "24px",
-        "fontWeight": "400",
-        "borderRadius": "3.35544e+07px",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "700",
+        "borderRadius": "16px",
         "borderColor": "oklch(0.88 0.03 145)",
-        "borderWidth": "0px",
-        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.484 -0.134341 0.0940665 / 0.3) 0px 0px 0px 4px, oklab(0.484 -0.134341 0.0940665 / 0.5) 0px 25px 50px -12px",
-        "opacity": "1"
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(3) > button",
-      "tag": "button",
-      "box": {
-        "x": 627,
-        "y": 633,
-        "width": 23,
-        "height": 23,
-        "isClipped": false,
-        "scrollWidth": 40,
-        "clientWidth": 40,
-        "scrollHeight": 40,
-        "clientHeight": 40
-      },
-      "styles": {
-        "color": "oklch(0.44 0.022 145)",
-        "backgroundColor": "oklab(0.95 -0.0122873 0.00860365 / 0.8)",
-        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
-        "fontSize": "16px",
-        "lineHeight": "24px",
-        "fontWeight": "400",
-        "borderRadius": "3.35544e+07px",
-        "borderColor": "oklch(0.88 0.03 145)",
-        "borderWidth": "0px",
-        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.88 0.03 145) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
-        "opacity": "1"
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(4) > button",
-      "tag": "button",
-      "box": {
-        "x": 514,
-        "y": 736,
-        "width": 23,
-        "height": 23,
-        "isClipped": false,
-        "scrollWidth": 40,
-        "clientWidth": 40,
-        "scrollHeight": 40,
-        "clientHeight": 40
-      },
-      "styles": {
-        "color": "oklch(0.44 0.022 145)",
-        "backgroundColor": "oklab(0.95 -0.0122873 0.00860365 / 0.8)",
-        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
-        "fontSize": "16px",
-        "lineHeight": "24px",
-        "fontWeight": "400",
-        "borderRadius": "3.35544e+07px",
-        "borderColor": "oklch(0.88 0.03 145)",
-        "borderWidth": "0px",
-        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.88 0.03 145) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
-        "opacity": "1"
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(5) > button",
-      "tag": "button",
-      "box": {
-        "x": 629,
-        "y": 839,
-        "width": 23,
-        "height": 23,
-        "isClipped": false,
-        "scrollWidth": 40,
-        "clientWidth": 40,
-        "scrollHeight": 40,
-        "clientHeight": 40
-      },
-      "styles": {
-        "color": "oklch(0.44 0.022 145)",
-        "backgroundColor": "oklab(0.95 -0.0122873 0.00860365 / 0.8)",
-        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
-        "fontSize": "16px",
-        "lineHeight": "24px",
-        "fontWeight": "400",
-        "borderRadius": "3.35544e+07px",
-        "borderColor": "oklch(0.88 0.03 145)",
-        "borderWidth": "0px",
-        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.88 0.03 145) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
-        "opacity": "1"
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(6) > button",
-      "tag": "button",
-      "box": {
-        "x": 743,
-        "y": 941,
-        "width": 23,
-        "height": 23,
-        "isClipped": false,
-        "scrollWidth": 40,
-        "clientWidth": 40,
-        "scrollHeight": 40,
-        "clientHeight": 40
-      },
-      "styles": {
-        "color": "oklch(0.44 0.022 145)",
-        "backgroundColor": "oklab(0.95 -0.0122873 0.00860365 / 0.8)",
-        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
-        "fontSize": "16px",
-        "lineHeight": "24px",
-        "fontWeight": "400",
-        "borderRadius": "3.35544e+07px",
-        "borderColor": "oklch(0.88 0.03 145)",
-        "borderWidth": "0px",
-        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.88 0.03 145) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "borderWidth": "0px 0px 4px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.42 0.15 145) 0px 4px 0px 0px",
         "opacity": "1"
       }
     }
@@ -1321,192 +1066,94 @@
         "x": 0,
         "y": 64,
         "width": 1280,
-        "height": 998,
+        "height": 310,
         "isClipped": false,
         "scrollWidth": 1280,
         "clientWidth": 1280,
-        "scrollHeight": 998,
-        "clientHeight": 998
+        "scrollHeight": 310,
+        "clientHeight": 310
       }
     },
     {
-      "selector": "#root > div > main > div > div:nth-of-type(1) > a",
+      "selector": "#root > div > main > main",
       "box": {
-        "x": 88,
-        "y": 97,
-        "width": 160,
-        "height": 36,
+        "x": 64,
+        "y": 64,
+        "width": 1152,
+        "height": 310,
         "isClipped": false,
-        "scrollWidth": 160,
-        "clientWidth": 160,
-        "scrollHeight": 36,
-        "clientHeight": 36
+        "scrollWidth": 1152,
+        "clientWidth": 1152,
+        "scrollHeight": 310,
+        "clientHeight": 310
       }
     },
     {
-      "selector": "#root > div > main > div > div:nth-of-type(1) > a > button",
+      "selector": "#root > div > main > main > div > div:nth-of-type(1) > p:nth-of-type(1)",
       "box": {
-        "x": 88,
-        "y": 97,
-        "width": 160,
-        "height": 36,
+        "x": 481,
+        "y": 193,
+        "width": 318,
+        "height": 24,
         "isClipped": false,
-        "scrollWidth": 156,
-        "clientWidth": 156,
-        "scrollHeight": 34,
-        "clientHeight": 34
+        "scrollWidth": 318,
+        "clientWidth": 318,
+        "scrollHeight": 24,
+        "clientHeight": 24
       }
     },
     {
-      "selector": "#root > div > main > div > div:nth-of-type(1) > div > button:nth-of-type(1)",
+      "selector": "#root > div > main > main > div > div:nth-of-type(1) > p:nth-of-type(2)",
       "box": {
-        "x": 939,
-        "y": 101,
-        "width": 129,
-        "height": 28,
+        "x": 481,
+        "y": 221,
+        "width": 318,
+        "height": 20,
         "isClipped": false,
-        "scrollWidth": 129,
-        "clientWidth": 129,
-        "scrollHeight": 28,
-        "clientHeight": 28
+        "scrollWidth": 318,
+        "clientWidth": 318,
+        "scrollHeight": 20,
+        "clientHeight": 20
       }
     },
     {
-      "selector": "#root > div > main > div > div:nth-of-type(1) > div > button:nth-of-type(2)",
+      "selector": "#root > div > main > main > div > div:nth-of-type(2) > button",
       "box": {
-        "x": 1068,
-        "y": 101,
-        "width": 119,
-        "height": 28,
+        "x": 501,
+        "y": 257,
+        "width": 111,
+        "height": 44,
         "isClipped": false,
-        "scrollWidth": 119,
-        "clientWidth": 119,
-        "scrollHeight": 28,
-        "clientHeight": 28
+        "scrollWidth": 107,
+        "clientWidth": 107,
+        "scrollHeight": 40,
+        "clientHeight": 40
       }
     },
     {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(1) > h1",
-      "box": {
-        "x": 113,
-        "y": 217,
-        "width": 700,
-        "height": 36,
-        "isClipped": false,
-        "scrollWidth": 700,
-        "clientWidth": 700,
-        "scrollHeight": 36,
-        "clientHeight": 36
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(1) > p",
-      "box": {
-        "x": 113,
-        "y": 261,
-        "width": 576,
-        "height": 32,
-        "isClipped": false,
-        "scrollWidth": 576,
-        "clientWidth": 576,
-        "scrollHeight": 32,
-        "clientHeight": 32
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(2) > a",
-      "box": {
-        "x": 941,
-        "y": 212,
-        "width": 226,
-        "height": 52,
-        "isClipped": false,
-        "scrollWidth": 226,
-        "clientWidth": 226,
-        "scrollHeight": 52,
-        "clientHeight": 52
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(2) > a > button",
-      "box": {
-        "x": 941,
-        "y": 212,
-        "width": 226,
-        "height": 52,
-        "isClipped": false,
-        "scrollWidth": 226,
-        "clientWidth": 226,
-        "scrollHeight": 48,
-        "clientHeight": 48
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(2) > button",
+      "selector": "#root > div > main > main > div > div:nth-of-type(2) > a",
       "box": {
         "x": 624,
-        "y": 515,
-        "width": 32,
-        "height": 32,
-        "isClipped": true,
-        "scrollWidth": 63,
-        "clientWidth": 56,
-        "scrollHeight": 63,
-        "clientHeight": 56
+        "y": 257,
+        "width": 154,
+        "height": 44,
+        "isClipped": false,
+        "scrollWidth": 154,
+        "clientWidth": 154,
+        "scrollHeight": 44,
+        "clientHeight": 44
       }
     },
     {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(3) > button",
+      "selector": "#root > div > main > main > div > div:nth-of-type(2) > a > button",
       "box": {
-        "x": 627,
-        "y": 633,
-        "width": 23,
-        "height": 23,
+        "x": 624,
+        "y": 257,
+        "width": 154,
+        "height": 44,
         "isClipped": false,
-        "scrollWidth": 40,
-        "clientWidth": 40,
-        "scrollHeight": 40,
-        "clientHeight": 40
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(4) > button",
-      "box": {
-        "x": 514,
-        "y": 736,
-        "width": 23,
-        "height": 23,
-        "isClipped": false,
-        "scrollWidth": 40,
-        "clientWidth": 40,
-        "scrollHeight": 40,
-        "clientHeight": 40
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(5) > button",
-      "box": {
-        "x": 629,
-        "y": 839,
-        "width": 23,
-        "height": 23,
-        "isClipped": false,
-        "scrollWidth": 40,
-        "clientWidth": 40,
-        "scrollHeight": 40,
-        "clientHeight": 40
-      }
-    },
-    {
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(6) > button",
-      "box": {
-        "x": 743,
-        "y": 941,
-        "width": 23,
-        "height": 23,
-        "isClipped": false,
-        "scrollWidth": 40,
-        "clientWidth": 40,
+        "scrollWidth": 154,
+        "clientWidth": 154,
         "scrollHeight": 40,
         "clientHeight": 40
       }
@@ -1574,45 +1221,39 @@
       "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button"
     },
     {
-      "type": "link",
-      "text": "Back to Courses",
-      "selector": "#root > div > main > div > div:nth-of-type(1) > a"
+      "type": "other",
+      "text": "Something went wrong An unexpected error occurred. Please try again. Try again Back to courses",
+      "selector": "#root > div > main"
     },
     {
-      "type": "button",
-      "text": "Back to Courses",
-      "selector": "#root > div > main > div > div:nth-of-type(1) > a > button"
-    },
-    {
-      "type": "button",
-      "text": "Map Journey",
-      "selector": "#root > div > main > div > div:nth-of-type(1) > div > button:nth-of-type(1)"
-    },
-    {
-      "type": "button",
-      "text": "Classic List",
-      "selector": "#root > div > main > div > div:nth-of-type(1) > div > button:nth-of-type(2)"
-    },
-    {
-      "type": "heading",
-      "text": "Scientific Thinking",
-      "level": 1,
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(1) > h1"
+      "type": "other",
+      "text": "Something went wrong An unexpected error occurred. Please try again. Try again Back to courses",
+      "selector": "#root > div > main > main"
     },
     {
       "type": "paragraph",
-      "text": "Traverse the interactive wave map. Complete 5-minute atomic waves to earn XP and climb the national leaderboard.",
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(1) > p"
+      "text": "Something went wrong",
+      "selector": "#root > div > main > main > div > div:nth-of-type(1) > p:nth-of-type(1)"
     },
     {
-      "type": "link",
-      "text": "Continue Journey",
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(2) > a"
+      "type": "paragraph",
+      "text": "An unexpected error occurred. Please try again.",
+      "selector": "#root > div > main > main > div > div:nth-of-type(1) > p:nth-of-type(2)"
     },
     {
       "type": "button",
-      "text": "Continue Journey",
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(2) > a > button"
+      "text": "Try again",
+      "selector": "#root > div > main > main > div > div:nth-of-type(2) > button"
+    },
+    {
+      "type": "link",
+      "text": "Back to courses",
+      "selector": "#root > div > main > main > div > div:nth-of-type(2) > a"
+    },
+    {
+      "type": "button",
+      "text": "Back to courses",
+      "selector": "#root > div > main > main > div > div:nth-of-type(2) > a > button"
     }
   ],
   "linkInventory": [
@@ -1681,20 +1322,12 @@
       "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a"
     },
     {
-      "text": "Back to Courses",
+      "text": "Back to courses",
       "href": "/courses",
       "resolvedUrl": "http://localhost:5173/courses",
       "isInternal": true,
       "isDisabled": false,
-      "selector": "#root > div > main > div > div:nth-of-type(1) > a"
-    },
-    {
-      "text": "Continue Journey",
-      "href": "/waves/science-thinking-l1-w1",
-      "resolvedUrl": "http://localhost:5173/waves/science-thinking-l1-w1",
-      "isInternal": true,
-      "isDisabled": false,
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(2) > a"
+      "selector": "#root > div > main > main > div > div:nth-of-type(2) > a"
     }
   ],
   "focusOrder": [
@@ -1784,74 +1417,23 @@
     },
     {
       "order": 13,
-      "tag": "a",
-      "accessibleName": "Back to Courses",
-      "selector": "#root > div > main > div > div:nth-of-type(1) > a",
+      "tag": "button",
+      "accessibleName": "Try again",
+      "selector": "#root > div > main > main > div > div:nth-of-type(2) > button",
       "tabIndex": 0
     },
     {
       "order": 14,
-      "tag": "button",
-      "accessibleName": "Back to Courses",
-      "selector": "#root > div > main > div > div:nth-of-type(1) > a > button",
+      "tag": "a",
+      "accessibleName": "Back to courses",
+      "selector": "#root > div > main > main > div > div:nth-of-type(2) > a",
       "tabIndex": 0
     },
     {
       "order": 15,
       "tag": "button",
-      "accessibleName": "Map Journey",
-      "selector": "#root > div > main > div > div:nth-of-type(1) > div > button:nth-of-type(1)",
-      "tabIndex": 0
-    },
-    {
-      "order": 16,
-      "tag": "button",
-      "accessibleName": "Classic List",
-      "selector": "#root > div > main > div > div:nth-of-type(1) > div > button:nth-of-type(2)",
-      "tabIndex": 0
-    },
-    {
-      "order": 17,
-      "tag": "a",
-      "accessibleName": "Continue Journey",
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(2) > a",
-      "tabIndex": 0
-    },
-    {
-      "order": 18,
-      "tag": "button",
-      "accessibleName": "Continue Journey",
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(2) > a > button",
-      "tabIndex": 0
-    },
-    {
-      "order": 19,
-      "tag": "button",
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(2) > button",
-      "tabIndex": 0
-    },
-    {
-      "order": 20,
-      "tag": "button",
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(3) > button",
-      "tabIndex": 0
-    },
-    {
-      "order": 21,
-      "tag": "button",
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(4) > button",
-      "tabIndex": 0
-    },
-    {
-      "order": 22,
-      "tag": "button",
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(5) > button",
-      "tabIndex": 0
-    },
-    {
-      "order": 23,
-      "tag": "button",
-      "selector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(6) > button",
+      "accessibleName": "Back to courses",
+      "selector": "#root > div > main > main > div > div:nth-of-type(2) > a > button",
       "tabIndex": 0
     }
   ],
@@ -1862,7 +1444,7 @@
     "streakValue": "3⚡",
     "keysBadgePresent": true,
     "keysValue": "2🗝️",
-    "progressRingPresent": true,
+    "progressRingPresent": false,
     "audioTriggerObserved": false
   }
 }

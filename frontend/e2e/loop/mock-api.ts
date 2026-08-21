@@ -1,10 +1,22 @@
 import type { Page } from "@playwright/test";
 
 /**
+ * Pages that already have the GraphQL route installed. The snapshot engine
+ * calls setup once per screen, and every extra call stacked another handler on
+ * the same page: by the tenth screen a single request was walking ten
+ * identical interceptors, and unmatched queries were each continuing to a
+ * backend that is not running during an offline crawl.
+ */
+const routedPages = new WeakSet<Page>();
+
+/**
  * Sets up Playwright GraphQL route interception to allow offline/standalone UX crawling
  * without requiring the full Docker backend stack to be running.
  */
 export async function setupMockGraphQL(page: Page) {
+  if (routedPages.has(page)) return;
+  routedPages.add(page);
+
   await page.route("**/graphql", async (route) => {
     try {
       const req = route.request();

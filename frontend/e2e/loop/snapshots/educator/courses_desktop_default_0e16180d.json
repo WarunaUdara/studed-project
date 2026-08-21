@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "role": "student",
+    "role": "educator",
     "path": "/courses",
     "routeFile": "frontend/src/routes/courses.tsx",
     "title": "StudEd",
@@ -10,7 +10,7 @@
       "height": 800
     },
     "state": "default",
-    "timestamp": "2026-08-21T05:44:47.846Z"
+    "timestamp": "2026-08-21T05:45:08.986Z"
   },
   "domOutline": [
     {
@@ -1682,7 +1682,7 @@
       "textSnippet": "G10 0% Computer Science Foundations",
       "box": {
         "x": 477,
-        "y": 1319,
+        "y": 1318,
         "width": 190,
         "height": 232,
         "isClipped": false,
@@ -1702,7 +1702,7 @@
         "borderColor": "oklch(0.88 0.03 145)",
         "borderWidth": "0px",
         "boxShadow": "none",
-        "opacity": "0.962814"
+        "opacity": "0.981205"
       }
     },
     {
@@ -1711,7 +1711,7 @@
       "textSnippet": "Computer Science Foundations",
       "box": {
         "x": 477,
-        "y": 1519,
+        "y": 1518,
         "width": 190,
         "height": 32,
         "isClipped": false,
@@ -1760,7 +1760,7 @@
         "borderColor": "oklch(0.88 0.03 145)",
         "borderWidth": "0px",
         "boxShadow": "none",
-        "opacity": "0.856306"
+        "opacity": "0.891225"
       }
     },
     {
@@ -1818,7 +1818,7 @@
         "borderColor": "oklch(0.88 0.03 145)",
         "borderWidth": "0px",
         "boxShadow": "none",
-        "opacity": "0.700955"
+        "opacity": "0.747963"
       }
     },
     {
@@ -1856,7 +1856,7 @@
       "textSnippet": "O/L 0% O/L Physics Revision",
       "box": {
         "x": 1107,
-        "y": 1325,
+        "y": 1324,
         "width": 190,
         "height": 216,
         "isClipped": false,
@@ -1876,7 +1876,7 @@
         "borderColor": "oklch(0.88 0.03 145)",
         "borderWidth": "0px",
         "boxShadow": "none",
-        "opacity": "0.507784"
+        "opacity": "0.564468"
       }
     },
     {
@@ -1885,7 +1885,7 @@
       "textSnippet": "O/L Physics Revision",
       "box": {
         "x": 1107,
-        "y": 1525,
+        "y": 1524,
         "width": 190,
         "height": 16,
         "isClipped": false,
@@ -1914,7 +1914,7 @@
       "textSnippet": "A/L 0% A/L Physics: Mechanics and Circuits",
       "box": {
         "x": 1317,
-        "y": 1329,
+        "y": 1328,
         "width": 190,
         "height": 232,
         "isClipped": false,
@@ -1934,7 +1934,7 @@
         "borderColor": "oklch(0.88 0.03 145)",
         "borderWidth": "0px",
         "boxShadow": "none",
-        "opacity": "0.282583"
+        "opacity": "0.347773"
       }
     },
     {
@@ -1943,7 +1943,7 @@
       "textSnippet": "A/L Physics: Mechanics and Circuits",
       "box": {
         "x": 1317,
-        "y": 1529,
+        "y": 1528,
         "width": 190,
         "height": 32,
         "isClipped": false,
@@ -2916,7 +2916,7 @@
       "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3)",
       "box": {
         "x": 477,
-        "y": 1319,
+        "y": 1318,
         "width": 190,
         "height": 232,
         "isClipped": false,
@@ -2930,7 +2930,7 @@
       "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3) > h3",
       "box": {
         "x": 477,
-        "y": 1519,
+        "y": 1518,
         "width": 190,
         "height": 32,
         "isClipped": false,
@@ -3000,7 +3000,7 @@
       "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6)",
       "box": {
         "x": 1107,
-        "y": 1325,
+        "y": 1324,
         "width": 190,
         "height": 216,
         "isClipped": false,
@@ -3014,7 +3014,7 @@
       "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6) > h3",
       "box": {
         "x": 1107,
-        "y": 1525,
+        "y": 1524,
         "width": 190,
         "height": 16,
         "isClipped": false,
@@ -3028,7 +3028,7 @@
       "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7)",
       "box": {
         "x": 1317,
-        "y": 1329,
+        "y": 1328,
         "width": 190,
         "height": 232,
         "isClipped": false,
@@ -3042,7 +3042,7 @@
       "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7) > h3",
       "box": {
         "x": 1317,
-        "y": 1529,
+        "y": 1528,
         "width": 190,
         "height": 32,
         "isClipped": false,
