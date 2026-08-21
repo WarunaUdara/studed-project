@@ -197,7 +197,7 @@ export function Navbar() {
       href: "/leaderboard",
       links: [
         {
-          label: "Hydrogen League",
+          label: "Weekly League",
           href: "/leaderboard",
           description: "Weekly competitive league standings",
           icon: <Trophy className="size-4 text-amber-500" />,
@@ -218,9 +218,9 @@ export function Navbar() {
       ],
       previewCards: [
         {
-          title: "Weekly Hydrogen League",
+          title: "Weekly League Standings",
           subtitle:
-            "You're in the Top 5 this week! Complete today's daily wave to earn promotion into Helium League.",
+            "Compete against students in your tier this week. Complete daily waves to climb the leaderboard.",
           href: "/leaderboard",
           gradient: "bg-gradient-to-tr from-indigo-600/30 via-purple-500/20 to-pink-500/20",
           icon: <Trophy className="size-6 text-amber-400" />,

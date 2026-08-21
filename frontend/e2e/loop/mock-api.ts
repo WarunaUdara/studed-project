@@ -116,6 +116,158 @@ export async function setupMockGraphQL(page: Page) {
         });
       }
 
+      // 4. Achievements Query
+      if (query.includes("achievements") || query.includes("GetAchievements")) {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              achievements: [
+                {
+                  id: "first_wave",
+                  name: "First Wave Complete",
+                  description: "Complete your first wave in any course.",
+                  iconUrl: null,
+                  unlocked: true,
+                  unlockedAt: "2026-08-01T12:00:00Z",
+                },
+                {
+                  id: "lesson_complete",
+                  name: "Lesson Pioneer",
+                  description: "Finish all waves in a single lesson.",
+                  iconUrl: null,
+                  unlocked: true,
+                  unlockedAt: "2026-08-05T15:30:00Z",
+                },
+                {
+                  id: "first_course",
+                  name: "Course Conqueror",
+                  description: "Complete an entire curriculum course.",
+                  iconUrl: null,
+                  unlocked: false,
+                  unlockedAt: null,
+                },
+                {
+                  id: "perfect_score",
+                  name: "Flawless Execution",
+                  description: "Achieve 100% on any evaluate section.",
+                  iconUrl: null,
+                  unlocked: true,
+                  unlockedAt: "2026-08-08T09:00:00Z",
+                },
+                {
+                  id: "lesson_proficient",
+                  name: "Mastery Badge",
+                  description: "Reach proficient level across 3 lessons.",
+                  iconUrl: null,
+                  unlocked: false,
+                  unlockedAt: null,
+                },
+                {
+                  id: "rising_star",
+                  name: "Rising Star",
+                  description: "Cross 500 XP in learning milestones.",
+                  iconUrl: null,
+                  unlocked: true,
+                  unlockedAt: "2026-08-10T18:00:00Z",
+                },
+                {
+                  id: "scholar",
+                  name: "Scholar",
+                  description: "Cross 2,500 XP in learning milestones.",
+                  iconUrl: null,
+                  unlocked: false,
+                  unlockedAt: null,
+                },
+                {
+                  id: "master",
+                  name: "Grand Master",
+                  description: "Cross 10,000 XP in learning milestones.",
+                  iconUrl: null,
+                  unlocked: false,
+                  unlockedAt: null,
+                },
+              ],
+            },
+          }),
+        });
+      }
+
+      // 5. Leaderboard Query
+      if (query.includes("query Leaderboard") || query.includes("leaderboard(")) {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              leaderboard: {
+                totalRanked: 15,
+                entries: [
+                  { rank: 1, userId: "u-1", displayName: "Senuri W.", totalXp: 12450, isMe: false },
+                  { rank: 2, userId: "u-2", displayName: "Kavindu J.", totalXp: 11820, isMe: false },
+                  { rank: 3, userId: "u-3", displayName: "Dinuka P.", totalXp: 10950, isMe: false },
+                  { rank: 4, userId: "u-4", displayName: "Thisara B.", totalXp: 9800, isMe: false },
+                  { rank: 5, userId: "u-5", displayName: "Rashmi G.", totalXp: 9150, isMe: false },
+                  { rank: 6, userId: "demo-student-id", displayName: "Demo S.", totalXp: 425, isMe: true },
+                ],
+                me: {
+                  rank: 6,
+                  userId: "demo-student-id",
+                  displayName: "Demo S.",
+                  totalXp: 425,
+                  isMe: true,
+                },
+              },
+            },
+          }),
+        });
+      }
+
+      // 6. My Enrollments Query
+      if (query.includes("myEnrollments") || query.includes("MyEnrollments")) {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              myEnrollments: [
+                {
+                  id: "science-thinking",
+                  title: "Scientific Thinking",
+                  description: "Learn mechanical physics and kinematics.",
+                  slug: "science-thinking",
+                  gradeLevel: "G9",
+                  price: 0,
+                  isPublished: true,
+                  myProgress: { completedWaves: 1, totalWaves: 5 },
+                  lessons: [],
+                },
+              ],
+            },
+          }),
+        });
+      }
+
+      // 7. My Subscription Query
+      if (query.includes("mySubscription") || query.includes("MySubscription")) {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              mySubscription: {
+                id: "sub-123",
+                planTier: "PREMIUM",
+                status: "ACTIVE",
+                currentPeriodEnd: "2027-01-01T00:00:00Z",
+                cancelAtPeriodEnd: false,
+              },
+            },
+          }),
+        });
+      }
+
       // Default continue to real server
       return route.continue();
     } catch {

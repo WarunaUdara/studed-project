@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
+import { setupMockGraphQL } from "./loop/mock-api";
 
 test.describe("Achievements Page", () => {
   test.beforeEach(async ({ page }) => {
+    await setupMockGraphQL(page);
     await page.context().clearCookies();
     await page.goto("/login");
     await page.locator("#email").fill("demo.student@studed.lk");
@@ -45,6 +47,7 @@ test.describe("Achievements Page", () => {
 
 test.describe("Settings Page", () => {
   test.beforeEach(async ({ page }) => {
+    await setupMockGraphQL(page);
     await page.context().clearCookies();
     await page.goto("/login");
     await page.locator("#email").fill("demo.student@studed.lk");

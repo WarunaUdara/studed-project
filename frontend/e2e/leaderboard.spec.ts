@@ -14,7 +14,10 @@ const INVENTED_SCHOOLS = [
 // to render to every student.
 const INVENTED_PEOPLE = ["David E", "Jeremy L", "Yolanda J", "Ankit K", "Hydrogen League"];
 
+import { setupMockGraphQL } from "./loop/mock-api";
+
 async function signInAsStudent(page: import("@playwright/test").Page) {
+  await setupMockGraphQL(page);
   await page.context().clearCookies();
   await page.goto("/login");
   await page.locator("#email").fill("demo.student@studed.lk");
