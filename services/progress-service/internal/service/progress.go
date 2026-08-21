@@ -119,6 +119,18 @@ func (s *progressService) RecordAttempt(ctx context.Context, userID, waveID stri
 					xpEarned = earned
 				}
 			}
+			// A replay that had nothing to reconcile still has to report the
+			// student's real total. Returning the zero value told a client
+			// retrying after a network timeout that they had 0 XP.
+			if totalXp == 0 {
+				if total, err := s.fetchTotalXp(ctx, existing.UserID); err != nil {
+					slog.Warn("could not read total xp on an idempotent replay",
+						slog.String("user_id", existing.UserID), slog.Any("error", err))
+					warnings = append(warnings, fmt.Sprintf("failed to fetch total xp: %v", err))
+				} else {
+					totalXp = total
+				}
+			}
 
 			return &progresspb.RecordAttemptResponse{
 				AttemptId:         existing.ID,

@@ -47,6 +47,16 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*
 			payload.User.LongestStreak = streak.Longest
 			payload.User.LastActiveAt = streak.LastActiveAt
 		}
+		// Record who this user is for ranking purposes. Signing in is not
+		// learning and earns nothing, but it is a good moment to keep the
+		// display name current: a student who has never passed a wave since
+		// the name was first stored would otherwise rank as "Student Scholar",
+		// and a renamed student would show their old name until their next
+		// submission.
+		if err := r.GamificationClient.UpdateLeaderboard(ctx, payload.User.ID, payload.User.FullName, "", payload.User.Grade); err != nil {
+			slog.Warn("could not refresh leaderboard identity on login",
+				slog.String("user_id", payload.User.ID), slog.Any("error", err))
+		}
 		if totalXp, err := r.GamificationClient.GetUserXp(ctx, payload.User.ID); err == nil {
 			payload.User.TotalXp = totalXp
 		}

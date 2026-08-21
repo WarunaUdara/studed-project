@@ -211,3 +211,33 @@ func rightAnswer() []*progresspb.Answer {
 func wrongAnswer() []*progresspb.Answer {
 	return []*progresspb.Answer{{EvaluateBlockId: "q1", Answer: "no"}}
 }
+
+// A retry after a network timeout must report the student's real total. The
+// replay path returned the zero value when it had nothing to reconcile, so a
+// client that retried was told it had 0 XP.
+func TestRecordAttempt_ReplayReportsTheRealTotalXp(t *testing.T) {
+	svc, _, _, _ := newTestProgressService()
+	seedEnrollment(svc)
+	ctx := context.Background()
+
+	first, err := svc.RecordAttempt(ctx, "u1", "wave-1", rightAnswer(), "sub-1")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if first.TotalXp == 0 {
+		t.Fatalf("the first submission should report a total, got %d", first.TotalXp)
+	}
+
+	replay, err := svc.RecordAttempt(ctx, "u1", "wave-1", rightAnswer(), "sub-1")
+	if err != nil {
+		t.Fatalf("unexpected error on replay: %v", err)
+	}
+	if replay.TotalXp != first.TotalXp {
+		t.Fatalf("replay reported %d total XP but the original reported %d",
+			replay.TotalXp, first.TotalXp)
+	}
+	if replay.XpEarned != first.XpEarned {
+		t.Fatalf("replay reported %d XP earned but the original reported %d",
+			replay.XpEarned, first.XpEarned)
+	}
+}
