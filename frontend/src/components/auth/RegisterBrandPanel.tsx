@@ -50,7 +50,7 @@ const LEVEL_1_TARGET = 100;
 
 export function RegisterBrandPanel() {
   return (
-    <div className="bg-login-panel-brand relative hidden w-1/2 overflow-hidden lg:flex">
+    <div className="bg-login-panel-brand relative hidden w-1/2 h-full shrink-0 overflow-hidden lg:flex">
       {/* Soft light bloom behind the island, above the base gradient */}
       <div
         aria-hidden="true"
