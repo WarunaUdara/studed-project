@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "urql";
 
 import { AIAssistantPanel } from "@/components/educator/AIAssistantPanel";
 import { WavePreview } from "@/components/educator/WavePreview";
-import { pushPuckData, setPuckPanelsVisible } from "@/components/puck-blocks/PuckCanvas";
+import { pushPuckData, setPuckPanelsVisible } from "@/components/puck-blocks/puck-bridge";
 import {
   agentBlocksToPuckItems,
   applyBlockOpsToData,

@@ -16,7 +16,11 @@ export default defineConfig(({ mode }) => {
   console.log("[vite.config] Proxy target resolved to:", target);
 
   return {
-    plugins: [TanStackRouterVite(), react(), tailwindcss()],
+    plugins: [
+      TanStackRouterVite({ autoCodeSplitting: true }),
+      react(),
+      tailwindcss(),
+    ],
     resolve: {
       dedupe: ["react", "react-dom"],
       alias: {
@@ -80,6 +84,9 @@ export default defineConfig(({ mode }) => {
               { name: "vendor-graphql", test: /node_modules[\\/](urql|@urql|graphql)[\\/]/ },
               { name: "vendor-baseui", test: /node_modules[\\/]@base-ui[\\/]/ },
               { name: "vendor-zod", test: /node_modules[\\/]zod[\\/]/ },
+              { name: "vendor-puck", test: /node_modules[\\/]@puckeditor[\\/]/ },
+              { name: "vendor-three", test: /node_modules[\\/](three|@types[\\/]three|ogl|postprocessing)[\\/]/ },
+              { name: "vendor-katex", test: /node_modules[\\/](katex|rehype-katex|remark-math)[\\/]/ },
             ],
           },
         },

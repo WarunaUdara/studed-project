@@ -4,55 +4,25 @@ import { useEffect, useRef } from "react";
 import "@puckeditor/core/puck.css";
 import "@/styles/puck-theme.css";
 import { type PuckData, puckConfig } from "@/components/puck-blocks/puck-config";
+import {
+  getPuckDispatch,
+  pushPuckData,
+  setPuckDispatchHandle,
+  setPuckPanelsVisible,
+  setPuckSidebarVisible,
+} from "./puck-bridge";
+
+export {
+  getPuckDispatch,
+  pushPuckData,
+  setPuckPanelsVisible,
+  setPuckSidebarVisible,
+};
 
 interface PuckCanvasProps {
   data: PuckData;
   onChange: (data: PuckData) => void;
   onPublish: (data: PuckData) => void;
-}
-
-// ---------------------------------------------------------------------------
-// Module-level bridge: lets the wave editor push data INTO Puck's internal
-// store without remounting the editor (remounts reset zoom/selection/undo,
-// which the agent must never disturb). The bridge lives inside Puck's React
-// tree (via overrides.headerActions) so it can call usePuck() legally.
-// ---------------------------------------------------------------------------
-
-type Dispatch = ReturnType<typeof usePuck>["dispatch"];
-
-let puckDispatch: Dispatch | null = null;
-
-/** Non-render accessor for the wave editor. */
-export function getPuckDispatch(): Dispatch | null {
-  return puckDispatch;
-}
-
-/** Push a full data snapshot into Puck's store (keeps zoom/selection/history). */
-export function pushPuckData(data: PuckData) {
-  puckDispatch?.({
-    type: "setData",
-    data,
-  });
-}
-
-/** Programmatically collapse/expand Puck's left (blocks) panel. */
-export function setPuckSidebarVisible(visible: boolean) {
-  puckDispatch?.({
-    type: "setUi",
-    ui: { leftSideBarVisible: visible },
-  });
-}
-
-/**
- * Programmatically collapse/expand BOTH of Puck's side panels (blocks
- * palette left + properties right). Used when the AI dock opens so the
- * editor canvas gets the full remaining width.
- */
-export function setPuckPanelsVisible(visible: boolean) {
-  puckDispatch?.({
-    type: "setUi",
-    ui: { leftSideBarVisible: visible, rightSideBarVisible: visible },
-  });
 }
 
 // Rendered inside Puck's header via overrides.headerActions. Captures the
@@ -65,10 +35,10 @@ function PuckBridge() {
   const mounted = useRef(false);
 
   useEffect(() => {
-    puckDispatch = dispatch;
+    setPuckDispatchHandle(dispatch);
     mounted.current = true;
     return () => {
-      puckDispatch = null;
+      setPuckDispatchHandle(null);
     };
   }, [dispatch]);
 
