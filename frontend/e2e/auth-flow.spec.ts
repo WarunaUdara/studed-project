@@ -19,10 +19,11 @@ test.describe("Authentication and Authorization Flow", () => {
     await page.getByRole("button", { name: "Sign in" }).click();
 
     await expect(page).toHaveURL(/\/dashboard/);
-    await expect(page.getByRole("heading", { name: "My Courses" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Gamification Hub" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Leaderboard Peek" })).toBeVisible();
-    await expect(page.getByRole("banner").getByRole("button", { name: "Log out" })).toBeVisible();
+    // The student dashboard is the two-rail layout: search, the widget rail,
+    // and the course deck.
+    await expect(page.getByPlaceholder("What do you want to learn?")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Ask" })).toBeVisible();
+    await expect(page.getByRole("banner").getByRole("button", { name: "User profile menu" })).toBeVisible();
   });
 
   test("should authenticate as educator and redirect to educator courses", async ({ page }) => {

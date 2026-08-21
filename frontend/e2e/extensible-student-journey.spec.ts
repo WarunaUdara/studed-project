@@ -15,19 +15,16 @@ test.describe("Extensible Student Journey E2E Suites (POM Driven)", () => {
     await dashboardPage.assertOnDashboard();
   });
 
-  test("should seamlessly interact with curriculum tracker via POM actions", async () => {
-    await dashboardPage.assertCurriculumTrackerVisible();
-    await dashboardPage.selectGlobalCurriculum();
-    await dashboardPage.selectLocalCurriculum();
+  test("should render the dashboard rails via POM actions", async () => {
+    await dashboardPage.assertSearchRailVisible();
+    await dashboardPage.assertWidgetRailVisible();
   });
 
-  test("should start focus session timer via POM actions", async () => {
-    await dashboardPage.startPomodoroTimer("Linear Algebra Exercises");
+  test("should open the ask modal via POM actions", async () => {
+    await dashboardPage.askAbout("Linear equations");
   });
 
-  test("should switch gamification hub tabs via POM actions", async () => {
-    await dashboardPage.switchGamificationTab("badges");
-    await dashboardPage.switchGamificationTab("timeline");
-    await dashboardPage.switchGamificationTab("stats");
+  test("should reach the catalog via POM actions", async () => {
+    await dashboardPage.goToCourses();
   });
 });

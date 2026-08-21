@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-20T12:33:44.713Z",
+  "timestamp": "2026-08-21T05:44:44.798Z",
   "staticRoutes": [
     {
       "routeFile": "frontend/src/routes/settings.tsx",
@@ -268,7 +268,7 @@
           "parentPath": "/dashboard"
         },
         {
-          "path": "/waves/science-gears-2",
+          "path": "/waves/science-thinking-l1-w1",
           "routeFile": "frontend/src/routes/waves.$waveId.tsx",
           "depth": 2,
           "title": "StudEd",

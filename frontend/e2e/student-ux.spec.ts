@@ -1,8 +1,15 @@
 import { expect, test } from "@playwright/test";
 
+/**
+ * The student dashboard was rebuilt as a two-rail layout: search and widgets on
+ * the left, the course deck on the right. These tests cover what it offers now.
+ * The curriculum tracker, the dashboard Pomodoro card and the gamification tab
+ * strip were removed from this screen in the redesign; the Pomodoro survives as
+ * an app-wide floating widget behind a user preference, which is covered where
+ * that preference is set rather than here.
+ */
 test.describe("Student Dashboard UX & Flow Simulation", () => {
   test.beforeEach(async ({ page }) => {
-    // Log in as student
     await page.context().clearCookies();
     await page.goto("/login");
     await page.locator("#email").fill("demo.student@studed.lk");
@@ -11,77 +18,31 @@ test.describe("Student Dashboard UX & Flow Simulation", () => {
     await expect(page).toHaveURL(/\/dashboard/);
   });
 
-  test("should render the curriculum tracker and allow switching modes", async ({ page }) => {
-    // 1. Verify Curriculum & Exam Tracker Card is visible
-    await expect(page.getByText("Curriculum & Exam Tracker")).toBeVisible();
-    await expect(page.getByText("G.C.E. O/L Examination")).toBeVisible();
+  test("should render the search rail and the widget stack", async ({ page }) => {
+    const search = page.getByPlaceholder("What do you want to learn?");
+    await expect(search).toBeVisible();
+    await expect(page.getByRole("button", { name: "Ask" })).toBeVisible();
 
-    // 2. Select Global Curriculum and verify state update
-    const slButton = page.locator("[data-testid='curriculum-local']");
-    const globalButton = page.locator("[data-testid='curriculum-global']");
-
-    await expect(slButton).toBeVisible();
-    await expect(globalButton).toBeVisible();
-
-    // Click Global
-    await globalButton.click();
-    await expect(page.getByText("Target: UK Pearson/Edexcel")).toBeVisible();
-
-    // Click local back
-    await slButton.click();
-    await expect(page.getByText("Target: SL Syllabus")).toBeVisible();
+    // The league widget sits in the left rail and links onward to the full table.
+    await expect(page.getByText("View all rankings")).toBeVisible();
   });
 
-  test("should render the Pomodoro timer and allow starting focus blocks", async ({ page }) => {
-    // 1. Verify Focus Timer elements
-    await expect(page.getByText("Focus Session Hub")).toBeVisible();
-    await expect(page.locator("[data-testid='pomodoro-time']")).toBeVisible();
+  test("should open the ask modal from the dashboard search", async ({ page }) => {
+    const search = page.getByPlaceholder("What do you want to learn?");
+    await search.fill("fractions");
+    await page.getByRole("button", { name: "Ask" }).click();
 
-    // 2. Fill task field
-    const taskInput = page.locator("[data-testid='pomodoro-task-input']");
-    await expect(taskInput).toBeVisible();
-    await taskInput.fill("Solving algebraic equations");
-    await expect(taskInput).toHaveValue("Solving algebraic equations");
-
-    // 3. Play/Pause toggle
-    const playButton = page.locator("[data-testid='pomodoro-play-pause']");
-    await expect(playButton).toContainText("Start");
-    await playButton.click();
-    await expect(playButton).toContainText("Pause");
-
-    // 4. Reset timer
-    const resetButton = page.locator("[data-testid='pomodoro-reset']");
-
-    // Set up dialog handler to accept the confirmation dialog
-    page.once("dialog", async (dialog) => {
-      await dialog.accept();
-    });
-
-    await resetButton.click();
-    await expect(playButton).toContainText("Start");
+    // The modal takes over with the typed query carried into it.
+    const dialog = page.getByRole("dialog", { name: "Search lessons and ask a question" });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByPlaceholder("Search lessons, waves, or courses...")).toHaveValue(
+      "fractions",
+    );
   });
 
-  test("should toggle between gamification tabs inside the Hub card", async ({ page }) => {
-    // 1. Verify Gamification Hub Card
-    await expect(page.getByText("Gamification Hub")).toBeVisible();
-
-    const tabStats = page.locator("[data-testid='tab-stats']");
-    const tabBadges = page.locator("[data-testid='tab-badges']");
-    const tabTimeline = page.locator("[data-testid='tab-timeline']");
-
-    await expect(tabStats).toBeVisible();
-    await expect(tabBadges).toBeVisible();
-    await expect(tabTimeline).toBeVisible();
-
-    // Verify stats tab content: check default XP indicator
-    await expect(page.getByText("Total XP", { exact: true })).toBeVisible();
-
-    // Click Badges Tab and check badges are rendered
-    await tabBadges.click();
-    await expect(page.getByText("badges unlocked")).toBeVisible();
-
-    // Click Path Timeline tab
-    await tabTimeline.click();
-    await expect(page.getByText("You are here")).toBeVisible();
+  test("should reach the course catalog from the dashboard", async ({ page }) => {
+    await page.getByRole("link", { name: "Courses", exact: true }).first().click();
+    await expect(page).toHaveURL(/\/courses/);
+    await expect(page.getByRole("heading", { name: "Learning Paths" }).first()).toBeVisible();
   });
 });

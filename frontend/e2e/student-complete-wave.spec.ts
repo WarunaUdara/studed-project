@@ -37,7 +37,9 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
     // Locate the A/L Physics card
     const physicsCard = page
       .locator("[data-testid='course-card']")
-      .filter({ hasText: "A/L Physics" })
+      // Exact match: the catalog also ships "A/L Physics: Mechanics and
+      // Circuits", which a substring match would pick up instead.
+      .filter({ has: page.getByRole("heading", { name: "A/L Physics", exact: true }) })
       .first();
     await expect(physicsCard).toBeVisible({ timeout: 5000 });
 
@@ -45,7 +47,7 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
     await physicsCard.click();
 
     // Enroll in the course (sheet shows Enroll Free when not enrolled)
-    const enrollBtn = page.getByRole("button", { name: /Enroll Free/i });
+    const enrollBtn = page.getByRole("button", { name: /Enroll for Free/i });
     await expect(enrollBtn).toBeVisible({ timeout: 5000 });
     await enrollBtn.click();
 
@@ -102,11 +104,17 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
     const updatedXpBadge = page.getByText("100 XP").first();
     await expect(updatedXpBadge).toBeVisible({ timeout: 10000 });
 
-    // 7. Verify leaderboard has updated for the user
-    await page.getByRole("link", { name: "Leaderboard", exact: true }).click();
+    // 7. Verify leaderboard has updated for the user. The nav item is labelled
+    // Leagues; the route it points at is still /leaderboard.
+    await page.getByRole("link", { name: "Leagues", exact: true }).first().click();
     await expect(page).toHaveURL(/\/leaderboard/);
 
-    const userLeaderboardRow = page.locator("main, [role='main']").getByText(studentName).first();
+    // The leaderboard masks names on purpose: privateLeaderboardName renders
+    // "AL Student 1787282181376" as "AL 1.". Asserting the full name here would
+    // only pass if that privacy rule were broken.
+    const [firstWord, , lastWord] = studentName.split(" ");
+    const maskedName = `${firstWord} ${lastWord.charAt(0)}.`;
+    const userLeaderboardRow = page.locator("main, [role='main']").getByText(maskedName).first();
     await expect(userLeaderboardRow).toBeVisible({ timeout: 10000 });
   });
 });

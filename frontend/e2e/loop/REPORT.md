@@ -1,44 +1,231 @@
-# StudEd UI/UX Self-Evaluating Loop — Production Report
+# StudEd UI/UX Self-Evaluating Loop — Iteration 1 Report
 
-**Generated At**: 2026-08-20T12:53:25.029Z  
-**Status**: Phases 0, 1, 2, 3 Evaluated against WCAG 2.2 AA and UI/UX Design System Tokens
+**Generated At**: 2026-08-21T05:45:20.819Z  
+**Status**: Completed Phase 0 (Discover), Phase 1 (Snapshot), Phase 2 (Audit), Phase 3 (Critique)
 
 ---
 
 ## Executive Summary
 
-- **Total Defects Identified (Pass A)**: 14 (P0: 5, P1: 9, P2: 0)
-- **Dark Pattern / Exploitative Risks (Pass B)**: 0
-- **Healthy Motivational Invariants (Pass B)**: 0
-- **Creative / Pedagogical Backlog Ideas (Pass C)**: 2
+- **Total Deterministic Faults**: 166
+- **P0 Critical Defects**: 59
+- **P1 Visual / Interaction Defects**: 85
+- **P2 Polish / Spacing Defects**: 22
+- **Dark Pattern Flags (Pass B)**: 6
+- **Creative Backlog Suggestions (Pass C)**: 2
 
 ---
 
 ## Section 1: Pass A — Defects (Fix Loop Candidate)
 
-| Severity | Screen | Component / Selector | Defect / Evidence | Concrete Suggested Fix |
-|---|---|---|---|---|
-| **P0** | `/dashboard` | `#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
-| **P1** | `/dashboard` | `#root > div > main > div > div > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > a` | Interactive <a> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
-| **P0** | `/courses/science-thinking` | `#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Courses" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
-| **P1** | `/courses/science-thinking` | `#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
-| **P0** | `/courses/science-thinking` | `#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
-| **P1** | `/courses/science-thinking` | `#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(2) > button` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
-| **P1** | `/courses/science-thinking` | `#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(3) > button` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
-| **P1** | `/courses/science-thinking` | `#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(4) > button` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
-| **P1** | `/courses/science-thinking` | `#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(5) > button` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
-| **P1** | `/courses/science-thinking` | `#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(6) > button` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
-| **P0** | `/dashboard` | `#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(3) > a` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Quests" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
-| **P1** | `/dashboard` | `#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
-| **P0** | `/dashboard` | `#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
-| **P1** | `/dashboard` | `#root > div > main > div > div > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > a` | Interactive <a> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| Severity | Screen | Root Cause / Fault | Suggested Fix |
+|---|---|---|---|
+| **P0** | `/subscription` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/courses/fractions` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Courses" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
+| **P1** | `/courses/fractions` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/courses/fractions` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/courses/science-thinking` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/courses/science-thinking` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| **P1** | `/courses/science-thinking` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| **P1** | `/courses/science-thinking` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| **P1** | `/courses/science-thinking` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| **P1** | `/courses/science-thinking` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| **P0** | `/courses/logic-structures` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Courses" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
+| **P1** | `/courses/logic-structures` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/courses/logic-structures` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/courses` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/courses` | Element overflows viewport horizontally (435px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (605px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (733px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (401px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (401px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (401px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (401px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (591px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (591px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (781px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (781px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (971px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (971px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1161px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1161px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1351px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1351px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (401px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (401px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P0** | `/courses/fractions` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/courses` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Courses" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
+| **P1** | `/courses` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/courses` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/courses` | Element overflows viewport horizontally (1297px > 1280px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1297px > 1280px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1507px > 1280px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1507px > 1280px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P0** | `/achievements` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P2** | `/achievements` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P2** | `/achievements` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P2** | `/achievements` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P0** | `/courses/thinking-in-python` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Courses" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
+| **P1** | `/courses/thinking-in-python` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/courses/thinking-in-python` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/dashboard` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/dashboard` | Interactive <a> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| **P0** | `/leaderboard` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Leagues" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
+| **P1** | `/leaderboard` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/leaderboard` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P2** | `/leaderboard` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P0** | `/courses/thinking-in-python` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/achievements` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/achievements` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P2** | `/achievements` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P2** | `/achievements` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P2** | `/achievements` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P0** | `/courses/science-thinking` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Courses" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
+| **P1** | `/courses/science-thinking` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/courses/science-thinking` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/courses/science-thinking` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| **P1** | `/courses/science-thinking` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| **P1** | `/courses/science-thinking` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| **P1** | `/courses/science-thinking` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| **P1** | `/courses/science-thinking` | Interactive <button> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| **P0** | `/leaderboard` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/leaderboard` | Element overflows viewport horizontally (443px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P2** | `/leaderboard` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P1** | `/settings` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/settings` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/settings` | Insufficient WCAG 2.2 contrast (1.17:1 < 4.5:1) on "Free Preview · Manage plan Upg" | Adjust color token to exceed 4.5:1 against oklab(0.95 -0.0122873 0.00860365 / 0.5). |
+| **P2** | `/settings` | Body text font size (10px) is below the 11px accessibility threshold. | Scale font size up to minimum 12px or use standard text-xs (12px). |
+| **P2** | `/settings` | Body text font size (10px) is below the 11px accessibility threshold. | Scale font size up to minimum 12px or use standard text-xs (12px). |
+| **P0** | `/waves/science-thinking-l1-w1` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/waves/science-gears-1` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/waves/science-gears-1` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P2** | `/waves/science-gears-1` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P0** | `/courses/logic-structures` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/settings` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/settings` | Insufficient WCAG 2.2 contrast (1.17:1 < 4.5:1) on "Free Preview · Manage plan Upg" | Adjust color token to exceed 4.5:1 against oklab(0.95 -0.0122873 0.00860365 / 0.5). |
+| **P2** | `/settings` | Body text font size (10px) is below the 11px accessibility threshold. | Scale font size up to minimum 12px or use standard text-xs (12px). |
+| **P2** | `/settings` | Body text font size (10px) is below the 11px accessibility threshold. | Scale font size up to minimum 12px or use standard text-xs (12px). |
+| **P0** | `/waves/science-gears-1` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P2** | `/waves/science-gears-1` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P1** | `/subscription` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/subscription` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/waves/science-thinking-l1-w1` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/waves/science-thinking-l1-w1` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/dashboard` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Quests" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
+| **P1** | `/dashboard` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/dashboard` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/dashboard` | Interactive <a> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| **P0** | `/subscription` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/courses/fractions` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Courses" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
+| **P1** | `/courses/fractions` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/courses/fractions` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/courses/logic-structures` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Courses" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
+| **P1** | `/courses/logic-structures` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/courses/logic-structures` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/courses` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/courses` | Element overflows viewport horizontally (435px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (605px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (733px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (401px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (401px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (401px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (401px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (591px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (591px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (781px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (781px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (971px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (971px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1161px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1161px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1351px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1351px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (401px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (401px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P0** | `/pricing` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/courses/fractions` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/courses` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Courses" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
+| **P1** | `/courses` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/courses` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/courses` | Element overflows viewport horizontally (1297px > 1280px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1297px > 1280px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1507px > 1280px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/courses` | Element overflows viewport horizontally (1507px > 1280px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P0** | `/achievements` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P2** | `/achievements` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P2** | `/achievements` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P2** | `/achievements` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P0** | `/courses/thinking-in-python` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Courses" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
+| **P1** | `/courses/thinking-in-python` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/courses/thinking-in-python` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/dashboard` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/dashboard` | Interactive <a> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
+| **P0** | `/leaderboard` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Leagues" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
+| **P1** | `/leaderboard` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/leaderboard` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P2** | `/leaderboard` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P1** | `/pricing` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/pricing` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/courses/thinking-in-python` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/achievements` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/achievements` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P2** | `/achievements` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P2** | `/achievements` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P2** | `/achievements` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P0** | `/leaderboard` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/leaderboard` | Element overflows viewport horizontally (443px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P2** | `/leaderboard` | Color hue (27) deviates from the OKLCH design system tokens. | Replace with semantic design system tokens (--primary, --science, --commerce, --gold). |
+| **P0** | `/courses/logic-structures` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/` | Element overflows viewport horizontally (415px > 390px) | Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling. |
+| **P1** | `/subscription` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/subscription` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P0** | `/dashboard` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "Quests" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1). |
+| **P1** | `/dashboard` | Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on "Go Premium" | Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1). |
+| **P0** | `/dashboard` | Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on "D" | Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2). |
+| **P1** | `/dashboard` | Interactive <a> has no accessible name or aria-label. | Add aria-label="..." or accessible text inside the interactive element. |
 
 ---
 
 ## Section 2: Pass B — Dark Pattern & Dopamine Honesty Audit
 
-> [!NOTE]
-> Zero exploitative dark patterns detected. All rewarded interactions correlate with authentic student mastery and exploration.
+### Reattempt Safety & Low-Anxiety Practice (missing-healthy)
+- **Screen**: `/waves/science-thinking-l1-w1`
+- **Description**: Wave puzzle interface allows repeatable simulation attempts without penalty.
+- **Verdict**: **SERVES — Encourages experimentation, exploratory physics, and fearless mastery.**
+- **Recommendation**: Preserve immediate mechanical reset button without deducting Explorer XP.
+
+### Transparent XP Milestone Reward (missing-healthy)
+- **Screen**: `/waves/science-thinking-l1-w1`
+- **Description**: XP awards fire in direct correlation with problem-solving milestones.
+- **Verdict**: **SERVES — Reinforces genuine conceptual comprehension through instant multi-sensory feedback.**
+- **Recommendation**: Ensure toast animation duration remains under 1200ms to avoid blocking navigation.
+
+### Reattempt Safety & Low-Anxiety Practice (missing-healthy)
+- **Screen**: `/waves/science-gears-1`
+- **Description**: Wave puzzle interface allows repeatable simulation attempts without penalty.
+- **Verdict**: **SERVES — Encourages experimentation, exploratory physics, and fearless mastery.**
+- **Recommendation**: Preserve immediate mechanical reset button without deducting Explorer XP.
+
+### Reattempt Safety & Low-Anxiety Practice (missing-healthy)
+- **Screen**: `/waves/science-gears-1`
+- **Description**: Wave puzzle interface allows repeatable simulation attempts without penalty.
+- **Verdict**: **SERVES — Encourages experimentation, exploratory physics, and fearless mastery.**
+- **Recommendation**: Preserve immediate mechanical reset button without deducting Explorer XP.
+
+### Reattempt Safety & Low-Anxiety Practice (missing-healthy)
+- **Screen**: `/waves/science-thinking-l1-w1`
+- **Description**: Wave puzzle interface allows repeatable simulation attempts without penalty.
+- **Verdict**: **SERVES — Encourages experimentation, exploratory physics, and fearless mastery.**
+- **Recommendation**: Preserve immediate mechanical reset button without deducting Explorer XP.
+
+### Transparent XP Milestone Reward (missing-healthy)
+- **Screen**: `/waves/science-thinking-l1-w1`
+- **Description**: XP awards fire in direct correlation with problem-solving milestones.
+- **Verdict**: **SERVES — Reinforces genuine conceptual comprehension through instant multi-sensory feedback.**
+- **Recommendation**: Ensure toast animation duration remains under 1200ms to avoid blocking navigation.
 
 ---
 
@@ -58,7 +245,7 @@
 
 ---
 
-## Phase 6: Human Gate
+## Phase 6: Human Gate & Next Steps
 
-- **Next Iteration Priority**: Resolve P0 contrast faults and provide accessible names for canvas buttons.
-- **Strict Cap**: Loop is bounded by $N \le 3$ fix iterations.
+1. **Review Pass A Defects**: Address top P0/P1 contrast and aria-label improvements.
+2. **Review Pass C Proposals**: Select backlog items for future sprints.

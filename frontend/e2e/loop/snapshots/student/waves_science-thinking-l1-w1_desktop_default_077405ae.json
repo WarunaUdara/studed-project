@@ -1,0 +1,2130 @@
+{
+  "metadata": {
+    "role": "student",
+    "path": "/waves/science-thinking-l1-w1",
+    "routeFile": "frontend/src/routes/waves.$waveId.tsx",
+    "title": "StudEd",
+    "viewport": "desktop",
+    "viewportSize": {
+      "width": 1280,
+      "height": 800
+    },
+    "state": "default",
+    "timestamp": "2026-08-21T05:45:00.627Z"
+  },
+  "domOutline": [
+    {
+      "tag": "body",
+      "classes": "",
+      "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumDAsk Blobby Scientific Thin",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 1206
+      },
+      "children": [
+        {
+          "id": "root",
+          "tag": "div",
+          "classes": "",
+          "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumDAsk Blobby Scientific Thin",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 1206
+          },
+          "children": [
+            {
+              "tag": "div",
+              "classes": "relative min-h-screen bg-background text-foreground",
+              "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumDAsk Blobby Scientific Thin",
+              "box": {
+                "x": 0,
+                "y": 0,
+                "width": 1280,
+                "height": 1206
+              },
+              "children": [
+                {
+                  "tag": "div",
+                  "classes": "pointer-events-none fixed top-0 right-16 z-[9999] select-none",
+                  "box": {
+                    "x": 1152,
+                    "y": 0,
+                    "width": 64,
+                    "height": 340
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "classes": "relative size-full",
+                      "box": {
+                        "x": 1152,
+                        "y": 0,
+                        "width": 64,
+                        "height": 340
+                      },
+                      "children": [
+                        {
+                          "tag": "button",
+                          "classes": "pointer-events-auto absolute cursor-grab touch-none rounded-full transition-shadow active:cursor-gra",
+                          "box": {
+                            "x": 1161,
+                            "y": 153,
+                            "width": 46,
+                            "height": 46
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "classes": "relative w-full select-none",
+                  "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumD",
+                  "box": {
+                    "x": 0,
+                    "y": 0,
+                    "width": 1280,
+                    "height": 64
+                  },
+                  "children": [
+                    {
+                      "tag": "header",
+                      "classes": "relative z-50 h-16 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl transition-col",
+                      "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumD",
+                      "box": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 1280,
+                        "height": 64
+                      },
+                      "children": [
+                        {
+                          "tag": "div",
+                          "classes": "mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6",
+                          "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumD",
+                          "box": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 1280,
+                            "height": 63
+                          },
+                          "children": [
+                            {
+                              "tag": "div",
+                              "classes": "flex items-center gap-8",
+                              "textSnippet": "StudEdCoursesLeaguesQuests",
+                              "box": {
+                                "x": 24,
+                                "y": 16,
+                                "width": 412,
+                                "height": 32
+                              }
+                            },
+                            {
+                              "tag": "div",
+                              "classes": "flex items-center gap-3",
+                              "textSnippet": "LVL 3425✦|2🗝️|3⚡Go PremiumD",
+                              "box": {
+                                "x": 873,
+                                "y": 14,
+                                "width": 383,
+                                "height": 36
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "main",
+                  "classes": "",
+                  "textSnippet": "Ask Blobby Scientific Thinking Wave 140XP RewardAttempts 0/31. Connecting GearsG",
+                  "box": {
+                    "x": 0,
+                    "y": 64,
+                    "width": 1280,
+                    "height": 1142
+                  },
+                  "children": [
+                    {
+                      "tag": "button",
+                      "classes": "fixed bottom-5 right-5 z-40 flex min-h-14 items-center gap-2 rounded-2xl border border-primary/40 bg",
+                      "textSnippet": "Ask Blobby",
+                      "box": {
+                        "x": 1110,
+                        "y": 722,
+                        "width": 150,
+                        "height": 58
+                      },
+                      "children": [
+                        {
+                          "tag": "span",
+                          "classes": "h-8 w-8",
+                          "box": {
+                            "x": 1127,
+                            "y": 735,
+                            "width": 32,
+                            "height": 32
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "div",
+                      "classes": "mx-auto max-w-4xl space-y-5 p-4 pt-6 sm:p-6 sm:pt-8",
+                      "textSnippet": "Scientific Thinking Wave 140XP RewardAttempts 0/31. Connecting GearsGears and Me",
+                      "box": {
+                        "x": 192,
+                        "y": 64,
+                        "width": 896,
+                        "height": 1142
+                      },
+                      "children": [
+                        {
+                          "tag": "div",
+                          "classes": "flex items-center justify-between gap-3",
+                          "textSnippet": "Scientific Thinking",
+                          "box": {
+                            "x": 216,
+                            "y": 96,
+                            "width": 848,
+                            "height": 20
+                          },
+                          "children": [
+                            {
+                              "tag": "a",
+                              "classes": "inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary",
+                              "textSnippet": "Scientific Thinking",
+                              "box": {
+                                "x": 216,
+                                "y": 96,
+                                "width": 142,
+                                "height": 20
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "div",
+                          "classes": "space-y-2",
+                          "textSnippet": "Wave 140XP RewardAttempts 0/31. Connecting GearsGears and Mechanical Parity · EA",
+                          "box": {
+                            "x": 216,
+                            "y": 136,
+                            "width": 848,
+                            "height": 92
+                          },
+                          "children": [
+                            {
+                              "tag": "div",
+                              "classes": "flex flex-wrap items-center gap-2",
+                              "textSnippet": "Wave 140XP RewardAttempts 0/3",
+                              "box": {
+                                "x": 216,
+                                "y": 136,
+                                "width": 848,
+                                "height": 24
+                              }
+                            },
+                            {
+                              "tag": "h1",
+                              "classes": "text-2xl font-bold tracking-tight",
+                              "textSnippet": "1. Connecting Gears",
+                              "box": {
+                                "x": 216,
+                                "y": 168,
+                                "width": 848,
+                                "height": 32
+                              }
+                            },
+                            {
+                              "tag": "p",
+                              "classes": "text-sm text-muted-foreground",
+                              "textSnippet": "Gears and Mechanical Parity · EASY · Pass: 60%",
+                              "box": {
+                                "x": 216,
+                                "y": 208,
+                                "width": 848,
+                                "height": 20
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "div",
+                          "classes": "",
+                          "textSnippet": "Learn EvaluateTwo gears with meshing teeth cannot turn the same way. It is physi",
+                          "box": {
+                            "x": 216,
+                            "y": 248,
+                            "width": 848,
+                            "height": 934
+                          },
+                          "children": [
+                            {
+                              "tag": "div",
+                              "classes": "inline-flex items-center gap-1 rounded-lg bg-muted p-1 w-full justify-start",
+                              "role": "tablist",
+                              "textSnippet": "Learn Evaluate",
+                              "box": {
+                                "x": 216,
+                                "y": 248,
+                                "width": 848,
+                                "height": 40
+                              }
+                            },
+                            {
+                              "tag": "div",
+                              "classes": "focus-visible:outline-none mt-5 space-y-6",
+                              "role": "tabpanel",
+                              "textSnippet": "Two gears with meshing teeth cannot turn the same way. It is physically impossib",
+                              "box": {
+                                "x": 216,
+                                "y": 308,
+                                "width": 848,
+                                "height": 874
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "script",
+          "classes": "",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        }
+      ]
+    }
+  ],
+  "accessibilityTree": {
+    "role": "body",
+    "name": "body",
+    "children": [
+      {
+        "role": "div",
+        "name": "div",
+        "children": [
+          {
+            "role": "div",
+            "name": "div",
+            "children": [
+              {
+                "role": "div",
+                "name": "div",
+                "children": [
+                  {
+                    "role": "div",
+                    "name": "div",
+                    "children": [
+                      {
+                        "role": "button",
+                        "name": "Toggle dark and light theme"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "role": "main",
+                "name": "main",
+                "children": [
+                  {
+                    "role": "button",
+                    "name": "button"
+                  },
+                  {
+                    "role": "div",
+                    "name": "div",
+                    "children": [
+                      {
+                        "role": "div",
+                        "name": "div",
+                        "children": [
+                          {
+                            "role": "a",
+                            "name": "a"
+                          }
+                        ]
+                      },
+                      {
+                        "role": "div",
+                        "name": "div",
+                        "children": [
+                          {
+                            "role": "h1",
+                            "name": "1. Connecting Gears"
+                          },
+                          {
+                            "role": "p",
+                            "name": "Gears and Mechanical Parity · EASY · Pass: 60%"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "styledElements": [
+    {
+      "selector": "#root > div > div:nth-of-type(1) > div > button",
+      "tag": "button",
+      "box": {
+        "x": 1161,
+        "y": 153,
+        "width": 46,
+        "height": 46,
+        "isClipped": false,
+        "scrollWidth": 46,
+        "clientWidth": 46,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.178 0.029 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header",
+      "tag": "header",
+      "textSnippet": "Stud Ed Courses Leagues Quests LVL 3 425 ✦ | 2 🗝️ | 3 ⚡ Go ",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 64,
+        "isClipped": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 63,
+        "clientHeight": 63
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.8)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.4)",
+        "borderWidth": "0px 0px 1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > div > a",
+      "tag": "a",
+      "textSnippet": "Stud Ed",
+      "box": {
+        "x": 24,
+        "y": 16,
+        "width": 91,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 91,
+        "clientWidth": 91,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "\"IBM Plex Serif\", Georgia, serif",
+        "fontSize": "24px",
+        "lineHeight": "32px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav",
+      "tag": "nav",
+      "textSnippet": "Courses Leagues Quests",
+      "box": {
+        "x": 147,
+        "y": 18,
+        "width": 289,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 289,
+        "clientWidth": 289,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
+      "tag": "a",
+      "textSnippet": "Courses",
+      "box": {
+        "x": 147,
+        "y": 18,
+        "width": 96,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 96,
+        "clientWidth": 96,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(2) > a",
+      "tag": "a",
+      "textSnippet": "Leagues",
+      "box": {
+        "x": 247,
+        "y": 18,
+        "width": 96,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 96,
+        "clientWidth": 96,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(3) > a",
+      "tag": "a",
+      "textSnippet": "Quests",
+      "box": {
+        "x": 347,
+        "y": 18,
+        "width": 89,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 89,
+        "clientWidth": 89,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > button",
+      "tag": "button",
+      "box": {
+        "x": 873,
+        "y": 14,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "oklab(1 0 0 / 0.6)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.8)",
+        "borderWidth": "1px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 0px 0px",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(1)",
+      "tag": "a",
+      "textSnippet": "LVL 3 425 ✦",
+      "box": {
+        "x": 930,
+        "y": 24,
+        "width": 79,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 79,
+        "clientWidth": 79,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      },
+      "styles": {
+        "color": "oklch(0.596 0.145 163.225)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(2)",
+      "tag": "a",
+      "textSnippet": "2 🗝️",
+      "box": {
+        "x": 1024,
+        "y": 24,
+        "width": 25,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 25,
+        "clientWidth": 25,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      },
+      "styles": {
+        "color": "oklch(0.666 0.179 58.318)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(3)",
+      "tag": "a",
+      "textSnippet": "3 ⚡",
+      "box": {
+        "x": 1065,
+        "y": 24,
+        "width": 25,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 25,
+        "clientWidth": 25,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      },
+      "styles": {
+        "color": "oklch(0.646 0.222 41.116)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a",
+      "tag": "a",
+      "textSnippet": "Go Premium",
+      "box": {
+        "x": 1111,
+        "y": 17,
+        "width": 99,
+        "height": 30,
+        "isClipped": false,
+        "scrollWidth": 99,
+        "clientWidth": 99,
+        "scrollHeight": 30,
+        "clientHeight": 30
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "tag": "button",
+      "textSnippet": "Go Premium",
+      "box": {
+        "x": 1111,
+        "y": 17,
+        "width": 99,
+        "height": 30,
+        "isClipped": false,
+        "scrollWidth": 97,
+        "clientWidth": 97,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      },
+      "styles": {
+        "color": "oklch(0.666 0.179 58.318)",
+        "backgroundColor": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.769 0.0640531 0.176752 / 0.4)",
+        "borderWidth": "1px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 0px 0px",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "tag": "button",
+      "textSnippet": "D",
+      "box": {
+        "x": 1220,
+        "y": 14,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.484 0.164 145)",
+        "backgroundColor": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.484 -0.134341 0.0940665 / 0.4)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main",
+      "tag": "main",
+      "textSnippet": "Ask Blobby Scientific Thinking Wave 1 40 XP Reward Attempts ",
+      "box": {
+        "x": 0,
+        "y": 64,
+        "width": 1280,
+        "height": 1142,
+        "isClipped": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 1142,
+        "clientHeight": 1142
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > button",
+      "tag": "button",
+      "textSnippet": "Ask Blobby",
+      "box": {
+        "x": 1110,
+        "y": 722,
+        "width": 150,
+        "height": 58,
+        "isClipped": false,
+        "scrollWidth": 148,
+        "clientWidth": 148,
+        "scrollHeight": 56,
+        "clientHeight": 56
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklch(1 0 0)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "600",
+        "borderRadius": "16px",
+        "borderColor": "oklab(0.484 -0.134341 0.0940665 / 0.4)",
+        "borderWidth": "1px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0px 4px 6px -4px",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(1) > a",
+      "tag": "a",
+      "textSnippet": "Scientific Thinking",
+      "box": {
+        "x": 216,
+        "y": 96,
+        "width": 142,
+        "height": 20,
+        "isClipped": false,
+        "scrollWidth": 142,
+        "clientWidth": 142,
+        "scrollHeight": 20,
+        "clientHeight": 20
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "500",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(2) > h1",
+      "tag": "h1",
+      "textSnippet": "1. Connecting Gears",
+      "box": {
+        "x": 216,
+        "y": 168,
+        "width": 848,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 848,
+        "clientWidth": 848,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "24px",
+        "lineHeight": "32px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(2) > p",
+      "tag": "p",
+      "textSnippet": "Gears and Mechanical Parity · EASY · Pass: 60%",
+      "box": {
+        "x": 216,
+        "y": 208,
+        "width": 848,
+        "height": 20,
+        "isClipped": false,
+        "scrollWidth": 848,
+        "clientWidth": 848,
+        "scrollHeight": 20,
+        "clientHeight": 20
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(1) > button:nth-of-type(1)",
+      "tag": "button",
+      "role": "tab",
+      "textSnippet": "Learn",
+      "box": {
+        "x": 220,
+        "y": 252,
+        "width": 61,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 61,
+        "clientWidth": 61,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklch(0.988 0.003 145)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "500",
+        "borderRadius": "20px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(1) > button:nth-of-type(2)",
+      "tag": "button",
+      "role": "tab",
+      "textSnippet": "Evaluate",
+      "box": {
+        "x": 285,
+        "y": 252,
+        "width": 98,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 98,
+        "clientWidth": 98,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "500",
+        "borderRadius": "20px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > p",
+      "tag": "p",
+      "textSnippet": "Two gears with meshing teeth cannot turn the same way. It is",
+      "box": {
+        "x": 345,
+        "y": 325,
+        "width": 702,
+        "height": 26,
+        "isClipped": false,
+        "scrollWidth": 702,
+        "clientWidth": 702,
+        "scrollHeight": 26,
+        "clientHeight": 26
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "26px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "tag": "button",
+      "box": {
+        "x": 328,
+        "y": 376,
+        "width": 44,
+        "height": 44,
+        "isClipped": false,
+        "scrollWidth": 42,
+        "clientWidth": 42,
+        "scrollHeight": 42,
+        "clientHeight": 42
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "32px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "0.4"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "tag": "button",
+      "textSnippet": "Why not?",
+      "box": {
+        "x": 380,
+        "y": 376,
+        "width": 121,
+        "height": 44,
+        "isClipped": false,
+        "scrollWidth": 119,
+        "clientWidth": 119,
+        "scrollHeight": 42,
+        "clientHeight": 42
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "600",
+        "borderRadius": "32px",
+        "borderColor": "oklch(0.484 0.164 145)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section",
+      "tag": "section",
+      "textSnippet": "Work through the connecting gears puzzle. 0 Let's use intui",
+      "box": {
+        "x": 216,
+        "y": 444,
+        "width": 848,
+        "height": 612,
+        "isClipped": false,
+        "scrollWidth": 848,
+        "clientWidth": 848,
+        "scrollHeight": 612,
+        "clientHeight": 612
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > p",
+      "tag": "p",
+      "textSnippet": "Work through the connecting gears puzzle.",
+      "box": {
+        "x": 216,
+        "y": 444,
+        "width": 848,
+        "height": 20,
+        "isClipped": false,
+        "scrollWidth": 848,
+        "clientWidth": 848,
+        "scrollHeight": 20,
+        "clientHeight": 20
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "500",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > div > div:nth-of-type(1) > button",
+      "tag": "button",
+      "box": {
+        "x": 249,
+        "y": 509,
+        "width": 32,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 32,
+        "clientWidth": 32,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.708 0 none)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > div > div:nth-of-type(2) > div:nth-of-type(1) > h2",
+      "tag": "h2",
+      "textSnippet": "Let's use intuition to predict the behavior of a chain of ge",
+      "box": {
+        "x": 381,
+        "y": 566,
+        "width": 519,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 519,
+        "clientWidth": 519,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      },
+      "styles": {
+        "color": "oklch(0.97 0 none)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "18px",
+        "lineHeight": "28px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > div > div:nth-of-type(2) > div:nth-of-type(1) > p",
+      "tag": "p",
+      "textSnippet": "In any system of gears, each gear spins opposite its neighbo",
+      "box": {
+        "x": 381,
+        "y": 598,
+        "width": 519,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 519,
+        "clientWidth": 519,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      },
+      "styles": {
+        "color": "oklch(0.708 0 none)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "500",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > div > div:nth-of-type(3) > div:nth-of-type(2) > button",
+      "tag": "button",
+      "textSnippet": "Finish",
+      "box": {
+        "x": 932,
+        "y": 979,
+        "width": 99,
+        "height": 44,
+        "isClipped": false,
+        "scrollWidth": 99,
+        "clientWidth": 99,
+        "scrollHeight": 40,
+        "clientHeight": 40
+      },
+      "styles": {
+        "color": "oklch(0 0 0)",
+        "backgroundColor": "oklch(1 0 89.9)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "700",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px 0px 4px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > p",
+      "tag": "p",
+      "textSnippet": "Two meshing gears always turn in opposite directions. That o",
+      "box": {
+        "x": 216,
+        "y": 1080,
+        "width": 848,
+        "height": 26,
+        "isClipped": false,
+        "scrollWidth": 848,
+        "clientWidth": 848,
+        "scrollHeight": 26,
+        "clientHeight": 26
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "26px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > button",
+      "tag": "button",
+      "textSnippet": "Start Evaluation",
+      "box": {
+        "x": 216,
+        "y": 1130,
+        "width": 224,
+        "height": 52,
+        "isClipped": false,
+        "scrollWidth": 224,
+        "clientWidth": 224,
+        "scrollHeight": 48,
+        "clientHeight": 48
+      },
+      "styles": {
+        "color": "oklch(0.988 0.003 145)",
+        "backgroundColor": "oklch(0.484 0.164 145)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "800",
+        "borderRadius": "16px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px 0px 4px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.42 0.15 145) 0px 4px 0px 0px",
+        "opacity": "1"
+      }
+    }
+  ],
+  "boundingBoxes": [
+    {
+      "selector": "#root > div > div:nth-of-type(1) > div > button",
+      "box": {
+        "x": 1161,
+        "y": 153,
+        "width": 46,
+        "height": 46,
+        "isClipped": false,
+        "scrollWidth": 46,
+        "clientWidth": 46,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 64,
+        "isClipped": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 63,
+        "clientHeight": 63
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > div > a",
+      "box": {
+        "x": 24,
+        "y": 16,
+        "width": 91,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 91,
+        "clientWidth": 91,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav",
+      "box": {
+        "x": 147,
+        "y": 18,
+        "width": 289,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 289,
+        "clientWidth": 289,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
+      "box": {
+        "x": 147,
+        "y": 18,
+        "width": 96,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 96,
+        "clientWidth": 96,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(2) > a",
+      "box": {
+        "x": 247,
+        "y": 18,
+        "width": 96,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 96,
+        "clientWidth": 96,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(3) > a",
+      "box": {
+        "x": 347,
+        "y": 18,
+        "width": 89,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 89,
+        "clientWidth": 89,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > button",
+      "box": {
+        "x": 873,
+        "y": 14,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(1)",
+      "box": {
+        "x": 930,
+        "y": 24,
+        "width": 79,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 79,
+        "clientWidth": 79,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(2)",
+      "box": {
+        "x": 1024,
+        "y": 24,
+        "width": 25,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 25,
+        "clientWidth": 25,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(3)",
+      "box": {
+        "x": 1065,
+        "y": 24,
+        "width": 25,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 25,
+        "clientWidth": 25,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a",
+      "box": {
+        "x": 1111,
+        "y": 17,
+        "width": 99,
+        "height": 30,
+        "isClipped": false,
+        "scrollWidth": 99,
+        "clientWidth": 99,
+        "scrollHeight": 30,
+        "clientHeight": 30
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "box": {
+        "x": 1111,
+        "y": 17,
+        "width": 99,
+        "height": 30,
+        "isClipped": false,
+        "scrollWidth": 97,
+        "clientWidth": 97,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "box": {
+        "x": 1220,
+        "y": 14,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main",
+      "box": {
+        "x": 0,
+        "y": 64,
+        "width": 1280,
+        "height": 1142,
+        "isClipped": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "scrollHeight": 1142,
+        "clientHeight": 1142
+      }
+    },
+    {
+      "selector": "#root > div > main > button",
+      "box": {
+        "x": 1110,
+        "y": 722,
+        "width": 150,
+        "height": 58,
+        "isClipped": false,
+        "scrollWidth": 148,
+        "clientWidth": 148,
+        "scrollHeight": 56,
+        "clientHeight": 56
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(1) > a",
+      "box": {
+        "x": 216,
+        "y": 96,
+        "width": 142,
+        "height": 20,
+        "isClipped": false,
+        "scrollWidth": 142,
+        "clientWidth": 142,
+        "scrollHeight": 20,
+        "clientHeight": 20
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(2) > h1",
+      "box": {
+        "x": 216,
+        "y": 168,
+        "width": 848,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 848,
+        "clientWidth": 848,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(2) > p",
+      "box": {
+        "x": 216,
+        "y": 208,
+        "width": 848,
+        "height": 20,
+        "isClipped": false,
+        "scrollWidth": 848,
+        "clientWidth": 848,
+        "scrollHeight": 20,
+        "clientHeight": 20
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(1) > button:nth-of-type(1)",
+      "box": {
+        "x": 220,
+        "y": 252,
+        "width": 61,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 61,
+        "clientWidth": 61,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(1) > button:nth-of-type(2)",
+      "box": {
+        "x": 285,
+        "y": 252,
+        "width": 98,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 98,
+        "clientWidth": 98,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > p",
+      "box": {
+        "x": 345,
+        "y": 325,
+        "width": 702,
+        "height": 26,
+        "isClipped": false,
+        "scrollWidth": 702,
+        "clientWidth": 702,
+        "scrollHeight": 26,
+        "clientHeight": 26
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "box": {
+        "x": 328,
+        "y": 376,
+        "width": 44,
+        "height": 44,
+        "isClipped": false,
+        "scrollWidth": 42,
+        "clientWidth": 42,
+        "scrollHeight": 42,
+        "clientHeight": 42
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "box": {
+        "x": 380,
+        "y": 376,
+        "width": 121,
+        "height": 44,
+        "isClipped": false,
+        "scrollWidth": 119,
+        "clientWidth": 119,
+        "scrollHeight": 42,
+        "clientHeight": 42
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section",
+      "box": {
+        "x": 216,
+        "y": 444,
+        "width": 848,
+        "height": 612,
+        "isClipped": false,
+        "scrollWidth": 848,
+        "clientWidth": 848,
+        "scrollHeight": 612,
+        "clientHeight": 612
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > p",
+      "box": {
+        "x": 216,
+        "y": 444,
+        "width": 848,
+        "height": 20,
+        "isClipped": false,
+        "scrollWidth": 848,
+        "clientWidth": 848,
+        "scrollHeight": 20,
+        "clientHeight": 20
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > div > div:nth-of-type(1) > button",
+      "box": {
+        "x": 249,
+        "y": 509,
+        "width": 32,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 32,
+        "clientWidth": 32,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > div > div:nth-of-type(2) > div:nth-of-type(1) > h2",
+      "box": {
+        "x": 381,
+        "y": 566,
+        "width": 519,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 519,
+        "clientWidth": 519,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > div > div:nth-of-type(2) > div:nth-of-type(1) > p",
+      "box": {
+        "x": 381,
+        "y": 598,
+        "width": 519,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 519,
+        "clientWidth": 519,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > div > div:nth-of-type(3) > div:nth-of-type(2) > button",
+      "box": {
+        "x": 932,
+        "y": 979,
+        "width": 99,
+        "height": 44,
+        "isClipped": false,
+        "scrollWidth": 99,
+        "clientWidth": 99,
+        "scrollHeight": 40,
+        "clientHeight": 40
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > p",
+      "box": {
+        "x": 216,
+        "y": 1080,
+        "width": 848,
+        "height": 26,
+        "isClipped": false,
+        "scrollWidth": 848,
+        "clientWidth": 848,
+        "scrollHeight": 26,
+        "clientHeight": 26
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > button",
+      "box": {
+        "x": 216,
+        "y": 1130,
+        "width": 224,
+        "height": 52,
+        "isClipped": false,
+        "scrollWidth": 224,
+        "clientWidth": 224,
+        "scrollHeight": 48,
+        "clientHeight": 48
+      }
+    }
+  ],
+  "textInventory": [
+    {
+      "type": "other",
+      "text": "Stud Ed Courses Leagues Quests LVL 3 425 ✦ | 2 🗝️ | 3 ⚡ Go Premium D",
+      "selector": "#root > div > div:nth-of-type(2) > header"
+    },
+    {
+      "type": "link",
+      "text": "Stud Ed",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > div > a"
+    },
+    {
+      "type": "other",
+      "text": "Courses Leagues Quests",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav"
+    },
+    {
+      "type": "link",
+      "text": "Courses",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a"
+    },
+    {
+      "type": "link",
+      "text": "Leagues",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(2) > a"
+    },
+    {
+      "type": "link",
+      "text": "Quests",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(3) > a"
+    },
+    {
+      "type": "link",
+      "text": "LVL 3 425 ✦",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(1)"
+    },
+    {
+      "type": "link",
+      "text": "2 🗝️",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(2)"
+    },
+    {
+      "type": "link",
+      "text": "3 ⚡",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(3)"
+    },
+    {
+      "type": "link",
+      "text": "Go Premium",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a"
+    },
+    {
+      "type": "button",
+      "text": "Go Premium",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button"
+    },
+    {
+      "type": "button",
+      "text": "D",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button"
+    },
+    {
+      "type": "button",
+      "text": "Ask Blobby",
+      "selector": "#root > div > main > button"
+    },
+    {
+      "type": "link",
+      "text": "Scientific Thinking",
+      "selector": "#root > div > main > div > div:nth-of-type(1) > a"
+    },
+    {
+      "type": "heading",
+      "text": "1. Connecting Gears",
+      "level": 1,
+      "selector": "#root > div > main > div > div:nth-of-type(2) > h1"
+    },
+    {
+      "type": "paragraph",
+      "text": "Gears and Mechanical Parity · EASY · Pass: 60%",
+      "selector": "#root > div > main > div > div:nth-of-type(2) > p"
+    },
+    {
+      "type": "button",
+      "text": "Learn",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(1) > button:nth-of-type(1)"
+    },
+    {
+      "type": "button",
+      "text": "Evaluate",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(1) > button:nth-of-type(2)"
+    },
+    {
+      "type": "paragraph",
+      "text": "Two gears with meshing teeth cannot turn the same way. It is physically impossible.",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > p"
+    },
+    {
+      "type": "button",
+      "text": "Why not?",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > button:nth-of-type(2)"
+    },
+    {
+      "type": "other",
+      "text": "Work through the connecting gears puzzle. 0 Let's use intuition to predict the behavior of a chain of gears. In any system of gears, each gear spins opposite its neighbors. Finish",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section"
+    },
+    {
+      "type": "paragraph",
+      "text": "Work through the connecting gears puzzle.",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > p"
+    },
+    {
+      "type": "heading",
+      "text": "Let's use intuition to predict the behavior of a chain of gears.",
+      "level": 2,
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > div > div:nth-of-type(2) > div:nth-of-type(1) > h2"
+    },
+    {
+      "type": "paragraph",
+      "text": "In any system of gears, each gear spins opposite its neighbors.",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > div > div:nth-of-type(2) > div:nth-of-type(1) > p"
+    },
+    {
+      "type": "button",
+      "text": "Finish",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > div > div:nth-of-type(3) > div:nth-of-type(2) > button"
+    },
+    {
+      "type": "paragraph",
+      "text": "Two meshing gears always turn in opposite directions. That one fact is the whole basis of gear train prediction.",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > p"
+    },
+    {
+      "type": "button",
+      "text": "Start Evaluation",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > button"
+    }
+  ],
+  "linkInventory": [
+    {
+      "text": "Stud Ed",
+      "href": "/dashboard",
+      "resolvedUrl": "http://localhost:5173/dashboard",
+      "isInternal": true,
+      "isDisabled": false,
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > div > a"
+    },
+    {
+      "text": "Courses",
+      "href": "/courses",
+      "resolvedUrl": "http://localhost:5173/courses",
+      "isInternal": true,
+      "isDisabled": false,
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a"
+    },
+    {
+      "text": "Leagues",
+      "href": "/leaderboard",
+      "resolvedUrl": "http://localhost:5173/leaderboard",
+      "isInternal": true,
+      "isDisabled": false,
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(2) > a"
+    },
+    {
+      "text": "Quests",
+      "href": "/dashboard",
+      "resolvedUrl": "http://localhost:5173/dashboard",
+      "isInternal": true,
+      "isDisabled": false,
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(3) > a"
+    },
+    {
+      "text": "LVL 3 425 ✦",
+      "href": "/achievements",
+      "resolvedUrl": "http://localhost:5173/achievements",
+      "isInternal": true,
+      "isDisabled": false,
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(1)"
+    },
+    {
+      "text": "2 🗝️",
+      "href": "/subscription",
+      "resolvedUrl": "http://localhost:5173/subscription",
+      "isInternal": true,
+      "isDisabled": false,
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(2)"
+    },
+    {
+      "text": "3 ⚡",
+      "href": "/dashboard",
+      "resolvedUrl": "http://localhost:5173/dashboard",
+      "isInternal": true,
+      "isDisabled": false,
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(3)"
+    },
+    {
+      "text": "Go Premium",
+      "href": "/subscription",
+      "resolvedUrl": "http://localhost:5173/subscription",
+      "isInternal": true,
+      "isDisabled": false,
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a"
+    },
+    {
+      "text": "Scientific Thinking",
+      "href": "/courses/science-thinking",
+      "resolvedUrl": "http://localhost:5173/courses/science-thinking",
+      "isInternal": true,
+      "isDisabled": false,
+      "selector": "#root > div > main > div > div:nth-of-type(1) > a"
+    }
+  ],
+  "focusOrder": [
+    {
+      "order": 1,
+      "tag": "button",
+      "accessibleName": "Toggle dark and light theme",
+      "selector": "#root > div > div:nth-of-type(1) > div > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 2,
+      "tag": "a",
+      "accessibleName": "Stud\nEd",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > div > a",
+      "tabIndex": 0
+    },
+    {
+      "order": 3,
+      "tag": "a",
+      "accessibleName": "Courses",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
+      "tabIndex": 0
+    },
+    {
+      "order": 4,
+      "tag": "a",
+      "accessibleName": "Leagues",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(2) > a",
+      "tabIndex": 0
+    },
+    {
+      "order": 5,
+      "tag": "a",
+      "accessibleName": "Quests",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(3) > a",
+      "tabIndex": 0
+    },
+    {
+      "order": 6,
+      "tag": "button",
+      "accessibleName": "Search topics and lessons",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 7,
+      "tag": "a",
+      "accessibleName": "LVL 3\n425\n✦",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(1)",
+      "tabIndex": 0
+    },
+    {
+      "order": 8,
+      "tag": "a",
+      "accessibleName": "2\n🗝️",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(2)",
+      "tabIndex": 0
+    },
+    {
+      "order": 9,
+      "tag": "a",
+      "accessibleName": "3\n⚡",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(1) > a:nth-of-type(3)",
+      "tabIndex": 0
+    },
+    {
+      "order": 10,
+      "tag": "a",
+      "accessibleName": "Go Premium",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a",
+      "tabIndex": 0
+    },
+    {
+      "order": 11,
+      "tag": "button",
+      "accessibleName": "Go Premium",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 12,
+      "tag": "button",
+      "accessibleName": "User profile menu",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 13,
+      "tag": "button",
+      "accessibleName": "Ask Blobby",
+      "selector": "#root > div > main > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 14,
+      "tag": "a",
+      "accessibleName": "Scientific Thinking",
+      "selector": "#root > div > main > div > div:nth-of-type(1) > a",
+      "tabIndex": 0
+    },
+    {
+      "order": 15,
+      "tag": "button",
+      "role": "tab",
+      "accessibleName": "Learn",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(1) > button:nth-of-type(1)",
+      "tabIndex": 0
+    },
+    {
+      "order": 16,
+      "tag": "button",
+      "accessibleName": "Why not?",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "tabIndex": 0
+    },
+    {
+      "order": 17,
+      "tag": "button",
+      "accessibleName": "Close wave",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > div > div:nth-of-type(1) > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 18,
+      "tag": "button",
+      "accessibleName": "Finish",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > section > div > div:nth-of-type(3) > div:nth-of-type(2) > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 19,
+      "tag": "button",
+      "accessibleName": "Start Evaluation",
+      "selector": "#root > div > main > div > div:nth-of-type(3) > div:nth-of-type(2) > button",
+      "tabIndex": 0
+    }
+  ],
+  "dopamineProbes": {
+    "confettiPresent": false,
+    "xpToastPresent": true,
+    "xpValue": "40XP Reward",
+    "streakBadgePresent": true,
+    "streakValue": "3⚡",
+    "keysBadgePresent": true,
+    "keysValue": "2🗝️",
+    "progressRingPresent": false,
+    "audioTriggerObserved": false
+  }
+}

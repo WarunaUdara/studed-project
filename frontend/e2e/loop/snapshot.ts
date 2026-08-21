@@ -371,7 +371,10 @@ export async function captureScreenSnapshot(
   await setupMockGraphQL(page);
 
   const targetUrl = `${BASE_URL}${screen.path}`;
-  await page.goto(targetUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
+  // A dev server compiles each route the first time it is asked for, and the
+  // heavier screens take well past fifteen seconds cold. The per-screen
+  // deadline still bounds the whole capture.
+  await page.goto(targetUrl, { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.waitForTimeout(400); // Allow react rendering and animations to settle
 
   const title = await page.title().catch(() => screen.title);
@@ -434,6 +437,28 @@ export async function captureScreenSnapshot(
   return snapshot;
 }
 
+/** One screen may not hold up the whole audit. */
+const SCREEN_CAPTURE_TIMEOUT_MS = 45_000;
+
+async function captureWithDeadline(
+  page: Page,
+  screen: DiscoveredScreen,
+  viewport: ViewportMode,
+): Promise<ScreenSnapshot | null> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const deadline = new Promise<null>((resolve) => {
+    timer = setTimeout(() => resolve(null), SCREEN_CAPTURE_TIMEOUT_MS);
+  });
+  try {
+    // page.evaluate has no timeout of its own: a screen whose main thread never
+    // yields would otherwise stall the run indefinitely, which is exactly what
+    // happened before this deadline existed.
+    return await Promise.race([captureScreenSnapshot(page, screen, viewport, "default"), deadline]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 /**
  * Captures snapshots for an array of discovered screens across viewports.
  */
@@ -466,12 +491,27 @@ export async function captureAllSnapshots(
     console.warn(`[snapshot] Auth failed for ${role}:`, err);
   }
 
+  // A failed sign-in used to leave the crawler on /login, and every protected
+  // screen then bounced between the guard and the login page while the audit
+  // waited on a main thread that never settled. Seeding the session flag keeps
+  // the crawl on the screens it is meant to be fingerprinting.
+  if (new URL(page.url()).pathname === "/login") {
+    console.warn(`[snapshot] Sign-in did not navigate for ${role}; seeding a local session.`);
+    await page.evaluate(() => window.localStorage.setItem("studed_has_session", "true"));
+  }
+
   for (const screen of screens) {
     for (const vp of viewports) {
       try {
         console.log(`[snapshot] Capturing ${screen.role} -> ${screen.path} (${vp})...`);
-        const snap = await captureScreenSnapshot(page, screen, vp, "default");
-        snapshots.push(snap);
+        const snap = await captureWithDeadline(page, screen, vp);
+        if (snap) {
+          snapshots.push(snap);
+        } else {
+          console.warn(
+            `[snapshot] Gave up on ${screen.path} (${vp}) after ${SCREEN_CAPTURE_TIMEOUT_MS}ms`,
+          );
+        }
       } catch (err) {
         console.warn(`[snapshot] Error capturing ${screen.path} (${vp}):`, err);
       }

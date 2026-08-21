@@ -1,0 +1,46 @@
+diff --git a/node_modules/feral-blob/.bun-tag-553b47ecab3a2fff b/.bun-tag-553b47ecab3a2fff
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/node_modules/feral-blob/.bun-tag-f602ea938043fcd7 b/.bun-tag-f602ea938043fcd7
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/dist/feral-blob.js b/dist/feral-blob.js
+index 579b58319e20e922063cee263b88b3b66d1c0424..bff908a58d0a3b121403bac3cd0b262bbb002d3b 100644
+--- a/dist/feral-blob.js
++++ b/dist/feral-blob.js
+@@ -104,7 +104,7 @@ const BODY_TRANSFORMS = {
+     y: [0, -22, -6, -10],
+     scaleX: [1, 1, 1.05, 1],
+     scaleY: [1, 1.06, 0.96, 1],
+-    transition: { type: "spring", stiffness: 220, damping: 9, mass: 0.7 }
++    transition: { duration: 0.85, ease: "easeOut", times: [0, 0.32, 0.62, 1] }
+   },
+   sad: {
+     // the melt is the SAD_SHAPE body path itself; the body group just holds (no scaling),
+@@ -139,7 +139,7 @@ const FACE_TRANSFORMS = {
+     // track the body's bounce EXACTLY (matched y keyframes) so the face rides up with it, no detach
+     y: [0, -22, -6, -10],
+     scale: 1,
+-    transition: { delay: 0.05, type: "spring", stiffness: 220, damping: 9, mass: 0.7 }
++    transition: { delay: 0.05, duration: 0.85, ease: "easeOut", times: [0, 0.32, 0.62, 1] }
+   },
+   sad: {
+     // the melted body sits lower, so the face drops onto it (looking down, sad). NO squash
+@@ -171,7 +171,7 @@ const LEFT_ARM_TRANSFORMS = {
+     // ride the bigger bounce + raise gently OUTWARD like a tiny excited hand; stays snug to the FAT body
+     y: [0, -19, -5, -9],
+     rotate: -8,
+-    transition: { delay: 0.1, type: "spring", stiffness: 210, damping: 11, mass: 0.8 }
++    transition: { delay: 0.1, duration: 0.85, ease: "easeOut", times: [0, 0.32, 0.62, 1] }
+   },
+   sad: {
+     y: 13,
+@@ -199,7 +199,7 @@ const RIGHT_ARM_TRANSFORMS = {
+     // ride the bigger bounce + raise gently OUTWARD like a tiny excited hand; stays snug to the FAT body
+     y: [0, -19, -5, -9],
+     rotate: 8,
+-    transition: { delay: 0.12, type: "spring", stiffness: 210, damping: 11, mass: 0.8 }
++    transition: { delay: 0.12, duration: 0.85, ease: "easeOut", times: [0, 0.32, 0.62, 1] }
+   },
+   sad: {
+     y: 13,

@@ -1,0 +1,3255 @@
+{
+  "metadata": {
+    "role": "educator",
+    "path": "/courses",
+    "routeFile": "frontend/src/routes/courses.tsx",
+    "title": "StudEd",
+    "viewport": "mobile",
+    "viewportSize": {
+      "width": 390,
+      "height": 844
+    },
+    "state": "default",
+    "timestamp": "2026-08-21T05:45:09.612Z"
+  },
+  "domOutline": [
+    {
+      "tag": "body",
+      "classes": "",
+      "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumDLearning PathsStep-by-step",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 2408
+      },
+      "children": [
+        {
+          "id": "root",
+          "tag": "div",
+          "classes": "",
+          "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumDLearning PathsStep-by-step",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 2408
+          },
+          "children": [
+            {
+              "tag": "div",
+              "classes": "relative min-h-screen bg-background text-foreground",
+              "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumDLearning PathsStep-by-step",
+              "box": {
+                "x": 0,
+                "y": 0,
+                "width": 390,
+                "height": 2408
+              },
+              "children": [
+                {
+                  "tag": "div",
+                  "classes": "pointer-events-none fixed top-0 right-16 z-[9999] select-none",
+                  "box": {
+                    "x": 262,
+                    "y": 0,
+                    "width": 64,
+                    "height": 340
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "classes": "relative size-full",
+                      "box": {
+                        "x": 262,
+                        "y": 0,
+                        "width": 64,
+                        "height": 340
+                      },
+                      "children": [
+                        {
+                          "tag": "button",
+                          "classes": "pointer-events-auto absolute cursor-grab touch-none rounded-full transition-shadow active:cursor-gra",
+                          "box": {
+                            "x": 271,
+                            "y": 153,
+                            "width": 46,
+                            "height": 46
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "classes": "relative w-full select-none",
+                  "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumD",
+                  "box": {
+                    "x": 0,
+                    "y": 0,
+                    "width": 390,
+                    "height": 64
+                  },
+                  "children": [
+                    {
+                      "tag": "header",
+                      "classes": "relative z-50 h-16 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl transition-col",
+                      "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumD",
+                      "box": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 390,
+                        "height": 64
+                      },
+                      "children": [
+                        {
+                          "tag": "div",
+                          "classes": "mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6",
+                          "textSnippet": "StudEdCoursesLeaguesQuestsLVL 3425✦|2🗝️|3⚡Go PremiumD",
+                          "box": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 390,
+                            "height": 63
+                          },
+                          "children": [
+                            {
+                              "tag": "div",
+                              "classes": "flex items-center gap-8",
+                              "textSnippet": "StudEdCoursesLeaguesQuests",
+                              "box": {
+                                "x": 16,
+                                "y": 16,
+                                "width": 83,
+                                "height": 32
+                              }
+                            },
+                            {
+                              "tag": "div",
+                              "classes": "flex items-center gap-3",
+                              "textSnippet": "LVL 3425✦|2🗝️|3⚡Go PremiumD",
+                              "box": {
+                                "x": 246,
+                                "y": 14,
+                                "width": 128,
+                                "height": 36
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "main",
+                  "classes": "",
+                  "textSnippet": "Learning PathsStep-by-step paths to mastery · 12 courses available · 12 enrolled",
+                  "box": {
+                    "x": 0,
+                    "y": 64,
+                    "width": 390,
+                    "height": 2344
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "classes": "mx-auto max-w-7xl px-4 py-6 sm:px-6 min-h-[calc(100vh-64px)]",
+                      "textSnippet": "Learning PathsStep-by-step paths to mastery · 12 courses available · 12 enrolled",
+                      "box": {
+                        "x": 0,
+                        "y": 64,
+                        "width": 390,
+                        "height": 2344
+                      },
+                      "children": [
+                        {
+                          "tag": "div",
+                          "classes": "space-y-8 relative pb-12",
+                          "textSnippet": "Learning PathsStep-by-step paths to mastery · 12 courses available · 12 enrolled",
+                          "box": {
+                            "x": 16,
+                            "y": 88,
+                            "width": 358,
+                            "height": 2296
+                          },
+                          "children": [
+                            {
+                              "tag": "div",
+                              "classes": "flex flex-col md:flex-row md:items-end justify-between gap-6",
+                              "textSnippet": "Learning PathsStep-by-step paths to mastery · 12 courses available · 12 enrolled",
+                              "box": {
+                                "x": 16,
+                                "y": 88,
+                                "width": 358,
+                                "height": 150
+                              }
+                            },
+                            {
+                              "tag": "div",
+                              "classes": "flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar",
+                              "textSnippet": "✨All Paths📐Mathematics💻Programming & CS🔬Science & Physics📚Languages",
+                              "box": {
+                                "x": 16,
+                                "y": 270,
+                                "width": 358,
+                                "height": 38
+                              }
+                            },
+                            {
+                              "tag": "div",
+                              "classes": "space-y-8",
+                              "textSnippet": "Your learning pathsGRADES 4–11 · O/LMath FoundationsStrengthen algebra, geometry",
+                              "box": {
+                                "x": 16,
+                                "y": 340,
+                                "width": 358,
+                                "height": 1996
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "script",
+          "classes": "",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        }
+      ]
+    }
+  ],
+  "accessibilityTree": {
+    "role": "body",
+    "name": "body",
+    "children": [
+      {
+        "role": "div",
+        "name": "div",
+        "children": [
+          {
+            "role": "div",
+            "name": "div",
+            "children": [
+              {
+                "role": "div",
+                "name": "div",
+                "children": [
+                  {
+                    "role": "div",
+                    "name": "div",
+                    "children": [
+                      {
+                        "role": "button",
+                        "name": "Toggle dark and light theme"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "styledElements": [
+    {
+      "selector": "#root > div > div:nth-of-type(1) > div > button",
+      "tag": "button",
+      "box": {
+        "x": 271,
+        "y": 153,
+        "width": 46,
+        "height": 46,
+        "isClipped": false,
+        "scrollWidth": 46,
+        "clientWidth": 46,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.178 0.029 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header",
+      "tag": "header",
+      "textSnippet": "Stud Ed D",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 64,
+        "isClipped": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "scrollHeight": 63,
+        "clientHeight": 63
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.8)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.4)",
+        "borderWidth": "0px 0px 1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > div > a",
+      "tag": "a",
+      "textSnippet": "Stud Ed",
+      "box": {
+        "x": 16,
+        "y": 16,
+        "width": 83,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 83,
+        "clientWidth": 83,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "\"IBM Plex Serif\", Georgia, serif",
+        "fontSize": "24px",
+        "lineHeight": "32px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > button",
+      "tag": "button",
+      "box": {
+        "x": 246,
+        "y": 14,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "oklab(1 0 0 / 0.6)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.8)",
+        "borderWidth": "1px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 0px 0px",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "tag": "button",
+      "textSnippet": "D",
+      "box": {
+        "x": 290,
+        "y": 14,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.484 0.164 145)",
+        "backgroundColor": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.484 -0.134341 0.0940665 / 0.4)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > button",
+      "tag": "button",
+      "box": {
+        "x": 338,
+        "y": 14,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklch(1 0 0)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main",
+      "tag": "main",
+      "textSnippet": "Learning Paths Step-by-step paths to mastery · 12 courses a",
+      "box": {
+        "x": 0,
+        "y": 64,
+        "width": 390,
+        "height": 2344,
+        "isClipped": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "scrollHeight": 2344,
+        "clientHeight": 2344
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(1) > div:nth-of-type(1) > h1",
+      "tag": "h1",
+      "textSnippet": "Learning Paths",
+      "box": {
+        "x": 16,
+        "y": 88,
+        "width": 358,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 358,
+        "clientWidth": 358,
+        "scrollHeight": 36,
+        "clientHeight": 36
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "30px",
+        "lineHeight": "36px",
+        "fontWeight": "800",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(1) > div:nth-of-type(1) > p",
+      "tag": "p",
+      "textSnippet": "Step-by-step paths to mastery · 12 courses available · 12 en",
+      "box": {
+        "x": 16,
+        "y": 130,
+        "width": 358,
+        "height": 40,
+        "isClipped": false,
+        "scrollWidth": 358,
+        "clientWidth": 358,
+        "scrollHeight": 40,
+        "clientHeight": 40
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "500",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#course-search",
+      "tag": "input",
+      "id": "course-search",
+      "box": {
+        "x": 16,
+        "y": 194,
+        "width": 358,
+        "height": 44,
+        "isClipped": false,
+        "scrollWidth": 356,
+        "clientWidth": 356,
+        "scrollHeight": 42,
+        "clientHeight": 42
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklab(1 0 0 / 0.8)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(1)",
+      "tag": "button",
+      "textSnippet": "✨ All Paths",
+      "box": {
+        "x": 15,
+        "y": 270,
+        "width": 109,
+        "height": 35,
+        "isClipped": false,
+        "scrollWidth": 105,
+        "clientWidth": 105,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.988 0.003 145)",
+        "backgroundColor": "oklch(0.484 0.164 145)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.484 0.164 145)",
+        "borderWidth": "1px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(2)",
+      "tag": "button",
+      "textSnippet": "📐 Mathematics",
+      "box": {
+        "x": 131,
+        "y": 270,
+        "width": 132,
+        "height": 34,
+        "isClipped": false,
+        "scrollWidth": 130,
+        "clientWidth": 130,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "oklch(1 0 0)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(3)",
+      "tag": "button",
+      "textSnippet": "💻 Programming & CS",
+      "box": {
+        "x": 270,
+        "y": 270,
+        "width": 165,
+        "height": 34,
+        "isClipped": false,
+        "scrollWidth": 163,
+        "clientWidth": 163,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "oklch(1 0 0)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(4)",
+      "tag": "button",
+      "textSnippet": "🔬 Science & Physics",
+      "box": {
+        "x": 443,
+        "y": 270,
+        "width": 162,
+        "height": 34,
+        "isClipped": false,
+        "scrollWidth": 160,
+        "clientWidth": 160,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "oklch(1 0 0)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(5)",
+      "tag": "button",
+      "textSnippet": "📚 Languages",
+      "box": {
+        "x": 613,
+        "y": 270,
+        "width": 120,
+        "height": 34,
+        "isClipped": false,
+        "scrollWidth": 118,
+        "clientWidth": 118,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "oklch(1 0 0)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(1) > h2",
+      "tag": "h2",
+      "textSnippet": "Your learning paths",
+      "box": {
+        "x": 16,
+        "y": 340,
+        "width": 358,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 358,
+        "clientWidth": 358,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "\"IBM Plex Serif\", Georgia, serif",
+        "fontSize": "20px",
+        "lineHeight": "28px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > h2",
+      "tag": "h2",
+      "textSnippet": "Math Foundations",
+      "box": {
+        "x": 105,
+        "y": 444,
+        "width": 244,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 244,
+        "clientWidth": 244,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "\"IBM Plex Serif\", Georgia, serif",
+        "fontSize": "20px",
+        "lineHeight": "28px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > p",
+      "tag": "p",
+      "textSnippet": "Strengthen algebra, geometry, and arithmetic skills step-by-",
+      "box": {
+        "x": 105,
+        "y": 476,
+        "width": 244,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 244,
+        "clientWidth": 244,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > button",
+      "tag": "button",
+      "box": {
+        "x": 313,
+        "y": 524,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.8)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.5)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "tag": "button",
+      "box": {
+        "x": 27,
+        "y": 660,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.9)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.6)",
+        "borderWidth": "1px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px",
+        "opacity": "0"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "tag": "button",
+      "box": {
+        "x": 327,
+        "y": 660,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.9)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.6)",
+        "borderWidth": "1px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px",
+        "opacity": "0"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1)",
+      "tag": "div",
+      "textSnippet": "G10 33% Coordinate Geometry",
+      "box": {
+        "x": 41,
+        "y": 588,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > h3",
+      "tag": "h3",
+      "textSnippet": "Coordinate Geometry",
+      "box": {
+        "x": 41,
+        "y": 788,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "tag": "div",
+      "textSnippet": "G5 0% Math Foundation",
+      "box": {
+        "x": 231,
+        "y": 588,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3",
+      "tag": "h3",
+      "textSnippet": "Math Foundation",
+      "box": {
+        "x": 231,
+        "y": 788,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > h2",
+      "tag": "h2",
+      "textSnippet": "Programming & Computer Science",
+      "box": {
+        "x": 105,
+        "y": 921,
+        "width": 244,
+        "height": 56,
+        "isClipped": false,
+        "scrollWidth": 244,
+        "clientWidth": 244,
+        "scrollHeight": 56,
+        "clientHeight": 56
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "\"IBM Plex Serif\", Georgia, serif",
+        "fontSize": "20px",
+        "lineHeight": "28px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > p",
+      "tag": "p",
+      "textSnippet": "Speak the language of computers and build programs in Python",
+      "box": {
+        "x": 105,
+        "y": 981,
+        "width": 244,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 244,
+        "clientWidth": 244,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > button",
+      "tag": "button",
+      "box": {
+        "x": 313,
+        "y": 1029,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.8)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.5)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "tag": "button",
+      "box": {
+        "x": 27,
+        "y": 1165,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.9)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.6)",
+        "borderWidth": "1px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px",
+        "opacity": "0"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "tag": "button",
+      "box": {
+        "x": 327,
+        "y": 1165,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.9)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.6)",
+        "borderWidth": "1px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px",
+        "opacity": "0"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div",
+      "tag": "div",
+      "textSnippet": "G6 0% Computers and Code",
+      "box": {
+        "x": 41,
+        "y": 1093,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div > h3",
+      "tag": "h3",
+      "textSnippet": "Computers and Code",
+      "box": {
+        "x": 41,
+        "y": 1293,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > h2",
+      "tag": "h2",
+      "textSnippet": "Natural Science & Physics",
+      "box": {
+        "x": 105,
+        "y": 1426,
+        "width": 244,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 244,
+        "clientWidth": 244,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "\"IBM Plex Serif\", Georgia, serif",
+        "fontSize": "20px",
+        "lineHeight": "28px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > p",
+      "tag": "p",
+      "textSnippet": "Explore physics mechanics, cellular biology, and chemistry l",
+      "box": {
+        "x": 105,
+        "y": 1458,
+        "width": 244,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 244,
+        "clientWidth": 244,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > button",
+      "tag": "button",
+      "box": {
+        "x": 313,
+        "y": 1506,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.8)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.5)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "tag": "button",
+      "box": {
+        "x": 27,
+        "y": 1642,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.9)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.6)",
+        "borderWidth": "1px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px",
+        "opacity": "0"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "tag": "button",
+      "box": {
+        "x": 327,
+        "y": 1642,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.9)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.6)",
+        "borderWidth": "1px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px",
+        "opacity": "0"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1)",
+      "tag": "div",
+      "textSnippet": "G9 20% Scientific Thinking",
+      "box": {
+        "x": 41,
+        "y": 1570,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > h3",
+      "tag": "h3",
+      "textSnippet": "Scientific Thinking",
+      "box": {
+        "x": 41,
+        "y": 1770,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "tag": "div",
+      "textSnippet": "G4 0% Physics Adventures",
+      "box": {
+        "x": 231,
+        "y": 1570,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3",
+      "tag": "h3",
+      "textSnippet": "Physics Adventures",
+      "box": {
+        "x": 231,
+        "y": 1770,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3)",
+      "tag": "div",
+      "textSnippet": "G10 0% Computer Science Foundations",
+      "box": {
+        "x": 421,
+        "y": 1570,
+        "width": 170,
+        "height": 232,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 232,
+        "clientHeight": 232
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "0.971346"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3) > h3",
+      "tag": "h3",
+      "textSnippet": "Computer Science Foundations",
+      "box": {
+        "x": 421,
+        "y": 1770,
+        "width": 170,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4)",
+      "tag": "div",
+      "textSnippet": "G7 0% Forces, Energy and Machines",
+      "box": {
+        "x": 611,
+        "y": 1572,
+        "width": 170,
+        "height": 232,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 232,
+        "clientHeight": 232
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "0.871701"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4) > h3",
+      "tag": "h3",
+      "textSnippet": "Forces, Energy and Machines",
+      "box": {
+        "x": 611,
+        "y": 1772,
+        "width": 170,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(5)",
+      "tag": "div",
+      "textSnippet": "G10 0% Electricity and Motion",
+      "box": {
+        "x": 801,
+        "y": 1574,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "0.721411"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(5) > h3",
+      "tag": "h3",
+      "textSnippet": "Electricity and Motion",
+      "box": {
+        "x": 801,
+        "y": 1774,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6)",
+      "tag": "div",
+      "textSnippet": "O/L 0% O/L Physics Revision",
+      "box": {
+        "x": 991,
+        "y": 1577,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "0.532319"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6) > h3",
+      "tag": "h3",
+      "textSnippet": "O/L Physics Revision",
+      "box": {
+        "x": 991,
+        "y": 1777,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7)",
+      "tag": "div",
+      "textSnippet": "A/L 0% A/L Physics: Mechanics and Circuits",
+      "box": {
+        "x": 1181,
+        "y": 1580,
+        "width": 170,
+        "height": 232,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 232,
+        "clientHeight": 232
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "0.310736"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7) > h3",
+      "tag": "h3",
+      "textSnippet": "A/L Physics: Mechanics and Circuits",
+      "box": {
+        "x": 1181,
+        "y": 1780,
+        "width": 170,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > h2",
+      "tag": "h2",
+      "textSnippet": "Additional Explorations",
+      "box": {
+        "x": 57,
+        "y": 1919,
+        "width": 292,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 292,
+        "clientWidth": 292,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "\"IBM Plex Serif\", Georgia, serif",
+        "fontSize": "20px",
+        "lineHeight": "28px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > p",
+      "tag": "p",
+      "textSnippet": "Explore custom courses and specialized modules published by ",
+      "box": {
+        "x": 57,
+        "y": 1951,
+        "width": 292,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 292,
+        "clientWidth": 292,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(2) > button",
+      "tag": "button",
+      "box": {
+        "x": 313,
+        "y": 1999,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.44 0.022 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.8)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.5)",
+        "borderWidth": "1px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "tag": "button",
+      "box": {
+        "x": 27,
+        "y": 2135,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.9)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.6)",
+        "borderWidth": "1px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px",
+        "opacity": "0"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "tag": "button",
+      "box": {
+        "x": 327,
+        "y": 2135,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "oklab(0.988 -0.00245746 0.00172073 / 0.9)",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "3.35544e+07px",
+        "borderColor": "oklab(0.88 -0.0245746 0.0172073 / 0.6)",
+        "borderWidth": "1px",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px",
+        "opacity": "0"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1)",
+      "tag": "div",
+      "textSnippet": "O/L 0% O/L ICT Revision",
+      "box": {
+        "x": 41,
+        "y": 2063,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > h3",
+      "tag": "h3",
+      "textSnippet": "O/L ICT Revision",
+      "box": {
+        "x": 41,
+        "y": 2263,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "tag": "div",
+      "textSnippet": "A/L 0% A/L ICT: Structures and Systems",
+      "box": {
+        "x": 231,
+        "y": 2063,
+        "width": 170,
+        "height": 232,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 232,
+        "clientHeight": 232
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": "400",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3",
+      "tag": "h3",
+      "textSnippet": "A/L ICT: Structures and Systems",
+      "box": {
+        "x": 231,
+        "y": 2263,
+        "width": 170,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      },
+      "styles": {
+        "color": "oklch(0.178 0.029 145)",
+        "backgroundColor": "transparent",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": "700",
+        "borderRadius": "0px",
+        "borderColor": "oklch(0.88 0.03 145)",
+        "borderWidth": "0px",
+        "boxShadow": "none",
+        "opacity": "1"
+      }
+    }
+  ],
+  "boundingBoxes": [
+    {
+      "selector": "#root > div > div:nth-of-type(1) > div > button",
+      "box": {
+        "x": 271,
+        "y": 153,
+        "width": 46,
+        "height": 46,
+        "isClipped": false,
+        "scrollWidth": 46,
+        "clientWidth": 46,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 64,
+        "isClipped": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "scrollHeight": 63,
+        "clientHeight": 63
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > div > a",
+      "box": {
+        "x": 16,
+        "y": 16,
+        "width": 83,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 83,
+        "clientWidth": 83,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > button",
+      "box": {
+        "x": 246,
+        "y": 14,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "box": {
+        "x": 290,
+        "y": 14,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > button",
+      "box": {
+        "x": 338,
+        "y": 14,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main",
+      "box": {
+        "x": 0,
+        "y": 64,
+        "width": 390,
+        "height": 2344,
+        "isClipped": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "scrollHeight": 2344,
+        "clientHeight": 2344
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(1) > div:nth-of-type(1) > h1",
+      "box": {
+        "x": 16,
+        "y": 88,
+        "width": 358,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 358,
+        "clientWidth": 358,
+        "scrollHeight": 36,
+        "clientHeight": 36
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(1) > div:nth-of-type(1) > p",
+      "box": {
+        "x": 16,
+        "y": 130,
+        "width": 358,
+        "height": 40,
+        "isClipped": false,
+        "scrollWidth": 358,
+        "clientWidth": 358,
+        "scrollHeight": 40,
+        "clientHeight": 40
+      }
+    },
+    {
+      "selector": "#course-search",
+      "box": {
+        "x": 16,
+        "y": 194,
+        "width": 358,
+        "height": 44,
+        "isClipped": false,
+        "scrollWidth": 356,
+        "clientWidth": 356,
+        "scrollHeight": 42,
+        "clientHeight": 42
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(1)",
+      "box": {
+        "x": 15,
+        "y": 270,
+        "width": 109,
+        "height": 35,
+        "isClipped": false,
+        "scrollWidth": 105,
+        "clientWidth": 105,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(2)",
+      "box": {
+        "x": 131,
+        "y": 270,
+        "width": 132,
+        "height": 34,
+        "isClipped": false,
+        "scrollWidth": 130,
+        "clientWidth": 130,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(3)",
+      "box": {
+        "x": 270,
+        "y": 270,
+        "width": 165,
+        "height": 34,
+        "isClipped": false,
+        "scrollWidth": 163,
+        "clientWidth": 163,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(4)",
+      "box": {
+        "x": 443,
+        "y": 270,
+        "width": 162,
+        "height": 34,
+        "isClipped": false,
+        "scrollWidth": 160,
+        "clientWidth": 160,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(5)",
+      "box": {
+        "x": 613,
+        "y": 270,
+        "width": 120,
+        "height": 34,
+        "isClipped": false,
+        "scrollWidth": 118,
+        "clientWidth": 118,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(1) > h2",
+      "box": {
+        "x": 16,
+        "y": 340,
+        "width": 358,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 358,
+        "clientWidth": 358,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > h2",
+      "box": {
+        "x": 105,
+        "y": 444,
+        "width": 244,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 244,
+        "clientWidth": 244,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > p",
+      "box": {
+        "x": 105,
+        "y": 476,
+        "width": 244,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 244,
+        "clientWidth": 244,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > button",
+      "box": {
+        "x": 313,
+        "y": 524,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "box": {
+        "x": 27,
+        "y": 660,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "box": {
+        "x": 327,
+        "y": 660,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1)",
+      "box": {
+        "x": 41,
+        "y": 588,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > h3",
+      "box": {
+        "x": 41,
+        "y": 788,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "box": {
+        "x": 231,
+        "y": 588,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3",
+      "box": {
+        "x": 231,
+        "y": 788,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > h2",
+      "box": {
+        "x": 105,
+        "y": 921,
+        "width": 244,
+        "height": 56,
+        "isClipped": false,
+        "scrollWidth": 244,
+        "clientWidth": 244,
+        "scrollHeight": 56,
+        "clientHeight": 56
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > p",
+      "box": {
+        "x": 105,
+        "y": 981,
+        "width": 244,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 244,
+        "clientWidth": 244,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > button",
+      "box": {
+        "x": 313,
+        "y": 1029,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "box": {
+        "x": 27,
+        "y": 1165,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "box": {
+        "x": 327,
+        "y": 1165,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div",
+      "box": {
+        "x": 41,
+        "y": 1093,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div > h3",
+      "box": {
+        "x": 41,
+        "y": 1293,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > h2",
+      "box": {
+        "x": 105,
+        "y": 1426,
+        "width": 244,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 244,
+        "clientWidth": 244,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > p",
+      "box": {
+        "x": 105,
+        "y": 1458,
+        "width": 244,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 244,
+        "clientWidth": 244,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > button",
+      "box": {
+        "x": 313,
+        "y": 1506,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "box": {
+        "x": 27,
+        "y": 1642,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "box": {
+        "x": 327,
+        "y": 1642,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1)",
+      "box": {
+        "x": 41,
+        "y": 1570,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > h3",
+      "box": {
+        "x": 41,
+        "y": 1770,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "box": {
+        "x": 231,
+        "y": 1570,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3",
+      "box": {
+        "x": 231,
+        "y": 1770,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3)",
+      "box": {
+        "x": 421,
+        "y": 1570,
+        "width": 170,
+        "height": 232,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 232,
+        "clientHeight": 232
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3) > h3",
+      "box": {
+        "x": 421,
+        "y": 1770,
+        "width": 170,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4)",
+      "box": {
+        "x": 611,
+        "y": 1572,
+        "width": 170,
+        "height": 232,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 232,
+        "clientHeight": 232
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4) > h3",
+      "box": {
+        "x": 611,
+        "y": 1772,
+        "width": 170,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(5)",
+      "box": {
+        "x": 801,
+        "y": 1574,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(5) > h3",
+      "box": {
+        "x": 801,
+        "y": 1774,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6)",
+      "box": {
+        "x": 991,
+        "y": 1577,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6) > h3",
+      "box": {
+        "x": 991,
+        "y": 1777,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7)",
+      "box": {
+        "x": 1181,
+        "y": 1580,
+        "width": 170,
+        "height": 232,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 232,
+        "clientHeight": 232
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7) > h3",
+      "box": {
+        "x": 1181,
+        "y": 1780,
+        "width": 170,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > h2",
+      "box": {
+        "x": 57,
+        "y": 1919,
+        "width": 292,
+        "height": 28,
+        "isClipped": false,
+        "scrollWidth": 292,
+        "clientWidth": 292,
+        "scrollHeight": 28,
+        "clientHeight": 28
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > p",
+      "box": {
+        "x": 57,
+        "y": 1951,
+        "width": 292,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 292,
+        "clientWidth": 292,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(2) > button",
+      "box": {
+        "x": 313,
+        "y": 1999,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "box": {
+        "x": 27,
+        "y": 2135,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "box": {
+        "x": 327,
+        "y": 2135,
+        "width": 36,
+        "height": 36,
+        "isClipped": false,
+        "scrollWidth": 34,
+        "clientWidth": 34,
+        "scrollHeight": 34,
+        "clientHeight": 34
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1)",
+      "box": {
+        "x": 41,
+        "y": 2063,
+        "width": 170,
+        "height": 216,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 216,
+        "clientHeight": 216
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > h3",
+      "box": {
+        "x": 41,
+        "y": 2263,
+        "width": 170,
+        "height": 16,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 16,
+        "clientHeight": 16
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "box": {
+        "x": 231,
+        "y": 2063,
+        "width": 170,
+        "height": 232,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 232,
+        "clientHeight": 232
+      }
+    },
+    {
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3",
+      "box": {
+        "x": 231,
+        "y": 2263,
+        "width": 170,
+        "height": 32,
+        "isClipped": false,
+        "scrollWidth": 170,
+        "clientWidth": 170,
+        "scrollHeight": 32,
+        "clientHeight": 32
+      }
+    }
+  ],
+  "textInventory": [
+    {
+      "type": "other",
+      "text": "Stud Ed D",
+      "selector": "#root > div > div:nth-of-type(2) > header"
+    },
+    {
+      "type": "link",
+      "text": "Stud Ed",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > div > a"
+    },
+    {
+      "type": "button",
+      "text": "D",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button"
+    },
+    {
+      "type": "heading",
+      "text": "Learning Paths",
+      "level": 1,
+      "selector": "#root > div > main > div > div > div:nth-of-type(1) > div:nth-of-type(1) > h1"
+    },
+    {
+      "type": "paragraph",
+      "text": "Step-by-step paths to mastery · 12 courses available · 12 enrolled",
+      "selector": "#root > div > main > div > div > div:nth-of-type(1) > div:nth-of-type(1) > p"
+    },
+    {
+      "type": "button",
+      "text": "✨ All Paths",
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(1)"
+    },
+    {
+      "type": "button",
+      "text": "📐 Mathematics",
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(2)"
+    },
+    {
+      "type": "button",
+      "text": "💻 Programming & CS",
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(3)"
+    },
+    {
+      "type": "button",
+      "text": "🔬 Science & Physics",
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(4)"
+    },
+    {
+      "type": "button",
+      "text": "📚 Languages",
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(5)"
+    },
+    {
+      "type": "heading",
+      "text": "Your learning paths",
+      "level": 2,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(1) > h2"
+    },
+    {
+      "type": "heading",
+      "text": "Math Foundations",
+      "level": 2,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > h2"
+    },
+    {
+      "type": "paragraph",
+      "text": "Strengthen algebra, geometry, and arithmetic skills step-by-step.",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > p"
+    },
+    {
+      "type": "other",
+      "text": "G10 33% Coordinate Geometry",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1)"
+    },
+    {
+      "type": "heading",
+      "text": "Coordinate Geometry",
+      "level": 3,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > h3"
+    },
+    {
+      "type": "other",
+      "text": "G5 0% Math Foundation",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)"
+    },
+    {
+      "type": "heading",
+      "text": "Math Foundation",
+      "level": 3,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3"
+    },
+    {
+      "type": "heading",
+      "text": "Programming & Computer Science",
+      "level": 2,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > h2"
+    },
+    {
+      "type": "paragraph",
+      "text": "Speak the language of computers and build programs in Python.",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > p"
+    },
+    {
+      "type": "other",
+      "text": "G6 0% Computers and Code",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div"
+    },
+    {
+      "type": "heading",
+      "text": "Computers and Code",
+      "level": 3,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div > h3"
+    },
+    {
+      "type": "heading",
+      "text": "Natural Science & Physics",
+      "level": 2,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > h2"
+    },
+    {
+      "type": "paragraph",
+      "text": "Explore physics mechanics, cellular biology, and chemistry laws.",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > p"
+    },
+    {
+      "type": "other",
+      "text": "G9 20% Scientific Thinking",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1)"
+    },
+    {
+      "type": "heading",
+      "text": "Scientific Thinking",
+      "level": 3,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > h3"
+    },
+    {
+      "type": "other",
+      "text": "G4 0% Physics Adventures",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)"
+    },
+    {
+      "type": "heading",
+      "text": "Physics Adventures",
+      "level": 3,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3"
+    },
+    {
+      "type": "other",
+      "text": "G10 0% Computer Science Foundations",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3)"
+    },
+    {
+      "type": "heading",
+      "text": "Computer Science Foundations",
+      "level": 3,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3) > h3"
+    },
+    {
+      "type": "other",
+      "text": "G7 0% Forces, Energy and Machines",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4)"
+    },
+    {
+      "type": "heading",
+      "text": "Forces, Energy and Machines",
+      "level": 3,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4) > h3"
+    },
+    {
+      "type": "other",
+      "text": "G10 0% Electricity and Motion",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(5)"
+    },
+    {
+      "type": "heading",
+      "text": "Electricity and Motion",
+      "level": 3,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(5) > h3"
+    },
+    {
+      "type": "other",
+      "text": "O/L 0% O/L Physics Revision",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6)"
+    },
+    {
+      "type": "heading",
+      "text": "O/L Physics Revision",
+      "level": 3,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6) > h3"
+    },
+    {
+      "type": "other",
+      "text": "A/L 0% A/L Physics: Mechanics and Circuits",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7)"
+    },
+    {
+      "type": "heading",
+      "text": "A/L Physics: Mechanics and Circuits",
+      "level": 3,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7) > h3"
+    },
+    {
+      "type": "heading",
+      "text": "Additional Explorations",
+      "level": 2,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > h2"
+    },
+    {
+      "type": "paragraph",
+      "text": "Explore custom courses and specialized modules published by educators.",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > p"
+    },
+    {
+      "type": "other",
+      "text": "O/L 0% O/L ICT Revision",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1)"
+    },
+    {
+      "type": "heading",
+      "text": "O/L ICT Revision",
+      "level": 3,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > h3"
+    },
+    {
+      "type": "other",
+      "text": "A/L 0% A/L ICT: Structures and Systems",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)"
+    },
+    {
+      "type": "heading",
+      "text": "A/L ICT: Structures and Systems",
+      "level": 3,
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3"
+    }
+  ],
+  "linkInventory": [
+    {
+      "text": "Stud Ed",
+      "href": "/dashboard",
+      "resolvedUrl": "http://localhost:5173/dashboard",
+      "isInternal": true,
+      "isDisabled": false,
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > div > a"
+    }
+  ],
+  "focusOrder": [
+    {
+      "order": 1,
+      "tag": "button",
+      "accessibleName": "Toggle dark and light theme",
+      "selector": "#root > div > div:nth-of-type(1) > div > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 2,
+      "tag": "a",
+      "accessibleName": "Stud\nEd",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > div > a",
+      "tabIndex": 0
+    },
+    {
+      "order": 3,
+      "tag": "button",
+      "accessibleName": "Search topics and lessons",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 4,
+      "tag": "button",
+      "accessibleName": "User profile menu",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 5,
+      "tag": "button",
+      "accessibleName": "Toggle menu",
+      "selector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 6,
+      "tag": "input",
+      "accessibleName": "What do you want to learn? (press /)",
+      "selector": "#course-search",
+      "tabIndex": 0
+    },
+    {
+      "order": 7,
+      "tag": "button",
+      "accessibleName": "✨\nAll Paths",
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(1)",
+      "tabIndex": 0
+    },
+    {
+      "order": 8,
+      "tag": "button",
+      "accessibleName": "📐\nMathematics",
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(2)",
+      "tabIndex": 0
+    },
+    {
+      "order": 9,
+      "tag": "button",
+      "accessibleName": "💻\nProgramming & CS",
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(3)",
+      "tabIndex": 0
+    },
+    {
+      "order": 10,
+      "tag": "button",
+      "accessibleName": "🔬\nScience & Physics",
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(4)",
+      "tabIndex": 0
+    },
+    {
+      "order": 11,
+      "tag": "button",
+      "accessibleName": "📚\nLanguages",
+      "selector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(5)",
+      "tabIndex": 0
+    },
+    {
+      "order": 12,
+      "tag": "button",
+      "accessibleName": "Star learning path",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 13,
+      "tag": "button",
+      "accessibleName": "Scroll left",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "tabIndex": 0
+    },
+    {
+      "order": 14,
+      "tag": "button",
+      "accessibleName": "Scroll right",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "tabIndex": 0
+    },
+    {
+      "order": 15,
+      "tag": "button",
+      "accessibleName": "Star learning path",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 16,
+      "tag": "button",
+      "accessibleName": "Scroll left",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "tabIndex": 0
+    },
+    {
+      "order": 17,
+      "tag": "button",
+      "accessibleName": "Scroll right",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "tabIndex": 0
+    },
+    {
+      "order": 18,
+      "tag": "button",
+      "accessibleName": "Star learning path",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 19,
+      "tag": "button",
+      "accessibleName": "Scroll left",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "tabIndex": 0
+    },
+    {
+      "order": 20,
+      "tag": "button",
+      "accessibleName": "Scroll right",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "tabIndex": 0
+    },
+    {
+      "order": 21,
+      "tag": "button",
+      "accessibleName": "Star learning path",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(2) > button",
+      "tabIndex": 0
+    },
+    {
+      "order": 22,
+      "tag": "button",
+      "accessibleName": "Scroll left",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > button:nth-of-type(1)",
+      "tabIndex": 0
+    },
+    {
+      "order": 23,
+      "tag": "button",
+      "accessibleName": "Scroll right",
+      "selector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > button:nth-of-type(2)",
+      "tabIndex": 0
+    }
+  ],
+  "dopamineProbes": {
+    "confettiPresent": false,
+    "xpToastPresent": false,
+    "streakBadgePresent": true,
+    "streakValue": "3⚡",
+    "keysBadgePresent": true,
+    "keysValue": "2🗝️",
+    "progressRingPresent": false,
+    "audioTriggerObserved": false
+  }
+}

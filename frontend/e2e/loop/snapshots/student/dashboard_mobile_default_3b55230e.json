@@ -10,7 +10,7 @@
       "height": 844
     },
     "state": "default",
-    "timestamp": "2026-08-20T12:33:47.464Z"
+    "timestamp": "2026-08-21T05:44:47.177Z"
   },
   "domOutline": [
     {
@@ -121,7 +121,7 @@
                               "box": {
                                 "x": 16,
                                 "y": 16,
-                                "width": 91,
+                                "width": 83,
                                 "height": 32
                               }
                             },
@@ -308,11 +308,11 @@
       "box": {
         "x": 16,
         "y": 16,
-        "width": 91,
+        "width": 83,
         "height": 32,
         "isClipped": false,
-        "scrollWidth": 91,
-        "clientWidth": 91,
+        "scrollWidth": 83,
+        "clientWidth": 83,
         "scrollHeight": 32,
         "clientHeight": 32
       },
@@ -508,11 +508,11 @@
       "box": {
         "x": 89,
         "y": 349,
-        "width": 198,
+        "width": 191,
         "height": 16,
         "isClipped": false,
-        "scrollWidth": 198,
-        "clientWidth": 198,
+        "scrollWidth": 191,
+        "clientWidth": 191,
         "scrollHeight": 16,
         "clientHeight": 16
       },
@@ -537,11 +537,11 @@
       "box": {
         "x": 89,
         "y": 365,
-        "width": 198,
+        "width": 191,
         "height": 17,
         "isClipped": false,
-        "scrollWidth": 198,
-        "clientWidth": 198,
+        "scrollWidth": 191,
+        "clientWidth": 191,
         "scrollHeight": 17,
         "clientHeight": 17
       },
@@ -624,11 +624,11 @@
       "box": {
         "x": 89,
         "y": 507,
-        "width": 146,
+        "width": 145,
         "height": 16,
         "isClipped": false,
-        "scrollWidth": 146,
-        "clientWidth": 146,
+        "scrollWidth": 145,
+        "clientWidth": 145,
         "scrollHeight": 16,
         "clientHeight": 16
       },
@@ -653,11 +653,11 @@
       "box": {
         "x": 89,
         "y": 523,
-        "width": 146,
+        "width": 145,
         "height": 17,
         "isClipped": false,
-        "scrollWidth": 146,
-        "clientWidth": 146,
+        "scrollWidth": 145,
+        "clientWidth": 145,
         "scrollHeight": 17,
         "clientHeight": 17
       },
@@ -708,13 +708,13 @@
       "tag": "a",
       "textSnippet": "View all rankings",
       "box": {
-        "x": 140,
+        "x": 141,
         "y": 716,
-        "width": 111,
+        "width": 107,
         "height": 17,
         "isClipped": false,
-        "scrollWidth": 111,
-        "clientWidth": 111,
+        "scrollWidth": 107,
+        "clientWidth": 107,
         "scrollHeight": 17,
         "clientHeight": 17
       },
@@ -737,13 +737,13 @@
       "tag": "h2",
       "textSnippet": "Fractions",
       "box": {
-        "x": 139,
+        "x": 142,
         "y": 828,
-        "width": 112,
+        "width": 107,
         "height": 32,
         "isClipped": false,
-        "scrollWidth": 112,
-        "clientWidth": 112,
+        "scrollWidth": 107,
+        "clientWidth": 107,
         "scrollHeight": 32,
         "clientHeight": 32
       },
@@ -767,9 +767,9 @@
       "textSnippet": "Start",
       "box": {
         "x": 41,
-        "y": 1224,
+        "y": 1223,
         "width": 308,
-        "height": 18,
+        "height": 20,
         "isClipped": false,
         "scrollWidth": 0,
         "clientWidth": 0,
@@ -824,13 +824,13 @@
       "tag": "h2",
       "textSnippet": "Thinking in Python",
       "box": {
-        "x": 115,
+        "x": 119,
         "y": 834,
-        "width": 218,
+        "width": 211,
         "height": 36,
         "isClipped": false,
-        "scrollWidth": 226,
-        "clientWidth": 226,
+        "scrollWidth": 219,
+        "clientWidth": 219,
         "scrollHeight": 32,
         "clientHeight": 32
       },
@@ -854,9 +854,9 @@
       "textSnippet": "Start",
       "box": {
         "x": 66,
-        "y": 1213,
+        "y": 1212,
         "width": 296,
-        "height": 25,
+        "height": 27,
         "isClipped": false,
         "scrollWidth": 0,
         "clientWidth": 0,
@@ -941,9 +941,9 @@
       "textSnippet": "Start",
       "box": {
         "x": 84,
-        "y": 1202,
+        "y": 1201,
         "width": 284,
-        "height": 31,
+        "height": 33,
         "isClipped": false,
         "scrollWidth": 0,
         "clientWidth": 0,
@@ -1224,11 +1224,11 @@
       "box": {
         "x": 16,
         "y": 16,
-        "width": 91,
+        "width": 83,
         "height": 32,
         "isClipped": false,
-        "scrollWidth": 91,
-        "clientWidth": 91,
+        "scrollWidth": 83,
+        "clientWidth": 83,
         "scrollHeight": 32,
         "clientHeight": 32
       }
@@ -1322,11 +1322,11 @@
       "box": {
         "x": 89,
         "y": 349,
-        "width": 198,
+        "width": 191,
         "height": 16,
         "isClipped": false,
-        "scrollWidth": 198,
-        "clientWidth": 198,
+        "scrollWidth": 191,
+        "clientWidth": 191,
         "scrollHeight": 16,
         "clientHeight": 16
       }
@@ -1336,11 +1336,11 @@
       "box": {
         "x": 89,
         "y": 365,
-        "width": 198,
+        "width": 191,
         "height": 17,
         "isClipped": false,
-        "scrollWidth": 198,
-        "clientWidth": 198,
+        "scrollWidth": 191,
+        "clientWidth": 191,
         "scrollHeight": 17,
         "clientHeight": 17
       }
@@ -1378,11 +1378,11 @@
       "box": {
         "x": 89,
         "y": 507,
-        "width": 146,
+        "width": 145,
         "height": 16,
         "isClipped": false,
-        "scrollWidth": 146,
-        "clientWidth": 146,
+        "scrollWidth": 145,
+        "clientWidth": 145,
         "scrollHeight": 16,
         "clientHeight": 16
       }
@@ -1392,11 +1392,11 @@
       "box": {
         "x": 89,
         "y": 523,
-        "width": 146,
+        "width": 145,
         "height": 17,
         "isClipped": false,
-        "scrollWidth": 146,
-        "clientWidth": 146,
+        "scrollWidth": 145,
+        "clientWidth": 145,
         "scrollHeight": 17,
         "clientHeight": 17
       }
@@ -1418,13 +1418,13 @@
     {
       "selector": "#root > div > main > div > div > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(3) > a",
       "box": {
-        "x": 140,
+        "x": 141,
         "y": 716,
-        "width": 111,
+        "width": 107,
         "height": 17,
         "isClipped": false,
-        "scrollWidth": 111,
-        "clientWidth": 111,
+        "scrollWidth": 107,
+        "clientWidth": 107,
         "scrollHeight": 17,
         "clientHeight": 17
       }
@@ -1432,13 +1432,13 @@
     {
       "selector": "#root > div > main > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > h2",
       "box": {
-        "x": 139,
+        "x": 142,
         "y": 828,
-        "width": 112,
+        "width": 107,
         "height": 32,
         "isClipped": false,
-        "scrollWidth": 112,
-        "clientWidth": 112,
+        "scrollWidth": 107,
+        "clientWidth": 107,
         "scrollHeight": 32,
         "clientHeight": 32
       }
@@ -1447,9 +1447,9 @@
       "selector": "#root > div > main > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(4) > a",
       "box": {
         "x": 41,
-        "y": 1224,
+        "y": 1223,
         "width": 308,
-        "height": 18,
+        "height": 20,
         "isClipped": false,
         "scrollWidth": 0,
         "clientWidth": 0,
@@ -1474,13 +1474,13 @@
     {
       "selector": "#root > div > main > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > h2",
       "box": {
-        "x": 115,
+        "x": 119,
         "y": 834,
-        "width": 218,
+        "width": 211,
         "height": 36,
         "isClipped": false,
-        "scrollWidth": 226,
-        "clientWidth": 226,
+        "scrollWidth": 219,
+        "clientWidth": 219,
         "scrollHeight": 32,
         "clientHeight": 32
       }
@@ -1489,9 +1489,9 @@
       "selector": "#root > div > main > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(4) > a",
       "box": {
         "x": 66,
-        "y": 1213,
+        "y": 1212,
         "width": 296,
-        "height": 25,
+        "height": 27,
         "isClipped": false,
         "scrollWidth": 0,
         "clientWidth": 0,
@@ -1531,9 +1531,9 @@
       "selector": "#root > div > main > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(4) > a",
       "box": {
         "x": 84,
-        "y": 1202,
+        "y": 1201,
         "width": 284,
-        "height": 31,
+        "height": 33,
         "isClipped": false,
         "scrollWidth": 0,
         "clientWidth": 0,

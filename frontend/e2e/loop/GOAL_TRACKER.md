@@ -1,6 +1,6 @@
 # StudEd Goal Loop Tracker
 
-**Iterations completed**: 11  
+**Iterations completed**: 13  
 **Branch**: `feature/physics-g4-5` (pull request #86 open against `main`)  
 **Date**: 2026-08-20
 
@@ -28,7 +28,7 @@
 | `bun run loop` audit | **not completed on this machine.** Phase 0 discovery ran (26 routes); Phase 1 stalled part way through 12 student screens and was stopped after 35 minutes. One real cause is fixed in this branch: the snapshot phase signed in before installing the GraphQL mock, so an offline audit captured protected screens as logged-out redirects. Re-run it against a running stack before the next merge. |
 | Go tests | pass across every service, including the new `coderun`, `ask` and proxy suites |
 | `make ci-local` | every code gate passes; stops at `helm-lint` because helm, kyverno, tofu and promtool are not installed locally. |
-| Pull request CI | **all green** on #86: frontend typecheck/test/build, Go tests, govulncheck, gitleaks, Bun audit, OpenTofu, k8s schema, helm lint, Kyverno, Cloudflare Pages, and every service image publish. |
+| Pull request CI | Green on #86 for every pipeline except **E2E Playwright**, which was already red on `main` before this branch existed. Twelve tests still asserted a dashboard that three commits had removed. They are repaired here; the re-run is what confirms it. |
 
 ## Content shipped
 
@@ -64,14 +64,31 @@
 - The pull request was opened once the demo path was verified, so CI covers the
   infrastructure gates this machine cannot run.
 
+## Defects found and fixed this iteration
+
+- **The blob threw on every wave page.** `feral-blob` animates its happy mood as
+  four keyframes with a spring transition, which Motion rejects outright: the
+  bounce never played and every render threw. Traced with a console-capture
+  probe and patched to a tween with explicit times. Correction to an earlier
+  note in this file: this was not pre-existing shell noise, the blob teacher is
+  what put it on the wave pages. Worth raising upstream.
+- **The audit could stall forever.** `page.evaluate` carries no timeout, so a
+  screen whose main thread never settled hung the whole run. Each screen now has
+  a deadline. Two causes behind it are fixed too: a failed sign-in left the
+  crawler bouncing off the auth guard, and navigation now allows 30 seconds
+  because a dev server compiles each route on first request.
+- **Student course cards had no test hook.** The catalog redesign dropped the
+  `data-testid` the suite reaches them by, which the educator list still has, so
+  three enrollment tests could not find a single course.
+- **The search modal had no dialog semantics**, so a screen reader user met a
+  stray search field rather than being told the page had been taken over.
+
 ## Open defects
 
-- **P2** Framer Motion logs `Only two keyframes currently supported with spring
-  and inertia animations` on every authenticated page load. Pre-existing: a
-  spring transition drives a multi-keyframe `y` array somewhere in the shell.
-- **P2** The wave player still special-cases the gears and maze waves by id and
-  by title substring. Slice C should replace both with typed blocks.
-- **P3** No Sinhala copy yet for any of the new course content.
+- **P3** No Sinhala copy yet for any of the new course content. Deferred by
+  decision; the i18n shape for block content is still open.
+- **P3** The first Playwright test of a local run intermittently loses its
+  worker and passes on retry. Runner start-up, not an assertion.
 
 ## Next slice planned
 

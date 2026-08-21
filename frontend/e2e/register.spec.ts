@@ -7,7 +7,9 @@ test.describe("Register Page", () => {
 
   test("should display branding and registration form elements", async ({ page }) => {
     await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
-    await expect(page.getByText("Start your learning journey today")).toBeVisible();
+    await expect(
+      page.getByText("Start your learning journey and claim your starter rewards"),
+    ).toBeVisible();
     await expect(page.locator("#fullName")).toBeVisible();
     await expect(page.locator("#email")).toBeVisible();
     await expect(page.locator("#password")).toBeVisible();
@@ -22,8 +24,8 @@ test.describe("Register Page", () => {
     await page.locator("#password").fill("123");
     await page.getByRole("button", { name: "Create account" }).click();
 
-    await expect(page.getByText("Full name is required")).toBeVisible();
-    await expect(page.getByText("Invalid email address")).toBeVisible();
+    await expect(page.getByText("Full name must be at least 2 characters")).toBeVisible();
+    await expect(page.getByText("Please enter a valid email address")).toBeVisible();
     await expect(page.getByText("Password must be at least 8 characters")).toBeVisible();
   });
 

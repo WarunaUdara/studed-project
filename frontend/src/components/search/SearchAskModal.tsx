@@ -200,6 +200,11 @@ export function SearchAskModal({
 
       {/* Spotlight Command Dialog Container */}
       <motion.div
+        // Announced as a dialog so a screen reader user is told the page has
+        // been taken over, rather than finding a stray search field.
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search lessons and ask a question"
         initial={{ opacity: 0, scale: 0.98, y: -10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.98, y: -10 }}

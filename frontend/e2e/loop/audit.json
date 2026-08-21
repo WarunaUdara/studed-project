@@ -1,22 +1,1104 @@
 {
-  "timestamp": "2026-08-20T12:51:29.315Z",
+  "timestamp": "2026-08-21T05:45:20.813Z",
   "summary": {
-    "totalFaults": 14,
-    "p0Count": 5,
-    "p1Count": 9,
-    "p2Count": 0,
+    "totalFaults": 166,
+    "p0Count": 59,
+    "p1Count": 85,
+    "p2Count": 22,
     "byCategory": {
-      "contrast": 7,
-      "token-drift": 0,
-      "typography": 0,
-      "overlap": 0,
+      "contrast": 81,
+      "token-drift": 18,
+      "typography": 4,
+      "overlap": 49,
       "dead-links": 0,
-      "a11y": 7,
+      "a11y": 14,
       "state-coverage": 0,
       "spacing-rhythm": 0
     }
   },
   "faults": [
+    {
+      "id": "contrast-student-_subscription-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/subscription",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-student-_courses_fractions-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_1____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/fractions",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Courses"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Courses\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_courses_fractions-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/courses/fractions",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_courses_fractions-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/fractions",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-student-_courses_science-thinking-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_2____button",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "tag": "button",
+        "tabIndex": 0
+      },
+      "message": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_3____button",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(3) > button",
+      "evidence": {
+        "tag": "button",
+        "tabIndex": 0
+      },
+      "message": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_4____button",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(4) > button",
+      "evidence": {
+        "tag": "button",
+        "tabIndex": 0
+      },
+      "message": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_5____button",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(5) > button",
+      "evidence": {
+        "tag": "button",
+        "tabIndex": 0
+      },
+      "message": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "a11y-name-_courses_science-thinking-_root___div___main___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___div___div_nth-of-type_6____button",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/courses/science-thinking",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > div > div:nth-of-type(6) > button",
+      "evidence": {
+        "tag": "button",
+        "tabIndex": 0
+      },
+      "message": "Interactive <button> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "contrast-student-_courses_logic-structures-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_1____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/logic-structures",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Courses"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Courses\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_courses_logic-structures-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/courses/logic-structures",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_courses_logic-structures-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/logic-structures",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-student-_courses-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_2____button_nth-of-type_3_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(3)",
+      "evidence": {
+        "elementRightEdge": 435,
+        "viewportWidth": 390,
+        "box": {
+          "x": 270,
+          "y": 270,
+          "width": 165,
+          "height": 34,
+          "isClipped": false,
+          "scrollWidth": 163,
+          "clientWidth": 163,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (435px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_2____button_nth-of-type_4_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(4)",
+      "evidence": {
+        "elementRightEdge": 605,
+        "viewportWidth": 390,
+        "box": {
+          "x": 443,
+          "y": 270,
+          "width": 162,
+          "height": 34,
+          "isClipped": false,
+          "scrollWidth": 160,
+          "clientWidth": 160,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (605px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_2____button_nth-of-type_5_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(5)",
+      "evidence": {
+        "elementRightEdge": 733,
+        "viewportWidth": 390,
+        "box": {
+          "x": 613,
+          "y": 270,
+          "width": 120,
+          "height": 34,
+          "isClipped": false,
+          "scrollWidth": 118,
+          "clientWidth": 118,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (733px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "evidence": {
+        "elementRightEdge": 401,
+        "viewportWidth": 390,
+        "box": {
+          "x": 231,
+          "y": 588,
+          "width": 170,
+          "height": 216,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 216,
+          "clientHeight": 216
+        }
+      },
+      "message": "Element overflows viewport horizontally (401px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3",
+      "evidence": {
+        "elementRightEdge": 401,
+        "viewportWidth": 390,
+        "box": {
+          "x": 231,
+          "y": 788,
+          "width": 170,
+          "height": 16,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 16,
+          "clientHeight": 16
+        }
+      },
+      "message": "Element overflows viewport horizontally (401px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "evidence": {
+        "elementRightEdge": 401,
+        "viewportWidth": 390,
+        "box": {
+          "x": 231,
+          "y": 1570,
+          "width": 170,
+          "height": 216,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 216,
+          "clientHeight": 216
+        }
+      },
+      "message": "Element overflows viewport horizontally (401px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3",
+      "evidence": {
+        "elementRightEdge": 401,
+        "viewportWidth": 390,
+        "box": {
+          "x": 231,
+          "y": 1770,
+          "width": 170,
+          "height": 16,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 16,
+          "clientHeight": 16
+        }
+      },
+      "message": "Element overflows viewport horizontally (401px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_3_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3)",
+      "evidence": {
+        "elementRightEdge": 591,
+        "viewportWidth": 390,
+        "box": {
+          "x": 421,
+          "y": 1570,
+          "width": 170,
+          "height": 232,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 232,
+          "clientHeight": 232
+        }
+      },
+      "message": "Element overflows viewport horizontally (591px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_3____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3) > h3",
+      "evidence": {
+        "elementRightEdge": 591,
+        "viewportWidth": 390,
+        "box": {
+          "x": 421,
+          "y": 1770,
+          "width": 170,
+          "height": 32,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (591px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_4_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4)",
+      "evidence": {
+        "elementRightEdge": 781,
+        "viewportWidth": 390,
+        "box": {
+          "x": 611,
+          "y": 1572,
+          "width": 170,
+          "height": 232,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 232,
+          "clientHeight": 232
+        }
+      },
+      "message": "Element overflows viewport horizontally (781px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_4____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4) > h3",
+      "evidence": {
+        "elementRightEdge": 781,
+        "viewportWidth": 390,
+        "box": {
+          "x": 611,
+          "y": 1772,
+          "width": 170,
+          "height": 32,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (781px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_5_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(5)",
+      "evidence": {
+        "elementRightEdge": 971,
+        "viewportWidth": 390,
+        "box": {
+          "x": 801,
+          "y": 1574,
+          "width": 170,
+          "height": 216,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 216,
+          "clientHeight": 216
+        }
+      },
+      "message": "Element overflows viewport horizontally (971px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_5____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(5) > h3",
+      "evidence": {
+        "elementRightEdge": 971,
+        "viewportWidth": 390,
+        "box": {
+          "x": 801,
+          "y": 1774,
+          "width": 170,
+          "height": 16,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 16,
+          "clientHeight": 16
+        }
+      },
+      "message": "Element overflows viewport horizontally (971px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_6_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6)",
+      "evidence": {
+        "elementRightEdge": 1161,
+        "viewportWidth": 390,
+        "box": {
+          "x": 991,
+          "y": 1577,
+          "width": 170,
+          "height": 216,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 216,
+          "clientHeight": 216
+        }
+      },
+      "message": "Element overflows viewport horizontally (1161px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_6____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6) > h3",
+      "evidence": {
+        "elementRightEdge": 1161,
+        "viewportWidth": 390,
+        "box": {
+          "x": 991,
+          "y": 1777,
+          "width": 170,
+          "height": 16,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 16,
+          "clientHeight": 16
+        }
+      },
+      "message": "Element overflows viewport horizontally (1161px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_7_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7)",
+      "evidence": {
+        "elementRightEdge": 1351,
+        "viewportWidth": 390,
+        "box": {
+          "x": 1181,
+          "y": 1580,
+          "width": 170,
+          "height": 232,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 232,
+          "clientHeight": 232
+        }
+      },
+      "message": "Element overflows viewport horizontally (1351px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_7____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7) > h3",
+      "evidence": {
+        "elementRightEdge": 1351,
+        "viewportWidth": 390,
+        "box": {
+          "x": 1181,
+          "y": 1780,
+          "width": 170,
+          "height": 32,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (1351px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_5____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "evidence": {
+        "elementRightEdge": 401,
+        "viewportWidth": 390,
+        "box": {
+          "x": 231,
+          "y": 2063,
+          "width": 170,
+          "height": 232,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 232,
+          "clientHeight": 232
+        }
+      },
+      "message": "Element overflows viewport horizontally (401px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_5____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3",
+      "evidence": {
+        "elementRightEdge": 401,
+        "viewportWidth": 390,
+        "box": {
+          "x": 231,
+          "y": 2263,
+          "width": 170,
+          "height": 32,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (401px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "contrast-student-_courses_fractions-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/fractions",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-student-_courses-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_1____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Courses"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Courses\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_courses-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_courses-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "overflow-desktop-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_6_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6)",
+      "evidence": {
+        "elementRightEdge": 1297,
+        "viewportWidth": 1280,
+        "box": {
+          "x": 1107,
+          "y": 1325,
+          "width": 190,
+          "height": 216,
+          "isClipped": false,
+          "scrollWidth": 190,
+          "clientWidth": 190,
+          "scrollHeight": 216,
+          "clientHeight": 216
+        }
+      },
+      "message": "Element overflows viewport horizontally (1297px > 1280px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-desktop-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_6____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6) > h3",
+      "evidence": {
+        "elementRightEdge": 1297,
+        "viewportWidth": 1280,
+        "box": {
+          "x": 1107,
+          "y": 1525,
+          "width": 190,
+          "height": 16,
+          "isClipped": false,
+          "scrollWidth": 190,
+          "clientWidth": 190,
+          "scrollHeight": 16,
+          "clientHeight": 16
+        }
+      },
+      "message": "Element overflows viewport horizontally (1297px > 1280px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-desktop-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_7_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7)",
+      "evidence": {
+        "elementRightEdge": 1507,
+        "viewportWidth": 1280,
+        "box": {
+          "x": 1317,
+          "y": 1329,
+          "width": 190,
+          "height": 232,
+          "isClipped": false,
+          "scrollWidth": 190,
+          "clientWidth": 190,
+          "scrollHeight": 232,
+          "clientHeight": 232
+        }
+      },
+      "message": "Element overflows viewport horizontally (1507px > 1280px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-desktop-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_7____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7) > h3",
+      "evidence": {
+        "elementRightEdge": 1507,
+        "viewportWidth": 1280,
+        "box": {
+          "x": 1317,
+          "y": 1529,
+          "width": 190,
+          "height": 32,
+          "isClipped": false,
+          "scrollWidth": 190,
+          "clientWidth": 190,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (1507px > 1280px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "contrast-student-_achievements-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/achievements",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "token-drift-_achievements-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_1____div_nth-of-type_2____div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/achievements",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "token-drift-_achievements-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/achievements",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "token-drift-_achievements-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_3____div_nth-of-type_2____div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/achievements",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(3) > div:nth-of-type(2) > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "contrast-student-_courses_thinking-in-python-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_1____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/thinking-in-python",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Courses"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Courses\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_courses_thinking-in-python-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/courses/thinking-in-python",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_courses_thinking-in-python-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/thinking-in-python",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
     {
       "id": "contrast-student-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
       "category": "contrast",
@@ -51,6 +1133,218 @@
       },
       "message": "Interactive <a> has no accessible name or aria-label.",
       "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "contrast-student-_leaderboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_2____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/leaderboard",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(2) > a",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Leagues"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Leagues\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_leaderboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/leaderboard",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_leaderboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/leaderboard",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "token-drift-_leaderboard-_root___div___main___div___div___div_nth-of-type_3____div___div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/leaderboard",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "contrast-student-_courses_thinking-in-python-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/thinking-in-python",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-student-_achievements-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/achievements",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_achievements-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/achievements",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "token-drift-_achievements-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_1____div_nth-of-type_2____div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/achievements",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "token-drift-_achievements-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/achievements",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "token-drift-_achievements-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_3____div_nth-of-type_2____div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/achievements",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(3) > div:nth-of-type(2) > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
     },
     {
       "id": "contrast-student-_courses_science-thinking-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_1____a",
@@ -188,6 +1482,461 @@
       "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
     },
     {
+      "id": "contrast-student-_leaderboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/leaderboard",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "overflow-mobile-_leaderboard-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_1____button_nth-of-type_5_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/leaderboard",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(1) > button:nth-of-type(5)",
+      "evidence": {
+        "elementRightEdge": 443,
+        "viewportWidth": 390,
+        "box": {
+          "x": 372,
+          "y": 228,
+          "width": 71,
+          "height": 36,
+          "isClipped": false,
+          "scrollWidth": 71,
+          "clientWidth": 71,
+          "scrollHeight": 36,
+          "clientHeight": 36
+        }
+      },
+      "message": "Element overflows viewport horizontally (443px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "token-drift-_leaderboard-_root___div___main___div___div___div_nth-of-type_3____div___div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/leaderboard",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "contrast-student-_settings-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/settings",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_settings-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/settings",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-student-_settings-_root___div___main___div___div___form___div_nth-of-type_2____div___div_nth-of-type_2____div_nth-of-type_2____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/settings",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > form > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > a",
+      "evidence": {
+        "foreground": "oklch(0.44 0.022 145)",
+        "background": "oklab(0.95 -0.0122873 0.00860365 / 0.5)",
+        "measuredRatio": 1.17,
+        "requiredRatio": 4.5,
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "textSnippet": "Free Preview · Manage plan Upgrade"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.17:1 < 4.5:1) on \"Free Preview · Manage plan Upg\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.95 -0.0122873 0.00860365 / 0.5)."
+    },
+    {
+      "id": "typo-tiny-_settings-_root___div___main___div___div___div_nth-of-type_2____div___div___div___div_nth-of-type_3____div_nth-of-type_1____p_nth-of-type_2_",
+      "category": "typography",
+      "severity": "P2",
+      "screen": "/settings",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div > div > div > div:nth-of-type(3) > div:nth-of-type(1) > p:nth-of-type(2)",
+      "evidence": {
+        "fontSize": "10px",
+        "textSnippet": "Enrolled"
+      },
+      "message": "Body text font size (10px) is below the 11px accessibility threshold.",
+      "suggestedFix": "Scale font size up to minimum 12px or use standard text-xs (12px)."
+    },
+    {
+      "id": "typo-tiny-_settings-_root___div___main___div___div___div_nth-of-type_2____div___div___div___div_nth-of-type_3____div_nth-of-type_2____p_nth-of-type_2_",
+      "category": "typography",
+      "severity": "P2",
+      "screen": "/settings",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div > div > div > div:nth-of-type(3) > div:nth-of-type(2) > p:nth-of-type(2)",
+      "evidence": {
+        "fontSize": "10px",
+        "textSnippet": "Completed"
+      },
+      "message": "Body text font size (10px) is below the 11px accessibility threshold.",
+      "suggestedFix": "Scale font size up to minimum 12px or use standard text-xs (12px)."
+    },
+    {
+      "id": "contrast-student-_waves_science-thinking-l1-w1-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/waves/science-thinking-l1-w1",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-student-_waves_science-gears-1-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/waves/science-gears-1",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_waves_science-gears-1-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/waves/science-gears-1",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "token-drift-_waves_science-gears-1-_root___div___main___main___div___h2",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/waves/science-gears-1",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > main > div > h2",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "contrast-student-_courses_logic-structures-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/logic-structures",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-student-_settings-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/settings",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-student-_settings-_root___div___main___div___div___form___div_nth-of-type_2____div___div_nth-of-type_2____div_nth-of-type_2____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/settings",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > form > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > a",
+      "evidence": {
+        "foreground": "oklch(0.44 0.022 145)",
+        "background": "oklab(0.95 -0.0122873 0.00860365 / 0.5)",
+        "measuredRatio": 1.17,
+        "requiredRatio": 4.5,
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "textSnippet": "Free Preview · Manage plan Upgrade"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.17:1 < 4.5:1) on \"Free Preview · Manage plan Upg\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.95 -0.0122873 0.00860365 / 0.5)."
+    },
+    {
+      "id": "typo-tiny-_settings-_root___div___main___div___div___div_nth-of-type_2____div___div___div___div_nth-of-type_3____div_nth-of-type_1____p_nth-of-type_2_",
+      "category": "typography",
+      "severity": "P2",
+      "screen": "/settings",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div > div > div > div:nth-of-type(3) > div:nth-of-type(1) > p:nth-of-type(2)",
+      "evidence": {
+        "fontSize": "10px",
+        "textSnippet": "Enrolled"
+      },
+      "message": "Body text font size (10px) is below the 11px accessibility threshold.",
+      "suggestedFix": "Scale font size up to minimum 12px or use standard text-xs (12px)."
+    },
+    {
+      "id": "typo-tiny-_settings-_root___div___main___div___div___div_nth-of-type_2____div___div___div___div_nth-of-type_3____div_nth-of-type_2____p_nth-of-type_2_",
+      "category": "typography",
+      "severity": "P2",
+      "screen": "/settings",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div > div > div > div:nth-of-type(3) > div:nth-of-type(2) > p:nth-of-type(2)",
+      "evidence": {
+        "fontSize": "10px",
+        "textSnippet": "Completed"
+      },
+      "message": "Body text font size (10px) is below the 11px accessibility threshold.",
+      "suggestedFix": "Scale font size up to minimum 12px or use standard text-xs (12px)."
+    },
+    {
+      "id": "contrast-student-_waves_science-gears-1-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/waves/science-gears-1",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "token-drift-_waves_science-gears-1-_root___div___main___main___div___h2",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/waves/science-gears-1",
+      "role": "student",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > main > div > h2",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "contrast-student-_subscription-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/subscription",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_subscription-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/subscription",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-student-_waves_science-thinking-l1-w1-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/waves/science-thinking-l1-w1",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-student-_waves_science-thinking-l1-w1-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/waves/science-thinking-l1-w1",
+      "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
       "id": "contrast-student-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_3____a",
       "category": "contrast",
       "severity": "P0",
@@ -253,6 +2002,1590 @@
       "severity": "P1",
       "screen": "/dashboard",
       "role": "student",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > a",
+      "evidence": {
+        "tag": "a",
+        "tabIndex": 0
+      },
+      "message": "Interactive <a> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "contrast-educator-_subscription-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/subscription",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-educator-_courses_fractions-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_1____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/fractions",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Courses"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Courses\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_courses_fractions-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/courses/fractions",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_courses_fractions-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/fractions",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-educator-_-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-educator-_courses_logic-structures-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_1____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/logic-structures",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Courses"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Courses\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_courses_logic-structures-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/courses/logic-structures",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_courses_logic-structures-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/logic-structures",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-educator-_courses-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_2____button_nth-of-type_3_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(3)",
+      "evidence": {
+        "elementRightEdge": 435,
+        "viewportWidth": 390,
+        "box": {
+          "x": 270,
+          "y": 270,
+          "width": 165,
+          "height": 34,
+          "isClipped": false,
+          "scrollWidth": 163,
+          "clientWidth": 163,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (435px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_2____button_nth-of-type_4_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(4)",
+      "evidence": {
+        "elementRightEdge": 605,
+        "viewportWidth": 390,
+        "box": {
+          "x": 443,
+          "y": 270,
+          "width": 162,
+          "height": 34,
+          "isClipped": false,
+          "scrollWidth": 160,
+          "clientWidth": 160,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (605px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_2____button_nth-of-type_5_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > button:nth-of-type(5)",
+      "evidence": {
+        "elementRightEdge": 733,
+        "viewportWidth": 390,
+        "box": {
+          "x": 613,
+          "y": 270,
+          "width": 120,
+          "height": 34,
+          "isClipped": false,
+          "scrollWidth": 118,
+          "clientWidth": 118,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (733px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "evidence": {
+        "elementRightEdge": 401,
+        "viewportWidth": 390,
+        "box": {
+          "x": 231,
+          "y": 588,
+          "width": 170,
+          "height": 216,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 216,
+          "clientHeight": 216
+        }
+      },
+      "message": "Element overflows viewport horizontally (401px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3",
+      "evidence": {
+        "elementRightEdge": 401,
+        "viewportWidth": 390,
+        "box": {
+          "x": 231,
+          "y": 788,
+          "width": 170,
+          "height": 16,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 16,
+          "clientHeight": 16
+        }
+      },
+      "message": "Element overflows viewport horizontally (401px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "evidence": {
+        "elementRightEdge": 401,
+        "viewportWidth": 390,
+        "box": {
+          "x": 231,
+          "y": 1570,
+          "width": 170,
+          "height": 216,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 216,
+          "clientHeight": 216
+        }
+      },
+      "message": "Element overflows viewport horizontally (401px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3",
+      "evidence": {
+        "elementRightEdge": 401,
+        "viewportWidth": 390,
+        "box": {
+          "x": 231,
+          "y": 1770,
+          "width": 170,
+          "height": 16,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 16,
+          "clientHeight": 16
+        }
+      },
+      "message": "Element overflows viewport horizontally (401px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_3_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3)",
+      "evidence": {
+        "elementRightEdge": 591,
+        "viewportWidth": 390,
+        "box": {
+          "x": 421,
+          "y": 1570,
+          "width": 170,
+          "height": 232,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 232,
+          "clientHeight": 232
+        }
+      },
+      "message": "Element overflows viewport horizontally (591px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_3____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3) > h3",
+      "evidence": {
+        "elementRightEdge": 591,
+        "viewportWidth": 390,
+        "box": {
+          "x": 421,
+          "y": 1770,
+          "width": 170,
+          "height": 32,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (591px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_4_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4)",
+      "evidence": {
+        "elementRightEdge": 781,
+        "viewportWidth": 390,
+        "box": {
+          "x": 611,
+          "y": 1572,
+          "width": 170,
+          "height": 232,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 232,
+          "clientHeight": 232
+        }
+      },
+      "message": "Element overflows viewport horizontally (781px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_4____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4) > h3",
+      "evidence": {
+        "elementRightEdge": 781,
+        "viewportWidth": 390,
+        "box": {
+          "x": 611,
+          "y": 1772,
+          "width": 170,
+          "height": 32,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (781px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_5_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(5)",
+      "evidence": {
+        "elementRightEdge": 971,
+        "viewportWidth": 390,
+        "box": {
+          "x": 801,
+          "y": 1574,
+          "width": 170,
+          "height": 216,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 216,
+          "clientHeight": 216
+        }
+      },
+      "message": "Element overflows viewport horizontally (971px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_5____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(5) > h3",
+      "evidence": {
+        "elementRightEdge": 971,
+        "viewportWidth": 390,
+        "box": {
+          "x": 801,
+          "y": 1774,
+          "width": 170,
+          "height": 16,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 16,
+          "clientHeight": 16
+        }
+      },
+      "message": "Element overflows viewport horizontally (971px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_6_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6)",
+      "evidence": {
+        "elementRightEdge": 1161,
+        "viewportWidth": 390,
+        "box": {
+          "x": 991,
+          "y": 1577,
+          "width": 170,
+          "height": 216,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 216,
+          "clientHeight": 216
+        }
+      },
+      "message": "Element overflows viewport horizontally (1161px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_6____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6) > h3",
+      "evidence": {
+        "elementRightEdge": 1161,
+        "viewportWidth": 390,
+        "box": {
+          "x": 991,
+          "y": 1777,
+          "width": 170,
+          "height": 16,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 16,
+          "clientHeight": 16
+        }
+      },
+      "message": "Element overflows viewport horizontally (1161px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_7_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7)",
+      "evidence": {
+        "elementRightEdge": 1351,
+        "viewportWidth": 390,
+        "box": {
+          "x": 1181,
+          "y": 1580,
+          "width": 170,
+          "height": 232,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 232,
+          "clientHeight": 232
+        }
+      },
+      "message": "Element overflows viewport horizontally (1351px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_7____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7) > h3",
+      "evidence": {
+        "elementRightEdge": 1351,
+        "viewportWidth": 390,
+        "box": {
+          "x": 1181,
+          "y": 1780,
+          "width": 170,
+          "height": 32,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (1351px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_5____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "evidence": {
+        "elementRightEdge": 401,
+        "viewportWidth": 390,
+        "box": {
+          "x": 231,
+          "y": 2063,
+          "width": 170,
+          "height": 232,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 232,
+          "clientHeight": 232
+        }
+      },
+      "message": "Element overflows viewport horizontally (401px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-mobile-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_5____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > h3",
+      "evidence": {
+        "elementRightEdge": 401,
+        "viewportWidth": 390,
+        "box": {
+          "x": 231,
+          "y": 2263,
+          "width": 170,
+          "height": 32,
+          "isClipped": false,
+          "scrollWidth": 170,
+          "clientWidth": 170,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (401px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "contrast-educator-_pricing-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/pricing",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-educator-_courses_fractions-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/fractions",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-educator-_courses-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_1____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Courses"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Courses\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_courses-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_courses-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "overflow-desktop-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_6_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6)",
+      "evidence": {
+        "elementRightEdge": 1297,
+        "viewportWidth": 1280,
+        "box": {
+          "x": 1107,
+          "y": 1324,
+          "width": 190,
+          "height": 216,
+          "isClipped": false,
+          "scrollWidth": 190,
+          "clientWidth": 190,
+          "scrollHeight": 216,
+          "clientHeight": 216
+        }
+      },
+      "message": "Element overflows viewport horizontally (1297px > 1280px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-desktop-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_6____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6) > h3",
+      "evidence": {
+        "elementRightEdge": 1297,
+        "viewportWidth": 1280,
+        "box": {
+          "x": 1107,
+          "y": 1524,
+          "width": 190,
+          "height": 16,
+          "isClipped": false,
+          "scrollWidth": 190,
+          "clientWidth": 190,
+          "scrollHeight": 16,
+          "clientHeight": 16
+        }
+      },
+      "message": "Element overflows viewport horizontally (1297px > 1280px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-desktop-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_7_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7)",
+      "evidence": {
+        "elementRightEdge": 1507,
+        "viewportWidth": 1280,
+        "box": {
+          "x": 1317,
+          "y": 1328,
+          "width": 190,
+          "height": 232,
+          "isClipped": false,
+          "scrollWidth": 190,
+          "clientWidth": 190,
+          "scrollHeight": 232,
+          "clientHeight": 232
+        }
+      },
+      "message": "Element overflows viewport horizontally (1507px > 1280px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "overflow-desktop-_courses-_root___div___main___div___div___div_nth-of-type_3____div_nth-of-type_4____div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_7____h3",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/courses",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(7) > h3",
+      "evidence": {
+        "elementRightEdge": 1507,
+        "viewportWidth": 1280,
+        "box": {
+          "x": 1317,
+          "y": 1528,
+          "width": 190,
+          "height": 32,
+          "isClipped": false,
+          "scrollWidth": 190,
+          "clientWidth": 190,
+          "scrollHeight": 32,
+          "clientHeight": 32
+        }
+      },
+      "message": "Element overflows viewport horizontally (1507px > 1280px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "contrast-educator-_achievements-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/achievements",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "token-drift-_achievements-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_1____div_nth-of-type_2____div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/achievements",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "token-drift-_achievements-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/achievements",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "token-drift-_achievements-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_3____div_nth-of-type_2____div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/achievements",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(3) > div:nth-of-type(2) > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "contrast-educator-_courses_thinking-in-python-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_1____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/thinking-in-python",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(1) > a",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Courses"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Courses\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_courses_thinking-in-python-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/courses/thinking-in-python",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_courses_thinking-in-python-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/thinking-in-python",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-educator-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/dashboard",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "a11y-name-_dashboard-_root___div___main___div___div___div___div_nth-of-type_1____div_nth-of-type_3____div_nth-of-type_1____a",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/dashboard",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > a",
+      "evidence": {
+        "tag": "a",
+        "tabIndex": 0
+      },
+      "message": "Interactive <a> has no accessible name or aria-label.",
+      "suggestedFix": "Add aria-label=\"...\" or accessible text inside the interactive element."
+    },
+    {
+      "id": "contrast-educator-_leaderboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_2____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/leaderboard",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(2) > a",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Leagues"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Leagues\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_leaderboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/leaderboard",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_leaderboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/leaderboard",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "token-drift-_leaderboard-_root___div___main___div___div___div_nth-of-type_3____div___div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/leaderboard",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "contrast-educator-_pricing-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/pricing",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_pricing-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/pricing",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-educator-_courses_thinking-in-python-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/thinking-in-python",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-educator-_achievements-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/achievements",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_achievements-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/achievements",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "token-drift-_achievements-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_1____div_nth-of-type_2____div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/achievements",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "token-drift-_achievements-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_2____div_nth-of-type_2____div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/achievements",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "token-drift-_achievements-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_3____div_nth-of-type_2____div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/achievements",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(3) > div:nth-of-type(2) > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "contrast-educator-_leaderboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/leaderboard",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "overflow-mobile-_leaderboard-_root___div___main___div___div___div_nth-of-type_2____div_nth-of-type_1____button_nth-of-type_5_",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/leaderboard",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(2) > div:nth-of-type(1) > button:nth-of-type(5)",
+      "evidence": {
+        "elementRightEdge": 443,
+        "viewportWidth": 390,
+        "box": {
+          "x": 372,
+          "y": 228,
+          "width": 71,
+          "height": 36,
+          "isClipped": false,
+          "scrollWidth": 71,
+          "clientWidth": 71,
+          "scrollHeight": 36,
+          "clientHeight": 36
+        }
+      },
+      "message": "Element overflows viewport horizontally (443px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "token-drift-_leaderboard-_root___div___main___div___div___div_nth-of-type_3____div___div___p_nth-of-type_1_",
+      "category": "token-drift",
+      "severity": "P2",
+      "screen": "/leaderboard",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > div > div:nth-of-type(3) > div > div > p:nth-of-type(1)",
+      "evidence": {
+        "detectedOklch": "oklch(0.577 0.245 27.3)",
+        "hue": 27.3,
+        "allowedHues": [
+          145,
+          252,
+          55,
+          295,
+          247,
+          285
+        ]
+      },
+      "message": "Color hue (27) deviates from the OKLCH design system tokens.",
+      "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
+    },
+    {
+      "id": "contrast-educator-_courses_logic-structures-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/courses/logic-structures",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-educator-_-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "overflow-mobile-_-_root___div___main___div___section_nth-of-type_1____div_nth-of-type_2____div_nth-of-type_1____p",
+      "category": "overlap",
+      "severity": "P1",
+      "screen": "/",
+      "role": "educator",
+      "viewport": "mobile",
+      "elementSelector": "#root > div > main > div > section:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > p",
+      "evidence": {
+        "elementRightEdge": 415,
+        "viewportWidth": 390,
+        "box": {
+          "x": 16,
+          "y": 290,
+          "width": 399,
+          "height": 78,
+          "isClipped": false,
+          "scrollWidth": 399,
+          "clientWidth": 399,
+          "scrollHeight": 78,
+          "clientHeight": 78
+        }
+      },
+      "message": "Element overflows viewport horizontally (415px > 390px)",
+      "suggestedFix": "Add responsive max-w-full or overflow-x-hidden to prevent horizontal page scrolling."
+    },
+    {
+      "id": "contrast-educator-_subscription-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/subscription",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_subscription-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/subscription",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "contrast-educator-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_1____nav___div_nth-of-type_3____a",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/dashboard",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(1) > nav > div:nth-of-type(3) > a",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.1)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Quests"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"Quests\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___a___button",
+      "category": "contrast",
+      "severity": "P1",
+      "screen": "/dashboard",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > a > button",
+      "evidence": {
+        "foreground": "oklch(0.666 0.179 58.318)",
+        "background": "oklab(0.769 0.0640531 0.176752 / 0.1)",
+        "measuredRatio": 3.6,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "Go Premium"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (3.60:1 < 4.5:1) on \"Go Premium\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.769 0.0640531 0.176752 / 0.1)."
+    },
+    {
+      "id": "contrast-educator-_dashboard-_root___div___div_nth-of-type_2____header___div___div_nth-of-type_2____div___div_nth-of-type_2____button",
+      "category": "contrast",
+      "severity": "P0",
+      "screen": "/dashboard",
+      "role": "educator",
+      "viewport": "desktop",
+      "elementSelector": "#root > div > div:nth-of-type(2) > header > div > div:nth-of-type(2) > div > div:nth-of-type(2) > button",
+      "evidence": {
+        "foreground": "oklch(0.484 0.164 145)",
+        "background": "oklab(0.484 -0.134341 0.0940665 / 0.2)",
+        "measuredRatio": 1.38,
+        "requiredRatio": 4.5,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "textSnippet": "D"
+      },
+      "message": "Insufficient WCAG 2.2 contrast (1.38:1 < 4.5:1) on \"D\"",
+      "suggestedFix": "Adjust color token to exceed 4.5:1 against oklab(0.484 -0.134341 0.0940665 / 0.2)."
+    },
+    {
+      "id": "a11y-name-_dashboard-_root___div___main___div___div___div___div_nth-of-type_1____div_nth-of-type_3____div_nth-of-type_1____a",
+      "category": "a11y",
+      "severity": "P1",
+      "screen": "/dashboard",
+      "role": "educator",
       "viewport": "desktop",
       "elementSelector": "#root > div > main > div > div > div > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > a",
       "evidence": {
