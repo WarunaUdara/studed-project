@@ -104,8 +104,9 @@ test.describe("E2E Student Registration, Enrollment, and Wave Completion Flow", 
     const updatedXpBadge = page.getByText("100 XP").first();
     await expect(updatedXpBadge).toBeVisible({ timeout: 10000 });
 
-    // 7. Verify leaderboard has updated for the user
-    await page.getByRole("link", { name: "Leaderboard", exact: true }).click();
+    // 7. Verify leaderboard has updated for the user. The nav item is labelled
+    // Leagues; the route it points at is still /leaderboard.
+    await page.getByRole("link", { name: "Leagues", exact: true }).first().click();
     await expect(page).toHaveURL(/\/leaderboard/);
 
     const userLeaderboardRow = page.locator("main, [role='main']").getByText(studentName).first();
