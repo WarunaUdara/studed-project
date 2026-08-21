@@ -43,6 +43,6 @@ test.describe("Student Dashboard UX & Flow Simulation", () => {
   test("should reach the course catalog from the dashboard", async ({ page }) => {
     await page.getByRole("link", { name: "Courses", exact: true }).first().click();
     await expect(page).toHaveURL(/\/courses/);
-    await expect(page.getByRole("heading", { name: "Learning Paths" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Learning Paths" }).first()).toBeVisible();
   });
 });

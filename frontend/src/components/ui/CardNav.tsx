@@ -49,12 +49,32 @@ export function FloatingCardNav({
 
   const activeItem = items.find((item) => item.id === activeTabId);
 
+  // Close the mega menu whenever the route changes. Without this the menu that
+  // was opened on hover stays draped over the page the user just navigated to,
+  // and because the panel sits inside the nav's own hover region, moving the
+  // pointer towards the covered content keeps it open rather than dismissing
+  // it, so anything underneath is unreachable. Adjusting during render rather
+  // than in an effect closes it before paint, with no flash of an open menu.
+  const [menuPath, setMenuPath] = useState(activePath);
+  const [suppressHover, setSuppressHover] = useState(false);
+  if (menuPath !== activePath) {
+    setMenuPath(activePath);
+    setActiveTabId(null);
+    setIsMobileMenuOpen(false);
+    // The pointer is still resting on the item that was just clicked, so
+    // without this the menu reopens on the very next hover event and covers
+    // the page again. Hovering only reopens it once the pointer has left.
+    setSuppressHover(true);
+  }
+
   const handleMouseEnterTab = (id: string) => {
     if (hoverTimeout) clearTimeout(hoverTimeout);
+    if (suppressHover) return;
     setActiveTabId(id);
   };
 
   const handleMouseLeaveNav = () => {
+    setSuppressHover(false);
     const timeout = setTimeout(() => {
       setActiveTabId(null);
     }, 150);
