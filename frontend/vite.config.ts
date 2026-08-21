@@ -24,17 +24,17 @@ export default defineConfig(({ mode }) => {
     resolve: {
       dedupe: ["react", "react-dom"],
       alias: {
-        "@": path.resolve(__dirname, "./src"),
+        "@": path.resolve(import.meta.dirname, "./src"),
         // Course manifests live outside the frontend package so content-sync
         // and the app read the exact same files.
-        "@content": path.resolve(__dirname, "../content"),
+        "@content": path.resolve(import.meta.dirname, "../content"),
       },
     },
     server: {
       port: 5173,
       fs: {
         // Needed for the "@content" alias, which points above the Vite root.
-        allow: [path.resolve(__dirname), path.resolve(__dirname, "../content")],
+        allow: [path.resolve(import.meta.dirname), path.resolve(import.meta.dirname, "../content")],
       },
       allowedHosts: [
         "localhost",
@@ -61,15 +61,6 @@ export default defineConfig(({ mode }) => {
           target,
           changeOrigin: true,
         },
-      },
-      warmup: {
-        clientFiles: [
-          "./src/components/puck-blocks/puck-config.tsx",
-          "./src/routes/educator/_layout/courses.new.tsx",
-          "./src/routes/educator/_layout/courses.tsx",
-          "./src/routes/dashboard.tsx",
-          "./src/routes/waves.$waveId.tsx",
-        ],
       },
     },
     build: {
