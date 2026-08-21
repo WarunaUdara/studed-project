@@ -13,16 +13,16 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useMutation, useQuery } from "urql";
+import { StudentShell } from "@/components/layout/StudentShell";
 import { LearningPathRibbon } from "@/components/learning-paths/LearningPathRibbon";
 import type { CourseNode, LearningPathDef, PathCategory } from "@/components/learning-paths/types";
-import { StudentShell } from "@/components/layout/StudentShell";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
 import { COURSES_QUERY } from "@/graphql/courses";
 import { COURSE_PLAYER_QUERY, ENROLL_IN_COURSE_MUTATION } from "@/graphql/student";
+import { localCourseDetail, localCourseNodes } from "@/lib/content/localCourses";
 import { sanitizeGraphQLError } from "@/lib/errors";
-import { isScienceCourseId, SCIENCE_COURSE_NODE, SCIENCE_COURSE_DETAIL } from "@/lib/scienceCourse";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
 
@@ -66,10 +66,17 @@ function CoursesCatalogPage() {
     variables: { filter: { isPublished: true } },
   });
 
-  const allCourses: CourseNode[] = useMemo(
-    () => data?.courses?.edges?.map((edge: { node: CourseNode }) => edge.node) ?? [],
-    [data],
-  );
+  const allCourses: CourseNode[] = useMemo(() => {
+    const dbCourses: CourseNode[] =
+      data?.courses?.edges?.map((edge: { node: CourseNode }) => edge.node) ?? [];
+    // Manifest-backed courses are playable before they are synced. Merging them
+    // here means they flow through the same categorization as every other
+    // course instead of needing their own shelf.
+    const manifestExtras = localCourseNodes().filter(
+      (course) => !dbCourses.some((dbCourse) => dbCourse.slug === course.slug),
+    );
+    return [...dbCourses, ...manifestExtras];
+  }, [data]);
 
   // Group and structure courses into curated Learning Paths
   const learningPaths: LearningPathDef[] = useMemo(() => {
@@ -110,14 +117,7 @@ function CoursesCatalogPage() {
           c.slug.includes("physics")),
     );
 
-    const defaultScienceCourse: CourseNode = SCIENCE_COURSE_NODE;
-
-    const scienceCourses =
-      scienceDbCourses.length > 0
-        ? scienceDbCourses
-        : matchesSearch(defaultScienceCourse)
-          ? [defaultScienceCourse]
-          : [];
+    const scienceCourses = scienceDbCourses;
 
     // Languages Courses
     const langCourses = allCourses.filter(
@@ -215,7 +215,8 @@ function CoursesCatalogPage() {
               Learning Paths
             </h1>
             <p className="text-muted-foreground text-sm font-medium">
-              Step-by-step paths to mastery · {allCourses.length} courses available · {totalEnrolled} enrolled
+              Step-by-step paths to mastery · {allCourses.length} courses available ·{" "}
+              {totalEnrolled} enrolled
             </p>
           </div>
 
@@ -364,16 +365,17 @@ function CourseDetailSheet({
 }) {
   const { isAuthenticated } = useAuthStore();
   const { toast } = useToast();
-  const [{ data, fetching, error }] = useQuery({
+  // A query error is not reported separately: with a manifest fallback in play,
+  // the only thing the drawer can act on is whether it ended up with a course.
+  const [{ data, fetching }] = useQuery({
     query: COURSE_PLAYER_QUERY,
     variables: { id: courseId },
   });
   const [enrollResult, enroll] = useMutation(ENROLL_IN_COURSE_MUTATION);
-  const isScienceCourse = isScienceCourseId(courseId);
 
-  const fallbackScienceCourse = SCIENCE_COURSE_DETAIL;
-
-  const course = data?.course || (isScienceCourse ? fallbackScienceCourse : undefined);
+  // Manifest-backed courses fill the drawer when the catalog is serving them,
+  // so the syllabus reads the same whether a course is seeded or shipped.
+  const course = data?.course ?? localCourseDetail(courseId) ?? undefined;
   const isEnrolled = course?.myProgress !== null && course?.myProgress !== undefined;
 
   const handleEnroll = async () => {
@@ -419,14 +421,14 @@ function CourseDetailSheet({
             </button>
           </div>
 
-          {fetching && !isScienceCourse ? (
+          {fetching && !course ? (
             <div className="space-y-4">
               <Skeleton className="h-8 w-3/4" />
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-20 w-full" />
               <Skeleton className="h-40 w-full" />
             </div>
-          ) : error || !course ? (
+          ) : !course ? (
             <div className="text-center py-8">
               <p className="text-sm text-muted-foreground">Error loading course syllabus.</p>
             </div>
@@ -437,7 +439,9 @@ function CourseDetailSheet({
                   {course.gradeLevel}
                 </span>
                 <h2 className="text-2xl font-serif font-bold text-foreground">{course.title}</h2>
-                <p className="text-sm text-muted-foreground leading-relaxed">{course.description}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {course.description}
+                </p>
               </div>
 
               <div className="border-t pt-4">
@@ -524,7 +528,9 @@ function CourseDetailSheet({
               </Button>
             ) : (
               <Link to="/login">
-                <Button className="w-full rounded-full h-11 font-bold text-sm">Sign in to Enroll</Button>
+                <Button className="w-full rounded-full h-11 font-bold text-sm">
+                  Sign in to Enroll
+                </Button>
               </Link>
             )}
           </div>

@@ -281,3 +281,108 @@ describe("applyBlockOpsToData", () => {
     expect(next.content).toEqual(doc.content);
   });
 });
+
+// Interactive content must survive a trip through the educator editor. Before
+// these blocks were mapped, opening a physics wave and saving it rewrote every
+// lab as plain text and every manipulation as a generic drag and drop.
+describe("interactive blocks round-trip through the editor", () => {
+  const INTERACTIVE_LEARN: LearnBlockRaw[] = [
+    {
+      id: "lb-dialog",
+      type: "blob_dialog",
+      content: "Hello! I am Blobby.",
+      metadata: JSON.stringify({ version: 1, lines: [{ id: "l1", text: "Hello! I am Blobby." }] }),
+    },
+    {
+      id: "lb-force",
+      type: "force_lab",
+      content: "Push the cart.",
+      metadata: JSON.stringify({ version: 1, label: "Toy cart" }),
+    },
+    {
+      id: "lb-circuit",
+      type: "circuit_lab",
+      content: "Light the bulb.",
+      metadata: JSON.stringify({ version: 1, solution: { "slot-top": "wire" } }),
+    },
+    {
+      id: "lb-water",
+      type: "water_flow",
+      content: "Watch the drops.",
+      metadata: JSON.stringify({ version: 1 }),
+    },
+    {
+      id: "lb-anim",
+      type: "animation",
+      content: "force-arrows",
+      metadata: JSON.stringify({ version: 1, scene: "force-arrows", params: { push: 8 } }),
+    },
+  ];
+
+  const INTERACTIVE_EVALUATE: EvaluateBlockRaw[] = [
+    {
+      id: "eb-tap",
+      type: "tap_target",
+      question: "Which one is a pull?",
+      correctAnswer: "drawer",
+      explanation: "It comes towards you.",
+      metadata: JSON.stringify({ version: 1, targets: [{ id: "drawer", label: "Opening a drawer" }] }),
+    },
+    {
+      id: "eb-order",
+      type: "order_steps",
+      question: "Put these in order.",
+      correctAnswer: "push>roll",
+      explanation: "You push first.",
+      metadata: JSON.stringify({ version: 1, steps: [{ id: "push", label: "Push" }] }),
+    },
+  ];
+
+  it("maps each interactive type to its own editor block", () => {
+    const data = waveDataToPuck(INTERACTIVE_LEARN, INTERACTIVE_EVALUATE);
+    const types = data.content.map((item) => item.type);
+    expect(types).toEqual([
+      "BlobDialogBlock",
+      "PhysicsLabBlock",
+      "PhysicsLabBlock",
+      "PhysicsLabBlock",
+      "AnimationBlock",
+      "InteractiveQuestionBlock",
+      "InteractiveQuestionBlock",
+    ]);
+  });
+
+  it("preserves type, content and metadata when saved back", () => {
+    const saved = puckToWaveData(waveDataToPuck(INTERACTIVE_LEARN, INTERACTIVE_EVALUATE));
+
+    expect(saved.learnBlocks.map((block) => block.type)).toEqual([
+      "blob_dialog",
+      "force_lab",
+      "circuit_lab",
+      "water_flow",
+      "animation",
+    ]);
+    for (const original of INTERACTIVE_LEARN) {
+      const round = saved.learnBlocks.find((block) => block.id === original.id);
+      expect(round?.content).toBe(original.content);
+      expect(JSON.parse(round?.metadata ?? "{}")).toMatchObject(JSON.parse(original.metadata ?? "{}"));
+    }
+
+    expect(saved.evaluateBlocks.map((block) => block.type)).toEqual(["tap_target", "order_steps"]);
+    for (const original of INTERACTIVE_EVALUATE) {
+      const round = saved.evaluateBlocks.find((block) => block.id === original.id);
+      expect(round?.question).toBe(original.question);
+      expect(round?.correctAnswer).toBe(original.correctAnswer);
+      expect(round?.explanation).toBe(original.explanation);
+      expect(round?.metadata).toBe(original.metadata);
+    }
+  });
+
+  it("keeps the scene the educator picked when saving an animation", () => {
+    const data = waveDataToPuck([INTERACTIVE_LEARN[4]], []);
+    data.content[0].props.scene = "water-flow";
+    const saved = puckToWaveData(data);
+    expect(saved.learnBlocks[0].content).toBe("water-flow");
+    expect(JSON.parse(saved.learnBlocks[0].metadata ?? "{}").scene).toBe("water-flow");
+  });
+});

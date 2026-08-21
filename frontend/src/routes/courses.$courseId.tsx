@@ -10,8 +10,8 @@ import { ProgressRing } from "@/components/ui/ProgressRing";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
 import { COURSE_PLAYER_QUERY, ENROLL_IN_COURSE_MUTATION, RESET_WAVE_ATTEMPTS_MUTATION } from "@/graphql/student";
+import { localCourseDetail } from "@/lib/content/localCourses";
 import { sanitizeGraphQLError } from "@/lib/errors";
-import { isScienceCourseId, SCIENCE_COURSE_DETAIL } from "@/lib/scienceCourse";
 import { cn } from "@/lib/utils";
 
 interface Wave {
@@ -55,12 +55,18 @@ function CoursePlayerPage() {
   const { courseId } = Route.useParams();
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
 
+  // Manifest-backed courses ship with the app, so skip the query for them
+  // rather than letting a backend error hide a course we already hold.
+  const localCourse = useMemo(() => localCourseDetail(courseId), [courseId]);
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: COURSE_PLAYER_QUERY,
     variables: { id: courseId },
+    pause: Boolean(localCourse),
   });
 
-  const course: Course | undefined = data?.course;
+  // Manifest-backed courses render through the same journey components as
+  // every database course; only the source of the data differs.
+  const course: Course | undefined = localCourse ?? data?.course ?? undefined;
 
   const completedWaves = course?.myProgress?.completedWaves ?? 0;
   const totalWaves = course?.myProgress?.totalWaves ?? 0;
@@ -95,29 +101,6 @@ function CoursePlayerPage() {
       reexecuteQuery({ requestPolicy: "network-only" });
     }
   };
-
-  const isScienceCourse = isScienceCourseId(courseId);
-
-  if (isScienceCourse) {
-    return (
-      <div className="mx-auto max-w-6xl p-4 pt-6 sm:p-6 sm:pt-8">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <Link to="/courses">
-            <Button variant="ghost" size="sm" className="gap-1">
-              <ArrowLeft className="h-4 w-4" /> Back to Courses
-            </Button>
-          </Link>
-        </div>
-        <CourseJourneyMap
-          courseId={SCIENCE_COURSE_DETAIL.id}
-          courseTitle={SCIENCE_COURSE_DETAIL.title}
-          gradeLevel={SCIENCE_COURSE_DETAIL.gradeLevel}
-          lessons={SCIENCE_COURSE_DETAIL.lessons}
-          isEnrolled={true}
-        />
-      </div>
-    );
-  }
 
   if (fetching) {
     return (

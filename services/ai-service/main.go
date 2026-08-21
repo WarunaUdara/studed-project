@@ -11,6 +11,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/studed/ai-service/internal/agent"
+	"github.com/studed/ai-service/internal/coderun"
 	"github.com/studed/ai-service/internal/config"
 	"github.com/studed/ai-service/internal/handler"
 	"github.com/studed/ai-service/internal/provider"
@@ -35,6 +36,18 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("ai-service ok"))
 	})
+
+	// Running student code needs no LLM, so it is registered before the
+	// provider check and stays available on a deployment with no model key.
+	codeRunner := coderun.New(coderun.Config{
+		Timeout: time.Duration(cfg.CodeRunTimeoutSeconds) * time.Second,
+	})
+	coderun.NewHandler(codeRunner, log).Register(mux)
+	if codeRunner.Available() {
+		log.Info("code runner ready")
+	} else {
+		log.Warn("no python interpreter found; coding waves will report code running as unavailable")
+	}
 
 	if !cfg.HasConfiguredProvider() {
 		log.Warn("no LLM provider configured (set OPENCODE_API_KEY or GEMINI_API_KEY); AI endpoints will return 503")

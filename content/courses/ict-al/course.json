@@ -1,0 +1,892 @@
+{
+  "slug": "ict-al",
+  "title": "A/L ICT: Structures and Systems",
+  "description": "A/L work on the ideas behind the code: stacks and queues, recursion, sorting cost, error handling, normalisation and how a request actually travels a network.",
+  "gradeLevel": "AL",
+  "subject": "ICT",
+  "price": 0,
+  "version": 1,
+  "lessons": [
+    {
+      "title": "Lesson 1: Structures and Algorithms",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Stacks and Queues",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "ictal-1-1",
+              "type": "blob_dialog",
+              "content": "Two structures, two orders. A stack serves the newest item first, a queue the oldest.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Two structures, two orders. A stack serves the newest item first, a queue the oldest.",
+                    "mood": "happy",
+                    "cta": "Where do they show up?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "The back button is a stack. A printer job list is a queue.",
+                    "mood": "thinking",
+                    "cta": "Last in, first out?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Last in first out for the stack, first in first out for the queue. That single choice changes the behaviour entirely.",
+                    "mood": "cheer",
+                    "cta": "Clear"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-1-2",
+              "type": "python_runner",
+              "content": "stack = []\n\nstack.append('page1')\nstack.append('page2')\nstack.append('page3')\n\nprint('back to:', stack.pop())\nprint('back to:', stack.pop())\nprint('still holding:', stack)",
+              "metadata": {
+                "version": 1,
+                "title": "A stack of visited pages",
+                "instruction": "Run it, then add a fourth page before the pops and predict the output first.",
+                "starterCode": "stack = []\n\nstack.append('page1')\nstack.append('page2')\nstack.append('page3')\n\nprint('back to:', stack.pop())\nprint('back to:', stack.pop())\nprint('still holding:', stack)",
+                "hint": "append pushes onto the top, pop takes from the top."
+              }
+            },
+            {
+              "id": "ictal-1-3",
+              "type": "python_runner",
+              "content": "from collections import deque\n\nqueue = deque()\nqueue.append('Kavindi')\nqueue.append('Sahan')\nqueue.append('Dilini')\n\nprint('served:', queue.popleft())\nprint('waiting:', list(queue))",
+              "metadata": {
+                "version": 1,
+                "title": "A queue at the counter",
+                "instruction": "Run it, then serve one more person and print who is left.",
+                "starterCode": "from collections import deque\n\nqueue = deque()\nqueue.append('Kavindi')\nqueue.append('Sahan')\nqueue.append('Dilini')\n\nprint('served:', queue.popleft())\nprint('waiting:', list(queue))",
+                "hint": "popleft takes from the front, which is what makes it a queue."
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ictal-eb-1-1",
+              "type": "drag_drop",
+              "question": "Match each situation to the structure behind it.",
+              "correctAnswer": "slot-back:stack,slot-printer:queue",
+              "explanation": "Going back returns to the most recent page, while a printer serves jobs in arrival order.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "stack",
+                    "label": "A stack"
+                  },
+                  {
+                    "id": "queue",
+                    "label": "A queue"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-back",
+                    "label": "The browser back button"
+                  },
+                  {
+                    "id": "slot-printer",
+                    "label": "Jobs waiting at a printer"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-eb-1-2",
+              "type": "tap_target",
+              "question": "Items 1, 2 and 3 are pushed onto a stack. Which comes off first?",
+              "correctAnswer": "three",
+              "explanation": "A stack is last in, first out, so the most recently pushed item leaves first.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "three",
+                    "label": "3"
+                  },
+                  {
+                    "id": "one",
+                    "label": "1"
+                  },
+                  {
+                    "id": "two",
+                    "label": "2"
+                  },
+                  {
+                    "id": "any",
+                    "label": "Any of them"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-eb-1-3",
+              "type": "order_steps",
+              "question": "A queue receives A, then B, then C. In what order are they served?",
+              "correctAnswer": "a>b>c",
+              "explanation": "A queue is first in, first out, so they leave in the order they arrived.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "a",
+                    "label": "A"
+                  },
+                  {
+                    "id": "b",
+                    "label": "B"
+                  },
+                  {
+                    "id": "c",
+                    "label": "C"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Recursion Without Fear",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 60,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "ictal-2-1",
+              "type": "blob_dialog",
+              "content": "A recursive function calls itself on a smaller version of the same problem.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "A recursive function calls itself on a smaller version of the same problem.",
+                    "mood": "thinking",
+                    "cta": "Does it ever stop?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Only if there is a base case. That is the line that returns without calling again.",
+                    "mood": "happy",
+                    "cta": "And without it?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "It runs until the call stack overflows. The base case is not optional.",
+                    "mood": "surprised",
+                    "cta": "Noted"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-2-2",
+              "type": "python_runner",
+              "content": "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)\n\nfor i in range(1, 7):\n    print(i, '->', factorial(i))",
+              "metadata": {
+                "version": 1,
+                "title": "Factorial by recursion",
+                "instruction": "Run it, then remove the base case and see what Python says. Put it back afterwards.",
+                "starterCode": "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)\n\nfor i in range(1, 7):\n    print(i, '->', factorial(i))",
+                "hint": "Each call waits for the one below it before it can return."
+              }
+            },
+            {
+              "id": "ictal-2-3",
+              "type": "text",
+              "content": "Every recursive function needs two parts: a **base case** that stops, and a **recursive case** that moves closer to it. Losing either one is the whole class of recursion bugs."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ictal-eb-2-1",
+              "type": "tap_target",
+              "question": "What happens to a recursive function with no base case?",
+              "correctAnswer": "overflow",
+              "explanation": "Nothing stops the calls, so the stack fills and Python raises a RecursionError.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "overflow",
+                    "label": "It recurses until the call stack overflows"
+                  },
+                  {
+                    "id": "zero",
+                    "label": "It returns zero"
+                  },
+                  {
+                    "id": "once",
+                    "label": "It runs exactly once"
+                  },
+                  {
+                    "id": "syntax",
+                    "label": "Python refuses to run it"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-eb-2-2",
+              "type": "drag_drop",
+              "question": "Match each line of factorial to its role.",
+              "correctAnswer": "slot-if:base,slot-return:recursive",
+              "explanation": "The if line stops the recursion; the return line moves one step closer to it.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "base",
+                    "label": "The base case"
+                  },
+                  {
+                    "id": "recursive",
+                    "label": "The recursive case"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-if",
+                    "label": "if n <= 1: return 1"
+                  },
+                  {
+                    "id": "slot-return",
+                    "label": "return n * factorial(n - 1)"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-eb-2-3",
+              "type": "order_steps",
+              "question": "Trace factorial(3). Put the returns in the order they actually happen.",
+              "correctAnswer": "base-return>two-return>three-return",
+              "explanation": "The deepest call returns first, and each caller multiplies on the way back up.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "base-return",
+                    "label": "factorial(1) returns 1"
+                  },
+                  {
+                    "id": "two-return",
+                    "label": "factorial(2) returns 2"
+                  },
+                  {
+                    "id": "three-return",
+                    "label": "factorial(3) returns 6"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Sorting and What It Costs",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 65,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 12,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "ictal-3-1",
+              "type": "blob_dialog",
+              "content": "Bubble sort is easy to write and slow to run. That is why it is taught and never shipped.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Bubble sort is easy to write and slow to run. That is why it is taught and never shipped.",
+                    "mood": "thinking",
+                    "cta": "How slow?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Its work grows with the square of the data. Ten times the data means a hundred times the work.",
+                    "mood": "surprised",
+                    "cta": "That escalates fast"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "It does. Merge sort grows far more gently, which is why real libraries use that family.",
+                    "mood": "cheer",
+                    "cta": "Good to know"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-3-2",
+              "type": "python_runner",
+              "content": "marks = [45, 12, 78, 34, 67]\nswaps = 0\n\nfor i in range(len(marks)):\n    for j in range(len(marks) - 1 - i):\n        if marks[j] > marks[j + 1]:\n            marks[j], marks[j + 1] = marks[j + 1], marks[j]\n            swaps = swaps + 1\n\nprint(marks, 'after', swaps, 'swaps')",
+              "metadata": {
+                "version": 1,
+                "title": "Bubble sort, counting swaps",
+                "instruction": "Run it, then start from an already sorted list and compare the swap count.",
+                "starterCode": "marks = [45, 12, 78, 34, 67]\nswaps = 0\n\nfor i in range(len(marks)):\n    for j in range(len(marks) - 1 - i):\n        if marks[j] > marks[j + 1]:\n            marks[j], marks[j + 1] = marks[j + 1], marks[j]\n            swaps = swaps + 1\n\nprint(marks, 'after', swaps, 'swaps')",
+                "hint": "The inner loop shrinks each pass, because the largest value has already bubbled to the end."
+              }
+            },
+            {
+              "id": "ictal-3-3",
+              "type": "text",
+              "content": "**Bubble sort**: simple, quadratic, fine for a handful of items.\n\n**Merge sort**: splits, sorts each half, then merges. Its cost grows as n log n, which is the difference between usable and unusable on real data."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ictal-eb-3-1",
+              "type": "tap_target",
+              "question": "A bubble sort handles 100 items. Roughly how much work for 1000 items?",
+              "correctAnswer": "hundred-times",
+              "explanation": "Quadratic growth squares the factor: ten times the data is a hundred times the work.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "hundred-times",
+                    "label": "About 100 times as much"
+                  },
+                  {
+                    "id": "ten-times",
+                    "label": "About 10 times as much"
+                  },
+                  {
+                    "id": "same",
+                    "label": "About the same"
+                  },
+                  {
+                    "id": "twice",
+                    "label": "About twice as much"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-eb-3-2",
+              "type": "order_steps",
+              "question": "Put one pass of bubble sort in order.",
+              "correctAnswer": "compare>swap>advance>largest",
+              "explanation": "Each pass walks the list once and pushes the largest remaining value to the end.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "compare",
+                    "label": "Compare a pair of neighbours"
+                  },
+                  {
+                    "id": "swap",
+                    "label": "Swap them if they are the wrong way round"
+                  },
+                  {
+                    "id": "advance",
+                    "label": "Move to the next pair"
+                  },
+                  {
+                    "id": "largest",
+                    "label": "End the pass with the largest value at the end"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-eb-3-3",
+              "type": "drag_drop",
+              "question": "Match each algorithm to how its cost grows.",
+              "correctAnswer": "slot-binary:logarithmic,slot-bubble:quadratic,slot-merge:linearithmic",
+              "explanation": "Those three growth shapes cover almost everything on the A/L paper.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "quadratic",
+                    "label": "With the square of the data"
+                  },
+                  {
+                    "id": "linearithmic",
+                    "label": "A little faster than proportionally"
+                  },
+                  {
+                    "id": "logarithmic",
+                    "label": "By one step when the data doubles"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-bubble",
+                    "label": "Bubble sort"
+                  },
+                  {
+                    "id": "slot-merge",
+                    "label": "Merge sort"
+                  },
+                  {
+                    "id": "slot-binary",
+                    "label": "Binary search"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Lesson 2: Systems That Hold Up",
+      "sequenceOrder": 2,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Handling Errors Deliberately",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 60,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "ictal-4-1",
+              "type": "blob_dialog",
+              "content": "A program that crashes on bad input is not finished, it is a draft.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "A program that crashes on bad input is not finished, it is a draft.",
+                    "mood": "thinking",
+                    "cta": "So catch everything?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "No. Catch what you can actually handle, and let the rest surface.",
+                    "mood": "happy",
+                    "cta": "Why let it surface?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Because a swallowed error becomes a silent wrong answer, and those are far worse than a crash.",
+                    "mood": "cheer",
+                    "cta": "Agreed"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-4-2",
+              "type": "python_runner",
+              "content": "def safe_divide(a, b):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        return None\n\nprint(safe_divide(10, 2))\nprint(safe_divide(10, 0))",
+              "metadata": {
+                "version": 1,
+                "title": "Handle one specific failure",
+                "instruction": "Run it, then change except ZeroDivisionError to a bare except and think about what else it now hides.",
+                "starterCode": "def safe_divide(a, b):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        return None\n\nprint(safe_divide(10, 2))\nprint(safe_divide(10, 0))",
+                "hint": "A bare except catches typing errors in your own code too, which is exactly the problem."
+              }
+            },
+            {
+              "id": "ictal-4-3",
+              "type": "text",
+              "content": "Catch the **specific** exception you expect. A bare `except` also swallows your own typos, and then the bug hides instead of announcing itself."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ictal-eb-4-1",
+              "type": "tap_target",
+              "question": "Why is a bare except considered poor practice?",
+              "correctAnswer": "hides",
+              "explanation": "It catches every exception, so a NameError in your own code is silently swallowed with the expected one.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "hides",
+                    "label": "It hides unrelated bugs, including your own typos"
+                  },
+                  {
+                    "id": "slow",
+                    "label": "It is slower to run"
+                  },
+                  {
+                    "id": "invalid",
+                    "label": "It is not valid Python"
+                  },
+                  {
+                    "id": "style",
+                    "label": "It only breaks the style guide"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-eb-4-2",
+              "type": "toggle_switch",
+              "question": "Switch on the failures worth catching in a marks program.",
+              "correctAnswer": "bad-input=on,missing-file=on,own-typo=off",
+              "explanation": "Catch what a user or the environment can do to you. Your own typo should crash loudly so you fix it.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "bad-input",
+                    "label": "A user typing letters where a number is expected",
+                    "onLabel": "catch it",
+                    "offLabel": "let it surface"
+                  },
+                  {
+                    "id": "missing-file",
+                    "label": "A missing data file",
+                    "onLabel": "catch it",
+                    "offLabel": "let it surface"
+                  },
+                  {
+                    "id": "own-typo",
+                    "label": "A misspelled variable name in your own code",
+                    "onLabel": "catch it",
+                    "offLabel": "let it surface"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-eb-4-3",
+              "type": "order_steps",
+              "question": "Put a robust input routine in order.",
+              "correctAnswer": "read>validate>handle>proceed",
+              "explanation": "Validation happens before use, and a clear message beats a traceback for anyone who is not the developer.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "read",
+                    "label": "Read the value"
+                  },
+                  {
+                    "id": "validate",
+                    "label": "Check it is the right shape"
+                  },
+                  {
+                    "id": "handle",
+                    "label": "Handle the failure with a message"
+                  },
+                  {
+                    "id": "proceed",
+                    "label": "Proceed with a value you trust"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Normalising a Database",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 60,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "ictal-5-1",
+              "type": "blob_dialog",
+              "content": "Normalisation sounds abstract until you meet a table that repeats a phone number in forty rows.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Normalisation sounds abstract until you meet a table that repeats a phone number in forty rows.",
+                    "mood": "thinking",
+                    "cta": "Then it is obvious?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Then it is urgent. First normal form removes repeating groups, second removes partial dependencies.",
+                    "mood": "happy",
+                    "cta": "And third?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Third removes fields that depend on another non-key field rather than on the key itself.",
+                    "mood": "cheer",
+                    "cta": "That is the exam wording"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-5-2",
+              "type": "code",
+              "content": "Unnormalised:\nStudent(index_no, name, subject1, subject2, subject3)\n\nFirst normal form:\nStudent(index_no, name)\nEnrolment(index_no, subject)"
+            },
+            {
+              "id": "ictal-5-3",
+              "type": "text",
+              "content": "The test for third normal form: does every non-key field depend on **the key, the whole key, and nothing but the key**?"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ictal-eb-5-1",
+              "type": "order_steps",
+              "question": "Put the normal forms in the order they are applied.",
+              "correctAnswer": "first>second>third",
+              "explanation": "Each form assumes the previous one has already been reached.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "first",
+                    "label": "Remove repeating groups"
+                  },
+                  {
+                    "id": "second",
+                    "label": "Remove partial dependencies on part of a composite key"
+                  },
+                  {
+                    "id": "third",
+                    "label": "Remove dependencies between non-key fields"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-eb-5-2",
+              "type": "tap_target",
+              "question": "A table stores class_teacher, which depends on class rather than on the student key. Which form fixes it?",
+              "correctAnswer": "third",
+              "explanation": "A non-key field depending on another non-key field is exactly what third normal form removes.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "third",
+                    "label": "Third normal form"
+                  },
+                  {
+                    "id": "first",
+                    "label": "First normal form"
+                  },
+                  {
+                    "id": "second",
+                    "label": "Second normal form"
+                  },
+                  {
+                    "id": "none",
+                    "label": "None of them"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-eb-5-3",
+              "type": "toggle_switch",
+              "question": "Switch on what normalisation is actually buying you.",
+              "correctAnswer": "faster-always=off,no-anomalies=on,one-place=on",
+              "explanation": "Normalisation buys consistency. It often adds joins, so some queries get slower, which is the trade it makes.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "one-place",
+                    "label": "Each fact lives in one place",
+                    "onLabel": "benefit",
+                    "offLabel": "not a benefit"
+                  },
+                  {
+                    "id": "no-anomalies",
+                    "label": "Updates cannot leave rows contradicting each other",
+                    "onLabel": "benefit",
+                    "offLabel": "not a benefit"
+                  },
+                  {
+                    "id": "faster-always",
+                    "label": "Every query becomes faster",
+                    "onLabel": "benefit",
+                    "offLabel": "not a benefit"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. What Happens When You Open a Page",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 65,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 12,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "ictal-6-1",
+              "type": "blob_dialog",
+              "content": "Typing an address does more work than most people ever see.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Typing an address does more work than most people ever see.",
+                    "mood": "thinking",
+                    "cta": "What happens first?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "The name is turned into an address by DNS, then a connection is opened to that address.",
+                    "mood": "happy",
+                    "cta": "Then the page?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Then a request goes out, a response comes back, and the browser builds the page from it.",
+                    "mood": "cheer",
+                    "cta": "One step at a time"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-6-2",
+              "type": "text",
+              "content": "**DNS** turns a name into an address. **TCP** opens a reliable connection. **HTTP** carries the request and the response. **HTTPS** is the same thing inside encryption."
+            },
+            {
+              "id": "ictal-6-3",
+              "type": "callout",
+              "content": "When a page fails, ask which step broke. A DNS failure, a refused connection and a 500 response are three different problems with three different fixes."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ictal-eb-6-1",
+              "type": "order_steps",
+              "question": "Put the steps of loading a web page in order.",
+              "correctAnswer": "dns>connect>request>render",
+              "explanation": "Name to address, address to connection, connection to request, request to page.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "dns",
+                    "label": "Look up the name to get an address"
+                  },
+                  {
+                    "id": "connect",
+                    "label": "Open a connection to that address"
+                  },
+                  {
+                    "id": "request",
+                    "label": "Send the request"
+                  },
+                  {
+                    "id": "render",
+                    "label": "Build the page from the response"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-eb-6-2",
+              "type": "drag_drop",
+              "question": "Match each failure to the step that broke.",
+              "correctAnswer": "slot-500:server,slot-refused:connection,slot-unknown:dns",
+              "explanation": "Each symptom points at exactly one stage, which is what makes this worth memorising.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "dns",
+                    "label": "Name lookup"
+                  },
+                  {
+                    "id": "connection",
+                    "label": "Opening the connection"
+                  },
+                  {
+                    "id": "server",
+                    "label": "The server handling the request"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-unknown",
+                    "label": "The name cannot be found"
+                  },
+                  {
+                    "id": "slot-refused",
+                    "label": "The connection is refused"
+                  },
+                  {
+                    "id": "slot-500",
+                    "label": "A 500 error comes back"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ictal-eb-6-3",
+              "type": "tap_target",
+              "question": "What does HTTPS add over HTTP?",
+              "correctAnswer": "encryption",
+              "explanation": "HTTPS is HTTP inside an encrypted connection, so the content cannot be read or altered in transit.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "encryption",
+                    "label": "Encryption of the request and response"
+                  },
+                  {
+                    "id": "speed",
+                    "label": "Faster page loading"
+                  },
+                  {
+                    "id": "compression",
+                    "label": "Automatic compression"
+                  },
+                  {
+                    "id": "caching",
+                    "label": "Better caching"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

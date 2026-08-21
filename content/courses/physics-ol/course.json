@@ -1,0 +1,923 @@
+{
+  "slug": "physics-ol",
+  "title": "O/L Physics Revision",
+  "description": "Exam-shaped revision for O/L physics: circuit analysis, moments and pressure, energy accounting, and the working that earns method marks.",
+  "gradeLevel": "OL",
+  "subject": "Physics",
+  "price": 0,
+  "version": 1,
+  "lessons": [
+    {
+      "title": "Lesson 1: Circuits Under Exam Conditions",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Analysing a Circuit Step by Step",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "ol-1-1",
+              "type": "blob_dialog",
+              "content": "Circuit questions look different every year and are solved the same way every year.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Circuit questions look different every year and are solved the same way every year.",
+                    "mood": "thinking",
+                    "cta": "How?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Reduce the network to one resistance, find the total current, then work back to the part you were asked about.",
+                    "mood": "happy",
+                    "cta": "Always in that order?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Always. Jumping straight to the part you want is where the marks are lost.",
+                    "mood": "cheer",
+                    "cta": "Noted"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-1-2",
+              "type": "ohms_law_lab",
+              "content": "Use the bench as your reduced circuit. Set the total resistance you calculated and read the supply current.",
+              "metadata": {
+                "version": 1,
+                "voltage": 12,
+                "resistance": 6,
+                "maxVoltage": 12,
+                "maxResistance": 12,
+                "caption": "Once the network is one resistance, the supply current is a single division."
+              }
+            },
+            {
+              "id": "ol-1-3",
+              "type": "formula",
+              "content": "R_{total} = R_1 + R_2 \\qquad I_{supply} = \\frac{V}{R_{total}}"
+            },
+            {
+              "id": "ol-1-4",
+              "type": "callout",
+              "content": "Write the reduced resistance down before you touch a calculator. Examiners award method marks for it even when the arithmetic slips."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ol-eb-1-1",
+              "type": "order_steps",
+              "question": "Put the circuit analysis steps in the order that earns method marks.",
+              "correctAnswer": "reduce>total>split>answer",
+              "explanation": "Each step feeds the next, and each one on the page is a mark, even if the final number is wrong.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "reduce",
+                    "label": "Reduce the network to one resistance"
+                  },
+                  {
+                    "id": "total",
+                    "label": "Find the total current from the supply"
+                  },
+                  {
+                    "id": "split",
+                    "label": "Split the current or voltage between the branches"
+                  },
+                  {
+                    "id": "answer",
+                    "label": "Answer the quantity actually asked for"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-eb-1-2",
+              "type": "tap_target",
+              "question": "A 12 V supply feeds a 4 ohm and an 8 ohm resistor in series. What is the supply current?",
+              "correctAnswer": "one",
+              "explanation": "Series adds to 12 ohm, and 12 V across 12 ohm gives 1 A.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "one",
+                    "label": "1 A"
+                  },
+                  {
+                    "id": "three",
+                    "label": "3 A"
+                  },
+                  {
+                    "id": "half",
+                    "label": "0.5 A"
+                  },
+                  {
+                    "id": "twelve",
+                    "label": "12 A"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-eb-1-3",
+              "type": "drag_drop",
+              "question": "Match each measurement to the meter and how it is connected.",
+              "correctAnswer": "slot-current:series-ammeter,slot-voltage:parallel-voltmeter",
+              "explanation": "Current is measured by joining the meter into the path, voltage by connecting across the component.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "series-ammeter",
+                    "label": "An ammeter in series"
+                  },
+                  {
+                    "id": "parallel-voltmeter",
+                    "label": "A voltmeter in parallel"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-current",
+                    "label": "Measuring the current through a lamp"
+                  },
+                  {
+                    "id": "slot-voltage",
+                    "label": "Measuring the voltage across a lamp"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Where the Voltage Goes",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "ol-2-1",
+              "type": "blob_dialog",
+              "content": "In a series circuit the supply voltage is shared out, and it is shared in proportion to resistance.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "In a series circuit the supply voltage is shared out, and it is shared in proportion to resistance.",
+                    "mood": "happy",
+                    "cta": "Why proportion?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Because the current is the same everywhere, so V equals I times R gives a bigger share to a bigger resistor.",
+                    "mood": "thinking",
+                    "cta": "That follows"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Add up the shares and you get the supply back. That is your check.",
+                    "mood": "cheer",
+                    "cta": "Useful"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-2-2",
+              "type": "ohms_law_lab",
+              "content": "Set the total resistance, note the current, then work out each resistor's share of the voltage.",
+              "metadata": {
+                "version": 1,
+                "voltage": 9,
+                "resistance": 9,
+                "maxVoltage": 12,
+                "maxResistance": 12,
+                "caption": "One current, then a share of voltage for each resistor in the chain."
+              }
+            },
+            {
+              "id": "ol-2-3",
+              "type": "formula",
+              "content": "V_1 = IR_1 \\qquad V_1 + V_2 = V_{supply}"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ol-eb-2-1",
+              "type": "tap_target",
+              "question": "A 9 V supply drives 1 A through a 3 ohm and a 6 ohm resistor in series. What is the voltage across the 6 ohm resistor?",
+              "correctAnswer": "six",
+              "explanation": "V = IR = 1 x 6 = 6 V, and the remaining 3 V sits across the 3 ohm resistor.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "six",
+                    "label": "6 V"
+                  },
+                  {
+                    "id": "three",
+                    "label": "3 V"
+                  },
+                  {
+                    "id": "nine",
+                    "label": "9 V"
+                  },
+                  {
+                    "id": "one-and-half",
+                    "label": "1.5 V"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-eb-2-2",
+              "type": "toggle_switch",
+              "question": "Switch on the checks that show your circuit answer is consistent.",
+              "correctAnswer": "bigger-r-smaller-v=off,same-current=on,sum=on",
+              "explanation": "Voltages must sum to the supply and the series current is common, but a bigger resistance takes a bigger share of voltage, not a smaller one.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "sum",
+                    "label": "The branch voltages add up to the supply",
+                    "onLabel": "valid check",
+                    "offLabel": "not a check"
+                  },
+                  {
+                    "id": "same-current",
+                    "label": "The current is the same at every point in a series loop",
+                    "onLabel": "valid check",
+                    "offLabel": "not a check"
+                  },
+                  {
+                    "id": "bigger-r-smaller-v",
+                    "label": "The bigger resistor takes the smaller voltage",
+                    "onLabel": "valid check",
+                    "offLabel": "not a check"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-eb-2-3",
+              "type": "slider_target",
+              "question": "Two equal resistors sit in series across 10 V. What voltage is across one of them?",
+              "correctAnswer": "five",
+              "explanation": "Equal resistances take equal shares, so each one takes half of the supply.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 10,
+                "step": 1,
+                "bands": [
+                  {
+                    "value": "too-low",
+                    "upTo": 3
+                  },
+                  {
+                    "value": "five",
+                    "upTo": 7
+                  },
+                  {
+                    "value": "too-high"
+                  }
+                ],
+                "unit": "volts"
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Energy, Power and the Meter",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 60,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "ol-3-1",
+              "type": "blob_dialog",
+              "content": "Household questions almost always end at the same place: energy in kilowatt hours, then cost.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Household questions almost always end at the same place: energy in kilowatt hours, then cost.",
+                    "mood": "thinking",
+                    "cta": "Which formula?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Power in kilowatts multiplied by time in hours. Convert first, calculate second.",
+                    "mood": "happy",
+                    "cta": "Convert first"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Most lost marks in this topic are unit conversions, not physics.",
+                    "mood": "cheer",
+                    "cta": "Fair warning"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-3-2",
+              "type": "formula",
+              "content": "E(kWh) = P(kW) \\times t(h) \\qquad cost = E \\times unit\\ price"
+            },
+            {
+              "id": "ol-3-3",
+              "type": "text",
+              "content": "A 2000 W iron used for 90 minutes: **2 kW x 1.5 h = 3 kWh**. At 50 rupees a unit that is 150 rupees."
+            },
+            {
+              "id": "ol-3-4",
+              "type": "callout",
+              "content": "Watts to kilowatts is a division by 1000. Minutes to hours is a division by 60. Do both before anything else."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ol-eb-3-1",
+              "type": "order_steps",
+              "question": "Put the household energy calculation in order.",
+              "correctAnswer": "convert-power>convert-time>energy>cost",
+              "explanation": "Both conversions come before the multiplication, which is what keeps the units honest.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "convert-power",
+                    "label": "Convert the power to kilowatts"
+                  },
+                  {
+                    "id": "convert-time",
+                    "label": "Convert the time to hours"
+                  },
+                  {
+                    "id": "energy",
+                    "label": "Multiply to get the energy in kilowatt hours"
+                  },
+                  {
+                    "id": "cost",
+                    "label": "Multiply by the price per unit"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-eb-3-2",
+              "type": "tap_target",
+              "question": "A 1500 W kettle runs for 20 minutes. How much energy is that in kilowatt hours?",
+              "correctAnswer": "half",
+              "explanation": "1.5 kW multiplied by one third of an hour is 0.5 kWh.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "half",
+                    "label": "0.5 kWh"
+                  },
+                  {
+                    "id": "thirty",
+                    "label": "30 kWh"
+                  },
+                  {
+                    "id": "five",
+                    "label": "5 kWh"
+                  },
+                  {
+                    "id": "three",
+                    "label": "3 kWh"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-eb-3-3",
+              "type": "drag_drop",
+              "question": "Match each quantity to its everyday unit.",
+              "correctAnswer": "slot-cost:rupee,slot-energy:kilowatt-hour,slot-rate:kilowatt",
+              "explanation": "Power is a rate in kilowatts, the bill counts energy in kilowatt hours, and the cost follows from the unit price.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "kilowatt",
+                    "label": "kilowatt"
+                  },
+                  {
+                    "id": "kilowatt-hour",
+                    "label": "kilowatt hour"
+                  },
+                  {
+                    "id": "rupee",
+                    "label": "rupees"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-rate",
+                    "label": "The rate an appliance uses energy"
+                  },
+                  {
+                    "id": "slot-energy",
+                    "label": "The energy on your monthly bill"
+                  },
+                  {
+                    "id": "slot-cost",
+                    "label": "What you actually pay"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Lesson 2: Moments, Pressure and Energy",
+      "sequenceOrder": 2,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Moments in Equilibrium",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "ol-4-1",
+              "type": "blob_dialog",
+              "content": "An object in equilibrium has two conditions, and most students only remember one.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "An object in equilibrium has two conditions, and most students only remember one.",
+                    "mood": "thinking",
+                    "cta": "Which two?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "The forces balance, and the turning effects balance about any point you choose.",
+                    "mood": "happy",
+                    "cta": "Any point?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Any point. Choosing the pivot removes an unknown force from the equation, which is why examiners set it there.",
+                    "mood": "cheer",
+                    "cta": "Clever"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-4-2",
+              "type": "lever_lab",
+              "content": "Balance the beam, then check that clockwise and anticlockwise moments are equal.",
+              "metadata": {
+                "version": 1,
+                "notches": 5,
+                "weights": [
+                  2,
+                  4,
+                  6
+                ],
+                "left": {
+                  "position": -4,
+                  "weight": 2
+                },
+                "right": null,
+                "caption": "In equilibrium the clockwise and anticlockwise moments about the pivot are equal."
+              }
+            },
+            {
+              "id": "ol-4-3",
+              "type": "formula",
+              "content": "\\sum M_{clockwise} = \\sum M_{anticlockwise}"
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ol-eb-4-1",
+              "type": "tap_target",
+              "question": "A uniform metre rule is pivoted at its centre. A 4 N weight hangs 20 cm from the pivot. What moment must balance it?",
+              "correctAnswer": "point-eight",
+              "explanation": "Moment = force x distance in metres = 4 x 0.20 = 0.8 N m.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "point-eight",
+                    "label": "0.8 N m"
+                  },
+                  {
+                    "id": "eighty",
+                    "label": "80 N m"
+                  },
+                  {
+                    "id": "twenty",
+                    "label": "20 N m"
+                  },
+                  {
+                    "id": "four",
+                    "label": "4 N m"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-eb-4-2",
+              "type": "toggle_switch",
+              "question": "Switch on the conditions needed for full equilibrium.",
+              "correctAnswer": "forces=on,moments=on,symmetry=off",
+              "explanation": "Equilibrium needs balanced forces and balanced moments. Symmetry is convenient but never required.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "forces",
+                    "label": "The forces balance",
+                    "onLabel": "required",
+                    "offLabel": "not required"
+                  },
+                  {
+                    "id": "moments",
+                    "label": "The moments balance",
+                    "onLabel": "required",
+                    "offLabel": "not required"
+                  },
+                  {
+                    "id": "symmetry",
+                    "label": "The object is symmetrical",
+                    "onLabel": "required",
+                    "offLabel": "not required"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-eb-4-3",
+              "type": "order_steps",
+              "question": "Put the moments question method in order.",
+              "correctAnswer": "pivot>list>equate>solve",
+              "explanation": "Choosing the pivot first is what removes an unknown from the equation before you write it.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "pivot",
+                    "label": "Choose the pivot, ideally through an unknown force"
+                  },
+                  {
+                    "id": "list",
+                    "label": "List every force and its distance from that pivot"
+                  },
+                  {
+                    "id": "equate",
+                    "label": "Set clockwise moments equal to anticlockwise"
+                  },
+                  {
+                    "id": "solve",
+                    "label": "Solve for the unknown"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Pressure in Solids and Liquids",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "ol-5-1",
+              "type": "blob_dialog",
+              "content": "Pressure is force spread over area, which is why a drawing pin hurts and a plank does not.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Pressure is force spread over area, which is why a drawing pin hurts and a plank does not.",
+                    "mood": "happy",
+                    "cta": "Same force?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Same force, tiny area. In liquids there is a second formula for depth.",
+                    "mood": "thinking",
+                    "cta": "Which?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Pressure equals density times gravity times depth. Note what is missing: the shape of the container.",
+                    "mood": "surprised",
+                    "cta": "Shape does not matter?"
+                  },
+                  {
+                    "id": "l4",
+                    "text": "Not at all. Only depth, density and gravity.",
+                    "mood": "cheer",
+                    "cta": "Good to know"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-5-2",
+              "type": "formula",
+              "content": "P = \\frac{F}{A} \\qquad P = \\rho g h"
+            },
+            {
+              "id": "ol-5-3",
+              "type": "text",
+              "content": "A tank and a thin pipe filled to the same height have the **same pressure at the bottom**. The width of the water above changes the weight, not the pressure."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ol-eb-5-1",
+              "type": "tap_target",
+              "question": "Why does a sharp knife cut more easily than a blunt one?",
+              "correctAnswer": "area",
+              "explanation": "The same force through a much smaller contact area gives a far higher pressure.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "area",
+                    "label": "The smaller area gives a much higher pressure"
+                  },
+                  {
+                    "id": "force",
+                    "label": "You can push with more force"
+                  },
+                  {
+                    "id": "sharp-strong",
+                    "label": "A sharp blade is stronger"
+                  },
+                  {
+                    "id": "friction",
+                    "label": "A sharp blade has less friction"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-eb-5-2",
+              "type": "drag_drop",
+              "question": "Match each change to what it does to the pressure at the bottom of a tank.",
+              "correctAnswer": "slot-deeper:increase,slot-wider:no-change",
+              "explanation": "Pressure depends on depth, density and gravity, so width changes nothing.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "increase",
+                    "label": "Increases it"
+                  },
+                  {
+                    "id": "no-change",
+                    "label": "Leaves it unchanged"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-deeper",
+                    "label": "Filling it deeper"
+                  },
+                  {
+                    "id": "slot-wider",
+                    "label": "Using a wider tank at the same depth"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-eb-5-3",
+              "type": "slider_target",
+              "question": "You double the depth of water. What happens to the pressure at the bottom?",
+              "correctAnswer": "doubles",
+              "explanation": "Pressure is proportional to depth, so doubling the depth doubles the pressure.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 10,
+                "step": 1,
+                "bands": [
+                  {
+                    "value": "unchanged",
+                    "upTo": 3
+                  },
+                  {
+                    "value": "doubles",
+                    "upTo": 7
+                  },
+                  {
+                    "value": "quadruples"
+                  }
+                ],
+                "unit": "relative pressure"
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Energy Accounting in Problems",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 60,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "ol-6-1",
+              "type": "blob_dialog",
+              "content": "Energy questions are accounting. Whatever went in has to appear somewhere afterwards.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Energy questions are accounting. Whatever went in has to appear somewhere afterwards.",
+                    "mood": "thinking",
+                    "cta": "Including waste?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Especially waste. Efficiency is just useful output divided by total input.",
+                    "mood": "happy",
+                    "cta": "As a percentage?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "As a percentage, and it can never exceed one hundred. If yours does, a number is in the wrong place.",
+                    "mood": "cheer",
+                    "cta": "Good check"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-6-2",
+              "type": "formula",
+              "content": "efficiency = \\frac{useful\\ output}{total\\ input} \\times 100\\%"
+            },
+            {
+              "id": "ol-6-3",
+              "type": "force_lab",
+              "content": "Push the cart on a rough surface. The push you feel is the input; the movement is the useful output.",
+              "metadata": {
+                "version": 1,
+                "label": "Loaded trolley",
+                "surfaces": [
+                  {
+                    "id": "smooth",
+                    "label": "Smooth floor",
+                    "friction": 0.2
+                  },
+                  {
+                    "id": "rough",
+                    "label": "Rough floor",
+                    "friction": 0.75
+                  }
+                ],
+                "caption": "Whatever friction cancels has left the system as heat, and that is the waste term in the accounts."
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "ol-eb-6-1",
+              "type": "tap_target",
+              "question": "A motor takes 500 J and delivers 300 J of useful work. What is its efficiency?",
+              "correctAnswer": "sixty",
+              "explanation": "300 divided by 500 is 0.6, which is 60 percent. The other 200 J left as heat and sound.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "sixty",
+                    "label": "60 percent"
+                  },
+                  {
+                    "id": "forty",
+                    "label": "40 percent"
+                  },
+                  {
+                    "id": "hundred-sixty",
+                    "label": "167 percent"
+                  },
+                  {
+                    "id": "thirty",
+                    "label": "30 percent"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-eb-6-2",
+              "type": "order_steps",
+              "question": "Follow the energy through a hydroelectric station.",
+              "correctAnswer": "stored>moving>turbine>electrical",
+              "explanation": "Each stage passes energy on, and each stage loses a little as heat and sound.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "stored",
+                    "label": "Stored energy in water held high"
+                  },
+                  {
+                    "id": "moving",
+                    "label": "Movement energy as it falls"
+                  },
+                  {
+                    "id": "turbine",
+                    "label": "Movement energy in the turbine"
+                  },
+                  {
+                    "id": "electrical",
+                    "label": "Electrical energy in the cables"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ol-eb-6-3",
+              "type": "toggle_switch",
+              "question": "Switch on the statements an examiner would accept.",
+              "correctAnswer": "conserved=on,over-hundred=off,waste-heat=on",
+              "explanation": "Energy is conserved and waste appears as heat, so no machine can put out more useful energy than it took in.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "over-hundred",
+                    "label": "An efficiency above 100 percent is possible with a good machine",
+                    "onLabel": "accept",
+                    "offLabel": "reject"
+                  },
+                  {
+                    "id": "waste-heat",
+                    "label": "Wasted energy usually ends up as heat",
+                    "onLabel": "accept",
+                    "offLabel": "reject"
+                  },
+                  {
+                    "id": "conserved",
+                    "label": "The total energy before and after is the same",
+                    "onLabel": "accept",
+                    "offLabel": "reject"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

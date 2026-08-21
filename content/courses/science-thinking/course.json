@@ -1,0 +1,729 @@
+{
+  "slug": "science-thinking",
+  "title": "Scientific Thinking",
+  "description": "Mechanical physics through gear trains: how touching gears turn, why direction alternates, and how to predict a whole network before it moves.",
+  "gradeLevel": "G9",
+  "subject": "Science",
+  "price": 0,
+  "version": 1,
+  "lessons": [
+    {
+      "title": "Gears and Mechanical Parity",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Connecting Gears",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 40,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 6,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "sci-1-1",
+              "type": "blob_dialog",
+              "content": "Two gears with meshing teeth cannot turn the same way. It is physically impossible.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Two gears with meshing teeth cannot turn the same way. It is physically impossible.",
+                    "mood": "thinking",
+                    "cta": "Why not?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Where their teeth meet, the surfaces must move in opposite directions, or they would grind.",
+                    "mood": "happy",
+                    "cta": "So one reverses the other?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Every single time. Play the puzzle and watch the arrows.",
+                    "mood": "cheer",
+                    "cta": "Let me try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-1-2",
+              "type": "gear_train",
+              "content": "Work through the connecting gears puzzle.",
+              "metadata": {
+                "version": 1,
+                "puzzleIds": [
+                  "intro-chain"
+                ]
+              }
+            },
+            {
+              "id": "sci-1-3",
+              "type": "text",
+              "content": "Two meshing gears always turn in **opposite** directions. That one fact is the whole basis of gear train prediction."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "sci-eb-1-1",
+              "type": "tap_target",
+              "question": "A gear turns clockwise. Which way does the gear meshed with it turn?",
+              "correctAnswer": "anticlockwise",
+              "explanation": "Meshing teeth force opposite rotation, whatever the sizes are.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "anticlockwise",
+                    "label": "Anticlockwise"
+                  },
+                  {
+                    "id": "clockwise",
+                    "label": "Clockwise"
+                  },
+                  {
+                    "id": "depends-size",
+                    "label": "It depends on the size"
+                  },
+                  {
+                    "id": "still",
+                    "label": "It does not turn"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-eb-1-2",
+              "type": "toggle_switch",
+              "question": "Switch on what actually decides the direction of a meshed gear.",
+              "correctAnswer": "colour=off,count=on,meshing=on",
+              "explanation": "Direct meshing reverses direction, and the number of gears decides how many reversals happen along the chain.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "meshing",
+                    "label": "Whether the gears mesh directly",
+                    "onLabel": "decides it",
+                    "offLabel": "does not decide it"
+                  },
+                  {
+                    "id": "count",
+                    "label": "How many gears are in the chain",
+                    "onLabel": "decides it",
+                    "offLabel": "does not decide it"
+                  },
+                  {
+                    "id": "colour",
+                    "label": "The colour of the gear",
+                    "onLabel": "decides it",
+                    "offLabel": "does not decide it"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-eb-1-3",
+              "type": "order_steps",
+              "question": "Trace the direction through a three gear chain, starting clockwise.",
+              "correctAnswer": "first>second>third",
+              "explanation": "Each mesh flips the direction, so gear 3 matches gear 1.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "first",
+                    "label": "Gear 1 turns clockwise"
+                  },
+                  {
+                    "id": "second",
+                    "label": "Gear 2 turns anticlockwise"
+                  },
+                  {
+                    "id": "third",
+                    "label": "Gear 3 turns clockwise"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Gear Speeds and Tooth Counts",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 40,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 6,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "sci-2-1",
+              "type": "blob_dialog",
+              "content": "Direction is only half the story. Size decides speed.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Direction is only half the story. Size decides speed.",
+                    "mood": "thinking",
+                    "cta": "How?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "A small gear driving a big one turns it slowly. Fewer teeth means more turns to cover the same teeth.",
+                    "mood": "happy",
+                    "cta": "So teeth count?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Teeth count, not diameter, is what you compare. Try the prediction puzzle.",
+                    "mood": "cheer",
+                    "cta": "Ready"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-2-2",
+              "type": "gear_train",
+              "content": "Predict the direction of the target gear before you answer.",
+              "metadata": {
+                "version": 1,
+                "puzzleIds": [
+                  "three-gear-prediction"
+                ]
+              }
+            },
+            {
+              "id": "sci-2-3",
+              "type": "text",
+              "content": "A gear with **half the teeth** turns **twice as fast**. Speed and tooth count trade off exactly."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "sci-eb-2-1",
+              "type": "tap_target",
+              "question": "A 10 tooth gear drives a 20 tooth gear. How fast does the big one turn?",
+              "correctAnswer": "half",
+              "explanation": "Twice the teeth means half the turns for the same movement at the mesh.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "half",
+                    "label": "Half as fast"
+                  },
+                  {
+                    "id": "twice",
+                    "label": "Twice as fast"
+                  },
+                  {
+                    "id": "same",
+                    "label": "The same speed"
+                  },
+                  {
+                    "id": "four",
+                    "label": "Four times as fast"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-eb-2-2",
+              "type": "drag_drop",
+              "question": "Match each gear pairing to its effect.",
+              "correctAnswer": "slot-big-to-small:faster,slot-small-to-big:slower",
+              "explanation": "The gear with fewer teeth always turns faster, whichever one is driving.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "faster",
+                    "label": "The driven gear turns faster"
+                  },
+                  {
+                    "id": "slower",
+                    "label": "The driven gear turns slower"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-big-to-small",
+                    "label": "A big gear driving a small one"
+                  },
+                  {
+                    "id": "slot-small-to-big",
+                    "label": "A small gear driving a big one"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-eb-2-3",
+              "type": "slider_target",
+              "question": "A 12 tooth gear drives a 36 tooth gear. How many turns of the driver make one turn of the driven gear?",
+              "correctAnswer": "three",
+              "explanation": "Thirty six teeth divided by twelve is three, so the driver turns three times.",
+              "metadata": {
+                "version": 1,
+                "min": 1,
+                "max": 6,
+                "step": 1,
+                "bands": [
+                  {
+                    "value": "too-few",
+                    "upTo": 2
+                  },
+                  {
+                    "value": "three",
+                    "upTo": 3
+                  },
+                  {
+                    "value": "too-many"
+                  }
+                ],
+                "unit": "turns"
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Direction Inversion in Long Chains",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 40,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 6,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "sci-3-1",
+              "type": "blob_dialog",
+              "content": "Here is the shortcut that turns a hard question into a two second one.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Here is the shortcut that turns a hard question into a two second one.",
+                    "mood": "thinking",
+                    "cta": "Which is?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Count the gears. Odd numbered positions match the driver, even numbered ones oppose it.",
+                    "mood": "surprised",
+                    "cta": "Just count?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Just count. You never need to trace the whole chain again.",
+                    "mood": "cheer",
+                    "cta": "Excellent"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-3-2",
+              "type": "gear_train",
+              "content": "Tap every gear that turns the same way as the driver.",
+              "metadata": {
+                "version": 1,
+                "puzzleIds": [
+                  "five-gear-tap"
+                ]
+              }
+            },
+            {
+              "id": "sci-3-3",
+              "type": "callout",
+              "content": "Parity is the word for this: an odd number of meshes reverses direction, an even number restores it."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "sci-eb-3-1",
+              "type": "tap_target",
+              "question": "In a straight chain, the 4th gear turns which way relative to the 1st?",
+              "correctAnswer": "opposite",
+              "explanation": "Three meshes separate them, and an odd number of meshes reverses the direction.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "opposite",
+                    "label": "The opposite way"
+                  },
+                  {
+                    "id": "same",
+                    "label": "The same way"
+                  },
+                  {
+                    "id": "depends",
+                    "label": "It depends on the sizes"
+                  },
+                  {
+                    "id": "stopped",
+                    "label": "It does not turn"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-eb-3-2",
+              "type": "toggle_switch",
+              "question": "Switch on the gears that turn the same way as gear 1 in a straight chain.",
+              "correctAnswer": "gear3=on,gear4=off,gear5=on",
+              "explanation": "Odd positions match the driver, even positions oppose it.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "gear3",
+                    "label": "Gear 3",
+                    "onLabel": "same way",
+                    "offLabel": "opposite way"
+                  },
+                  {
+                    "id": "gear4",
+                    "label": "Gear 4",
+                    "onLabel": "same way",
+                    "offLabel": "opposite way"
+                  },
+                  {
+                    "id": "gear5",
+                    "label": "Gear 5",
+                    "onLabel": "same way",
+                    "offLabel": "opposite way"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-eb-3-3",
+              "type": "order_steps",
+              "question": "Put the parity shortcut in order.",
+              "correctAnswer": "count>odd-even>answer",
+              "explanation": "Counting meshes replaces tracing the whole chain, however long it is.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "count",
+                    "label": "Count the meshes between the two gears"
+                  },
+                  {
+                    "id": "odd-even",
+                    "label": "Decide whether that count is odd or even"
+                  },
+                  {
+                    "id": "answer",
+                    "label": "Odd reverses the direction, even keeps it"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "4. Curved Arch Mechanisms",
+          "sequenceOrder": 4,
+          "status": "published",
+          "xpReward": 40,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 6,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "sci-4-1",
+              "type": "blob_dialog",
+              "content": "Real machines are not straight lines. Gears curve around corners.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Real machines are not straight lines. Gears curve around corners.",
+                    "mood": "thinking",
+                    "cta": "Does that change the rule?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Not at all. Geometry does not matter, only how many meshes you cross.",
+                    "mood": "happy",
+                    "cta": "So parity still holds?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Parity always holds. The curve is there to look intimidating.",
+                    "mood": "cheer",
+                    "cta": "Good"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-4-2",
+              "type": "gear_train",
+              "content": "Work through the curved arch. Count the meshes, not the corners.",
+              "metadata": {
+                "version": 1,
+                "puzzleIds": [
+                  "curved-six-gear-arch"
+                ]
+              }
+            },
+            {
+              "id": "sci-4-3",
+              "type": "text",
+              "content": "The shape of the layout is a **distraction**. Count the meshes along the path and the answer falls out."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "sci-eb-4-1",
+              "type": "tap_target",
+              "question": "Does bending a gear chain around a corner change the direction rule?",
+              "correctAnswer": "no",
+              "explanation": "Direction depends on how many meshes are crossed, not on how the gears are arranged in space.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "no",
+                    "label": "No, only the number of meshes matters"
+                  },
+                  {
+                    "id": "yes-reverses",
+                    "label": "Yes, a corner reverses direction"
+                  },
+                  {
+                    "id": "yes-stops",
+                    "label": "Yes, corners stop the rotation"
+                  },
+                  {
+                    "id": "depends",
+                    "label": "It depends on the angle"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-eb-4-2",
+              "type": "order_steps",
+              "question": "Put the method for a curved train in order.",
+              "correctAnswer": "path>count>parity>state",
+              "explanation": "Finding the path first is what stops a curve from confusing the count.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "path",
+                    "label": "Find the path from driver to target"
+                  },
+                  {
+                    "id": "count",
+                    "label": "Count the meshes along that path"
+                  },
+                  {
+                    "id": "parity",
+                    "label": "Apply the odd or even rule"
+                  },
+                  {
+                    "id": "state",
+                    "label": "State the direction"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-eb-4-3",
+              "type": "drag_drop",
+              "question": "Match each mesh count to the result.",
+              "correctAnswer": "slot-even:same,slot-odd:opposite",
+              "explanation": "Two reversals cancel out, which is why even counts restore the original direction.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "same",
+                    "label": "Turns the same way as the driver"
+                  },
+                  {
+                    "id": "opposite",
+                    "label": "Turns the opposite way"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-even",
+                    "label": "An even number of meshes"
+                  },
+                  {
+                    "id": "slot-odd",
+                    "label": "An odd number of meshes"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "5. Branched Gear Networks",
+          "sequenceOrder": 5,
+          "status": "published",
+          "xpReward": 40,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 7,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "sci-5-1",
+              "type": "blob_dialog",
+              "content": "The last step: a network where one gear drives two branches at once.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "The last step: a network where one gear drives two branches at once.",
+                    "mood": "thinking",
+                    "cta": "Do the branches interfere?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "No. Each branch follows its own path, with its own mesh count.",
+                    "mood": "happy",
+                    "cta": "So I count each separately?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Each branch separately, from the same driver. That is the whole method.",
+                    "mood": "cheer",
+                    "cta": "I can do that"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-5-2",
+              "type": "gear_train",
+              "content": "Work through the branched cluster. Handle one branch at a time.",
+              "metadata": {
+                "version": 1,
+                "puzzleIds": [
+                  "seven-gear-branched-cluster"
+                ]
+              }
+            },
+            {
+              "id": "sci-5-3",
+              "type": "text",
+              "content": "In a branched network, the direction of any gear depends only on the **meshes between it and the driver** along its own branch."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "sci-eb-5-1",
+              "type": "tap_target",
+              "question": "Two branches leave the same driver. What decides each gear's direction?",
+              "correctAnswer": "own-branch",
+              "explanation": "Branches are independent paths, so each gear only answers to the meshes between it and the driver.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "own-branch",
+                    "label": "The mesh count along its own branch"
+                  },
+                  {
+                    "id": "total",
+                    "label": "The total number of gears in the network"
+                  },
+                  {
+                    "id": "other-branch",
+                    "label": "What the other branch is doing"
+                  },
+                  {
+                    "id": "size",
+                    "label": "The size of the driver"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-eb-5-2",
+              "type": "toggle_switch",
+              "question": "Switch on the true statements about branched networks.",
+              "correctAnswer": "independent=on,interfere=off,parity=on",
+              "explanation": "Branches share only the driver, so the parity rule applies separately along each path.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "independent",
+                    "label": "Each branch can be analysed on its own",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "parity",
+                    "label": "The parity rule still applies along each branch",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "interfere",
+                    "label": "One branch changes the direction of the other",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sci-eb-5-3",
+              "type": "order_steps",
+              "question": "Put the branched network method in order.",
+              "correctAnswer": "driver>branch>count>repeat",
+              "explanation": "Taking one branch at a time turns an intimidating network into two simple chains.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "driver",
+                    "label": "Start at the driver"
+                  },
+                  {
+                    "id": "branch",
+                    "label": "Follow one branch at a time"
+                  },
+                  {
+                    "id": "count",
+                    "label": "Count the meshes along it"
+                  },
+                  {
+                    "id": "repeat",
+                    "label": "Repeat for the other branch"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

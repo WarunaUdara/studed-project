@@ -21,10 +21,17 @@ export default defineConfig(({ mode }) => {
       dedupe: ["react", "react-dom"],
       alias: {
         "@": path.resolve(__dirname, "./src"),
+        // Course manifests live outside the frontend package so content-sync
+        // and the app read the exact same files.
+        "@content": path.resolve(__dirname, "../content"),
       },
     },
     server: {
       port: 5173,
+      fs: {
+        // Needed for the "@content" alias, which points above the Vite root.
+        allow: [path.resolve(__dirname), path.resolve(__dirname, "../content")],
+      },
       allowedHosts: [
         "localhost",
         "127.0.0.1",
@@ -43,6 +50,10 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
         },
         "/ai": {
+          target,
+          changeOrigin: true,
+        },
+        "/code": {
           target,
           changeOrigin: true,
         },

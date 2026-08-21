@@ -61,11 +61,33 @@ export interface AIChatHandlers {
 // streamAgentChat POSTs the prompt to /ai/chat and parses the SSE stream,
 // calling onEvent for every agent event. Resolves when the stream ends.
 export async function streamAgentChat(request: AIChatRequest, handlers: AIChatHandlers): Promise<void> {
+  return streamFrom("/ai/chat", request, handlers);
+}
+
+/**
+ * Student lesson tutor. It hits a different endpoint from the educator chat:
+ * /ai/ask is open to any signed-in learner and reaches a model with no
+ * authoring tools attached, so a student cannot generate or change course
+ * content through the chat box. The event shape is identical, so both panels
+ * parse the same stream.
+ */
+export async function streamStudentAsk(
+  request: AIChatRequest,
+  handlers: AIChatHandlers,
+): Promise<void> {
+  return streamFrom("/ai/ask", request, handlers);
+}
+
+async function streamFrom(
+  endpoint: string,
+  request: AIChatRequest,
+  handlers: AIChatHandlers,
+): Promise<void> {
   const { onEvent, onError, onComplete, signal } = handlers;
 
   let response: Response;
   try {
-    response = await fetch("/ai/chat", {
+    response = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

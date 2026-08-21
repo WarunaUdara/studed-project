@@ -1,0 +1,1071 @@
+{
+  "slug": "ict-grade-6-8",
+  "title": "Computers and Code",
+  "description": "Grades 6 to 8 learn how a computer follows instructions, then write and run real Python, errors and all.",
+  "gradeLevel": "G6",
+  "subject": "ICT",
+  "price": 0,
+  "version": 1,
+  "lessons": [
+    {
+      "title": "Lesson 1: How a Computer Thinks",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Instructions in Order",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 40,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 7,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "i-1-1",
+              "type": "blob_dialog",
+              "content": "A computer is not clever. It is just very fast and very obedient.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "A computer is not clever. It is just very fast and very obedient.",
+                    "mood": "happy",
+                    "cta": "Really?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "It does exactly what you say, in exactly the order you say it.",
+                    "mood": "thinking",
+                    "cta": "Okay"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "So if you tell it to pour the tea before boiling the water, it pours cold water.",
+                    "mood": "surprised",
+                    "cta": "Ha!"
+                  },
+                  {
+                    "id": "l4",
+                    "text": "A list of instructions in the right order is called an algorithm.",
+                    "mood": "cheer",
+                    "cta": "Got it"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-1-2",
+              "type": "text",
+              "content": "Writing an algorithm means two things: the **right steps**, and the **right order**. Miss either one and the result is wrong even though every single step was correct."
+            },
+            {
+              "id": "i-1-3",
+              "type": "callout",
+              "content": "People fill in gaps without noticing. A computer never does. That is the whole difference."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "i-eb-1-1",
+              "type": "order_steps",
+              "question": "Put the tea-making algorithm in the right order.",
+              "correctAnswer": "boil>pour>add-tea>add-sugar",
+              "explanation": "The water has to boil before it is poured, and the tea has to be in the cup before you sweeten it.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "boil",
+                    "label": "Boil the water"
+                  },
+                  {
+                    "id": "pour",
+                    "label": "Pour the water into the cup"
+                  },
+                  {
+                    "id": "add-tea",
+                    "label": "Add the tea leaves"
+                  },
+                  {
+                    "id": "add-sugar",
+                    "label": "Stir in the sugar"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-1-2",
+              "type": "tap_target",
+              "question": "Which instruction is too vague for a computer?",
+              "correctAnswer": "some",
+              "explanation": "A computer cannot decide how much 'some' is. Every instruction has to say exactly how much or how many.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "some",
+                    "label": "Add some sugar"
+                  },
+                  {
+                    "id": "two",
+                    "label": "Add 2 spoons of sugar"
+                  },
+                  {
+                    "id": "stir",
+                    "label": "Stir 10 times"
+                  },
+                  {
+                    "id": "wait",
+                    "label": "Wait 3 minutes"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-1-3",
+              "type": "toggle_switch",
+              "question": "Switch on everything that is true about algorithms.",
+              "correctAnswer": "guess=off,order=on,steps=on",
+              "explanation": "An algorithm is exact steps in an exact order. It never guesses what you meant.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "steps",
+                    "label": "It is a list of steps",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "order",
+                    "label": "The order of the steps matters",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "guess",
+                    "label": "The computer guesses the missing steps",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Repeating Without Retyping",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 40,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "i-2-1",
+              "type": "blob_dialog",
+              "content": "Imagine writing out the 7 times table by hand, one line at a time.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Imagine writing out the 7 times table by hand, one line at a time.",
+                    "mood": "thinking",
+                    "cta": "Boring"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Exactly. So we tell the computer to repeat instead. That is called a loop.",
+                    "mood": "happy",
+                    "cta": "Show me"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "A loop needs two things: what to repeat, and how many times.",
+                    "mood": "happy",
+                    "cta": "Okay"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-2-2",
+              "type": "python_runner",
+              "content": "for i in range(1, 6):\n    print(7 * i)",
+              "metadata": {
+                "version": 1,
+                "title": "Run a loop",
+                "instruction": "Run this, then change 6 to 11 and run it again.",
+                "starterCode": "for i in range(1, 6):\n    print(7 * i)",
+                "hint": "range(1, 6) counts 1, 2, 3, 4, 5. It stops before 6."
+              }
+            },
+            {
+              "id": "i-2-3",
+              "type": "text",
+              "content": "The indented line is the part that repeats. Python uses indentation to decide what is inside the loop and what is outside it."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "i-eb-2-1",
+              "type": "tap_target",
+              "question": "How many lines does a loop over range(1, 4) print, if the loop body prints once?",
+              "correctAnswer": "three",
+              "explanation": "range(1, 4) gives 1, 2 and 3. It stops before 4, so the loop runs three times.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "three",
+                    "label": "3 lines"
+                  },
+                  {
+                    "id": "four",
+                    "label": "4 lines"
+                  },
+                  {
+                    "id": "one",
+                    "label": "1 line"
+                  },
+                  {
+                    "id": "zero",
+                    "label": "No lines"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-2-2",
+              "type": "drag_drop",
+              "question": "Match each piece of the loop to its job.",
+              "correctAnswer": "slot-body:print,slot-count:range,slot-name:i",
+              "explanation": "range says how many times, i holds the current number, and the indented print is the part that repeats.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "range",
+                    "label": "range(1, 6)"
+                  },
+                  {
+                    "id": "i",
+                    "label": "i"
+                  },
+                  {
+                    "id": "print",
+                    "label": "print(7 * i)"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-count",
+                    "label": "Says how many times"
+                  },
+                  {
+                    "id": "slot-name",
+                    "label": "Holds the number this time round"
+                  },
+                  {
+                    "id": "slot-body",
+                    "label": "The part that repeats"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-2-3",
+              "type": "order_steps",
+              "question": "What happens each time the loop goes round?",
+              "correctAnswer": "take-number>run-body>next-number",
+              "explanation": "The loop takes the next number, runs the indented lines with it, then moves on until the numbers run out.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "take-number",
+                    "label": "Take the next number from range"
+                  },
+                  {
+                    "id": "run-body",
+                    "label": "Run the indented lines with that number"
+                  },
+                  {
+                    "id": "next-number",
+                    "label": "Go back for the number after it"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Making Choices",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 45,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "i-3-1",
+              "type": "blob_dialog",
+              "content": "Sometimes a program has to choose. Pass or fail. Open or closed.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Sometimes a program has to choose. Pass or fail. Open or closed.",
+                    "mood": "thinking",
+                    "cta": "How?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "We ask a question that can only be true or false, and act on the answer.",
+                    "mood": "happy",
+                    "cta": "Like what?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "In Python that is an if statement. Try it below and change the marks.",
+                    "mood": "cheer",
+                    "cta": "Let me try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-3-2",
+              "type": "python_runner",
+              "content": "marks = 72\nif marks >= 75:\n    print('Distinction')\nelse:\n    print('Keep going')",
+              "metadata": {
+                "version": 1,
+                "title": "Change the marks and run it",
+                "instruction": "Run it, then set marks to 80 and run it again.",
+                "starterCode": "marks = 72\nif marks >= 75:\n    print('Distinction')\nelse:\n    print('Keep going')",
+                "hint": "The symbol >= means greater than or equal to."
+              }
+            },
+            {
+              "id": "i-3-3",
+              "type": "callout",
+              "content": "Only one branch ever runs. If the question is true, Python runs the if part and skips the else part entirely."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "i-eb-3-1",
+              "type": "tap_target",
+              "question": "The marks are exactly 75. Which line prints?",
+              "correctAnswer": "distinction",
+              "explanation": "75 >= 75 is true, because >= includes the number itself.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "distinction",
+                    "label": "Distinction"
+                  },
+                  {
+                    "id": "keep-going",
+                    "label": "Keep going"
+                  },
+                  {
+                    "id": "both",
+                    "label": "Both lines"
+                  },
+                  {
+                    "id": "neither",
+                    "label": "Neither line"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-3-2",
+              "type": "toggle_switch",
+              "question": "Switch on the questions a computer can answer with true or false.",
+              "correctAnswer": "friendly=off,marks=on,rain=on",
+              "explanation": "A computer can compare numbers and check a fact it has been given. It cannot judge whether someone is friendly.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "marks",
+                    "label": "Is 72 greater than 75?",
+                    "onLabel": "can answer",
+                    "offLabel": "cannot answer"
+                  },
+                  {
+                    "id": "rain",
+                    "label": "Is today marked as a rainy day?",
+                    "onLabel": "can answer",
+                    "offLabel": "cannot answer"
+                  },
+                  {
+                    "id": "friendly",
+                    "label": "Is this person friendly?",
+                    "onLabel": "can answer",
+                    "offLabel": "cannot answer"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-3-3",
+              "type": "order_steps",
+              "question": "Put an if statement's steps in order.",
+              "correctAnswer": "ask>choose>run>continue",
+              "explanation": "Python asks the question, picks the matching branch, runs only that branch, then carries on below.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "ask",
+                    "label": "Ask the true or false question"
+                  },
+                  {
+                    "id": "choose",
+                    "label": "Pick the branch that matches"
+                  },
+                  {
+                    "id": "run",
+                    "label": "Run only that branch"
+                  },
+                  {
+                    "id": "continue",
+                    "label": "Carry on with the rest of the program"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "4. Program the Blob",
+          "sequenceOrder": 4,
+          "status": "published",
+          "xpReward": 45,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 9,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "i-7-1",
+              "type": "blob_dialog",
+              "content": "Now you write the instructions and something else follows them.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Now you write the instructions and something else follows them.",
+                    "mood": "happy",
+                    "cta": "Follows them?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Blobby walks the grid using exactly the commands you put in order. No more, no less.",
+                    "mood": "thinking",
+                    "cta": "What if I am wrong?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Then Blobby walks into a wall, and you can see exactly which step was wrong.",
+                    "mood": "cheer",
+                    "cta": "Let me try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-7-2",
+              "type": "blob_maze",
+              "content": "Drag the movement commands into the right order, then run the program.",
+              "metadata": {
+                "version": 1
+              }
+            },
+            {
+              "id": "i-7-3",
+              "type": "text",
+              "content": "This is what programming is: **planning the whole sequence before anything runs**, then watching where reality disagrees with your plan."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "i-eb-7-1",
+              "type": "order_steps",
+              "question": "Blobby faces east and the gem is two squares east, then one square north. Put the program in order.",
+              "correctAnswer": "forward>forward-2>turn-left>forward-3",
+              "explanation": "Two moves east first, then a left turn to face north, then one more move.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "forward",
+                    "label": "Move forward"
+                  },
+                  {
+                    "id": "forward-2",
+                    "label": "Move forward again"
+                  },
+                  {
+                    "id": "turn-left",
+                    "label": "Turn left"
+                  },
+                  {
+                    "id": "forward-3",
+                    "label": "Move forward once more"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-7-2",
+              "type": "tap_target",
+              "question": "Your program sends Blobby into a wall. What does that tell you?",
+              "correctAnswer": "wrong-step",
+              "explanation": "The computer followed your instructions exactly, so the mistake is in the order or the number of steps you gave.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "wrong-step",
+                    "label": "One of my steps is wrong"
+                  },
+                  {
+                    "id": "blob-mistake",
+                    "label": "Blobby made a mistake"
+                  },
+                  {
+                    "id": "broken",
+                    "label": "The game is broken"
+                  },
+                  {
+                    "id": "impossible",
+                    "label": "The puzzle cannot be solved"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-7-3",
+              "type": "toggle_switch",
+              "question": "Switch on what a computer does with your instructions.",
+              "correctAnswer": "exact=on,guess=off,order=on",
+              "explanation": "A computer follows the steps exactly, in the order given, and never guesses what you meant.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "exact",
+                    "label": "Follows them exactly",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "order",
+                    "label": "Follows them in order",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "guess",
+                    "label": "Guesses what you meant",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Lesson 2: Your First Python Programs",
+      "sequenceOrder": 2,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Printing and Variables",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 45,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 9,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "i-4-1",
+              "type": "blob_dialog",
+              "content": "Time to write real Python. Everything you run here runs for real.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Time to write real Python. Everything you run here runs for real.",
+                    "mood": "cheer",
+                    "cta": "Nice"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "print puts something on the screen. A variable is a named box that remembers a value.",
+                    "mood": "happy",
+                    "cta": "Okay"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Change the name in the box below to your own, then press Run.",
+                    "mood": "happy",
+                    "cta": "Let me try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-4-2",
+              "type": "python_runner",
+              "content": "name = 'Kavindi'\nprint('Ayubowan, ' + name)",
+              "metadata": {
+                "version": 1,
+                "title": "Say hello",
+                "instruction": "Put your own name between the quotes and run it.",
+                "starterCode": "name = 'Kavindi'\nprint('Ayubowan, ' + name)",
+                "hint": "The quotes matter. Without them Python thinks it is a variable name."
+              }
+            },
+            {
+              "id": "i-4-3",
+              "type": "text",
+              "content": "A variable keeps whatever you put in it until you change it. Reading it never empties the box."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "i-eb-4-1",
+              "type": "drag_drop",
+              "question": "Build the line that prints a greeting.",
+              "correctAnswer": "slot-1:print,slot-2:text,slot-3:name",
+              "explanation": "print does the showing, the quoted text is fixed, and the variable adds whatever is in the box.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "print",
+                    "label": "print("
+                  },
+                  {
+                    "id": "text",
+                    "label": "'Ayubowan, '"
+                  },
+                  {
+                    "id": "name",
+                    "label": "+ name)"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-1",
+                    "label": "First"
+                  },
+                  {
+                    "id": "slot-2",
+                    "label": "Second"
+                  },
+                  {
+                    "id": "slot-3",
+                    "label": "Third"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-4-2",
+              "type": "tap_target",
+              "question": "A program sets score to 10, then sets score to 25, then prints score. What appears?",
+              "correctAnswer": "twentyfive",
+              "explanation": "The second line replaces what was in the box, so only 25 is left by the time print runs.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "twentyfive",
+                    "label": "25"
+                  },
+                  {
+                    "id": "ten",
+                    "label": "10"
+                  },
+                  {
+                    "id": "thirtyfive",
+                    "label": "35"
+                  },
+                  {
+                    "id": "both",
+                    "label": "10 then 25"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-4-3",
+              "type": "toggle_switch",
+              "question": "Switch on the valid variable names.",
+              "correctAnswer": "my-score=off,score=on,total2=on",
+              "explanation": "Names can hold letters, digits and underscores, but never a hyphen, because Python reads that as a minus sign.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "score",
+                    "label": "score",
+                    "onLabel": "valid",
+                    "offLabel": "invalid"
+                  },
+                  {
+                    "id": "total2",
+                    "label": "total2",
+                    "onLabel": "valid",
+                    "offLabel": "invalid"
+                  },
+                  {
+                    "id": "my-score",
+                    "label": "my-score",
+                    "onLabel": "valid",
+                    "offLabel": "invalid"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Reading the Error Message",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 50,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 9,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "i-5-1",
+              "type": "blob_dialog",
+              "content": "Your program will break. Mine breaks too, every single day.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Your program will break. Mine breaks too, every single day.",
+                    "mood": "happy",
+                    "cta": "Really?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Python always tells you what went wrong and which line it happened on.",
+                    "mood": "thinking",
+                    "cta": "Where?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Read the last line of the red text first. That is the actual problem.",
+                    "mood": "happy",
+                    "cta": "Okay"
+                  },
+                  {
+                    "id": "l4",
+                    "text": "Run the broken program below and read what Python says. Then fix it!",
+                    "mood": "cheer",
+                    "cta": "Let me try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-5-2",
+              "type": "python_runner",
+              "content": "total = 5\nprint(totl)",
+              "metadata": {
+                "version": 1,
+                "title": "Break it on purpose",
+                "instruction": "Run this. Read the red message, then fix the spelling and run it again.",
+                "starterCode": "total = 5\nprint(totl)",
+                "hint": "A NameError means Python has never heard of that name."
+              }
+            },
+            {
+              "id": "i-5-3",
+              "type": "text",
+              "content": "Three errors you will meet constantly:\n\n- **NameError**: you used a name Python does not know, usually a typo.\n- **SyntaxError**: something is written wrongly, often a missing quote or bracket.\n- **TypeError**: you mixed things that do not go together, like a number and a word."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "i-eb-5-1",
+              "type": "drag_drop",
+              "question": "Match each mistake to the error Python gives.",
+              "correctAnswer": "slot-name:typo,slot-syntax:quote,slot-type:mix",
+              "explanation": "A misspelled name is a NameError, a missing quote is a SyntaxError, and adding a word to a number is a TypeError.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "typo",
+                    "label": "Printing totl when the box is called total"
+                  },
+                  {
+                    "id": "quote",
+                    "label": "A greeting with only one quote mark"
+                  },
+                  {
+                    "id": "mix",
+                    "label": "Adding 5 to the word apples"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-name",
+                    "label": "NameError"
+                  },
+                  {
+                    "id": "slot-syntax",
+                    "label": "SyntaxError"
+                  },
+                  {
+                    "id": "slot-type",
+                    "label": "TypeError"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-5-2",
+              "type": "tap_target",
+              "question": "Which line of a long red error message should you read first?",
+              "correctAnswer": "last",
+              "explanation": "The last line names the error and explains it. The lines above only show how Python got there.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "last",
+                    "label": "The last line"
+                  },
+                  {
+                    "id": "first",
+                    "label": "The first line"
+                  },
+                  {
+                    "id": "middle",
+                    "label": "The middle line"
+                  },
+                  {
+                    "id": "none",
+                    "label": "None of it, just try again"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-5-3",
+              "type": "order_steps",
+              "question": "Your program just crashed. What do you do?",
+              "correctAnswer": "read-error>find-line>fix>rerun",
+              "explanation": "Read what broke, go to the line it names, fix that one thing, and run it again to check.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "read-error",
+                    "label": "Read the last line of the error"
+                  },
+                  {
+                    "id": "find-line",
+                    "label": "Go to the line number it names"
+                  },
+                  {
+                    "id": "fix",
+                    "label": "Fix that one thing"
+                  },
+                  {
+                    "id": "rerun",
+                    "label": "Run it again to check"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Putting It Together",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 55,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 10,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "i-6-1",
+              "type": "blob_dialog",
+              "content": "You now have all four ideas: printing, variables, loops and choices.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "You now have all four ideas: printing, variables, loops and choices.",
+                    "mood": "cheer",
+                    "cta": "All four?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Real programs are just these, stacked together, over and over.",
+                    "mood": "happy",
+                    "cta": "Show me"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "This one prints a report for a whole class. Read it, then make it yours.",
+                    "mood": "thinking",
+                    "cta": "Let me try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-6-2",
+              "type": "python_runner",
+              "content": "marks = [82, 45, 67, 91, 58]\n\nfor mark in marks:\n    if mark >= 75:\n        print(mark, 'Distinction')\n    elif mark >= 50:\n        print(mark, 'Pass')\n    else:\n        print(mark, 'Needs work')",
+              "metadata": {
+                "version": 1,
+                "title": "A class report",
+                "instruction": "Run it, then add your own mark to the list and run it again.",
+                "starterCode": "marks = [82, 45, 67, 91, 58]\n\nfor mark in marks:\n    if mark >= 75:\n        print(mark, 'Distinction')\n    elif mark >= 50:\n        print(mark, 'Pass')\n    else:\n        print(mark, 'Needs work')",
+                "hint": "elif means otherwise, if this instead. Python checks it only when the first question was false."
+              }
+            },
+            {
+              "id": "i-6-3",
+              "type": "text",
+              "content": "A list holds many values in one box. The loop takes them out one at a time, and the if statement decides what to say about each one."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "i-eb-6-1",
+              "type": "tap_target",
+              "question": "In that program, how many times does the if statement run?",
+              "correctAnswer": "five",
+              "explanation": "The loop goes round once per mark, and there are five marks, so the if statement runs five times.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "five",
+                    "label": "5 times, once per mark"
+                  },
+                  {
+                    "id": "one",
+                    "label": "Once, at the start"
+                  },
+                  {
+                    "id": "three",
+                    "label": "3 times, once per branch"
+                  },
+                  {
+                    "id": "unknown",
+                    "label": "There is no way to tell"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-6-2",
+              "type": "drag_drop",
+              "question": "Match each mark to what the program prints for it.",
+              "correctAnswer": "slot-distinction:ninetyone,slot-needs:fortyfive,slot-pass:sixtyseven",
+              "explanation": "91 clears 75, 67 clears 50 but not 75, and 45 clears neither.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "ninetyone",
+                    "label": "91"
+                  },
+                  {
+                    "id": "sixtyseven",
+                    "label": "67"
+                  },
+                  {
+                    "id": "fortyfive",
+                    "label": "45"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-distinction",
+                    "label": "Distinction"
+                  },
+                  {
+                    "id": "slot-pass",
+                    "label": "Pass"
+                  },
+                  {
+                    "id": "slot-needs",
+                    "label": "Needs work"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "i-eb-6-3",
+              "type": "order_steps",
+              "question": "Put the program's structure in order, outside first.",
+              "correctAnswer": "list>loop>if>print",
+              "explanation": "The list holds the marks, the loop takes them one at a time, the if decides the label, and print says it out loud.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "list",
+                    "label": "The list of marks"
+                  },
+                  {
+                    "id": "loop",
+                    "label": "The loop over the marks"
+                  },
+                  {
+                    "id": "if",
+                    "label": "The choice about one mark"
+                  },
+                  {
+                    "id": "print",
+                    "label": "The line that prints the result"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

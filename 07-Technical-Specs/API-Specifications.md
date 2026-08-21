@@ -369,6 +369,81 @@ query {
 }
 ```
 
+
+## Student REST endpoints
+
+Two REST routes sit beside GraphQL because both stream or execute rather than
+resolve a graph. Both are proxied by the api-gateway and require a signed-in
+user.
+
+### `POST /ai/ask` — lesson tutor
+
+Streams Server-Sent Events (`data: {"type":"delta"|"done"|"error", ...}`) from
+the ai-service's `/v1/ask`. Any signed-in learner may call it. It reaches a
+model with **no tools attached**, so a student cannot generate or mutate course
+content through the chat box. This is distinct from `/ai/chat`, which is
+educator-only and drives the authoring agent.
+
+Request:
+
+```json
+{
+  "prompt": "Why is my bulb dark?",
+  "grade": "G4",
+  "language": "en",
+  "waveContext": "Lesson: Make the Bulb Glow\n\nElectricity travels in a full circle.",
+  "history": [{ "role": "user", "content": "..." }]
+}
+```
+
+The question, the lesson context and the replayed history are each bounded
+server side. The system prompt keeps answers short, child-readable, inside the
+current lesson, and unwilling to hand over an answer the student is being
+marked on.
+
+### `POST /code/run` — student code sandbox
+
+Runs a short Python program on the ai-service and returns exactly what it
+printed.
+
+```json
+{ "code": "print(6 * 7)", "stdin": "" }
+```
+
+```json
+{
+  "stdout": "42\n",
+  "stderr": "",
+  "exitCode": 0,
+  "timedOut": false,
+  "durationMs": 34,
+  "truncated": false
+}
+```
+
+A crashing program is a **200 with a traceback on stderr**, not an HTTP error:
+the student is meant to read the real Python error. Non-200 responses mean the
+runner itself could not run anything (503 when no interpreter is installed, 413
+when the program exceeds the size limit).
+
+> [!warning] Sandbox requirements
+> Execution is server side so the limits live somewhere a student cannot edit.
+> In order of what actually stops a hostile program:
+> 1. **The container.** The ai-service image installs Python, runs as a
+>    non-root user, drops all capabilities and sets `no-new-privileges`,
+>    `pids_limit` and `mem_limit`. A deployment that skips these runs student
+>    code with the service's own privileges.
+> 2. **A wall-clock deadline** (`CODE_RUN_TIMEOUT_SECONDS`, default 5), enforced
+>    by killing the whole process group.
+> 3. **Address-space and CPU limits** via `prlimit` where it is installed.
+> 4. **A stripped environment and a per-run temporary directory**, so service
+>    configuration is unreachable and nothing is left behind.
+> 5. **Output caps** on stdout and stderr.
+>
+> Network egress is not blocked by the runner itself. Deployments that expose
+> this endpoint publicly should place the ai-service on a network that cannot
+> reach internal services or the internet.
+
 ## Related Notes
 
 - [[Backend Architecture]] — Go microservices design.

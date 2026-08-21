@@ -4,6 +4,18 @@ import { MarkdownContent } from "@/components/ui/MarkdownContent";
 import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
 import { TsCircuitBlock } from "@/components/learn/visualizations/TsCircuitBlock";
 import { HtmlSimulationBlock } from "@/components/learn/visualizations/HtmlSimulationBlock";
+import { AnimationBlock } from "@/components/learn/interactive/AnimationBlock";
+import { BlobDialogBlock } from "@/components/learn/interactive/BlobDialogBlock";
+import { CircuitLabBlock } from "@/components/learn/interactive/CircuitLabBlock";
+import { ForceLabBlock } from "@/components/learn/interactive/ForceLabBlock";
+import { FractionLabBlock } from "@/components/learn/interactive/FractionLabBlock";
+import { LeverLabBlock } from "@/components/learn/interactive/LeverLabBlock";
+import { OhmsLawLabBlock } from "@/components/learn/interactive/OhmsLawLabBlock";
+import { PythonRunnerBlock } from "@/components/learn/interactive/PythonRunnerBlock";
+import { WaterFlowBlock } from "@/components/learn/interactive/WaterFlowBlock";
+import { SCENE_IDS } from "@/components/learn/interactive/animationRegistry";
+import { EvaluateBlockRenderer } from "@/components/evaluate/EvaluateBlockRenderer";
+import { hasInteractiveConfig } from "@/lib/content/interactiveBlocks";
 
 // ---------------------------------------------------------------------------
 // Block props
@@ -76,6 +88,30 @@ export interface DragDropBlockProps {
   explanation: string;
 }
 
+export interface PhysicsLabBlockProps {
+  labType: string;
+  content: string;
+  metadata: string;
+}
+
+export interface BlobDialogBlockProps {
+  content: string;
+  metadata: string;
+}
+
+export interface AnimationBlockProps {
+  scene: string;
+  metadata: string;
+}
+
+export interface InteractiveQuestionBlockProps {
+  questionType: string;
+  question: string;
+  correctAnswer: string;
+  explanation: string;
+  metadata: string;
+}
+
 // ---------------------------------------------------------------------------
 // Shared render helpers
 // ---------------------------------------------------------------------------
@@ -95,6 +131,23 @@ function EvaluateBadge({ label }: { label: string }) {
     </span>
   );
 }
+
+const PHYSICS_LAB_LABELS: Record<string, string> = {
+  force_lab: "Force Lab (push, pull, friction)",
+  circuit_lab: "Circuit Lab (wire the bulb)",
+  water_flow: "Water Flow (voltage and current)",
+  fraction_lab: "Fraction Bar (cut and shade)",
+  lever_lab: "Lever Balance (moments)",
+  ohms_law_lab: "Ohm's Law Bench (V, R, I)",
+};
+
+const INTERACTIVE_QUESTION_LABELS: Record<string, string> = {
+  tap_target: "Tap the right thing",
+  drag_drop: "Pick and place",
+  order_steps: "Put in order",
+  toggle_switch: "Flip the switches",
+  slider_target: "Slide to the right spot",
+};
 
 const VIZ_LABELS: Record<string, string> = {
   mathviz_manim: "Math Animation (Manim)",
@@ -294,6 +347,173 @@ export const puckConfig: Config = {
           <div className="overflow-x-auto rounded-md bg-muted/30 py-4 text-lg">
             <MathFormula formula={formula || "\\text{Provide formula}"} />
           </div>
+        </div>
+      ),
+    },
+
+    // Interactive physics labs. The educator edits the interaction as config
+    // JSON and sees the exact component a student will manipulate.
+    PhysicsLabBlock: {
+      fields: {
+        labType: {
+          type: "select",
+          label: "Lab Type",
+          options: Object.entries(PHYSICS_LAB_LABELS).map(([value, label]) => ({ value, label })),
+        },
+        content: { type: "textarea", label: "Instruction shown above the lab" },
+        metadata: { type: "textarea", label: "Config JSON (surfaces, slots, parts)" },
+      },
+      defaultProps: {
+        labType: "force_lab",
+        content: "Move the slider to choose how hard you push the cart.",
+        metadata: JSON.stringify({ version: 1 }),
+      },
+      render: ({ labType, content, metadata }) => (
+        <div className="space-y-2">
+          <LearnBadge label={PHYSICS_LAB_LABELS[labType] ?? "Interactive Lab"} />
+          {labType === "circuit_lab" ? (
+            <CircuitLabBlock content={content} metadata={metadata} />
+          ) : labType === "water_flow" ? (
+            <WaterFlowBlock content={content} metadata={metadata} />
+          ) : labType === "fraction_lab" ? (
+            <FractionLabBlock content={content} metadata={metadata} />
+          ) : labType === "lever_lab" ? (
+            <LeverLabBlock content={content} metadata={metadata} />
+          ) : labType === "ohms_law_lab" ? (
+            <OhmsLawLabBlock content={content} metadata={metadata} />
+          ) : (
+            <ForceLabBlock content={content} metadata={metadata} />
+          )}
+        </div>
+      ),
+    },
+
+    // A Python exercise a student runs against the server sandbox.
+    PythonRunnerBlock: {
+      fields: {
+        content: { type: "textarea", label: "Starter code" },
+        metadata: { type: "textarea", label: "Exercise JSON (title, instruction, stdin, hint)" },
+      },
+      defaultProps: {
+        content: "score = 100\nprint(score)",
+        metadata: JSON.stringify({
+          version: 1,
+          title: "Try it yourself",
+          instruction: "Change the number and run it again.",
+        }),
+      },
+      render: ({ content, metadata }) => (
+        <div className="space-y-2">
+          <LearnBadge label="Python Exercise" />
+          <PythonRunnerBlock content={content} metadata={metadata} />
+        </div>
+      ),
+    },
+
+    // The blob teacher's script. Every line keeps its own speakable text.
+    BlobDialogBlock: {
+      fields: {
+        content: { type: "textarea", label: "Opening line (used if no script below)" },
+        metadata: { type: "textarea", label: "Dialog script JSON (lines, mood, cta)" },
+      },
+      defaultProps: {
+        content: "Hello! Let us learn something new.",
+        metadata: JSON.stringify({
+          version: 1,
+          lines: [{ id: "l1", text: "Hello! Let us learn something new.", mood: "happy" }],
+        }),
+      },
+      render: ({ content, metadata }) => (
+        <div className="space-y-2">
+          <LearnBadge label="Blob Teacher Dialog" />
+          <BlobDialogBlock content={content} metadata={metadata} />
+        </div>
+      ),
+    },
+
+    // An animation pulled from the scene registry by id.
+    AnimationBlock: {
+      fields: {
+        scene: {
+          type: "select",
+          label: "Animation",
+          options: SCENE_IDS.map((id) => ({ value: id, label: id })),
+        },
+        metadata: { type: "textarea", label: "Params JSON (scene inputs, caption)" },
+      },
+      defaultProps: {
+        scene: SCENE_IDS[0] ?? "force-arrows",
+        metadata: JSON.stringify({ version: 1, params: {} }),
+      },
+      render: ({ scene, metadata }) => {
+        // The scene chosen in the picker always wins over a stale id in the JSON.
+        let config: Record<string, unknown> = {};
+        try {
+          config = metadata ? JSON.parse(metadata) : {};
+        } catch {
+          config = {};
+        }
+        config.scene = scene;
+        return (
+          <div className="space-y-2">
+            <LearnBadge label="Injected Animation" />
+            <AnimationBlock content={scene} metadata={JSON.stringify(config)} />
+          </div>
+        );
+      },
+    },
+
+    // Manipulative questions. The preview is the student renderer itself, so an
+    // educator can try the interaction before publishing it.
+    InteractiveQuestionBlock: {
+      fields: {
+        questionType: {
+          type: "select",
+          label: "Interaction",
+          options: Object.entries(INTERACTIVE_QUESTION_LABELS).map(([value, label]) => ({
+            value,
+            label,
+          })),
+        },
+        question: { type: "textarea", label: "Question" },
+        correctAnswer: { type: "text", label: "Canonical answer" },
+        explanation: { type: "textarea", label: "Explanation" },
+        metadata: { type: "textarea", label: "Interaction JSON (targets, slots, steps, bands)" },
+      },
+      defaultProps: {
+        questionType: "tap_target",
+        question: "Which one is a pull?",
+        correctAnswer: "drawer",
+        explanation: "Opening a drawer brings it towards you.",
+        metadata: JSON.stringify({
+          version: 1,
+          targets: [
+            { id: "drawer", label: "Opening a drawer" },
+            { id: "kick", label: "Kicking a ball" },
+          ],
+        }),
+      },
+      render: ({ questionType, question, correctAnswer, explanation, metadata }) => (
+        <div className="space-y-2 rounded-lg border border-primary/20 bg-primary/5 p-4">
+          <EvaluateBadge label={INTERACTIVE_QUESTION_LABELS[questionType] ?? "Interactive"} />
+          <EvaluateBlockRenderer
+            block={{
+              id: "preview",
+              type: questionType,
+              question,
+              correctAnswer,
+              explanation,
+              metadata,
+            }}
+            index={0}
+            answer=""
+            onAnswerChange={() => {}}
+          />
+          {correctAnswer && (
+            <p className="text-xs font-medium text-success">
+              Canonical answer: <span className="underline">{correctAnswer}</span>
+            </p>
+          )}
         </div>
       ),
     },
@@ -663,9 +883,34 @@ function learnBlockToItem(lb: LearnBlockRaw): PuckData["content"][number] {
     case "simulation_html":
     case "simulation":
       return { type: "HtmlSimulationBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
+    case "force_lab":
+    case "circuit_lab":
+    case "water_flow":
+    case "fraction_lab":
+    case "lever_lab":
+    case "ohms_law_lab":
+      return { type: "PhysicsLabBlock", props: { ...common, labType: type, content: lb.content, metadata: lb.metadata || "{}" } };
+    case "blob_dialog":
+      return { type: "BlobDialogBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
+    case "python_runner":
+      return { type: "PythonRunnerBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
+    case "animation":
+      return { type: "AnimationBlock", props: { ...common, scene: sceneFrom(lb), metadata: lb.metadata || "{}" } };
     default:
       return { type: "TextBlock", props: { ...common, content: lb.content } };
   }
+}
+
+// The scene id an animation block points at, preferring its metadata over the
+// content field so a renamed scene only has to be fixed in one place.
+function sceneFrom(lb: LearnBlockRaw): string {
+  try {
+    const meta = JSON.parse(lb.metadata || "{}");
+    if (typeof meta.scene === "string" && meta.scene) return meta.scene;
+  } catch {
+    // fall through to the content field
+  }
+  return lb.content;
 }
 
 // Pull the circuit code out of an elecsim block's metadata.
@@ -693,6 +938,20 @@ function evaluateBlockToItem(eb: EvaluateBlockRaw): PuckData["content"][number] 
       return { type: "TrueFalseBlock", props: { ...common } };
     case "numeric":
       return { type: "NumericBlock", props: { ...common } };
+    case "tap_target":
+    case "drag_drop":
+    case "order_steps":
+    case "toggle_switch":
+    case "slider_target":
+      // Without an interaction config this is legacy content that happens to
+      // share a type name, so it keeps the plain question editor.
+      if (hasInteractiveConfig(type, eb.metadata)) {
+        return {
+          type: "InteractiveQuestionBlock",
+          props: { ...common, questionType: type, metadata: eb.metadata || "{}" },
+        };
+      }
+      return { type: "DragDropBlock", props: { ...common } };
     default:
       return { type: "DragDropBlock", props: { ...common } };
   }
@@ -861,6 +1120,60 @@ export function puckToWaveData(puckData: PuckData) {
         });
         break;
       }
+      case "PhysicsLabBlock":
+        learnBlocks.push({
+          id,
+          type: str(block.props.labType) || "force_lab",
+          content: str(block.props.content),
+          metadata: str(block.props.metadata) || null,
+        });
+        break;
+      case "PythonRunnerBlock":
+        learnBlocks.push({
+          id,
+          type: "python_runner",
+          content: str(block.props.content),
+          metadata: str(block.props.metadata) || null,
+        });
+        break;
+      case "BlobDialogBlock":
+        learnBlocks.push({
+          id,
+          type: "blob_dialog",
+          content: str(block.props.content),
+          metadata: str(block.props.metadata) || null,
+        });
+        break;
+      case "AnimationBlock": {
+        // Keep the picker's scene as the stored scene, so saving cannot leave
+        // the block pointing at an animation the educator moved away from.
+        let animationMeta: Record<string, unknown> = {};
+        try {
+          animationMeta = JSON.parse(str(block.props.metadata) || "{}");
+        } catch {
+          animationMeta = {};
+        }
+        animationMeta.scene = str(block.props.scene) || animationMeta.scene;
+        if (!animationMeta.version) animationMeta.version = 1;
+        learnBlocks.push({
+          id,
+          type: "animation",
+          content: str(animationMeta.scene),
+          metadata: JSON.stringify(animationMeta),
+        });
+        break;
+      }
+      case "InteractiveQuestionBlock":
+        evaluateBlocks.push({
+          id,
+          type: str(block.props.questionType) || "tap_target",
+          question: str(block.props.question),
+          options: null,
+          correctAnswer: str(block.props.correctAnswer),
+          explanation: str(block.props.explanation),
+          metadata: str(block.props.metadata) || null,
+        });
+        break;
       case "MCQBlock": {
         const rawOptions = str(block.props.options);
         const parsedOptions = rawOptions

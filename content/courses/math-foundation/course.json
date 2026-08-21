@@ -1,0 +1,479 @@
+{
+  "slug": "math-foundation",
+  "title": "Math Foundation",
+  "description": "The number sense every later grade leans on: fractions you can see, place value, and the four operations, built through pictures a child can move.",
+  "gradeLevel": "G5",
+  "subject": "Mathematics",
+  "price": 0,
+  "version": 1,
+  "lessons": [
+    {
+      "title": "Lesson 1: Fractions You Can See",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. What Is a Fraction?",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 40,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 7,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "m-1-1",
+              "type": "blob_dialog",
+              "content": "A fraction is just a way of saying part of something.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "A fraction is just a way of saying part of something.",
+                    "mood": "happy",
+                    "cta": "Like what?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Cut a roti into 4 equal pieces and eat 1. You ate one quarter, or 1/4.",
+                    "mood": "happy",
+                    "cta": "Okay"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "The bottom number says how many pieces the whole was cut into.",
+                    "mood": "thinking",
+                    "cta": "And the top?"
+                  },
+                  {
+                    "id": "l4",
+                    "text": "The top number says how many of those pieces you have. Try it below!",
+                    "mood": "cheer",
+                    "cta": "Let me try"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "m-1-2",
+              "type": "fraction_lab",
+              "content": "Cut the bar and shade some pieces. Watch the two numbers change.",
+              "metadata": {
+                "version": 1,
+                "parts": 4,
+                "shaded": 1,
+                "maxParts": 12,
+                "caption": "The bottom number counts the pieces in the whole. The top number counts the ones you shaded."
+              }
+            },
+            {
+              "id": "m-1-3",
+              "type": "text",
+              "content": "Every fraction needs **equal** pieces. Four uneven pieces are not quarters, they are just four pieces."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "m-eb-1-1",
+              "type": "tap_target",
+              "question": "A bar is cut into 8 equal pieces and 3 are shaded. Which fraction is shaded?",
+              "correctAnswer": "three-eighths",
+              "explanation": "Eight pieces in the whole goes on the bottom, three shaded goes on top, so it is 3/8.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "three-eighths",
+                    "label": "3/8"
+                  },
+                  {
+                    "id": "eight-thirds",
+                    "label": "8/3"
+                  },
+                  {
+                    "id": "three-fifths",
+                    "label": "3/5"
+                  },
+                  {
+                    "id": "one-third",
+                    "label": "1/3"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "m-eb-1-2",
+              "type": "slider_target",
+              "question": "You cut a cake into more and more pieces. What happens to each piece?",
+              "correctAnswer": "smaller-pieces",
+              "explanation": "The cake does not grow, so sharing it between more people makes every piece smaller.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 10,
+                "step": 1,
+                "unit": "pieces of cake",
+                "bands": [
+                  {
+                    "value": "smaller-pieces",
+                    "upTo": 4
+                  },
+                  {
+                    "value": "same-size",
+                    "upTo": 7
+                  },
+                  {
+                    "value": "bigger-pieces"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "m-eb-1-3",
+              "type": "drag_drop",
+              "question": "Put each number where it belongs in the fraction 5/6.",
+              "correctAnswer": "slot-bottom:six,slot-top:five",
+              "explanation": "The pieces you have go on top, and the pieces in the whole go underneath.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "five",
+                    "label": "5"
+                  },
+                  {
+                    "id": "six",
+                    "label": "6"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-top",
+                    "label": "Pieces you have (top)"
+                  },
+                  {
+                    "id": "slot-bottom",
+                    "label": "Pieces in the whole (bottom)"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Equal Parts Only",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 40,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 7,
+          "difficulty": "EASY",
+          "learnBlocks": [
+            {
+              "id": "m-2-1",
+              "type": "blob_dialog",
+              "content": "Careful! Pieces only count as halves if they are exactly the same size.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Careful! Pieces only count as halves if they are exactly the same size.",
+                    "mood": "surprised",
+                    "cta": "Why?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "If I cut a roti into one big piece and one small piece, neither one is half.",
+                    "mood": "thinking",
+                    "cta": "That is true"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "So a fraction always means equal shares. Yaay, now you know the secret rule.",
+                    "mood": "cheer",
+                    "cta": "Got it"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "m-2-2",
+              "type": "fraction_lab",
+              "content": "Every piece here is exactly the same width. That is what makes these real fractions.",
+              "metadata": {
+                "version": 1,
+                "parts": 6,
+                "shaded": 3,
+                "maxParts": 10,
+                "caption": "Shade half the pieces and see what 3/6 is really called."
+              }
+            },
+            {
+              "id": "m-2-3",
+              "type": "animation",
+              "content": "fraction-bar",
+              "metadata": {
+                "version": 1,
+                "scene": "fraction-bar",
+                "params": {
+                  "parts": 2,
+                  "shaded": 1,
+                  "label": "One half"
+                },
+                "caption": "One out of two equal pieces is one half."
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "m-eb-2-1",
+              "type": "tap_target",
+              "question": "Which cut gives you real halves?",
+              "correctAnswer": "equal",
+              "explanation": "Halves must be exactly the same size. Uneven pieces are not halves, whatever they look like.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "equal",
+                    "label": "Two pieces exactly the same size"
+                  },
+                  {
+                    "id": "uneven",
+                    "label": "One big piece and one small piece"
+                  },
+                  {
+                    "id": "three",
+                    "label": "Three equal pieces"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "m-eb-2-2",
+              "type": "toggle_switch",
+              "question": "Switch on every statement that is true about 3/6.",
+              "correctAnswer": "half=on,pieces=on,three=off",
+              "explanation": "Three out of six equal pieces is the same as one half. The pieces are equal, and 3/6 is not three whole bars.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "half",
+                    "label": "3/6 is the same as one half",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "pieces",
+                    "label": "All six pieces are the same size",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "three",
+                    "label": "3/6 means three whole bars",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "m-eb-2-3",
+              "type": "drag_drop",
+              "question": "Match each picture to its fraction.",
+              "correctAnswer": "slot-half:two-of-four,slot-quarter:one-of-four",
+              "explanation": "One shaded piece out of four is a quarter. Two shaded out of four is the same as one half.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "one-of-four",
+                    "label": "1 shaded out of 4"
+                  },
+                  {
+                    "id": "two-of-four",
+                    "label": "2 shaded out of 4"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-quarter",
+                    "label": "One quarter"
+                  },
+                  {
+                    "id": "slot-half",
+                    "label": "One half"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Which Fraction Is Bigger?",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 45,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 8,
+          "difficulty": "MEDIUM",
+          "learnBlocks": [
+            {
+              "id": "m-3-1",
+              "type": "blob_dialog",
+              "content": "Here is the question that catches everybody. Which is bigger, 1/3 or 1/5?",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Here is the question that catches everybody. Which is bigger, 1/3 or 1/5?",
+                    "mood": "thinking",
+                    "cta": "1/5?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "It looks like 5 beats 3, but think about the cake. Sharing between 5 people gives smaller slices.",
+                    "mood": "surprised",
+                    "cta": "Oh!"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "So 1/3 is bigger than 1/5. A bigger bottom number means smaller pieces.",
+                    "mood": "happy",
+                    "cta": "Gotcha"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "m-3-2",
+              "type": "fraction_lab",
+              "content": "Shade one piece, then change the number of parts. Watch that single piece shrink.",
+              "metadata": {
+                "version": 1,
+                "parts": 3,
+                "shaded": 1,
+                "maxParts": 12,
+                "caption": "Same one piece, more cuts, smaller share."
+              }
+            },
+            {
+              "id": "m-3-3",
+              "type": "callout",
+              "content": "When the top numbers match, the fraction with the smaller bottom number is the bigger one."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "m-eb-3-1",
+              "type": "order_steps",
+              "question": "Put these fractions in order, smallest first.",
+              "correctAnswer": "eighth>quarter>half",
+              "explanation": "All three have one piece on top, so the one cut into the most pieces is the smallest.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "eighth",
+                    "label": "1/8"
+                  },
+                  {
+                    "id": "quarter",
+                    "label": "1/4"
+                  },
+                  {
+                    "id": "half",
+                    "label": "1/2"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "m-eb-3-2",
+              "type": "tap_target",
+              "question": "Nimasha ate 2/6 of a roti and Sahan ate 2/3. Who ate more?",
+              "correctAnswer": "sahan",
+              "explanation": "Both ate two pieces, but Sahan's pieces came from a roti cut into only 3, so his pieces were bigger.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "sahan",
+                    "label": "Sahan"
+                  },
+                  {
+                    "id": "nimasha",
+                    "label": "Nimasha"
+                  },
+                  {
+                    "id": "same",
+                    "label": "They ate the same"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "m-eb-3-3",
+              "type": "slider_target",
+              "question": "Slide to shade about three quarters of the bar.",
+              "correctAnswer": "three-quarters",
+              "explanation": "Three quarters is most of the bar but not all of it, so the slider sits high without reaching the end.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 12,
+                "step": 1,
+                "unit": "parts shaded out of 12",
+                "bands": [
+                  {
+                    "value": "too-little",
+                    "upTo": 6
+                  },
+                  {
+                    "value": "three-quarters",
+                    "upTo": 10
+                  },
+                  {
+                    "value": "nearly-all"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Lesson 2: Place Value and Big Numbers",
+      "sequenceOrder": 2,
+      "status": "draft",
+      "waves": []
+    },
+    {
+      "title": "Lesson 3: The Four Operations",
+      "sequenceOrder": 3,
+      "status": "draft",
+      "waves": []
+    },
+    {
+      "title": "Lesson 4: Measurement and Money",
+      "sequenceOrder": 4,
+      "status": "draft",
+      "waves": []
+    },
+    {
+      "title": "Lesson 5: Shapes and Space",
+      "sequenceOrder": 5,
+      "status": "draft",
+      "waves": []
+    }
+  ]
+}

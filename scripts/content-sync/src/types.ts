@@ -15,13 +15,26 @@ export type WaveStatus = (typeof WAVE_STATUSES)[number];
 export const LEARN_BLOCK_TYPES = [
   "heading", "text", "image", "video", "formula", "code", "callout",
   "coordinate_plane", "manim", "molecule", "circuit", "physics",
+  // Interactive blocks. Their configuration lives in `metadata`; see
+  // frontend/src/lib/content/interactiveBlocks.ts for the shapes.
+  "blob_dialog", "force_lab", "circuit_lab", "water_flow", "fraction_lab", "lever_lab", "ohms_law_lab", "gear_train", "blob_maze", "python_runner", "animation",
 ] as const;
 
 export type LearnBlockType = (typeof LEARN_BLOCK_TYPES)[number];
 
 export const EVALUATE_BLOCK_TYPES = [
   "multiple_choice", "fill_in_blank", "true_false", "numeric",
+  // Manipulative question types. `correctAnswer` holds the canonical encoding
+  // of the manipulation, which is what the server grades against.
+  "tap_target", "drag_drop", "order_steps", "toggle_switch", "slider_target",
 ] as const;
+
+/** Question types whose answer is a manipulation rather than a typed response. */
+export const INTERACTIVE_EVALUATE_TYPES = [
+  "tap_target", "drag_drop", "order_steps", "toggle_switch", "slider_target",
+] as const;
+
+export type InteractiveEvaluateType = (typeof INTERACTIVE_EVALUATE_TYPES)[number];
 
 export type EvaluateBlockType = (typeof EVALUATE_BLOCK_TYPES)[number];
 

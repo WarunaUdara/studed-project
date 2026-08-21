@@ -193,6 +193,12 @@ func main() {
 	aiChatProxy := gwhandler.NewAIChatProxy(cfg.AIServiceURL)
 	r.Handle("/ai/chat", aiChatProxy)
 
+	// Student lesson tutor: any signed-in learner, no authoring tools upstream.
+	r.Handle("/ai/ask", gwhandler.NewStudentAskProxy(cfg.AIServiceURL))
+
+	// Coding waves: student programs run in the ai-service sandbox, never here.
+	r.Handle("/code/run", gwhandler.NewCodeRunProxy(cfg.AIServiceURL))
+
 	// Course image and attachment storage. Reads are public so <img> tags work;
 	// writes require an educator and carry the service token upstream.
 	uploadProxy, err := gwhandler.NewUploadProxy(cfg.UploadServiceURL, cfg.ServiceToken, log)

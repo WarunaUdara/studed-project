@@ -1,0 +1,897 @@
+{
+  "slug": "physics-al",
+  "title": "A/L Physics: Mechanics and Circuits",
+  "description": "A/L work on the reasoning examiners actually test: resolving projectile motion, momentum and circular dynamics, then EMF with internal resistance and capacitor behaviour.",
+  "gradeLevel": "AL",
+  "subject": "Physics",
+  "price": 0,
+  "version": 1,
+  "lessons": [
+    {
+      "title": "Lesson 1: Mechanics That Examiners Test",
+      "sequenceOrder": 1,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. Projectiles Are Two Problems",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 60,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "al-1-1",
+              "type": "blob_dialog",
+              "content": "A projectile question is two independent problems that happen to share a clock.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "A projectile question is two independent problems that happen to share a clock.",
+                    "mood": "thinking",
+                    "cta": "Independent?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Horizontally there is no acceleration, so the horizontal velocity never changes.",
+                    "mood": "happy",
+                    "cta": "And vertically?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Vertically it is free fall at g. The only thing the two share is the time.",
+                    "mood": "cheer",
+                    "cta": "That is the whole trick"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-1-2",
+              "type": "formula",
+              "content": "x = u\\cos\\theta \\cdot t \\qquad y = u\\sin\\theta \\cdot t - \\tfrac{1}{2}gt^2"
+            },
+            {
+              "id": "al-1-3",
+              "type": "text",
+              "content": "Resolve at the start, solve each direction separately, and let **time** be the bridge between them. Most lost marks come from mixing the two directions into one equation."
+            },
+            {
+              "id": "al-1-4",
+              "type": "callout",
+              "content": "At the highest point the vertical velocity is zero, but the horizontal velocity is unchanged. The speed there is not zero."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "al-eb-1-1",
+              "type": "order_steps",
+              "question": "Put the projectile method in the order that keeps the directions separate.",
+              "correctAnswer": "resolve>vertical>horizontal>combine",
+              "explanation": "Time comes from the vertical motion and is then carried across to the horizontal, which is what keeps the two problems separate.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "resolve",
+                    "label": "Resolve the launch velocity into components"
+                  },
+                  {
+                    "id": "vertical",
+                    "label": "Use the vertical equation to find the time"
+                  },
+                  {
+                    "id": "horizontal",
+                    "label": "Put that time into the horizontal equation"
+                  },
+                  {
+                    "id": "combine",
+                    "label": "Combine the components for the final answer"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-eb-1-2",
+              "type": "tap_target",
+              "question": "At the top of its flight, what is true of a projectile launched at an angle?",
+              "correctAnswer": "horizontal-only",
+              "explanation": "The vertical component is momentarily zero, but the horizontal component has not changed since launch.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "horizontal-only",
+                    "label": "Its velocity is horizontal and non-zero"
+                  },
+                  {
+                    "id": "zero",
+                    "label": "Its velocity is zero"
+                  },
+                  {
+                    "id": "vertical-only",
+                    "label": "Its velocity is vertical"
+                  },
+                  {
+                    "id": "max-speed",
+                    "label": "Its speed is at a maximum"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-eb-1-3",
+              "type": "toggle_switch",
+              "question": "Switch on the statements that hold for ideal projectile motion.",
+              "correctAnswer": "horizontal-constant=on,shared-time=on,vertical-constant=off",
+              "explanation": "With no air resistance the horizontal velocity is constant and the vertical one changes at g, while a single time links them.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "horizontal-constant",
+                    "label": "The horizontal velocity is constant",
+                    "onLabel": "holds",
+                    "offLabel": "does not hold"
+                  },
+                  {
+                    "id": "vertical-constant",
+                    "label": "The vertical velocity is constant",
+                    "onLabel": "holds",
+                    "offLabel": "does not hold"
+                  },
+                  {
+                    "id": "shared-time",
+                    "label": "Both directions share the same time of flight",
+                    "onLabel": "holds",
+                    "offLabel": "does not hold"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Momentum and Collisions",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 60,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "al-2-1",
+              "type": "blob_dialog",
+              "content": "Momentum is conserved in every collision. Kinetic energy is not.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "Momentum is conserved in every collision. Kinetic energy is not.",
+                    "mood": "thinking",
+                    "cta": "Never?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Only in an elastic collision. In an inelastic one, energy goes into heat and deformation.",
+                    "mood": "happy",
+                    "cta": "So how do I choose?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Start with momentum every time. Bring in energy only when the question says elastic.",
+                    "mood": "cheer",
+                    "cta": "Good rule"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-2-2",
+              "type": "formula",
+              "content": "m_1u_1 + m_2u_2 = m_1v_1 + m_2v_2"
+            },
+            {
+              "id": "al-2-3",
+              "type": "text",
+              "content": "**Impulse** is the same idea in another form: force multiplied by contact time equals the change in momentum. That is why a longer contact time means a gentler force, and why crumple zones exist."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "al-eb-2-1",
+              "type": "toggle_switch",
+              "question": "Switch on what is conserved in a perfectly inelastic collision.",
+              "correctAnswer": "kinetic=off,momentum=on,total-energy=on",
+              "explanation": "Momentum and total energy are always conserved. Kinetic energy is not, because some becomes heat and deformation.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "momentum",
+                    "label": "Total momentum",
+                    "onLabel": "conserved",
+                    "offLabel": "not conserved"
+                  },
+                  {
+                    "id": "kinetic",
+                    "label": "Total kinetic energy",
+                    "onLabel": "conserved",
+                    "offLabel": "not conserved"
+                  },
+                  {
+                    "id": "total-energy",
+                    "label": "Total energy including heat",
+                    "onLabel": "conserved",
+                    "offLabel": "not conserved"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-eb-2-2",
+              "type": "tap_target",
+              "question": "Why does a longer crumple time reduce the force on a passenger?",
+              "correctAnswer": "impulse",
+              "explanation": "The change in momentum is fixed by the collision, so stretching the time lowers the average force.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "impulse",
+                    "label": "The same change in momentum spread over more time"
+                  },
+                  {
+                    "id": "less-momentum",
+                    "label": "The car loses less momentum"
+                  },
+                  {
+                    "id": "less-energy",
+                    "label": "The collision has less energy"
+                  },
+                  {
+                    "id": "mass",
+                    "label": "The car behaves as if it has more mass"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-eb-2-3",
+              "type": "drag_drop",
+              "question": "Match each collision to what happens to the kinetic energy.",
+              "correctAnswer": "slot-elastic:unchanged,slot-partial:reduced,slot-stick:maximum-loss",
+              "explanation": "Sticking together is the perfectly inelastic case, which loses the most kinetic energy that momentum conservation allows.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "unchanged",
+                    "label": "Unchanged"
+                  },
+                  {
+                    "id": "reduced",
+                    "label": "Reduced"
+                  },
+                  {
+                    "id": "maximum-loss",
+                    "label": "Reduced by the largest possible amount"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-elastic",
+                    "label": "A perfectly elastic collision"
+                  },
+                  {
+                    "id": "slot-partial",
+                    "label": "A typical real collision"
+                  },
+                  {
+                    "id": "slot-stick",
+                    "label": "Two bodies that stick together"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Circular Motion",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 65,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "al-3-1",
+              "type": "blob_dialog",
+              "content": "There is no such thing as centrifugal force pushing you outwards.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "There is no such thing as centrifugal force pushing you outwards.",
+                    "mood": "surprised",
+                    "cta": "But I feel it"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "What you feel is your own inertia. The real force points inwards, towards the centre.",
+                    "mood": "thinking",
+                    "cta": "Always inwards?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Always. Friction, tension or gravity provides it. Remove it and the object goes straight, not outwards.",
+                    "mood": "cheer",
+                    "cta": "That is the exam answer"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-3-2",
+              "type": "formula",
+              "content": "a = \\frac{v^2}{r} \\qquad F = \\frac{mv^2}{r}"
+            },
+            {
+              "id": "al-3-3",
+              "type": "text",
+              "content": "Name the force doing the job before you use the formula. In a car it is friction, on a string it is tension, and for a satellite it is gravity."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "al-eb-3-1",
+              "type": "tap_target",
+              "question": "A car rounds a bend at constant speed. Which direction is the resultant force?",
+              "correctAnswer": "centre",
+              "explanation": "Circular motion needs a resultant force towards the centre, provided here by friction on the tyres.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "centre",
+                    "label": "Towards the centre of the bend"
+                  },
+                  {
+                    "id": "outwards",
+                    "label": "Away from the centre"
+                  },
+                  {
+                    "id": "forwards",
+                    "label": "Forwards along the road"
+                  },
+                  {
+                    "id": "none",
+                    "label": "There is no resultant force"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-eb-3-2",
+              "type": "drag_drop",
+              "question": "Match each circular motion to the force that keeps it circular.",
+              "correctAnswer": "slot-car:friction,slot-satellite:gravity,slot-string:tension",
+              "explanation": "The centripetal force is never a new force; it is whichever real force happens to point at the centre.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "friction",
+                    "label": "Friction"
+                  },
+                  {
+                    "id": "tension",
+                    "label": "Tension"
+                  },
+                  {
+                    "id": "gravity",
+                    "label": "Gravity"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-car",
+                    "label": "A car on a flat bend"
+                  },
+                  {
+                    "id": "slot-string",
+                    "label": "A stone whirled on a string"
+                  },
+                  {
+                    "id": "slot-satellite",
+                    "label": "A satellite in orbit"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-eb-3-3",
+              "type": "slider_target",
+              "question": "The speed of an orbiting object doubles at the same radius. What happens to the centripetal force needed?",
+              "correctAnswer": "four-times",
+              "explanation": "Force goes as the square of the speed, so doubling it needs four times the force.",
+              "metadata": {
+                "version": 1,
+                "min": 0,
+                "max": 10,
+                "step": 1,
+                "bands": [
+                  {
+                    "value": "halves",
+                    "upTo": 2
+                  },
+                  {
+                    "value": "doubles",
+                    "upTo": 5
+                  },
+                  {
+                    "value": "four-times"
+                  }
+                ],
+                "unit": "relative force"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Lesson 2: Circuits Beyond Ohm's Law",
+      "sequenceOrder": 2,
+      "status": "published",
+      "waves": [
+        {
+          "title": "1. EMF and Internal Resistance",
+          "sequenceOrder": 1,
+          "status": "published",
+          "xpReward": 60,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 11,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "al-4-1",
+              "type": "blob_dialog",
+              "content": "A real cell cannot deliver its full EMF, because it resists its own current.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "A real cell cannot deliver its full EMF, because it resists its own current.",
+                    "mood": "thinking",
+                    "cta": "Internal resistance?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Exactly. The terminal voltage is the EMF minus the volts lost inside the cell.",
+                    "mood": "happy",
+                    "cta": "So it drops under load?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "The bigger the current, the bigger the loss, which is why headlights dim when the starter turns.",
+                    "mood": "cheer",
+                    "cta": "That explains it"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-4-2",
+              "type": "formula",
+              "content": "V_{terminal} = \\varepsilon - Ir"
+            },
+            {
+              "id": "al-4-3",
+              "type": "ohms_law_lab",
+              "content": "Treat the resistance slider as the external load. A smaller load draws more current, and a real cell would sag under it.",
+              "metadata": {
+                "version": 1,
+                "voltage": 12,
+                "resistance": 4,
+                "maxVoltage": 12,
+                "maxResistance": 12,
+                "caption": "The bench is ideal, so nothing sags here. That gap is exactly what internal resistance accounts for."
+              }
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "al-eb-4-1",
+              "type": "tap_target",
+              "question": "A cell of EMF 6.0 V and internal resistance 0.5 ohm delivers 2.0 A. What is the terminal voltage?",
+              "correctAnswer": "five",
+              "explanation": "Terminal voltage = 6.0 - (2.0 x 0.5) = 5.0 V.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "five",
+                    "label": "5.0 V"
+                  },
+                  {
+                    "id": "seven",
+                    "label": "7.0 V"
+                  },
+                  {
+                    "id": "six",
+                    "label": "6.0 V"
+                  },
+                  {
+                    "id": "three",
+                    "label": "3.0 V"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-eb-4-2",
+              "type": "toggle_switch",
+              "question": "Switch on what happens as the external load resistance falls.",
+              "correctAnswer": "higher-emf=off,lower-terminal=on,more-current=on",
+              "explanation": "EMF is a property of the cell and does not change. A smaller load draws more current, and the internal drop grows with it.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "more-current",
+                    "label": "The current drawn rises",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "lower-terminal",
+                    "label": "The terminal voltage falls",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "higher-emf",
+                    "label": "The EMF of the cell rises",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-eb-4-3",
+              "type": "order_steps",
+              "question": "Order the terminal voltage from lowest to highest as the load changes.",
+              "correctAnswer": "short>normal>open",
+              "explanation": "With no current there is no internal drop, so an open circuit reads the full EMF.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "short",
+                    "label": "A very small load resistance"
+                  },
+                  {
+                    "id": "normal",
+                    "label": "A moderate load"
+                  },
+                  {
+                    "id": "open",
+                    "label": "An open circuit with no current"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "2. Capacitors: Charge, Not Current",
+          "sequenceOrder": 2,
+          "status": "published",
+          "xpReward": 65,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 12,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "al-5-1",
+              "type": "blob_dialog",
+              "content": "A capacitor does not store current. It stores charge, and its voltage grows as it fills.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "A capacitor does not store current. It stores charge, and its voltage grows as it fills.",
+                    "mood": "thinking",
+                    "cta": "So it fights back?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "It does. As the voltage climbs, the charging current falls away exponentially.",
+                    "mood": "happy",
+                    "cta": "Never quite full?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "In theory never. In practice five time constants is treated as fully charged.",
+                    "mood": "cheer",
+                    "cta": "Useful shortcut"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-5-2",
+              "type": "formula",
+              "content": "Q = CV \\qquad E = \\tfrac{1}{2}CV^2 \\qquad \\tau = RC"
+            },
+            {
+              "id": "al-5-3",
+              "type": "text",
+              "content": "The time constant is a product of resistance and capacitance. A bigger resistor charges the same capacitor more slowly, because it limits the current doing the filling."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "al-eb-5-1",
+              "type": "tap_target",
+              "question": "A 100 microfarad capacitor is charged to 12 V. What charge does it hold?",
+              "correctAnswer": "twelve-hundred",
+              "explanation": "Q = CV = 100 microfarad x 12 V = 1.2 millicoulomb.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "twelve-hundred",
+                    "label": "1.2 millicoulomb"
+                  },
+                  {
+                    "id": "eight",
+                    "label": "8.3 coulomb"
+                  },
+                  {
+                    "id": "twelve",
+                    "label": "12 coulomb"
+                  },
+                  {
+                    "id": "hundred",
+                    "label": "100 coulomb"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-eb-5-2",
+              "type": "drag_drop",
+              "question": "Match each change to its effect on the charging time constant.",
+              "correctAnswer": "slot-bigger-r:longer,slot-higher-v:no-change,slot-smaller-c:shorter",
+              "explanation": "The time constant is R times C, so the supply voltage changes the final charge but never the rate of filling.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "longer",
+                    "label": "Makes it longer"
+                  },
+                  {
+                    "id": "shorter",
+                    "label": "Makes it shorter"
+                  },
+                  {
+                    "id": "no-change",
+                    "label": "Leaves it unchanged"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-bigger-r",
+                    "label": "Using a bigger series resistor"
+                  },
+                  {
+                    "id": "slot-smaller-c",
+                    "label": "Using a smaller capacitor"
+                  },
+                  {
+                    "id": "slot-higher-v",
+                    "label": "Using a higher supply voltage"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-eb-5-3",
+              "type": "toggle_switch",
+              "question": "Switch on the statements that are true during charging.",
+              "correctAnswer": "current-falls=on,steady-current=off,voltage-rises=on",
+              "explanation": "The rising capacitor voltage opposes the supply, so the current decays as the voltage climbs.",
+              "metadata": {
+                "version": 1,
+                "switches": [
+                  {
+                    "id": "current-falls",
+                    "label": "The charging current falls with time",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "voltage-rises",
+                    "label": "The capacitor voltage rises with time",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  },
+                  {
+                    "id": "steady-current",
+                    "label": "The current stays constant until it is full",
+                    "onLabel": "true",
+                    "offLabel": "false"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "3. Choosing the Right Model",
+          "sequenceOrder": 3,
+          "status": "published",
+          "xpReward": 70,
+          "maxReattempts": 3,
+          "passingThreshold": 60,
+          "estimatedDuration": 12,
+          "difficulty": "HARD",
+          "learnBlocks": [
+            {
+              "id": "al-6-1",
+              "type": "blob_dialog",
+              "content": "By this point you have several models, and the exam skill is choosing between them.",
+              "metadata": {
+                "version": 1,
+                "lines": [
+                  {
+                    "id": "l1",
+                    "text": "By this point you have several models, and the exam skill is choosing between them.",
+                    "mood": "thinking",
+                    "cta": "How do I choose?"
+                  },
+                  {
+                    "id": "l2",
+                    "text": "Ask what is steady and what is changing. Steady current means Ohm's law; a changing one means the capacitor is involved.",
+                    "mood": "happy",
+                    "cta": "And mechanics?"
+                  },
+                  {
+                    "id": "l3",
+                    "text": "Same question. Constant acceleration allows the equations of motion. Otherwise think in energy or momentum.",
+                    "mood": "cheer",
+                    "cta": "That is the map"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-6-2",
+              "type": "text",
+              "content": "A quick sort:\n\n- **Steady circuit** with fixed resistances: Ohm's law and power.\n- **Changing circuit** with a capacitor: charge, time constant, exponential behaviour.\n- **Constant acceleration**: the equations of motion.\n- **Collision or sudden force**: momentum and impulse.\n- **Neither, but energy is trackable**: work and energy conservation."
+            },
+            {
+              "id": "al-6-3",
+              "type": "callout",
+              "content": "Write down which model you chose and why. Examiners give credit for a stated valid approach even when the arithmetic goes wrong."
+            }
+          ],
+          "evaluateBlocks": [
+            {
+              "id": "al-eb-6-1",
+              "type": "drag_drop",
+              "question": "Match each situation to the model that fits it.",
+              "correctAnswer": "slot-charging:capacitor,slot-collision:momentum,slot-steady:ohm",
+              "explanation": "Sorting by what is steady and what is changing points at the right model before any algebra starts.",
+              "metadata": {
+                "version": 1,
+                "items": [
+                  {
+                    "id": "ohm",
+                    "label": "Ohm's law and power"
+                  },
+                  {
+                    "id": "capacitor",
+                    "label": "Capacitor charge and time constant"
+                  },
+                  {
+                    "id": "momentum",
+                    "label": "Momentum and impulse"
+                  }
+                ],
+                "slots": [
+                  {
+                    "id": "slot-steady",
+                    "label": "A lamp on a steady supply"
+                  },
+                  {
+                    "id": "slot-charging",
+                    "label": "A circuit switched on with a capacitor in it"
+                  },
+                  {
+                    "id": "slot-collision",
+                    "label": "Two trolleys colliding on a track"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-eb-6-2",
+              "type": "tap_target",
+              "question": "A body accelerates non-uniformly along a track. Which approach is safe?",
+              "correctAnswer": "energy",
+              "explanation": "The equations of motion assume constant acceleration, so with a varying force an energy argument is the reliable route.",
+              "metadata": {
+                "version": 1,
+                "targets": [
+                  {
+                    "id": "energy",
+                    "label": "Work and energy conservation"
+                  },
+                  {
+                    "id": "suvat",
+                    "label": "The equations of constant acceleration"
+                  },
+                  {
+                    "id": "ohm",
+                    "label": "Ohm's law"
+                  },
+                  {
+                    "id": "time-constant",
+                    "label": "The time constant"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "al-eb-6-3",
+              "type": "order_steps",
+              "question": "Put the exam approach in the order that earns the most marks.",
+              "correctAnswer": "identify>state>apply>sanity",
+              "explanation": "The stated model carries credit on its own, and the final check catches sign and magnitude slips.",
+              "metadata": {
+                "version": 1,
+                "steps": [
+                  {
+                    "id": "identify",
+                    "label": "Identify what is constant and what is changing"
+                  },
+                  {
+                    "id": "state",
+                    "label": "State the model and the assumption behind it"
+                  },
+                  {
+                    "id": "apply",
+                    "label": "Apply the equation with units"
+                  },
+                  {
+                    "id": "sanity",
+                    "label": "Check the magnitude and direction are sensible"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -46,6 +46,9 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /v1/analyze-image", h.analyzeImage)
 	mux.HandleFunc("POST /v1/agent/task", h.agentTask)
 	mux.HandleFunc("POST /v1/agent/stream", h.agentStream)
+
+	// Student tutor: streams a plain answer with no tools attached.
+	mux.HandleFunc("POST /v1/ask", h.ask)
 }
 
 // ---- Request / response types -------------------------------------------------
