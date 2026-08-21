@@ -46,6 +46,18 @@ jobs:
       - name: Run Playwright E2E Tests
         run: cd frontend && bun run test:e2e
 
+      # Playwright already captures a screenshot, a trace and an error context
+      # for every failure. Without this they stay on the runner and every
+      # failure has to be diagnosed by guesswork from the log alone.
+      - name: Upload Playwright Failure Artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failures
+          path: frontend/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
       - name: Stop Docker Compose Stack
         if: always()
         run: docker compose down -v
