@@ -94,9 +94,15 @@ test.describe("Leaderboard", () => {
 
     await page.getByRole("textbox", { name: /Search the leaderboard/i }).fill("zzzznobody");
 
-    // With nothing matching, the page says so rather than leaving the top
-    // three standing behind the search.
-    await expect(page.getByText(/No one here matches/i)).toBeVisible({ timeout: 10000 });
+    // With nothing matching, the page says so rather than leaving the top three
+    // standing behind the search. On an empty board the empty state shows
+    // instead — the test accepts either rather than assuming a seeded database
+    // has ranked students.
+    await expect(
+      page.getByText(/No one here matches|Be the first|No XP earned/i).first(),
+    ).toBeVisible({ timeout: 10000 });
+
+    // Either way the podium must not survive the search.
     await expect(page.getByText("Gold", { exact: true })).toHaveCount(0);
   });
 });
