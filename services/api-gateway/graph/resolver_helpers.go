@@ -92,32 +92,40 @@ func (r *Resolver) populateLessonsParallel(ctx context.Context, courses []*model
 	_ = g.Wait()
 }
 
-// populateWavesProgressParallel resolves per-wave progress concurrently.
-// The serial form is one gRPC round-trip per wave across the whole catalog —
-// the N+1 hot path behind slow course/enrollment pages.
+// populateWavesProgressParallel attaches per-wave progress to a set of courses.
+// It asks each course for all of its wave progress in one call: resolving wave
+// by wave meant a catalog page issued one gRPC round trip per wave, and each of
+// those walked the whole course again to decide locking.
 func (r *Resolver) populateWavesProgressParallel(ctx context.Context, userID string, courses []*model.Course) {
 	g, ctx := errgroup.WithContext(ctx)
-	g.SetLimit(16)
+	g.SetLimit(8)
 	for _, course := range courses {
 		course := course
-		for _, lesson := range course.Lessons {
-			if lesson == nil {
-				continue
+		if course == nil {
+			continue
+		}
+		g.Go(func() error {
+			progressByWave, err := r.ProgressClient.GetCourseWaveProgress(ctx, userID, course.ID)
+			if err != nil {
+				slog.Warn("failed to load wave progress for course",
+					slog.String("course_id", course.ID), slog.Any("error", err))
+				return nil
 			}
-			for _, wave := range lesson.Waves {
-				if wave == nil {
+			for _, lesson := range course.Lessons {
+				if lesson == nil {
 					continue
 				}
-				wave := wave
-				g.Go(func() error {
-					progress, err := r.ProgressClient.GetWaveProgress(ctx, userID, wave.ID)
-					if err == nil {
+				for _, wave := range lesson.Waves {
+					if wave == nil {
+						continue
+					}
+					if progress, ok := progressByWave[wave.ID]; ok {
 						wave.MyProgress = progress
 					}
-					return nil
-				})
+				}
 			}
-		}
+			return nil
+		})
 	}
 	_ = g.Wait()
 }
@@ -154,7 +162,7 @@ func (r *Resolver) publishWaveEvents(ctx context.Context, userCtx middleware.Use
 			c := sc.courseID
 			cid = &c
 		}
-		rank, err := r.GamificationClient.GetMyRank(ctx, userCtx.UserID, sc.scope, cid, nil)
+		rank, _, _, err := r.GamificationClient.GetMyRank(ctx, userCtx.UserID, sc.scope, cid, nil)
 		if err != nil {
 			rank = 0
 		}

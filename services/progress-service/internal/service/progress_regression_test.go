@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+	"errors"
 	"testing"
 
 	progresspb "github.com/studed/shared/proto/gen/go/progress"
@@ -88,4 +90,124 @@ func TestProgressRegression_ScoreAnswersMatrix(t *testing.T) {
 			}
 		})
 	}
+}
+
+// The cap was enforced on submit while the response reported -1 ("unlimited"),
+// so a student was told they had endless attempts right up until the server
+// refused the next one. One policy now answers both.
+func TestRemainingAttempts_OnePolicy(t *testing.T) {
+	cases := []struct {
+		name          string
+		maxReattempts int32
+		used          int32
+		expected      int32
+	}{
+		{"no cap reports unlimited", 0, 5, -1},
+		{"a negative cap reports unlimited", -1, 5, -1},
+		{"first of three leaves two", 3, 1, 2},
+		{"last of three leaves none", 3, 3, 0},
+		{"over the cap never goes negative", 3, 7, 0},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := remainingAttempts(tc.maxReattempts, tc.used); got != tc.expected {
+				t.Errorf("remainingAttempts(%d, %d) = %d; expected %d",
+					tc.maxReattempts, tc.used, got, tc.expected)
+			}
+		})
+	}
+}
+
+// A capped wave must report the same remaining count on a fresh submission and
+// on an idempotent replay of it.
+func TestRecordAttempt_ReportsTheCapItEnforces(t *testing.T) {
+	svc, _, course, _ := newTestProgressService()
+	ctx := context.Background()
+	course.waves["wave-1"].MaxReattempts = 3
+
+	seedEnrollment(svc)
+
+	resp, err := svc.RecordAttempt(ctx, "u1", "wave-1", wrongAnswer(), "sub-1")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if resp.RemainingAttempts != 2 {
+		t.Fatalf("first of three attempts should leave 2, got %d", resp.RemainingAttempts)
+	}
+
+	replay, err := svc.RecordAttempt(ctx, "u1", "wave-1", wrongAnswer(), "sub-1")
+	if err != nil {
+		t.Fatalf("unexpected error on replay: %v", err)
+	}
+	if replay.RemainingAttempts != resp.RemainingAttempts {
+		t.Fatalf("a replay reported %d remaining but the original reported %d",
+			replay.RemainingAttempts, resp.RemainingAttempts)
+	}
+}
+
+// XP has to be attributed to the course it was earned in, or the course
+// leaderboard ranks by the student's unrelated global total.
+func TestRecordAttempt_AttributesXpToItsCourse(t *testing.T) {
+	svc, _, _, gamification := newTestProgressService()
+	seedEnrollment(svc)
+
+	if _, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", rightAnswer(), "sub-1"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if len(gamification.courseIDs) == 0 {
+		t.Fatal("no XP award was attempted")
+	}
+	if gamification.courseIDs[0] != "course-1" {
+		t.Fatalf("award was attributed to course %q; expected course-1", gamification.courseIDs[0])
+	}
+}
+
+// Passing a wave is learning activity, so it is what advances the streak.
+func TestRecordAttempt_PassAdvancesTheStreak(t *testing.T) {
+	svc, _, _, gamification := newTestProgressService()
+	seedEnrollment(svc)
+	ctx := context.Background()
+
+	if _, err := svc.RecordAttempt(ctx, "u1", "wave-1", wrongAnswer(), "sub-fail"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if gamification.touchCalls != 0 {
+		t.Fatalf("a failed attempt should not advance the streak, got %d calls", gamification.touchCalls)
+	}
+
+	if _, err := svc.RecordAttempt(ctx, "u1", "wave-1", rightAnswer(), "sub-pass"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if gamification.touchCalls != 1 {
+		t.Fatalf("a pass should advance the streak once, got %d calls", gamification.touchCalls)
+	}
+}
+
+// A streak outage must not cost the student their submission.
+func TestRecordAttempt_StreakFailureDoesNotFailTheSubmission(t *testing.T) {
+	svc, _, _, gamification := newTestProgressService()
+	seedEnrollment(svc)
+	gamification.touchErr = errors.New("gamification unavailable")
+
+	resp, err := svc.RecordAttempt(context.Background(), "u1", "wave-1", rightAnswer(), "sub-1")
+	if err != nil {
+		t.Fatalf("a streak outage must not fail the submission: %v", err)
+	}
+	if !resp.Passed {
+		t.Fatal("the attempt should still be recorded as passed")
+	}
+}
+
+func seedEnrollment(svc *progressService) {
+	_, _ = svc.EnrollInCourse(context.Background(), "u1", "course-1")
+}
+
+func rightAnswer() []*progresspb.Answer {
+	return []*progresspb.Answer{{EvaluateBlockId: "q1", Answer: "yes"}}
+}
+
+func wrongAnswer() []*progresspb.Answer {
+	return []*progresspb.Answer{{EvaluateBlockId: "q1", Answer: "no"}}
 }

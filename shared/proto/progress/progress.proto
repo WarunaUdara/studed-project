@@ -88,6 +88,26 @@ message CourseProgressResponse {
   string error = 6;
 }
 
+// One wave's progress inside a course rollup.
+message WaveProgressEntry {
+  string wave_id = 1;
+  string status = 2;
+  int32 attempts_count = 3;
+  int32 highest_score = 4;
+  int64 completed_at_unix = 5;
+  int64 last_attempted_at_unix = 6;
+}
+
+message GetCourseWaveProgressRequest {
+  string user_id = 1;
+  string course_id = 2;
+}
+
+message GetCourseWaveProgressResponse {
+  repeated WaveProgressEntry entries = 1;
+  string error = 2;
+}
+
 message IsEnrolledRequest {
   string user_id = 1;
   string course_id = 2;
@@ -122,6 +142,10 @@ service ProgressService {
   rpc RecordAttempt(RecordAttemptRequest) returns (RecordAttemptResponse);
   rpc GetWaveProgress(GetWaveProgressRequest) returns (WaveProgressResponse);
   rpc GetCourseProgress(GetCourseProgressRequest) returns (CourseProgressResponse);
+  // GetCourseWaveProgress resolves every wave in a course in one call. Asking
+  // per wave made a catalog page cost one round trip per wave, and each of
+  // those walked the whole course again to work out locking.
+  rpc GetCourseWaveProgress(GetCourseWaveProgressRequest) returns (GetCourseWaveProgressResponse);
   rpc IsEnrolled(IsEnrolledRequest) returns (IsEnrolledResponse);
   rpc ListEnrollments(ListEnrollmentsRequest) returns (ListEnrollmentsResponse);
   rpc ResetWaveAttempts(ResetWaveAttemptsRequest) returns (ResetWaveAttemptsResponse);

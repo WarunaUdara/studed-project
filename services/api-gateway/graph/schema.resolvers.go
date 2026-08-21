@@ -9,13 +9,21 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/studed/api-gateway/graph/model"
+	"github.com/studed/api-gateway/internal/client"
 	"github.com/studed/api-gateway/internal/events"
 	"github.com/studed/api-gateway/internal/middleware"
+)
+
+const (
+	// defaultLeaderboardPage is what a client gets when it asks for no size;
+	// maxLeaderboardPage is the ceiling regardless of what it asks for.
+	defaultLeaderboardPage = 50
+	maxLeaderboardPage     = 100
 )
 
 // Register is the resolver for the register field.
@@ -284,35 +292,26 @@ func (r *mutationResolver) SubmitWaveAnswers(ctx context.Context, waveID string,
 	}
 
 	if result.Passed {
-		if userCtx.FullName == "" {
-			return nil, fmt.Errorf("full name is empty in user context")
-		}
-
-		displayName := userCtx.FullName
-		if parts := strings.Fields(displayName); len(parts) > 1 {
-			displayName = parts[0] + " " + string(parts[len(parts)-1][0]) + "."
-		}
-
-		// Always update the global leaderboard.
-		if _, err := r.GamificationClient.UpdateLeaderboard(ctx, userCtx.UserID, displayName, result.TotalXp, model.LeaderboardScopeGlobal, "", nil); err != nil {
-			return nil, fmt.Errorf("failed to update global leaderboard: %w", err)
-		}
-
-		// Resolve the wave's courseID for the course-scoped leaderboard.
+		// Everything below is a side effect of a submission that is already
+		// durable. None of it may fail the student's result: losing a graded
+		// attempt to a Redis blip is far worse than a stale leaderboard.
 		courseID, err := r.CourseClient.GetWaveCourseID(ctx, waveID)
-		if err == nil && courseID != "" {
-			if _, err := r.GamificationClient.UpdateLeaderboard(ctx, userCtx.UserID, displayName, result.TotalXp, model.LeaderboardScopeCourse, courseID, nil); err != nil {
-				return nil, fmt.Errorf("failed to update course leaderboard: %w", err)
-			}
+		if err != nil {
+			slog.Warn("could not resolve the wave's course for ranking",
+				slog.String("wave_id", waveID), slog.Any("error", err))
 		}
 
-		// Resolve the student's grade for the grade-scoped leaderboard
-		// (grade is fetched from auth-service, NOT carried in the JWT).
-		authUser, err := r.AuthClient.GetUser(ctx, userCtx.UserID)
-		if err == nil && authUser.Grade != nil {
-			if _, err := r.GamificationClient.UpdateLeaderboard(ctx, userCtx.UserID, displayName, result.TotalXp, model.LeaderboardScopeGrade, "", authUser.Grade); err != nil {
-				return nil, fmt.Errorf("failed to update grade leaderboard: %w", err)
-			}
+		var grade *model.Grade
+		if authUser, err := r.AuthClient.GetUser(ctx, userCtx.UserID); err == nil {
+			grade = authUser.Grade
+		}
+
+		// One call refreshes every scope the student stands on. The display
+		// name is stored unmasked and masked on read, so an educator view can
+		// later be granted real names without a data migration.
+		if err := r.GamificationClient.UpdateLeaderboard(ctx, userCtx.UserID, userCtx.FullName, courseID, grade); err != nil {
+			slog.Error("leaderboard update failed after a passed wave",
+				slog.String("user_id", userCtx.UserID), slog.Any("error", err))
 		}
 
 		r.publishWaveEvents(ctx, userCtx, waveID, courseID, result)
@@ -491,8 +490,16 @@ func (r *mutationResolver) UpdateMe(ctx context.Context, input model.UpdateMeInp
 	}
 
 	// Fetch XP & Streaks to populate model fully
-	totalXp, _ := r.GamificationClient.GetUserXp(ctx, userCtx.UserID)
-	streak, _ := r.GamificationClient.GetUserStreak(ctx, userCtx.UserID)
+	// A gamification outage must not fail `me` — the rest of the session still
+	// works — but it must not read as a silent "0 XP" either, so it is logged.
+	totalXp, err := r.GamificationClient.GetUserXp(ctx, userCtx.UserID)
+	if err != nil {
+		slog.Warn("could not read total xp for me", slog.String("user_id", userCtx.UserID), slog.Any("error", err))
+	}
+	streak, err := r.GamificationClient.GetUserStreak(ctx, userCtx.UserID)
+	if err != nil {
+		slog.Warn("could not read streak for me", slog.String("user_id", userCtx.UserID), slog.Any("error", err))
+	}
 	updatedUser.TotalXp = totalXp
 	updatedUser.Streak = streak
 
@@ -506,8 +513,16 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 		return nil, errors.New("unauthorized")
 	}
 
-	totalXp, _ := r.GamificationClient.GetUserXp(ctx, userCtx.UserID)
-	streak, _ := r.GamificationClient.GetUserStreak(ctx, userCtx.UserID)
+	// A gamification outage must not fail `me` — the rest of the session still
+	// works — but it must not read as a silent "0 XP" either, so it is logged.
+	totalXp, err := r.GamificationClient.GetUserXp(ctx, userCtx.UserID)
+	if err != nil {
+		slog.Warn("could not read total xp for me", slog.String("user_id", userCtx.UserID), slog.Any("error", err))
+	}
+	streak, err := r.GamificationClient.GetUserStreak(ctx, userCtx.UserID)
+	if err != nil {
+		slog.Warn("could not read streak for me", slog.String("user_id", userCtx.UserID), slog.Any("error", err))
+	}
 
 	var grade *model.Grade
 	if authUser, err := r.AuthClient.GetUser(ctx, userCtx.UserID); err == nil {
@@ -789,11 +804,64 @@ func (r *queryResolver) WaveProgress(ctx context.Context, waveID string) (*model
 }
 
 // Leaderboard is the resolver for the leaderboard field.
-func (r *queryResolver) Leaderboard(ctx context.Context, scope model.LeaderboardScope, courseID *string, grade *model.Grade) ([]*model.LeaderboardEntry, error) {
-	if _, err := requireUser(ctx); err != nil {
+func (r *queryResolver) Leaderboard(ctx context.Context, scope model.LeaderboardScope, courseID *string, grade *model.Grade, limit *int, offset *int) (*model.LeaderboardPage, error) {
+	userCtx, err := requireUser(ctx)
+	if err != nil {
 		return nil, err
 	}
-	return r.GamificationClient.GetLeaderboard(ctx, scope, courseID, grade, 100)
+
+	pageSize := int32(defaultLeaderboardPage)
+	if limit != nil && *limit > 0 {
+		pageSize = int32(*limit)
+	}
+	if pageSize > maxLeaderboardPage {
+		pageSize = maxLeaderboardPage
+	}
+	var from int32
+	if offset != nil && *offset > 0 {
+		from = int32(*offset)
+	}
+
+	// The grade board defaults to the viewer's own grade rather than letting a
+	// student browse other grades' boards by passing an arbitrary value.
+	if scope == model.LeaderboardScopeGrade && grade == nil {
+		if authUser, err := r.AuthClient.GetUser(ctx, userCtx.UserID); err == nil {
+			grade = authUser.Grade
+		}
+	}
+
+	entries, totalRanked, err := r.GamificationClient.GetLeaderboard(ctx, userCtx.UserID, scope, courseID, grade, pageSize, from)
+	if err != nil {
+		return nil, err
+	}
+
+	page := &model.LeaderboardPage{Entries: entries, TotalRanked: totalRanked}
+
+	// A student outside the page still needs to see where they stand, which is
+	// the whole point of a leaderboard for the other 99% of users.
+	for _, entry := range entries {
+		if entry.IsMe {
+			page.Me = entry
+			break
+		}
+	}
+	if page.Me == nil {
+		rank, totalXp, _, err := r.GamificationClient.GetMyRank(ctx, userCtx.UserID, scope, courseID, grade)
+		if err != nil {
+			slog.Warn("could not resolve the viewer's rank",
+				slog.String("user_id", userCtx.UserID), slog.Any("error", err))
+		} else if rank > 0 {
+			page.Me = &model.LeaderboardEntry{
+				Rank:        rank,
+				UserID:      userCtx.UserID,
+				DisplayName: client.MaskDisplayName(userCtx.FullName),
+				TotalXp:     totalXp,
+				IsMe:        true,
+			}
+		}
+	}
+
+	return page, nil
 }
 
 // MyRank is the resolver for the myRank field.
@@ -812,9 +880,13 @@ func (r *queryResolver) MyRank(ctx context.Context, scope model.LeaderboardScope
 		grade = authUser.Grade
 	}
 
-	rank, err := r.GamificationClient.GetMyRank(ctx, userCtx.UserID, scope, courseID, grade)
+	rank, _, _, err := r.GamificationClient.GetMyRank(ctx, userCtx.UserID, scope, courseID, grade)
 	if err != nil {
 		return nil, err
+	}
+	// Unranked reads as null, not as rank zero.
+	if rank == 0 {
+		return nil, nil
 	}
 
 	return &rank, nil
@@ -835,7 +907,8 @@ func (r *subscriptionResolver) LeaderboardUpdated(ctx context.Context, scope mod
 	if r.Events == nil {
 		return nil, errors.New("real-time events are not configured")
 	}
-	if _, err := requireUser(ctx); err != nil {
+	viewer, err := requireUser(ctx)
+	if err != nil {
 		return nil, err
 	}
 
@@ -851,9 +924,11 @@ func (r *subscriptionResolver) LeaderboardUpdated(ctx context.Context, scope mod
 				continue
 			}
 			out <- &model.LeaderboardEntry{
-				Rank:    int(e.Rank),
-				User:    &model.User{ID: e.UserID, FullName: e.FullName},
-				TotalXp: int(e.TotalXp),
+				Rank:        int(e.Rank),
+				UserID:      e.UserID,
+				DisplayName: client.MaskDisplayName(e.FullName),
+				TotalXp:     int(e.TotalXp),
+				IsMe:        e.UserID == viewer.UserID,
 			}
 		}
 	}()
@@ -907,11 +982,15 @@ func (r *subscriptionResolver) AchievementUnlocked(ctx context.Context) (<-chan 
 			if e.UserID != userCtx.UserID {
 				continue
 			}
+			// An unlock event only ever describes an achievement that has
+			// just been earned, so it is always unlocked.
+			unlockedAt := time.Unix(e.UnlockedAtUnix, 0)
 			achievement := &model.Achievement{
 				ID:          e.ID,
 				Name:        e.Name,
 				Description: e.Description,
-				UnlockedAt:  time.Unix(e.UnlockedAtUnix, 0),
+				Unlocked:    true,
+				UnlockedAt:  &unlockedAt,
 			}
 			if e.IconURL != "" {
 				iconURL := e.IconURL

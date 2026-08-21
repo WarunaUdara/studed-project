@@ -10,25 +10,40 @@ import (
 	"github.com/studed/gamification-service/internal/events"
 	"github.com/studed/gamification-service/internal/model"
 	"github.com/studed/gamification-service/internal/repository"
-	gampb "github.com/studed/shared/proto/gen/go/gamification"
 )
+
+type xpEntry struct {
+	amount   int32
+	reason   string
+	sourceID string
+	courseID string
+	at       time.Time
+}
 
 type fakeXpRepo struct {
 	totalXp       map[string]int32
 	awarded       map[string]bool
+	identities    map[string]model.UserXp
+	history       []xpEntry
 	addXpErr      error
 	hasAwardedErr error
+	now           func() time.Time
 }
 
 func newFakeXpRepo() *fakeXpRepo {
-	return &fakeXpRepo{totalXp: make(map[string]int32), awarded: make(map[string]bool)}
+	return &fakeXpRepo{
+		totalXp:    make(map[string]int32),
+		awarded:    make(map[string]bool),
+		identities: make(map[string]model.UserXp),
+		now:        time.Now,
+	}
 }
 
 func (r *fakeXpRepo) GetOrCreateUserXp(ctx context.Context, userID string) (*model.UserXp, error) {
 	return &model.UserXp{UserID: userID, TotalXp: r.totalXp[userID]}, nil
 }
 
-func (r *fakeXpRepo) AddXp(ctx context.Context, userID string, amount int32, reason, sourceID string) (int32, error) {
+func (r *fakeXpRepo) AddXp(ctx context.Context, userID string, amount int32, reason, sourceID, courseID string) (int32, error) {
 	if r.addXpErr != nil {
 		return 0, r.addXpErr
 	}
@@ -39,6 +54,7 @@ func (r *fakeXpRepo) AddXp(ctx context.Context, userID string, amount int32, rea
 		r.awarded[userID+":"+sourceID] = true
 	}
 	r.totalXp[userID] += amount
+	r.history = append(r.history, xpEntry{amount: amount, reason: reason, sourceID: sourceID, courseID: courseID, at: r.now()})
 	return r.totalXp[userID], nil
 }
 
@@ -49,9 +65,79 @@ func (r *fakeXpRepo) GetUserXp(ctx context.Context, userID string) (int32, error
 func (r *fakeXpRepo) GetAllUserXp(ctx context.Context) ([]model.UserXp, error) {
 	var result []model.UserXp
 	for id, xp := range r.totalXp {
-		result = append(result, model.UserXp{UserID: id, TotalXp: xp})
+		who := r.identities[id]
+		who.UserID = id
+		who.TotalXp = xp
+		result = append(result, who)
 	}
 	return result, nil
+}
+
+func (r *fakeXpRepo) SaveIdentity(ctx context.Context, userID, displayName string, grade int32) error {
+	who := r.identities[userID]
+	who.UserID = userID
+	if displayName != "" {
+		who.DisplayName = displayName
+	}
+	if grade != 0 {
+		who.Grade = grade
+	}
+	r.identities[userID] = who
+	return nil
+}
+
+func (r *fakeXpRepo) GetIdentities(ctx context.Context, userIDs []string) (map[string]model.UserXp, error) {
+	out := make(map[string]model.UserXp, len(userIDs))
+	for _, id := range userIDs {
+		who := r.identities[id]
+		who.UserID = id
+		who.TotalXp = r.totalXp[id]
+		out[id] = who
+	}
+	return out, nil
+}
+
+func (r *fakeXpRepo) CourseXp(ctx context.Context, userID, courseID string) (int32, error) {
+	var total int32
+	for _, h := range r.history {
+		if h.courseID == courseID {
+			total += h.amount
+		}
+	}
+	return total, nil
+}
+
+func (r *fakeXpRepo) SumSince(ctx context.Context, userID string, since time.Time) (int32, error) {
+	var total int32
+	for _, h := range r.history {
+		if !h.at.Before(since) {
+			total += h.amount
+		}
+	}
+	return total, nil
+}
+
+func (r *fakeXpRepo) AllCourseXp(ctx context.Context) ([]repository.CourseXp, error) {
+	sums := map[string]int32{}
+	for _, h := range r.history {
+		if h.courseID != "" {
+			sums[h.courseID] += h.amount
+		}
+	}
+	var out []repository.CourseXp
+	for courseID, xp := range sums {
+		out = append(out, repository.CourseXp{CourseID: courseID, TotalXp: xp})
+	}
+	return out, nil
+}
+
+func (r *fakeXpRepo) AllSumsSince(ctx context.Context, since time.Time) ([]repository.UserSum, error) {
+	var out []repository.UserSum
+	for id := range r.totalXp {
+		xp, _ := r.SumSince(ctx, id, since)
+		out = append(out, repository.UserSum{UserID: id, TotalXp: xp})
+	}
+	return out, nil
 }
 
 func (r *fakeXpRepo) HasAwardedXp(ctx context.Context, userID, reason, sourceID string) (bool, error) {
@@ -64,18 +150,42 @@ func (r *fakeXpRepo) HasAwardedXp(ctx context.Context, userID, reason, sourceID 
 	return r.awarded[userID+":"+sourceID], nil
 }
 
-type fakeLeaderboardRepo struct{}
+// fakeLeaderboardRepo records what was written to each scope so tests can
+// assert that an award reaches the global, grade, weekly and course boards.
+type fakeLeaderboardRepo struct {
+	writes map[string]map[string]int32
+	setErr error
+}
 
-func (r *fakeLeaderboardRepo) UpdateLeaderboard(ctx context.Context, userID, fullName string, totalXp int32, scope, courseID string, grade int32) error {
+func newFakeLeaderboardRepo() *fakeLeaderboardRepo {
+	return &fakeLeaderboardRepo{writes: make(map[string]map[string]int32)}
+}
+
+func (r *fakeLeaderboardRepo) Set(ctx context.Context, scope, courseID string, grade int32, userID string, totalXp int32, at time.Time) error {
+	if r.setErr != nil {
+		return r.setErr
+	}
+	if r.writes == nil {
+		r.writes = make(map[string]map[string]int32)
+	}
+	key := repository.LeaderboardKey(scope, courseID, grade, at)
+	if r.writes[key] == nil {
+		r.writes[key] = make(map[string]int32)
+	}
+	r.writes[key][userID] = totalXp
 	return nil
 }
 
-func (r *fakeLeaderboardRepo) GetLeaderboard(ctx context.Context, scope, courseID string, grade int32, limit int32) ([]*gampb.LeaderboardEntry, error) {
-	return nil, nil
+func (r *fakeLeaderboardRepo) Page(ctx context.Context, scope, courseID string, grade, limit, offset int32) ([]repository.Ranked, int32, error) {
+	return nil, 0, nil
 }
 
-func (r *fakeLeaderboardRepo) GetRank(ctx context.Context, userID string, scope, courseID string, grade int32) (int64, error) {
-	return 0, nil
+func (r *fakeLeaderboardRepo) RankOf(ctx context.Context, scope, courseID string, grade int32, userID string) (repository.Ranked, int32, error) {
+	return repository.Ranked{UserID: userID}, 0, nil
+}
+
+func (r *fakeLeaderboardRepo) Clear(ctx context.Context, scope, courseID string, grade int32) error {
+	return nil
 }
 
 type fakeAchievementRepo struct {
@@ -130,7 +240,7 @@ func (r *fakeAchievementRepo) SaveStreak(ctx context.Context, streak *model.User
 func newTestService() (*gamificationService, *fakeXpRepo, *fakeAchievementRepo) {
 	xpRepo := newFakeXpRepo()
 	achievementRepo := newFakeAchievementRepo()
-	svc := NewGamificationService(xpRepo, &fakeLeaderboardRepo{}, achievementRepo).(*gamificationService)
+	svc := NewGamificationService(xpRepo, newFakeLeaderboardRepo(), achievementRepo).(*gamificationService)
 	return svc, xpRepo, achievementRepo
 }
 
@@ -149,7 +259,7 @@ func (p *fakePublisher) PublishAchievementUnlocked(ctx context.Context, e events
 func TestCalculateAndAwardXp_BelowPassingThreshold(t *testing.T) {
 	svc, xpRepo, _ := newTestService()
 
-	resp, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 50, 100, 70)
+	resp, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", "", 50, 100, 70)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -179,7 +289,7 @@ func TestCalculateAndAwardXp_TieredScoring(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			svc, _, _ := newTestService()
-			resp, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", tt.score, tt.xpReward, tt.passingThreshold)
+			resp, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", "", tt.score, tt.xpReward, tt.passingThreshold)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
@@ -196,10 +306,10 @@ func TestCalculateAndAwardXp_TieredScoring(t *testing.T) {
 func TestCalculateAndAwardXp_AccumulatesAcrossAttempts(t *testing.T) {
 	svc, xpRepo, _ := newTestService()
 
-	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 100, 100, 70); err != nil {
+	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", "", 100, 100, 70); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	resp, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w2", 100, 50, 70)
+	resp, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w2", "", 100, 50, 70)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -217,7 +327,7 @@ func TestCalculateAndAwardXp_AccumulatesAcrossAttempts(t *testing.T) {
 func TestCalculateAndAwardXp_UnlocksPerfectScoreAchievementOnlyAt100(t *testing.T) {
 	svc, _, achievementRepo := newTestService()
 
-	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 85, 100, 70); err != nil {
+	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", "", 85, 100, 70); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 	if achievementRepo.unlocked["u1"]["perfect_score"] {
@@ -227,7 +337,7 @@ func TestCalculateAndAwardXp_UnlocksPerfectScoreAchievementOnlyAt100(t *testing.
 		t.Fatalf("first_wave should unlock on any passing attempt")
 	}
 
-	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w2", 100, 100, 70); err != nil {
+	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w2", "", 100, 100, 70); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 	if !achievementRepo.unlocked["u1"]["perfect_score"] {
@@ -242,7 +352,7 @@ func TestCalculateAndAwardXp_UnlocksXpMilestoneAchievements(t *testing.T) {
 	// Re-passing the same wave awards no XP, so each wave must be distinct.
 	for i := 0; i < 5; i++ {
 		waveID := fmt.Sprintf("w%d", i)
-		if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", waveID, 100, 100, 70); err != nil {
+		if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", waveID, "", 100, 100, 70); err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 	}
@@ -257,7 +367,7 @@ func TestCalculateAndAwardXp_UnlocksXpMilestoneAchievements(t *testing.T) {
 func TestCalculateAndAwardXp_RepassingWaveGrantsNoAdditionalXp(t *testing.T) {
 	svc, xpRepo, _ := newTestService()
 
-	first, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 100, 100, 70)
+	first, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", "", 100, 100, 70)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -265,7 +375,7 @@ func TestCalculateAndAwardXp_RepassingWaveGrantsNoAdditionalXp(t *testing.T) {
 		t.Fatalf("expected 100 xp on first completion, got %+v", first)
 	}
 
-	second, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 100, 100, 70)
+	second, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", "", 100, 100, 70)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -283,10 +393,10 @@ func TestCalculateAndAwardXp_RepassingWaveGrantsNoAdditionalXp(t *testing.T) {
 func TestCalculateAndAwardXp_RequiresUserAndWaveID(t *testing.T) {
 	svc, _, _ := newTestService()
 
-	if _, err := svc.CalculateAndAwardXp(context.Background(), "", "w1", 100, 100, 70); err == nil {
+	if _, err := svc.CalculateAndAwardXp(context.Background(), "", "w1", "", 100, 100, 70); err == nil {
 		t.Fatalf("expected error for missing user id")
 	}
-	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "", 100, 100, 70); err == nil {
+	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "", "", 100, 100, 70); err == nil {
 		t.Fatalf("expected error for missing wave id")
 	}
 }
@@ -294,7 +404,7 @@ func TestCalculateAndAwardXp_RequiresUserAndWaveID(t *testing.T) {
 func TestAwardXp_ManualGrant(t *testing.T) {
 	svc, xpRepo, _ := newTestService()
 
-	resp, err := svc.AwardXp(context.Background(), "u1", 30, "manual_grant", "")
+	resp, err := svc.AwardXp(context.Background(), "u1", 30, "manual_grant", "", "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -337,22 +447,22 @@ func TestUnlockAchievement_AwardsBonusXpForLessonMilestones(t *testing.T) {
 	}
 }
 
-func TestGetUserStreak_FirstLoginStartsStreakAtOne(t *testing.T) {
+func TestTouchStreak_FirstActivityStartsStreakAtOne(t *testing.T) {
 	svc, xpRepo, _ := newTestService()
 
-	resp, err := svc.GetUserStreak(context.Background(), "u1")
+	resp, err := svc.TouchStreak(context.Background(), "u1")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 	if resp.CurrentStreak != 1 || resp.LongestStreak != 1 {
-		t.Fatalf("expected streak of 1 on first login, got %+v", resp)
+		t.Fatalf("expected streak of 1 on first activity, got %+v", resp)
 	}
 	if xpRepo.totalXp["u1"] != 5 {
-		t.Fatalf("expected 5 xp streak bonus on first login, got %d", xpRepo.totalXp["u1"])
+		t.Fatalf("expected 5 xp streak bonus on first activity, got %d", xpRepo.totalXp["u1"])
 	}
 }
 
-func TestGetUserStreak_ConsecutiveDayIncrementsStreak(t *testing.T) {
+func TestTouchStreak_ConsecutiveDayIncrementsStreak(t *testing.T) {
 	svc, _, achievementRepo := newTestService()
 
 	achievementRepo.streaks["u1"] = &model.UserStreak{
@@ -362,7 +472,7 @@ func TestGetUserStreak_ConsecutiveDayIncrementsStreak(t *testing.T) {
 		LastLoginDate: time.Now().UTC().AddDate(0, 0, -1),
 	}
 
-	resp, err := svc.GetUserStreak(context.Background(), "u1")
+	resp, err := svc.TouchStreak(context.Background(), "u1")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -371,7 +481,7 @@ func TestGetUserStreak_ConsecutiveDayIncrementsStreak(t *testing.T) {
 	}
 }
 
-func TestGetUserStreak_GapResetsStreak(t *testing.T) {
+func TestTouchStreak_GapResetsStreakAndKeepsLongest(t *testing.T) {
 	svc, _, achievementRepo := newTestService()
 
 	achievementRepo.streaks["u1"] = &model.UserStreak{
@@ -381,7 +491,7 @@ func TestGetUserStreak_GapResetsStreak(t *testing.T) {
 		LastLoginDate: time.Now().UTC().AddDate(0, 0, -3),
 	}
 
-	resp, err := svc.GetUserStreak(context.Background(), "u1")
+	resp, err := svc.TouchStreak(context.Background(), "u1")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -393,11 +503,90 @@ func TestGetUserStreak_GapResetsStreak(t *testing.T) {
 	}
 }
 
+func TestTouchStreak_SameDayIsIdempotent(t *testing.T) {
+	svc, xpRepo, _ := newTestService()
+	ctx := context.Background()
+
+	if _, err := svc.TouchStreak(ctx, "u1"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	afterFirst := xpRepo.totalXp["u1"]
+
+	resp, err := svc.TouchStreak(ctx, "u1")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if resp.CurrentStreak != 1 {
+		t.Fatalf("a second activity the same day must not advance the streak, got %d", resp.CurrentStreak)
+	}
+	if xpRepo.totalXp["u1"] != afterFirst {
+		t.Fatalf("a second activity the same day must not pay a second bonus: %d then %d", afterFirst, xpRepo.totalXp["u1"])
+	}
+}
+
+// GetUserStreak is a pure read. `me` calls it on every page load, so a streak
+// that advances here would measure browsing rather than learning.
+func TestGetUserStreak_DoesNotMutate(t *testing.T) {
+	svc, xpRepo, achievementRepo := newTestService()
+	ctx := context.Background()
+
+	achievementRepo.streaks["u1"] = &model.UserStreak{
+		UserID:        "u1",
+		CurrentStreak: 3,
+		LongestStreak: 7,
+		LastLoginDate: time.Now().UTC().AddDate(0, 0, -1),
+	}
+
+	for i := 0; i < 3; i++ {
+		resp, err := svc.GetUserStreak(ctx, "u1")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if resp.CurrentStreak != 3 {
+			t.Fatalf("read %d advanced the streak to %d", i, resp.CurrentStreak)
+		}
+		if resp.LongestStreak != 7 {
+			t.Fatalf("read %d changed the longest streak to %d", i, resp.LongestStreak)
+		}
+	}
+
+	if xpRepo.totalXp["u1"] != 0 {
+		t.Fatalf("reading a streak must never award xp, got %d", xpRepo.totalXp["u1"])
+	}
+	if achievementRepo.streaks["u1"].CurrentStreak != 3 {
+		t.Fatalf("reading a streak must not write it back")
+	}
+}
+
+// A streak whose last active day has already passed reads as broken, rather
+// than showing a stale count until the next write.
+func TestGetUserStreak_LapsedStreakReadsAsZero(t *testing.T) {
+	svc, _, achievementRepo := newTestService()
+
+	achievementRepo.streaks["u1"] = &model.UserStreak{
+		UserID:        "u1",
+		CurrentStreak: 9,
+		LongestStreak: 9,
+		LastLoginDate: time.Now().UTC().AddDate(0, 0, -4),
+	}
+
+	resp, err := svc.GetUserStreak(context.Background(), "u1")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if resp.CurrentStreak != 0 {
+		t.Fatalf("expected a lapsed streak to read as 0, got %d", resp.CurrentStreak)
+	}
+	if resp.LongestStreak != 9 {
+		t.Fatalf("longest streak should survive a lapse, got %d", resp.LongestStreak)
+	}
+}
+
 func TestCalculateAndAwardXp_SurfacesAddXpError(t *testing.T) {
 	svc, xpRepo, _ := newTestService()
 	xpRepo.addXpErr = errors.New("db unavailable")
 
-	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 100, 100, 70); err == nil {
+	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", "", 100, 100, 70); err == nil {
 		t.Fatal("expected the add-xp error to be surfaced")
 	}
 	if xpRepo.totalXp["u1"] != 0 {
@@ -409,7 +598,7 @@ func TestCalculateAndAwardXp_SurfacesAwardCheckError(t *testing.T) {
 	svc, xpRepo, _ := newTestService()
 	xpRepo.hasAwardedErr = errors.New("db unavailable")
 
-	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 100, 100, 70); err == nil {
+	if _, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", "", 100, 100, 70); err == nil {
 		t.Fatal("expected the award-once check error to be surfaced")
 	}
 }
@@ -418,7 +607,7 @@ func TestCalculateAndAwardXp_AchievementErrorsDoNotFailAward(t *testing.T) {
 	svc, xpRepo, achievementRepo := newTestService()
 	achievementRepo.unlockErr = errors.New("achievement db unavailable")
 
-	resp, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 100, 100, 70)
+	resp, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", "", 100, 100, 70)
 	if err != nil {
 		t.Fatalf("achievement failures must not fail the xp award: %v", err)
 	}
@@ -433,9 +622,9 @@ func TestCalculateAndAwardXp_AchievementErrorsDoNotFailAward(t *testing.T) {
 func TestCalculateAndAwardXp_PublisherErrorDoesNotFailAward(t *testing.T) {
 	xpRepo := newFakeXpRepo()
 	pub := &fakePublisher{xpErr: errors.New("redis unavailable")}
-	svc := NewGamificationService(xpRepo, &fakeLeaderboardRepo{}, newFakeAchievementRepo(), WithEventPublisher(pub)).(*gamificationService)
+	svc := NewGamificationService(xpRepo, newFakeLeaderboardRepo(), newFakeAchievementRepo(), WithEventPublisher(pub)).(*gamificationService)
 
-	resp, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", 100, 100, 70)
+	resp, err := svc.CalculateAndAwardXp(context.Background(), "u1", "w1", "", 100, 100, 70)
 	if err != nil {
 		t.Fatalf("publish failures must not fail the xp award: %v", err)
 	}

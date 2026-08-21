@@ -3,12 +3,21 @@ package service
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/studed/gamification-service/internal/events"
 	"github.com/studed/gamification-service/internal/model"
 	"github.com/studed/gamification-service/internal/repository"
 	gampb "github.com/studed/shared/proto/gen/go/gamification"
+)
+
+const (
+	// maxLeaderboardPage caps a single board read. Without it the query returns
+	// every ranked user, which is fine at demo scale and is not at 10,000.
+	maxLeaderboardPage = 100
+	streakBonusCap     = 50
 )
 
 // EventPublisher pushes real-time gamification events to Redis pub/sub for
@@ -19,16 +28,18 @@ type EventPublisher interface {
 }
 
 type GamificationService interface {
-	CalculateAndAwardXp(ctx context.Context, userID, waveID string, score, xpReward, passingThreshold int32) (*gampb.XpCalculationResponse, error)
-	AwardXp(ctx context.Context, userID string, amount int32, reason, sourceID string) (*gampb.AwardXpResponse, error)
+	CalculateAndAwardXp(ctx context.Context, userID, waveID, courseID string, score, xpReward, passingThreshold int32) (*gampb.XpCalculationResponse, error)
+	AwardXp(ctx context.Context, userID string, amount int32, reason, sourceID, courseID string) (*gampb.AwardXpResponse, error)
 	GetUserXp(ctx context.Context, userID string) (*gampb.GetUserXpResponse, error)
-	GetLeaderboard(ctx context.Context, scope, courseID string, grade int32, limit int32) (*gampb.GetLeaderboardResponse, error)
-	UpdateLeaderboard(ctx context.Context, userID, fullName string, totalXp int32, scope, courseID string, grade int32) (*gampb.UpdateLeaderboardResponse, error)
+	GetLeaderboard(ctx context.Context, scope, courseID string, grade, limit, offset int32) (*gampb.GetLeaderboardResponse, error)
+	UpdateLeaderboard(ctx context.Context, userID, fullName, courseID string, grade int32) (*gampb.UpdateLeaderboardResponse, error)
 	GetRank(ctx context.Context, userID string, scope, courseID string, grade int32) (*gampb.GetRankResponse, error)
 
 	GetAchievements(ctx context.Context, userID string) (*gampb.GetAchievementsResponse, error)
 	UnlockAchievement(ctx context.Context, userID, achievementID string) (*gampb.UnlockAchievementResponse, error)
 	GetUserStreak(ctx context.Context, userID string) (*gampb.GetUserStreakResponse, error)
+	TouchStreak(ctx context.Context, userID string) (*gampb.GetUserStreakResponse, error)
+	RebuildLeaderboards(ctx context.Context) error
 }
 
 type gamificationService struct {
@@ -36,6 +47,8 @@ type gamificationService struct {
 	leaderboardRepo repository.LeaderboardRepository
 	achievementRepo repository.AchievementRepository
 	publisher       EventPublisher
+	// now is injectable so week rollover and streak day maths are testable.
+	now func() time.Time
 }
 
 type Option func(*gamificationService)
@@ -44,6 +57,13 @@ type Option func(*gamificationService)
 func WithEventPublisher(p EventPublisher) Option {
 	return func(s *gamificationService) {
 		s.publisher = p
+	}
+}
+
+// WithClock pins the service clock, for tests that cross a week or day boundary.
+func WithClock(now func() time.Time) Option {
+	return func(s *gamificationService) {
+		s.now = now
 	}
 }
 
@@ -57,6 +77,7 @@ func NewGamificationService(
 		xpRepo:          xpRepo,
 		leaderboardRepo: leaderboardRepo,
 		achievementRepo: achievementRepo,
+		now:             time.Now,
 	}
 	for _, opt := range opts {
 		opt(s)
@@ -76,11 +97,11 @@ func (s *gamificationService) publishXpAwarded(ctx context.Context, userID, sour
 		TotalXp:  totalXp,
 		Reason:   reason,
 	}); err != nil {
-		fmt.Printf("failed to publish xp event: %v\n", err)
+		slog.Warn("failed to publish xp event", slog.Any("error", err))
 	}
 }
 
-func (s *gamificationService) CalculateAndAwardXp(ctx context.Context, userID, waveID string, score, xpReward, passingThreshold int32) (*gampb.XpCalculationResponse, error) {
+func (s *gamificationService) CalculateAndAwardXp(ctx context.Context, userID, waveID, courseID string, score, xpReward, passingThreshold int32) (*gampb.XpCalculationResponse, error) {
 	if userID == "" || waveID == "" {
 		return nil, fmt.Errorf("user id and wave id are required")
 	}
@@ -110,7 +131,7 @@ func (s *gamificationService) CalculateAndAwardXp(ctx context.Context, userID, w
 		}, nil
 	}
 
-	totalXp, err := s.xpRepo.AddXp(ctx, userID, xpEarned, "wave_completed", waveID)
+	totalXp, err := s.xpRepo.AddXp(ctx, userID, xpEarned, "wave_completed", waveID, courseID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to award xp: %w", err)
 	}
@@ -120,36 +141,52 @@ func (s *gamificationService) CalculateAndAwardXp(ctx context.Context, userID, w
 	// Trigger achievement evaluation
 	if xpEarned > 0 {
 		if _, err := s.UnlockAchievement(ctx, userID, "first_wave"); err != nil {
-			fmt.Printf("failed to unlock first_wave achievement: %v\n", err)
+			slog.Warn("failed to unlock achievement", slog.String("achievement", "first_wave"), slog.Any("error", err))
 		}
-
 		if score == 100 {
 			if _, err := s.UnlockAchievement(ctx, userID, "perfect_score"); err != nil {
-				fmt.Printf("failed to unlock perfect_score achievement: %v\n", err)
+				slog.Warn("failed to unlock achievement", slog.String("achievement", "perfect_score"), slog.Any("error", err))
 			}
 		}
+		totalXp = s.unlockXpMilestones(ctx, userID, totalXp)
+	}
 
-		if totalXp >= 500 {
-			if _, err := s.UnlockAchievement(ctx, userID, "rising_star"); err != nil {
-				fmt.Printf("failed to unlock rising_star achievement: %v\n", err)
-			}
-		}
-		if totalXp >= 2000 {
-			if _, err := s.UnlockAchievement(ctx, userID, "scholar"); err != nil {
-				fmt.Printf("failed to unlock scholar achievement: %v\n", err)
-			}
-		}
-		if totalXp >= 5000 {
-			if _, err := s.UnlockAchievement(ctx, userID, "master"); err != nil {
-				fmt.Printf("failed to unlock master achievement: %v\n", err)
-			}
-		}
+	// Refresh every board this award touches. A ranking failure is never
+	// allowed to undo a durable XP award, so it is logged, not returned.
+	if err := s.syncScopes(ctx, userID, courseID); err != nil {
+		slog.Error("leaderboard sync failed after award",
+			slog.String("user_id", userID), slog.Any("error", err))
 	}
 
 	return &gampb.XpCalculationResponse{
 		XpEarned: xpEarned,
 		TotalXp:  totalXp,
 	}, nil
+}
+
+// unlockXpMilestones awards the cumulative-XP achievements and returns the
+// total including any bonus those unlocks paid out.
+func (s *gamificationService) unlockXpMilestones(ctx context.Context, userID string, totalXp int32) int32 {
+	milestones := []struct {
+		at int32
+		id string
+	}{
+		{500, "rising_star"},
+		{2000, "scholar"},
+		{5000, "master"},
+	}
+	for _, m := range milestones {
+		if totalXp < m.at {
+			continue
+		}
+		if _, err := s.UnlockAchievement(ctx, userID, m.id); err != nil {
+			slog.Warn("failed to unlock achievement", slog.String("achievement", m.id), slog.Any("error", err))
+		}
+	}
+	if refreshed, err := s.xpRepo.GetUserXp(ctx, userID); err == nil {
+		return refreshed
+	}
+	return totalXp
 }
 
 func calculateXp(score, xpReward, passingThreshold int32) int32 {
@@ -168,33 +205,27 @@ func calculateXp(score, xpReward, passingThreshold int32) int32 {
 	return 0
 }
 
-func (s *gamificationService) AwardXp(ctx context.Context, userID string, amount int32, reason, sourceID string) (*gampb.AwardXpResponse, error) {
+func (s *gamificationService) AwardXp(ctx context.Context, userID string, amount int32, reason, sourceID, courseID string) (*gampb.AwardXpResponse, error) {
 	if userID == "" {
 		return nil, fmt.Errorf("user id is required")
 	}
 
-	totalXp, err := s.xpRepo.AddXp(ctx, userID, amount, reason, sourceID)
+	totalXp, err := s.xpRepo.AddXp(ctx, userID, amount, reason, sourceID, courseID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to award xp: %w", err)
 	}
 
 	s.publishXpAwarded(ctx, userID, sourceID, amount, totalXp, reason)
 
-	// Trigger achievement checks based on total XP after manually awarding XP as well
-	if totalXp >= 500 {
-		if _, err := s.UnlockAchievement(ctx, userID, "rising_star"); err != nil {
-			fmt.Printf("failed to unlock rising_star achievement: %v\n", err)
-		}
+	// Achievement bonuses call back into AwardXp. Re-entering the milestone
+	// check from there would recurse, so only direct awards evaluate them.
+	if !strings.HasPrefix(reason, "achievement_") {
+		totalXp = s.unlockXpMilestones(ctx, userID, totalXp)
 	}
-	if totalXp >= 2000 {
-		if _, err := s.UnlockAchievement(ctx, userID, "scholar"); err != nil {
-			fmt.Printf("failed to unlock scholar achievement: %v\n", err)
-		}
-	}
-	if totalXp >= 5000 {
-		if _, err := s.UnlockAchievement(ctx, userID, "master"); err != nil {
-			fmt.Printf("failed to unlock master achievement: %v\n", err)
-		}
+
+	if err := s.syncScopes(ctx, userID, courseID); err != nil {
+		slog.Error("leaderboard sync failed after award",
+			slog.String("user_id", userID), slog.Any("error", err))
 	}
 
 	return &gampb.AwardXpResponse{
@@ -217,34 +248,174 @@ func (s *gamificationService) GetUserXp(ctx context.Context, userID string) (*ga
 	}, nil
 }
 
-func (s *gamificationService) GetLeaderboard(ctx context.Context, scope, courseID string, grade int32, limit int32) (*gampb.GetLeaderboardResponse, error) {
-	entries, err := s.leaderboardRepo.GetLeaderboard(ctx, scope, courseID, grade, limit)
+// scopeKeyFor lists every board a single user appears on. Course boards are
+// only touched when the award is attributable to a course.
+func (s *gamificationService) syncScopes(ctx context.Context, userID, courseID string) error {
+	now := s.now()
+
+	identity, err := s.xpRepo.GetIdentities(ctx, []string{userID})
+	if err != nil {
+		return fmt.Errorf("failed to read identity: %w", err)
+	}
+	who := identity[userID]
+
+	if err := s.leaderboardRepo.Set(ctx, repository.ScopeGlobal, "", 0, userID, who.TotalXp, now); err != nil {
+		return fmt.Errorf("global: %w", err)
+	}
+	if who.Grade != 0 {
+		if err := s.leaderboardRepo.Set(ctx, repository.ScopeGrade, "", who.Grade, userID, who.TotalXp, now); err != nil {
+			return fmt.Errorf("grade: %w", err)
+		}
+	}
+
+	weekly, err := s.xpRepo.SumSince(ctx, userID, startOfWeek(now))
+	if err != nil {
+		return fmt.Errorf("weekly sum: %w", err)
+	}
+	if err := s.leaderboardRepo.Set(ctx, repository.ScopeWeekly, "", 0, userID, weekly, now); err != nil {
+		return fmt.Errorf("weekly: %w", err)
+	}
+
+	if courseID != "" {
+		courseXp, err := s.xpRepo.CourseXp(ctx, userID, courseID)
+		if err != nil {
+			return fmt.Errorf("course sum: %w", err)
+		}
+		if err := s.leaderboardRepo.Set(ctx, repository.ScopeCourse, courseID, 0, userID, courseXp, now); err != nil {
+			return fmt.Errorf("course: %w", err)
+		}
+	}
+
+	return nil
+}
+
+// startOfWeek is Monday 00:00 UTC, matching the weekly board's bucket.
+func startOfWeek(at time.Time) time.Time {
+	utc := at.UTC()
+	offset := (int(utc.Weekday()) + 6) % 7
+	day := time.Date(utc.Year(), utc.Month(), utc.Day(), 0, 0, 0, 0, time.UTC)
+	return day.AddDate(0, 0, -offset)
+}
+
+func (s *gamificationService) GetLeaderboard(ctx context.Context, scope, courseID string, grade, limit, offset int32) (*gampb.GetLeaderboardResponse, error) {
+	if limit <= 0 || limit > maxLeaderboardPage {
+		limit = maxLeaderboardPage
+	}
+
+	ranked, total, err := s.leaderboardRepo.Page(ctx, scope, courseID, grade, limit, offset)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get leaderboard: %w", err)
 	}
 
-	return &gampb.GetLeaderboardResponse{
-		Entries: entries,
-	}, nil
+	// One lookup for the whole page, not one per row.
+	ids := make([]string, 0, len(ranked))
+	for _, r := range ranked {
+		ids = append(ids, r.UserID)
+	}
+	identities, err := s.xpRepo.GetIdentities(ctx, ids)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve leaderboard names: %w", err)
+	}
+
+	entries := make([]*gampb.LeaderboardEntry, len(ranked))
+	for i, r := range ranked {
+		entries[i] = &gampb.LeaderboardEntry{
+			Rank:     r.Rank,
+			UserId:   r.UserID,
+			FullName: identities[r.UserID].DisplayName,
+			TotalXp:  r.TotalXp,
+		}
+	}
+
+	return &gampb.GetLeaderboardResponse{Entries: entries, TotalRanked: total}, nil
 }
 
-func (s *gamificationService) UpdateLeaderboard(ctx context.Context, userID, fullName string, totalXp int32, scope, courseID string, grade int32) (*gampb.UpdateLeaderboardResponse, error) {
-	if err := s.leaderboardRepo.UpdateLeaderboard(ctx, userID, fullName, totalXp, scope, courseID, grade); err != nil {
+// UpdateLeaderboard records who a user is and refreshes every board they are
+// on. It takes no XP total: totals come from this service's own ledger, so a
+// caller can never publish a figure that disagrees with it.
+func (s *gamificationService) UpdateLeaderboard(ctx context.Context, userID, fullName, courseID string, grade int32) (*gampb.UpdateLeaderboardResponse, error) {
+	if userID == "" {
+		return nil, fmt.Errorf("user id is required")
+	}
+	if err := s.xpRepo.SaveIdentity(ctx, userID, fullName, grade); err != nil {
+		return nil, fmt.Errorf("failed to save leaderboard identity: %w", err)
+	}
+	if err := s.syncScopes(ctx, userID, courseID); err != nil {
 		return nil, fmt.Errorf("failed to update leaderboard: %w", err)
 	}
 	return &gampb.UpdateLeaderboardResponse{}, nil
 }
 
 func (s *gamificationService) GetRank(ctx context.Context, userID string, scope, courseID string, grade int32) (*gampb.GetRankResponse, error) {
-	rank, err := s.leaderboardRepo.GetRank(ctx, userID, scope, courseID, grade)
-	if err != nil {
-		return nil, err
+	if userID == "" {
+		return nil, fmt.Errorf("user id is required")
 	}
+	ranked, total, err := s.leaderboardRepo.RankOf(ctx, scope, courseID, grade, userID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get rank: %w", err)
+	}
+	// Rank 0 means "not ranked in this scope yet" — an ordinary answer.
 	return &gampb.GetRankResponse{
-		Rank: int32(rank),
+		Rank:        ranked.Rank,
+		TotalXp:     ranked.TotalXp,
+		TotalRanked: total,
 	}, nil
 }
 
+// RebuildLeaderboards reconstructs every scope from Postgres. Redis is a
+// derived index: a flush, a failover, or an eviction must cost nothing but the
+// time this takes. Called on boot.
+func (s *gamificationService) RebuildLeaderboards(ctx context.Context) error {
+	now := s.now()
+
+	users, err := s.xpRepo.GetAllUserXp(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to read user xp: %w", err)
+	}
+	grades := make(map[int32]struct{})
+	for _, u := range users {
+		if err := s.leaderboardRepo.Set(ctx, repository.ScopeGlobal, "", 0, u.UserID, u.TotalXp, now); err != nil {
+			return fmt.Errorf("global rebuild: %w", err)
+		}
+		if u.Grade != 0 {
+			if err := s.leaderboardRepo.Set(ctx, repository.ScopeGrade, "", u.Grade, u.UserID, u.TotalXp, now); err != nil {
+				return fmt.Errorf("grade rebuild: %w", err)
+			}
+			grades[u.Grade] = struct{}{}
+		}
+	}
+
+	weekly, err := s.xpRepo.AllSumsSince(ctx, startOfWeek(now))
+	if err != nil {
+		return fmt.Errorf("failed to read weekly sums: %w", err)
+	}
+	for _, w := range weekly {
+		if err := s.leaderboardRepo.Set(ctx, repository.ScopeWeekly, "", 0, w.UserID, w.TotalXp, now); err != nil {
+			return fmt.Errorf("weekly rebuild: %w", err)
+		}
+	}
+
+	courses, err := s.xpRepo.AllCourseXp(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to read course xp: %w", err)
+	}
+	for _, c := range courses {
+		if err := s.leaderboardRepo.Set(ctx, repository.ScopeCourse, c.CourseID, 0, c.UserID, c.TotalXp, now); err != nil {
+			return fmt.Errorf("course rebuild: %w", err)
+		}
+	}
+
+	slog.Info("leaderboard rebuild complete",
+		slog.Int("users", len(users)),
+		slog.Int("grades", len(grades)),
+		slog.Int("weekly_entries", len(weekly)),
+		slog.Int("course_entries", len(courses)))
+	return nil
+}
+
+// GetAchievements returns the whole catalog, unlocked ones flagged. The UI
+// must be able to show what is still locked without knowing the unlock rules,
+// which is what let a parallel copy of those rules grow in the frontend.
 func (s *gamificationService) GetAchievements(ctx context.Context, userID string) (*gampb.GetAchievementsResponse, error) {
 	if userID == "" {
 		return nil, fmt.Errorf("user id is required")
@@ -260,22 +431,24 @@ func (s *gamificationService) GetAchievements(ctx context.Context, userID string
 		return nil, fmt.Errorf("failed to fetch unlocked achievements: %w", err)
 	}
 
-	unlockedMap := make(map[string]*model.UserAchievement)
+	unlockedMap := make(map[string]*model.UserAchievement, len(unlocked))
 	for _, u := range unlocked {
 		unlockedMap[u.AchievementID] = u
 	}
 
-	var pbAchievements []*gampb.Achievement
+	pbAchievements := make([]*gampb.Achievement, 0, len(metadata))
 	for _, m := range metadata {
-		if u, exists := unlockedMap[m.ID]; exists {
-			pbAchievements = append(pbAchievements, &gampb.Achievement{
-				Id:             m.ID,
-				Name:           m.Name,
-				Description:    m.Description,
-				IconUrl:        m.IconUrl,
-				UnlockedAtUnix: u.UnlockedAt.Unix(),
-			})
+		entry := &gampb.Achievement{
+			Id:          m.ID,
+			Name:        m.Name,
+			Description: m.Description,
+			IconUrl:     m.IconUrl,
 		}
+		if u, exists := unlockedMap[m.ID]; exists {
+			entry.Unlocked = true
+			entry.UnlockedAtUnix = u.UnlockedAt.Unix()
+		}
+		pbAchievements = append(pbAchievements, entry)
 	}
 
 	return &gampb.GetAchievementsResponse{
@@ -312,7 +485,7 @@ func (s *gamificationService) UnlockAchievement(ctx context.Context, userID, ach
 				}
 			}
 			if err := s.publisher.PublishAchievementUnlocked(ctx, event); err != nil {
-				fmt.Printf("failed to publish achievement event: %v\n", err)
+				slog.Warn("failed to publish achievement event", slog.Any("error", err))
 			}
 		}
 
@@ -327,8 +500,9 @@ func (s *gamificationService) UnlockAchievement(ctx context.Context, userID, ach
 		}
 
 		if bonusXp > 0 {
-			if _, err := s.AwardXp(ctx, userID, bonusXp, fmt.Sprintf("achievement_%s", achievementID), achievementID); err != nil {
-				fmt.Printf("failed to award achievement bonus xp: %v\n", err)
+			if _, err := s.AwardXp(ctx, userID, bonusXp, fmt.Sprintf("achievement_%s", achievementID), achievementID, ""); err != nil {
+				slog.Warn("failed to award achievement bonus xp",
+					slog.String("achievement", achievementID), slog.Any("error", err))
 			}
 		}
 	}
@@ -338,7 +512,37 @@ func (s *gamificationService) UnlockAchievement(ctx context.Context, userID, ach
 	}, nil
 }
 
+// GetUserStreak is a pure read. It must never advance the streak: `me` calls
+// it on every page load, and a streak that grows by browsing measures the
+// wrong thing entirely.
 func (s *gamificationService) GetUserStreak(ctx context.Context, userID string) (*gampb.GetUserStreakResponse, error) {
+	if userID == "" {
+		return nil, fmt.Errorf("user id is required")
+	}
+
+	streak, err := s.achievementRepo.GetOrCreateStreak(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get streak: %w", err)
+	}
+
+	current := streak.CurrentStreak
+	// A streak whose last active day is older than yesterday has already
+	// lapsed; report it as broken rather than waiting for the next write.
+	if !streak.LastLoginDate.IsZero() && daysBetween(streak.LastLoginDate, s.now()) > 1 {
+		current = 0
+	}
+
+	return &gampb.GetUserStreakResponse{
+		CurrentStreak:     current,
+		LongestStreak:     streak.LongestStreak,
+		LastLoginDateUnix: lastActiveUnix(streak.LastLoginDate),
+	}, nil
+}
+
+// TouchStreak records learning activity for today and advances the streak.
+// Called when a student actually does something — a recorded wave attempt —
+// not when they open a page.
+func (s *gamificationService) TouchStreak(ctx context.Context, userID string) (*gampb.GetUserStreakResponse, error) {
 	if userID == "" {
 		return nil, fmt.Errorf("user id is required")
 	}
@@ -348,50 +552,39 @@ func (s *gamificationService) GetUserStreak(ctx context.Context, userID string) 
 		return nil, fmt.Errorf("failed to get or create streak: %w", err)
 	}
 
-	now := time.Now().UTC()
-	todayStr := now.Format("2006-01-02")
-	yesterdayStr := now.AddDate(0, 0, -1).Format("2006-01-02")
+	now := s.now().UTC()
 
-	if streak.LastLoginDate.IsZero() {
-		streak.CurrentStreak = 1
-		streak.LongestStreak = 1
-		streak.LastLoginDate = now
-		if err := s.achievementRepo.SaveStreak(ctx, streak); err != nil {
-			return nil, fmt.Errorf("failed to save streak: %w", err)
-		}
-		if _, err := s.AwardXp(ctx, userID, 5, "streak_bonus", ""); err != nil {
-			fmt.Printf("failed to award streak xp: %v\n", err)
-		}
+	// Already counted today: nothing to advance, nothing to award.
+	if !streak.LastLoginDate.IsZero() && daysBetween(streak.LastLoginDate, now) == 0 {
+		return &gampb.GetUserStreakResponse{
+			CurrentStreak:     streak.CurrentStreak,
+			LongestStreak:     streak.LongestStreak,
+			LastLoginDateUnix: lastActiveUnix(streak.LastLoginDate),
+		}, nil
+	}
+
+	if !streak.LastLoginDate.IsZero() && daysBetween(streak.LastLoginDate, now) == 1 {
+		streak.CurrentStreak++
 	} else {
-		lastLoginStr := streak.LastLoginDate.Format("2006-01-02")
-		if lastLoginStr == todayStr {
-			// Already logged in today, do nothing.
-		} else if lastLoginStr == yesterdayStr {
-			streak.CurrentStreak += 1
-			if streak.CurrentStreak > streak.LongestStreak {
-				streak.LongestStreak = streak.CurrentStreak
-			}
-			streak.LastLoginDate = now
-			if err := s.achievementRepo.SaveStreak(ctx, streak); err != nil {
-				return nil, fmt.Errorf("failed to save streak: %w", err)
-			}
-			xpAmount := streak.CurrentStreak * 5
-			if xpAmount > 50 {
-				xpAmount = 50
-			}
-			if _, err := s.AwardXp(ctx, userID, xpAmount, "streak_bonus", ""); err != nil {
-				fmt.Printf("failed to award streak xp: %v\n", err)
-			}
-		} else {
-			streak.CurrentStreak = 1
-			streak.LastLoginDate = now
-			if err := s.achievementRepo.SaveStreak(ctx, streak); err != nil {
-				return nil, fmt.Errorf("failed to save streak: %w", err)
-			}
-			if _, err := s.AwardXp(ctx, userID, 5, "streak_bonus", ""); err != nil {
-				fmt.Printf("failed to award streak xp: %v\n", err)
-			}
-		}
+		streak.CurrentStreak = 1
+	}
+	if streak.CurrentStreak > streak.LongestStreak {
+		streak.LongestStreak = streak.CurrentStreak
+	}
+	streak.LastLoginDate = now
+
+	if err := s.achievementRepo.SaveStreak(ctx, streak); err != nil {
+		return nil, fmt.Errorf("failed to save streak: %w", err)
+	}
+
+	// streak_bonus = min(streak * 5, 50), per 05-Gamification/XP-System.md.
+	bonus := streak.CurrentStreak * 5
+	if bonus > streakBonusCap {
+		bonus = streakBonusCap
+	}
+	// Award-once per day: the source is the date, so a replay cannot pay twice.
+	if _, err := s.AwardXp(ctx, userID, bonus, "streak_bonus", now.Format("2006-01-02"), ""); err != nil {
+		slog.Warn("failed to award streak xp", slog.String("user_id", userID), slog.Any("error", err))
 	}
 
 	return &gampb.GetUserStreakResponse{
@@ -399,4 +592,18 @@ func (s *gamificationService) GetUserStreak(ctx context.Context, userID string) 
 		LongestStreak:     streak.LongestStreak,
 		LastLoginDateUnix: streak.LastLoginDate.Unix(),
 	}, nil
+}
+
+// daysBetween counts whole UTC calendar days from `from` to `to`.
+func daysBetween(from, to time.Time) int {
+	a := from.UTC().Truncate(24 * time.Hour)
+	b := to.UTC().Truncate(24 * time.Hour)
+	return int(b.Sub(a).Hours() / 24)
+}
+
+func lastActiveUnix(t time.Time) int64 {
+	if t.IsZero() {
+		return 0
+	}
+	return t.Unix()
 }
