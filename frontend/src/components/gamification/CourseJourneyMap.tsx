@@ -63,17 +63,25 @@ function TravelingMascot({
   pathRef,
   viewWidth,
   viewHeight,
+  targetFraction,
+  isCompletedAll,
 }: {
   pathRef: React.RefObject<SVGPathElement | null>;
   viewWidth: number;
   viewHeight: number;
+  targetFraction: number;
+  isCompletedAll?: boolean;
 }) {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const [isStationary, setIsStationary] = useState(false);
 
   useEffect(() => {
     let animId: number;
-    const duration = 10000;
+    const travelDuration = 3500;
+    const pauseDuration = 3500;
+    const totalCycle = travelDuration + pauseDuration;
     const startTime = performance.now();
+    const maxTarget = Math.max(0, Math.min(1, targetFraction));
 
     const loop = (now: number) => {
       const path = pathRef.current;
@@ -81,9 +89,20 @@ function TravelingMascot({
         try {
           const len = path.getTotalLength();
           if (len > 0) {
-            const elapsed = (now - startTime) % duration;
-            const progress = elapsed / duration;
-            const p = path.getPointAtLength(progress * len);
+            const elapsed = (now - startTime) % totalCycle;
+            let currentFraction: number;
+
+            if (elapsed < travelDuration) {
+              const t = elapsed / travelDuration;
+              const ease = 1 - Math.pow(1 - t, 3);
+              currentFraction = ease * maxTarget;
+              setIsStationary(false);
+            } else {
+              currentFraction = maxTarget;
+              setIsStationary(true);
+            }
+
+            const p = path.getPointAtLength(currentFraction * len);
             setPos({
               x: (p.x / viewWidth) * 100,
               y: (p.y / viewHeight) * 100,
@@ -98,16 +117,30 @@ function TravelingMascot({
 
     animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
-  }, [pathRef, viewWidth, viewHeight]);
+  }, [pathRef, viewWidth, viewHeight, targetFraction]);
 
   if (!pos) return null;
 
   return (
     <div
-      className="absolute pointer-events-none z-30 -translate-x-1/2 -translate-y-1/2"
+      className={cn(
+        "absolute pointer-events-none z-30 -translate-x-1/2 -translate-y-1/2 transition-transform duration-300",
+        isStationary && "animate-bounce"
+      )}
       style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
     >
-      <HelmetCompanion size="sm" mood="happy" className="h-10 w-10 drop-shadow-lg" />
+      <div className="relative flex flex-col items-center">
+        {isStationary && (
+          <div className="absolute -top-6 whitespace-nowrap rounded-full bg-primary px-2 py-0.5 text-[10px] font-extrabold text-primary-foreground shadow-md border border-primary-foreground/20 animate-fade-in">
+            {isCompletedAll ? "Course Mastered!" : "Next Lesson!"}
+          </div>
+        )}
+        <HelmetCompanion
+          size="sm"
+          mood={isStationary ? "happy" : "neutral"}
+          className="h-10 w-10 drop-shadow-lg"
+        />
+      </div>
     </div>
   );
 }
@@ -371,7 +404,13 @@ export function CourseJourneyMap({
             {/* Traveling Mascot & Node Buttons along Path */}
             <div className="absolute inset-0">
               {!reduce && (
-                <TravelingMascot pathRef={pathRef} viewWidth={VIEW_W} viewHeight={viewH} />
+                <TravelingMascot
+                  pathRef={pathRef}
+                  viewWidth={VIEW_W}
+                  viewHeight={viewH}
+                  targetFraction={completedFraction}
+                  isCompletedAll={completedCount === totalCount && totalCount > 0}
+                />
               )}
               {points.map((p, idx) => {
                 const wave = flattenedWaves[idx];

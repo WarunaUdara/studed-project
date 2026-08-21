@@ -10,8 +10,6 @@ import {
   Lock,
   Mail,
   RotateCcw,
-  ShieldCheck,
-  Sparkles,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useMutation } from "urql";
