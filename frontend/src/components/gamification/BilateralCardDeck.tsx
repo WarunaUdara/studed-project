@@ -42,9 +42,33 @@ const DEFAULT_DECK_CARDS: DeckCardData[] = [
         <circle cx="98" cy="74" r="10" fill="#fbbf24" />
         <circle cx="106" cy="80" r="5" fill="#ffffff" />
         {/* Easel Legs */}
-        <line x1="50" y1="100" x2="40" y2="135" stroke="#92400e" strokeWidth="5" strokeLinecap="round" />
-        <line x1="80" y1="100" x2="80" y2="135" stroke="#78350f" strokeWidth="5" strokeLinecap="round" />
-        <line x1="110" y1="100" x2="120" y2="135" stroke="#92400e" strokeWidth="5" strokeLinecap="round" />
+        <line
+          x1="50"
+          y1="100"
+          x2="40"
+          y2="135"
+          stroke="#92400e"
+          strokeWidth="5"
+          strokeLinecap="round"
+        />
+        <line
+          x1="80"
+          y1="100"
+          x2="80"
+          y2="135"
+          stroke="#78350f"
+          strokeWidth="5"
+          strokeLinecap="round"
+        />
+        <line
+          x1="110"
+          y1="100"
+          x2="120"
+          y2="135"
+          stroke="#92400e"
+          strokeWidth="5"
+          strokeLinecap="round"
+        />
         <rect x="30" y="98" width="100" height="6" rx="3" fill="#b45309" />
       </svg>
     ),
@@ -71,7 +95,16 @@ const DEFAULT_DECK_CARDS: DeckCardData[] = [
           fill="none"
         />
         {/* Laptop */}
-        <rect x="75" y="85" width="45" height="30" rx="3" fill="#1e293b" stroke="#64748b" strokeWidth="2" />
+        <rect
+          x="75"
+          y="85"
+          width="45"
+          height="30"
+          rx="3"
+          fill="#1e293b"
+          stroke="#64748b"
+          strokeWidth="2"
+        />
         <rect x="65" y="115" width="65" height="5" rx="2" fill="#334155" />
         {/* Snake Eyes & Tongue */}
         <circle cx="115" cy="85" r="2.5" fill="#ffffff" />
@@ -94,8 +127,24 @@ const DEFAULT_DECK_CARDS: DeckCardData[] = [
       <svg viewBox="0 0 160 160" className="size-full">
         {/* Golden Ratio / Coordinate Grid Target */}
         <rect x="30" y="30" width="100" height="100" rx="12" fill="#f59e0b" opacity="0.15" />
-        <line x1="30" y1="80" x2="130" y2="80" stroke="#f59e0b" strokeWidth="2" strokeDasharray="4 4" />
-        <line x1="80" y1="30" x2="80" y2="130" stroke="#f59e0b" strokeWidth="2" strokeDasharray="4 4" />
+        <line
+          x1="30"
+          y1="80"
+          x2="130"
+          y2="80"
+          stroke="#f59e0b"
+          strokeWidth="2"
+          strokeDasharray="4 4"
+        />
+        <line
+          x1="80"
+          y1="30"
+          x2="80"
+          y2="130"
+          stroke="#f59e0b"
+          strokeWidth="2"
+          strokeDasharray="4 4"
+        />
         <circle cx="80" cy="80" r="32" stroke="#f59e0b" strokeWidth="3" fill="none" />
         <circle cx="100" cy="60" r="6" fill="#f59e0b" />
         <circle cx="100" cy="60" r="2" fill="#ffffff" />
@@ -122,8 +171,24 @@ const DEFAULT_DECK_CARDS: DeckCardData[] = [
         <rect x="40" y="105" width="30" height="24" rx="4" fill="#334155" />
         <polygon points="50,112 62,117 50,122" fill="#ffffff" />
         <rect x="75" y="105" width="48" height="24" rx="4" fill="#e2e8f0" />
-        <line x1="83" y1="117" x2="95" y2="117" stroke="#64748b" strokeWidth="3" strokeLinecap="round" />
-        <line x1="89" y1="111" x2="89" y2="123" stroke="#64748b" strokeWidth="3" strokeLinecap="round" />
+        <line
+          x1="83"
+          y1="117"
+          x2="95"
+          y2="117"
+          stroke="#64748b"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+        <line
+          x1="89"
+          y1="111"
+          x2="89"
+          y2="123"
+          stroke="#64748b"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
       </svg>
     ),
     steps: [{ title: "Writing Programs", isCompleted: true, xp: 30 }],
@@ -145,7 +210,13 @@ const DEFAULT_DECK_CARDS: DeckCardData[] = [
         <rect x="52" y="47" width="56" height="52" rx="6" fill="#ffffff" />
         {/* Apple building */}
         <circle cx="80" cy="74" r="15" fill="#eab308" />
-        <path d="M 80,59 Q 82,54 86,52" stroke="#65a30d" strokeWidth="3" strokeLinecap="round" fill="none" />
+        <path
+          d="M 80,59 Q 82,54 86,52"
+          stroke="#65a30d"
+          strokeWidth="3"
+          strokeLinecap="round"
+          fill="none"
+        />
         {/* Nozzle */}
         <polygon points="76,47 84,47 80,54" fill="#334155" />
         <rect x="52" y="107" width="40" height="5" rx="2.5" fill="#a78bfa" />
@@ -198,7 +269,7 @@ export function BilateralCardDeck() {
           // Left stack offsets to the left; Right stack offsets to the right!
           let xOffset = 0;
           let scale = 1;
-          let zIndex = 20 - Math.abs(diff) * 2;
+          const zIndex = 20 - Math.abs(diff) * 2;
           let opacity = 1;
           let rotate = 0;
 

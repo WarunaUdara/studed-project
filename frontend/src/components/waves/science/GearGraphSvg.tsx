@@ -1,10 +1,7 @@
 import { motion } from "framer-motion";
 import { RotateCcw } from "lucide-react";
-import {
-  GearNetworkPuzzle,
-  solveGearDirections,
-} from "./gear-network-engine";
 import { generateGearPath } from "./GearTrainSvg";
+import { type GearNetworkPuzzle, solveGearDirections } from "./gear-network-engine";
 
 export interface GearGraphSvgProps {
   puzzle: GearNetworkPuzzle;
@@ -87,7 +84,10 @@ export function GearGraphSvg({
         <svg
           viewBox={`${minX} ${minY} ${width} ${height}`}
           className="overflow-visible max-w-full drop-shadow-2xl"
-          style={{ width: `${Math.min(480, width * 1.3)}px`, height: `${Math.min(320, height * 1.2)}px` }}
+          style={{
+            width: `${Math.min(480, width * 1.3)}px`,
+            height: `${Math.min(320, height * 1.2)}px`,
+          }}
         >
           {/* Render Gears */}
           {puzzle.nodes.map((node) => {
@@ -109,9 +109,7 @@ export function GearGraphSvg({
                 {/* Rotating SVG Gear Group centered at local (0, 0) */}
                 <motion.g
                   animate={
-                    isRotating
-                      ? { rotate: dir === 1 ? [0, 360] : [0, -360] }
-                      : { rotate: 0 }
+                    isRotating ? { rotate: dir === 1 ? [0, 360] : [0, -360] } : { rotate: 0 }
                   }
                   transition={
                     isRotating
@@ -136,12 +134,7 @@ export function GearGraphSvg({
                       fill={shadow}
                       opacity="0.35"
                     />
-                    <circle
-                      cx={node.radius}
-                      cy={node.radius}
-                      r={node.radius * 0.28}
-                      fill={fill}
-                    />
+                    <circle cx={node.radius} cy={node.radius} r={node.radius * 0.28} fill={fill} />
                     <circle
                       cx={node.radius}
                       cy={node.radius}
@@ -180,7 +173,10 @@ export function GearGraphSvg({
 
                 {/* Driver Rotation Arrow Indicator */}
                 {node.isDriver && (
-                  <g className="text-white drop-shadow-md pointer-events-none" transform={`translate(0, ${-node.radius - 12})`}>
+                  <g
+                    className="text-white drop-shadow-md pointer-events-none"
+                    transform={`translate(0, ${-node.radius - 12})`}
+                  >
                     <path
                       d="M -16 0 A 20 20 0 0 1 16 0"
                       fill="none"
@@ -188,10 +184,7 @@ export function GearGraphSvg({
                       strokeWidth="3.5"
                       strokeLinecap="round"
                     />
-                    <polygon
-                      points="-20,-2 -14,6 -12,-4"
-                      fill="#ffffff"
-                    />
+                    <polygon points="-20,-2 -14,6 -12,-4" fill="#ffffff" />
                   </g>
                 )}
 

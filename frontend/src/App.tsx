@@ -1,9 +1,9 @@
 import { Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { OfflineBanner } from "@/components/ui/OfflineBanner";
 import { PomodoroInitializer } from "@/components/gamification/PomodoroInitializer";
 import { Navbar } from "@/components/layout/Navbar";
 import { ThemePullCord } from "@/components/layout/ThemePullCord";
+import { OfflineBanner } from "@/components/ui/OfflineBanner";
 import { ToastProvider } from "@/components/ui/Toast";
 import { useUiPrefs } from "@/stores/uiPrefs";
 

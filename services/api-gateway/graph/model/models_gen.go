@@ -250,8 +250,12 @@ type User struct {
 	PreferredLanguage string            `json:"preferredLanguage"`
 	Subscription      *UserSubscription `json:"subscription,omitempty"`
 	TotalXp           int               `json:"totalXp"`
-	Streak            int               `json:"streak"`
-	CreatedAt         time.Time         `json:"createdAt"`
+	// Consecutive days of learning. Advanced by activity, never by page loads.
+	Streak        int `json:"streak"`
+	LongestStreak int `json:"longestStreak"`
+	// The last day the student learned. Lets a week view mark real days.
+	LastActiveAt *time.Time `json:"lastActiveAt,omitempty"`
+	CreatedAt    time.Time  `json:"createdAt"`
 }
 
 type UserSubscription struct {

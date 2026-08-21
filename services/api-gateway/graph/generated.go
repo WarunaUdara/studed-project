@@ -200,6 +200,8 @@ type ComplexityRoot struct {
 		FullName          func(childComplexity int) int
 		Grade             func(childComplexity int) int
 		ID                func(childComplexity int) int
+		LastActiveAt      func(childComplexity int) int
+		LongestStreak     func(childComplexity int) int
 		PreferredLanguage func(childComplexity int) int
 		Role              func(childComplexity int) int
 		Streak            func(childComplexity int) int
@@ -1169,6 +1171,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.User.ID(childComplexity), true
+	case "User.lastActiveAt":
+		if e.ComplexityRoot.User.LastActiveAt == nil {
+			break
+		}
+
+		return e.ComplexityRoot.User.LastActiveAt(childComplexity), true
+	case "User.longestStreak":
+		if e.ComplexityRoot.User.LongestStreak == nil {
+			break
+		}
+
+		return e.ComplexityRoot.User.LongestStreak(childComplexity), true
 	case "User.preferredLanguage":
 		if e.ComplexityRoot.User.PreferredLanguage == nil {
 			break
@@ -1765,6 +1779,10 @@ func (ec *executionContext) childFields_User(ctx context.Context, field graphql.
 		return ec.fieldContext_User_totalXp(ctx, field)
 	case "streak":
 		return ec.fieldContext_User_streak(ctx, field)
+	case "longestStreak":
+		return ec.fieldContext_User_longestStreak(ctx, field)
+	case "lastActiveAt":
+		return ec.fieldContext_User_lastActiveAt(ctx, field)
 	case "createdAt":
 		return ec.fieldContext_User_createdAt(ctx, field)
 	}
@@ -6270,6 +6288,52 @@ func (ec *executionContext) fieldContext_User_streak(_ context.Context, field gr
 	return graphql.NewScalarFieldContext("User", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
+func (ec *executionContext) _User_longestStreak(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_User_longestStreak(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.LongestStreak, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_User_longestStreak(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("User", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
+func (ec *executionContext) _User_lastActiveAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_User_lastActiveAt(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.LastActiveAt, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *time.Time) graphql.Marshaler {
+			return ec.marshalODateTime2ᚖtimeᚐTime(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_User_lastActiveAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("User", field, false, false, errors.New("field of type DateTime does not have child fields"))
+}
+
 func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -10327,6 +10391,16 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 		case "streak":
 			out.Values[i] = ec._User_streak(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "longestStreak":
+			out.Values[i] = ec._User_longestStreak(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "lastActiveAt":
+			out.Values[i] = ec._User_lastActiveAt(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
 				out.Invalids++
 			}
 		case "createdAt":

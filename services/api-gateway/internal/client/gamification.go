@@ -166,15 +166,29 @@ func (c *GamificationClient) GetMyRank(ctx context.Context, userID string, scope
 	return int(resp.Rank), int(resp.TotalXp), int(resp.TotalRanked), nil
 }
 
-func (c *GamificationClient) GetUserStreak(ctx context.Context, userID string) (int, error) {
+// Streak is a student's consecutive learning days. LastActiveAt is nil when
+// they have never recorded activity.
+type Streak struct {
+	Current      int
+	Longest      int
+	LastActiveAt *time.Time
+}
+
+func (c *GamificationClient) GetUserStreak(ctx context.Context, userID string) (Streak, error) {
 	resp, err := c.client.GetUserStreak(ctx, &gampb.GetUserStreakRequest{UserId: userID})
 	if err != nil {
-		return 0, fmt.Errorf("get user streak failed: %w", err)
+		return Streak{}, fmt.Errorf("get user streak failed: %w", err)
 	}
 	if resp.Error != "" {
-		return 0, fmt.Errorf("get user streak failed: %s", resp.Error)
+		return Streak{}, fmt.Errorf("get user streak failed: %s", resp.Error)
 	}
-	return int(resp.CurrentStreak), nil
+
+	streak := Streak{Current: int(resp.CurrentStreak), Longest: int(resp.LongestStreak)}
+	if resp.LastLoginDateUnix > 0 {
+		at := time.Unix(resp.LastLoginDateUnix, 0)
+		streak.LastActiveAt = &at
+	}
+	return streak, nil
 }
 
 func (c *GamificationClient) GetAchievements(ctx context.Context, userID string) ([]*model.Achievement, error) {

@@ -25,10 +25,34 @@ export function DailySparkStreakCharge({ onContinue }: DailySparkStreakChargePro
             className="absolute size-56 pointer-events-none select-none"
           >
             <svg viewBox="0 0 200 200" className="size-full">
-              <path d="M 40,50 Q 55,40 60,35" stroke="#bef264" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
-              <path d="M 160,50 Q 150,40 145,35" stroke="#bef264" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
-              <path d="M 30,120 Q 45,135 60,140" stroke="#bef264" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
-              <path d="M 170,120 Q 155,135 140,140" stroke="#bef264" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+              <path
+                d="M 40,50 Q 55,40 60,35"
+                stroke="#bef264"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                opacity="0.6"
+              />
+              <path
+                d="M 160,50 Q 150,40 145,35"
+                stroke="#bef264"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                opacity="0.6"
+              />
+              <path
+                d="M 30,120 Q 45,135 60,140"
+                stroke="#bef264"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                opacity="0.6"
+              />
+              <path
+                d="M 170,120 Q 155,135 140,140"
+                stroke="#bef264"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                opacity="0.6"
+              />
             </svg>
           </motion.div>
 
@@ -61,7 +85,12 @@ export function DailySparkStreakCharge({ onContinue }: DailySparkStreakChargePro
 
                 {/* Glass Inner Glow */}
                 <filter id="battery-glow" x="-30%" y="-30%" width="160%" height="160%">
-                  <feDropShadow dx="0" dy="8" stdDeviation="14" floodColor="rgba(190, 242, 100, 0.45)" />
+                  <feDropShadow
+                    dx="0"
+                    dy="8"
+                    stdDeviation="14"
+                    floodColor="rgba(190, 242, 100, 0.45)"
+                  />
                 </filter>
               </defs>
 

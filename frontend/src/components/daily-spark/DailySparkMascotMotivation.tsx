@@ -42,7 +42,12 @@ export function DailySparkMascotMotivation({
                   <stop offset="100%" stopColor="#3b82f6" />
                 </linearGradient>
                 <filter id="blob-glow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="8" stdDeviation="12" floodColor="rgba(34, 197, 94, 0.35)" />
+                  <feDropShadow
+                    dx="0"
+                    dy="8"
+                    stdDeviation="12"
+                    floodColor="rgba(34, 197, 94, 0.35)"
+                  />
                 </filter>
               </defs>
 
@@ -84,8 +89,20 @@ export function DailySparkMascotMotivation({
               </g>
 
               {/* Little arms holding the dumbbell bar */}
-              <path d="M 68,105 Q 60,75 75,48" stroke="#16a34a" strokeWidth="8" strokeLinecap="round" fill="none" />
-              <path d="M 132,105 Q 140,75 125,48" stroke="#16a34a" strokeWidth="8" strokeLinecap="round" fill="none" />
+              <path
+                d="M 68,105 Q 60,75 75,48"
+                stroke="#16a34a"
+                strokeWidth="8"
+                strokeLinecap="round"
+                fill="none"
+              />
+              <path
+                d="M 132,105 Q 140,75 125,48"
+                stroke="#16a34a"
+                strokeWidth="8"
+                strokeLinecap="round"
+                fill="none"
+              />
             </svg>
           </motion.div>
 

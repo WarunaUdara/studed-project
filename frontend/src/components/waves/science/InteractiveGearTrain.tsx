@@ -110,14 +110,10 @@ export function InteractiveGearTrain({
                 className="overflow-visible drop-shadow-xl"
                 style={{ width: gearSize, height: gearSize }}
                 animate={
-                  isRotating
-                    ? { rotate: gearDir === 1 ? [0, 360] : [0, -360] }
-                    : { rotate: 0 }
+                  isRotating ? { rotate: gearDir === 1 ? [0, 360] : [0, -360] } : { rotate: 0 }
                 }
                 transition={
-                  isRotating
-                    ? { repeat: Infinity, duration: 4, ease: "linear" }
-                    : { duration: 0.3 }
+                  isRotating ? { repeat: Infinity, duration: 4, ease: "linear" } : { duration: 0.3 }
                 }
               >
                 <g transform={`translate(${gearSize / 2 - radius}, ${gearSize / 2 - radius})`}>

@@ -65,7 +65,11 @@ type User {
   preferredLanguage: String!
   subscription: UserSubscription
   totalXp: Int!
+  "Consecutive days of learning. Advanced by activity, never by page loads."
   streak: Int!
+  longestStreak: Int!
+  "The last day the student learned. Lets a week view mark real days."
+  lastActiveAt: DateTime
   createdAt: DateTime!
 }
 

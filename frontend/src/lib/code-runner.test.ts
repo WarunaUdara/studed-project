@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { describeRun } from "./code-runner";
 
-const base = { stdout: "", stderr: "", exitCode: 0, timedOut: false, durationMs: 12, truncated: false };
+const base = {
+  stdout: "",
+  stderr: "",
+  exitCode: 0,
+  timedOut: false,
+  durationMs: 12,
+  truncated: false,
+};
 
 describe("describeRun", () => {
   it("celebrates a run that printed something", () => {
@@ -11,7 +18,11 @@ describe("describeRun", () => {
   });
 
   it("points a student at the traceback when the program crashed", () => {
-    const summary = describeRun({ ...base, exitCode: 1, stderr: "NameError: name 'x' is not defined" });
+    const summary = describeRun({
+      ...base,
+      exitCode: 1,
+      stderr: "NameError: name 'x' is not defined",
+    });
     expect(summary.tone).toBe("error");
     expect(summary.message).toContain("error");
   });

@@ -1,16 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import {
-  ArrowRight,
-  BookOpen,
-  Brain,
-  Code,
-  Compass,
-  Search,
-  Trophy,
-  X,
-  Zap,
-} from "lucide-react";
+import { ArrowRight, BookOpen, Brain, Code, Compass, Search, Trophy, X, Zap } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 export interface SearchEntry {
@@ -35,7 +25,17 @@ const PLATFORM_INDEX: SearchEntry[] = [
     href: "/waves/science-gears-1",
     icon: <Brain className="size-4 text-amber-500" />,
     badge: "Science · +30 XP",
-    keywords: ["gear", "gears", "science", "physics", "rotation", "connecting gears", "direction", "wave", "lesson"],
+    keywords: [
+      "gear",
+      "gears",
+      "science",
+      "physics",
+      "rotation",
+      "connecting gears",
+      "direction",
+      "wave",
+      "lesson",
+    ],
   },
   {
     id: "wave-science-2",
@@ -129,11 +129,7 @@ export interface SearchAskModalProps {
   initialQuery?: string;
 }
 
-export function SearchAskModal({
-  isOpen,
-  onClose,
-  initialQuery = "",
-}: SearchAskModalProps) {
+export function SearchAskModal({ isOpen, onClose, initialQuery = "" }: SearchAskModalProps) {
   const [query, setQuery] = useState(initialQuery);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -283,9 +279,7 @@ export function SearchAskModal({
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-muted-foreground truncate">
-                        {item.subtitle}
-                      </p>
+                      <p className="text-[11px] text-muted-foreground truncate">{item.subtitle}</p>
                     </div>
                   </div>
 
@@ -310,9 +304,13 @@ export function SearchAskModal({
         {/* Minimal Footer */}
         <div className="flex items-center justify-between border-t border-border/40 bg-muted/20 px-4 py-2 text-[11px] text-muted-foreground">
           <div className="flex items-center gap-2">
-            <span>Use <strong>↑↓</strong> to navigate</span>
+            <span>
+              Use <strong>↑↓</strong> to navigate
+            </span>
             <span>·</span>
-            <span><strong>↵</strong> to select</span>
+            <span>
+              <strong>↵</strong> to select
+            </span>
           </div>
           <span>StudEd Search</span>
         </div>

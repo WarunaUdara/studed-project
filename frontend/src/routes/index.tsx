@@ -27,19 +27,19 @@ import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { XPBar } from "@/components/gamification/XPBar";
 import { XPToast } from "@/components/gamification/XPToast";
 import { CountUp } from "@/components/public/CountUp";
+import { InteractiveHeroCard } from "@/components/public/InteractiveHeroCard";
 import { LanguageToggle } from "@/components/public/LanguageToggle";
 import { LiveLeaderboard } from "@/components/public/LiveLeaderboard";
 import { PlayableWave } from "@/components/public/PlayableWave";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { ScrollXpMeter } from "@/components/public/ScrollXpMeter";
-import { CTASection } from "@/components/ui/hero-dithering-card";
-import { InteractiveHeroCard } from "@/components/public/InteractiveHeroCard";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/Card";
-import { SplitText } from "@/components/ui/SplitText";
-import { TextLoop } from "@/components/ui/TextLoop";
+import { CTASection } from "@/components/ui/hero-dithering-card";
 import { MagicBento, MagicBentoCard } from "@/components/ui/MagicBento";
 import { ProgressRing } from "@/components/ui/ProgressRing";
+import { SplitText } from "@/components/ui/SplitText";
+import { TextLoop } from "@/components/ui/TextLoop";
 import { FEATURED_COURSES, type FeaturedCourse } from "@/lib/demoData";
 import { type ProficiencyLevel, proficiencyMeta } from "@/lib/gamification";
 import { usePublicI18n } from "@/lib/i18n";
@@ -65,7 +65,7 @@ function IndexPage() {
   return (
     <div className={cn(isSinhala && "font-sinhala")}>
       <Hero ctaLink={ctaLink} authed={isAuthenticated} />
-      
+
       <StatsBar />
       <HowItWorks />
       <PlayableWaveSection />
@@ -161,7 +161,11 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             className="flex flex-wrap items-center gap-3.5 pt-2"
           >
             {authed ? (
-              <Button asChild size="lg" className="rounded-full px-8 py-6 text-base font-bold shadow-md">
+              <Button
+                asChild
+                size="lg"
+                className="rounded-full px-8 py-6 text-base font-bold shadow-md"
+              >
                 <Link to={ctaLink}>
                   <Zap className="h-5 w-5" />
                   {t("ctaPortal")}
@@ -439,7 +443,9 @@ function GamificationShowcase() {
               </div>
               <div>
                 <h3 className="text-base font-semibold">{t("mechanicLeaderboardTitle")}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("mechanicLeaderboardCopy")}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                  {t("mechanicLeaderboardCopy")}
+                </p>
               </div>
             </div>
             <div className="pt-4">
@@ -462,7 +468,9 @@ function GamificationShowcase() {
               </div>
               <div>
                 <h3 className="text-base font-semibold">{t("mechanicXpTitle")}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("mechanicXpCopy")}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                  {t("mechanicXpCopy")}
+                </p>
               </div>
             </div>
             <div className="pt-4">
@@ -484,7 +492,9 @@ function GamificationShowcase() {
               </div>
               <div>
                 <h3 className="text-base font-semibold">{t("mechanicStreakTitle")}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("mechanicStreakCopy")}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                  {t("mechanicStreakCopy")}
+                </p>
               </div>
             </div>
             <div className="pt-4">
@@ -506,7 +516,9 @@ function GamificationShowcase() {
               </div>
               <div>
                 <h3 className="text-base font-semibold">{t("mechanicProficiencyTitle")}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("mechanicProficiencyCopy")}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                  {t("mechanicProficiencyCopy")}
+                </p>
               </div>
             </div>
             <div className="pt-4">
@@ -603,7 +615,6 @@ function StreakWeek() {
     </div>
   );
 }
-
 
 /* ---------------------------- Catalog preview ----------------------------- */
 

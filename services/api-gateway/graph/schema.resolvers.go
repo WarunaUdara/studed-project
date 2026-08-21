@@ -19,13 +19,6 @@ import (
 	"github.com/studed/api-gateway/internal/middleware"
 )
 
-const (
-	// defaultLeaderboardPage is what a client gets when it asks for no size;
-	// maxLeaderboardPage is the ceiling regardless of what it asks for.
-	defaultLeaderboardPage = 50
-	maxLeaderboardPage     = 100
-)
-
 // Register is the resolver for the register field.
 func (r *mutationResolver) Register(ctx context.Context, input model.RegisterInput) (*model.AuthPayload, error) {
 	payload, err := r.AuthClient.Register(ctx, input)
@@ -44,13 +37,15 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*
 	}
 	setAuthCookies(ctx, payload.AccessToken, payload.RefreshToken)
 
-	// Advance the daily-login streak and attach current XP, matching what `me`
-	// returns. Without the XP lookup the client stores totalXp=0 at sign-in and
-	// renders 0 until the first `me` query lands. Gamification failures never
-	// block login.
+	// Attach the current streak and XP so the client does not store totalXp=0 at
+	// sign-in and render 0 until the first `me` query lands. This only reads:
+	// signing in is not learning, so it does not advance the streak.
+	// Gamification failures never block login.
 	if payload.User != nil {
 		if streak, err := r.GamificationClient.GetUserStreak(ctx, payload.User.ID); err == nil {
-			payload.User.Streak = streak
+			payload.User.Streak = streak.Current
+			payload.User.LongestStreak = streak.Longest
+			payload.User.LastActiveAt = streak.LastActiveAt
 		}
 		if totalXp, err := r.GamificationClient.GetUserXp(ctx, payload.User.ID); err == nil {
 			payload.User.TotalXp = totalXp
@@ -501,7 +496,9 @@ func (r *mutationResolver) UpdateMe(ctx context.Context, input model.UpdateMeInp
 		slog.Warn("could not read streak for me", slog.String("user_id", userCtx.UserID), slog.Any("error", err))
 	}
 	updatedUser.TotalXp = totalXp
-	updatedUser.Streak = streak
+	updatedUser.Streak = streak.Current
+	updatedUser.LongestStreak = streak.Longest
+	updatedUser.LastActiveAt = streak.LastActiveAt
 
 	return updatedUser, nil
 }
@@ -545,7 +542,9 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 		Grade:             grade,
 		PreferredLanguage: userCtx.PreferredLanguage,
 		TotalXp:           totalXp,
-		Streak:            streak,
+		Streak:            streak.Current,
+		LongestStreak:     streak.Longest,
+		LastActiveAt:      streak.LastActiveAt,
 		Subscription:      subscription,
 	}, nil
 }

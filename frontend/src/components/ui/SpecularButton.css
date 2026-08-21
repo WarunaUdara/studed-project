@@ -25,7 +25,9 @@
     0 8px 24px rgba(0, 0, 0, 0.22);
   cursor: pointer;
   outline: none;
-  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease;
+  transition:
+    transform 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.15s ease;
 }
 
 .specular-button:hover {

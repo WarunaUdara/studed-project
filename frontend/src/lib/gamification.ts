@@ -140,110 +140,49 @@ export function computeProficiency(
   return "COMPLETED";
 }
 
-/* ----- Badges (frontend-computed milestones) ----- */
+/* ----- Achievement presentation ----- */
+//
+// The unlock RULES live in gamification-service and reach the UI through the
+// `achievements` query with an `unlocked` flag. What is left here is purely how
+// an achievement looks: its icon and its tier. Nothing in the frontend decides
+// whether an achievement is earned — two copies of those rules had drifted
+// apart, and the client's copy read a different XP total than the server's.
 
-export interface BadgeDef {
-  id: string;
-  label: string;
-  description: string;
+export type BadgeTier = "bronze" | "silver" | "gold" | "purple";
+
+export interface AchievementStyle {
   icon: string;
-  tier: "bronze" | "silver" | "gold" | "purple";
+  tier: BadgeTier;
 }
 
-export const BADGE_DEFS: BadgeDef[] = [
-  {
-    id: "first_wave",
-    label: "First Wave",
-    description: "Complete your first wave",
-    icon: "waves",
-    tier: "bronze",
-  },
-  {
-    id: "perfect_score",
-    label: "Perfect Score",
-    description: "Score 100% on any wave",
-    icon: "target",
-    tier: "silver",
-  },
-  {
-    id: "lesson_complete",
-    label: "Lesson Complete",
-    description: "Complete all waves in a lesson",
-    icon: "book",
-    tier: "bronze",
-  },
-  {
-    id: "lesson_proficient",
-    label: "Lesson Proficient",
-    description: "Reach Proficient in a lesson",
-    icon: "star",
-    tier: "gold",
-  },
-  {
-    id: "rising_star",
-    label: "Rising Star",
-    description: "Earn 500 XP",
-    icon: "sparkles",
-    tier: "silver",
-  },
-  {
-    id: "scholar",
-    label: "Scholar",
-    description: "Earn 2,000 XP",
-    icon: "graduation",
-    tier: "gold",
-  },
-  { id: "master", label: "Master", description: "Earn 5,000 XP", icon: "crown", tier: "purple" },
-  {
-    id: "first_course",
-    label: "Course Conqueror",
-    description: "Complete an entire course",
-    icon: "trophy",
-    tier: "gold",
-  },
-];
+const ACHIEVEMENT_STYLES: Record<string, AchievementStyle> = {
+  first_wave: { icon: "waves", tier: "bronze" },
+  perfect_score: { icon: "target", tier: "silver" },
+  lesson_complete: { icon: "book", tier: "bronze" },
+  lesson_proficient: { icon: "star", tier: "gold" },
+  rising_star: { icon: "sparkles", tier: "silver" },
+  scholar: { icon: "graduation", tier: "gold" },
+  master: { icon: "crown", tier: "purple" },
+  first_course: { icon: "trophy", tier: "gold" },
+};
 
-export interface BadgeEarned extends BadgeDef {
-  earned: boolean;
+/** How an achievement should look. Unknown ids fall back to bronze. */
+export function achievementStyle(id: string): AchievementStyle {
+  return ACHIEVEMENT_STYLES[id] ?? { icon: "trophy", tier: "bronze" };
 }
 
-export interface BadgeInputs {
-  totalXp: number;
-  completedWaves: number;
-  hasPerfectScore: boolean;
-  completedLessons: number;
-  proficientLessons: number;
-  completedCourses: number;
+/** An achievement as the API returns it. */
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  iconUrl?: string | null;
+  unlocked: boolean;
+  unlockedAt?: string | null;
 }
 
-export function computeBadges(input: BadgeInputs): BadgeEarned[] {
-  const earned = (id: string) => {
-    switch (id) {
-      case "first_wave":
-        return input.completedWaves >= 1;
-      case "perfect_score":
-        return input.hasPerfectScore;
-      case "lesson_complete":
-        return input.completedLessons >= 1;
-      case "lesson_proficient":
-        return input.proficientLessons >= 1;
-      case "rising_star":
-        return input.totalXp >= 500;
-      case "scholar":
-        return input.totalXp >= 2000;
-      case "master":
-        return input.totalXp >= 5000;
-      case "first_course":
-        return input.completedCourses >= 1;
-      default:
-        return false;
-    }
-  };
-  return BADGE_DEFS.map((def) => ({ ...def, earned: earned(def.id) }));
-}
-
-export function earnedCount(badges: BadgeEarned[]): number {
-  return badges.filter((b) => b.earned).length;
+export function earnedCount(achievements: Array<{ unlocked: boolean }>): number {
+  return achievements.filter((a) => a.unlocked).length;
 }
 
 /* ----- Leaderboard rank styling ----- */
@@ -280,19 +219,15 @@ export function rankBadgeGlyph(rank: number, total?: number): string {
   return "";
 }
 
-/** Display leaderboard names as "First name + initial." for privacy (per spec). */
-export function privateLeaderboardName(fullName: string): string {
-  if (!fullName || fullName.trim() === "") return "Student Scholar";
-  const trimmed = fullName.trim();
-  // Prevent raw DB UUIDs or hashes from leaking as names on public leaderboards
-  if (/^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(trimmed) || /^[0-9a-f]{32,}$/i.test(trimmed)) {
-    return "Student Scholar";
-  }
-  const parts = trimmed.split(/\s+/);
-  if (parts.length < 2) return trimmed;
-  const first = parts[0] ?? "";
-  const initial = (parts[parts.length - 1] ?? "").charAt(0);
-  return initial ? `${first} ${initial}.` : first;
+/**
+ * Names arrive already masked from the gateway, which owns the rule. This is a
+ * display guard only: it supplies a fallback when a name is missing, and never
+ * re-masks. Masking here as well is what produced three implementations of one
+ * rule that could disagree.
+ */
+export function leaderboardDisplayName(displayName: string | null | undefined): string {
+  const trimmed = (displayName ?? "").trim();
+  return trimmed === "" ? "Student Scholar" : trimmed;
 }
 
 /** Per-question XP breakdown categories for the achievements page. */

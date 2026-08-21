@@ -1,5 +1,5 @@
-import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import "./TextLoop.css";
 
 const VIEW_W = 1200;
@@ -97,7 +97,10 @@ export function TextLoop({
   const rawId = useId();
   const pathId = `text-loop-${rawId.replace(/:/g, "")}`;
 
-  const d = useMemo(() => path || buildPath(shape, curviness, ribbonWidth), [path, shape, curviness, ribbonWidth]);
+  const d = useMemo(
+    () => path || buildPath(shape, curviness, ribbonWidth),
+    [path, shape, curviness, ribbonWidth],
+  );
 
   const unit = useMemo(() => {
     const base = uppercase ? String(text).toUpperCase() : String(text);
@@ -130,7 +133,9 @@ export function TextLoop({
       if (!length) return;
 
       const reps = unitWidth > 0 ? Math.max(1, Math.round(length / unitWidth)) : 1;
-      setMetrics((prev) => (prev.length === length && prev.reps === reps ? prev : { length, reps }));
+      setMetrics((prev) =>
+        prev.length === length && prev.reps === reps ? prev : { length, reps },
+      );
     };
 
     measure();
@@ -158,7 +163,8 @@ export function TextLoop({
     apply(0);
 
     const prefersReduced =
-      typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced || speed <= 0) return undefined;
 
     const state = { offset: 0 };
@@ -215,14 +221,38 @@ export function TextLoop({
           {unit}
         </text>
 
-        <text className="text-loop-text" style={textStyle} fill={color} dominantBaseline="central" aria-hidden="true">
-          <textPath ref={headRef} href={`#${pathId}`} startOffset={0} textLength={fitLength} lengthAdjust="spacing">
+        <text
+          className="text-loop-text"
+          style={textStyle}
+          fill={color}
+          dominantBaseline="central"
+          aria-hidden="true"
+        >
+          <textPath
+            ref={headRef}
+            href={`#${pathId}`}
+            startOffset={0}
+            textLength={fitLength}
+            lengthAdjust="spacing"
+          >
             {loopText}
           </textPath>
         </text>
 
-        <text className="text-loop-text" style={textStyle} fill={color} dominantBaseline="central" aria-hidden="true">
-          <textPath ref={tailRef} href={`#${pathId}`} startOffset={0} textLength={fitLength} lengthAdjust="spacing">
+        <text
+          className="text-loop-text"
+          style={textStyle}
+          fill={color}
+          dominantBaseline="central"
+          aria-hidden="true"
+        >
+          <textPath
+            ref={tailRef}
+            href={`#${pathId}`}
+            startOffset={0}
+            textLength={fitLength}
+            lengthAdjust="spacing"
+          >
             {loopText}
           </textPath>
         </text>

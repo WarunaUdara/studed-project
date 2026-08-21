@@ -6,7 +6,7 @@
   height: 100%;
   overflow: hidden;
   background: var(--sc-bg, #f7f1ea);
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", sans-serif;
 }
 
 /* warm gradient that wells up from the bottom */
@@ -14,7 +14,13 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(180deg, transparent 0%, var(--sc-g1, #f3ddc8) 24%, var(--sc-g2, #dfa17c) 54%, var(--sc-g3, #b8674c) 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--sc-g1, #f3ddc8) 24%,
+    var(--sc-g2, #dfa17c) 54%,
+    var(--sc-g3, #b8674c) 100%
+  );
   will-change: transform;
 }
 
@@ -43,7 +49,13 @@
   position: absolute;
   inset: 8%;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 32%, var(--sc-orb-a, #fff0e2) 0%, var(--sc-orb-b, #fbc9a8) 46%, var(--sc-orb-c, #f0a983) 74%, var(--sc-orb-d, #e0916c) 96%);
+  background: radial-gradient(
+    circle at 40% 32%,
+    var(--sc-orb-a, #fff0e2) 0%,
+    var(--sc-orb-b, #fbc9a8) 46%,
+    var(--sc-orb-c, #f0a983) 74%,
+    var(--sc-orb-d, #e0916c) 96%
+  );
   box-shadow:
     0 24px 52px -14px rgb(var(--sc-orb-sh, 214 128 96) / 0.55),
     0 3px 8px -3px rgb(var(--sc-orb-sh, 214 128 96) / 0.3),
@@ -54,7 +66,7 @@
 
 /* glossy crescent highlight — gives the body a soft, plush sheen */
 .wc-orb::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 8%;
   left: 20%;
@@ -71,7 +83,11 @@
   position: absolute;
   inset: -20%;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--sc-orb-halo, rgba(246, 172, 132, 0.5)), transparent 62%);
+  background: radial-gradient(
+    circle,
+    var(--sc-orb-halo, rgba(246, 172, 132, 0.5)),
+    transparent 62%
+  );
   filter: blur(12px);
 }
 
@@ -144,7 +160,11 @@
   height: 52px;
   border: 0;
   border-radius: 26px;
-  background: linear-gradient(180deg, #ffffff 0%, color-mix(in srgb, var(--sc-accent, #c67f68) 9%, #ffffff) 100%);
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    color-mix(in srgb, var(--sc-accent, #c67f68) 9%, #ffffff) 100%
+  );
   color: var(--sc-btn-ink, #a85a44);
   font: inherit;
   font-size: 0.98rem;
@@ -155,7 +175,9 @@
     0 14px 28px -14px rgb(var(--sc-sh, 120 55 40) / 0.55),
     0 2px 5px rgb(var(--sc-sh, 120 55 40) / 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  transition: scale 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
+  transition:
+    scale 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.22s ease;
   -webkit-tap-highlight-color: transparent;
 }
 .wc-btn:active {
@@ -224,7 +246,7 @@
   isolation: isolate;
 }
 .glass::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -237,7 +259,7 @@
 }
 /* specular rim: the bright catch-light along the top-left edge of the glass */
 .glass::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -259,7 +281,7 @@
   flex-direction: column;
   background: var(--sc-bg, #fdf4e3);
   color: var(--sc-text, #8a5a20);
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", sans-serif;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -271,7 +293,12 @@
     radial-gradient(circle at 18% 16%, rgba(255, 180, 80, 0.16) 0%, transparent 34%),
     radial-gradient(circle at 86% 42%, rgba(255, 150, 70, 0.13) 0%, transparent 36%),
     radial-gradient(circle at 30% 88%, rgba(255, 195, 70, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 50% 30%, var(--sc-g1, #fffaf0) 0%, var(--sc-g2, #fcf0d8) 56%, var(--sc-g3, #f8e6c0) 100%);
+    radial-gradient(
+      circle at 50% 30%,
+      var(--sc-g1, #fffaf0) 0%,
+      var(--sc-g2, #fcf0d8) 56%,
+      var(--sc-g3, #f8e6c0) 100%
+    );
 }
 
 /* everything but the CTA lives in one centred cluster — no dead zone */
@@ -301,7 +328,8 @@
 .st-flame {
   position: relative;
   width: 118px;
-  filter: drop-shadow(0 12px 26px rgba(240, 110, 30, 0.45)) drop-shadow(0 3px 8px rgba(240, 110, 30, 0.25));
+  filter: drop-shadow(0 12px 26px rgba(240, 110, 30, 0.45))
+    drop-shadow(0 3px 8px rgba(240, 110, 30, 0.25));
 }
 .st-flame-svg {
   display: block;
@@ -361,7 +389,11 @@
    Exactly the icon core gradient — flame and count read as one system. */
 .st-num-value {
   display: inline-block;
-  background: linear-gradient(180deg, var(--sc-val-start, #ffb340) 0%, var(--sc-val-end, #ef5a1e) 92%);
+  background: linear-gradient(
+    180deg,
+    var(--sc-val-start, #ffb340) 0%,
+    var(--sc-val-end, #ef5a1e) 92%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -482,7 +514,11 @@
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.02em;
-  background: linear-gradient(180deg, var(--sc-val-start, #ffb340) 0%, var(--sc-val-end, #ef5a1e) 92%);
+  background: linear-gradient(
+    180deg,
+    var(--sc-val-start, #ffb340) 0%,
+    var(--sc-val-end, #ef5a1e) 92%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -569,7 +605,9 @@
 .dark .studed-theme-scene .st-week,
 .dark .studed-theme-scene .st-stats {
   background: linear-gradient(180deg, rgba(15, 28, 20, 0.85), rgba(20, 40, 29, 0.85));
-  box-shadow: 0 14px 28px -20px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 14px 28px -20px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 

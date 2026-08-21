@@ -46,8 +46,14 @@ describe("Learning Paths & Milestone Tracks Engine", () => {
       ],
     };
 
-    const totalWaves = mockPath.courses.reduce((acc, c) => acc + (c.myProgress?.totalWaves ?? 0), 0);
-    const completedWaves = mockPath.courses.reduce((acc, c) => acc + (c.myProgress?.completedWaves ?? 0), 0);
+    const totalWaves = mockPath.courses.reduce(
+      (acc, c) => acc + (c.myProgress?.totalWaves ?? 0),
+      0,
+    );
+    const completedWaves = mockPath.courses.reduce(
+      (acc, c) => acc + (c.myProgress?.completedWaves ?? 0),
+      0,
+    );
     const percent = Math.round((completedWaves / totalWaves) * 100);
 
     expect(totalWaves).toBe(10);

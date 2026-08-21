@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { DailySparkModal } from "@/components/daily-spark/DailySparkModal";
+import { DashboardContinueLearning } from "@/components/dashboard/DashboardContinueLearning";
 import { DashboardLeagueWidget } from "@/components/dashboard/DashboardLeagueWidget";
 import { DashboardPremiumCard } from "@/components/dashboard/DashboardPremiumCard";
 import { DashboardStreakWidget } from "@/components/dashboard/DashboardStreakWidget";
@@ -72,11 +73,14 @@ function DashboardPage() {
               {/* 1. Streak Tracker Widget */}
               <DashboardStreakWidget />
 
-              {/* 2. Unlock Premium Showcase Card */}
-              <DashboardPremiumCard />
+              {/* 2. Where each enrolled course stands, and what to open next */}
+              <DashboardContinueLearning />
 
-              {/* 3. Hydrogen League Standings Widget */}
+              {/* 3. This week's real standing */}
               <DashboardLeagueWidget />
+
+              {/* 4. Unlock Premium Showcase Card */}
+              <DashboardPremiumCard />
             </div>
 
             {/* Right Main Rail: 3D Bilateral Swappable Card Deck */}
@@ -87,10 +91,7 @@ function DashboardPage() {
         </div>
 
         {/* Daily Spark Modal Interstitial */}
-        <DailySparkModal
-          isOpen={dailySparkOpen}
-          onClose={() => setDailySparkOpen(false)}
-        />
+        <DailySparkModal isOpen={dailySparkOpen} onClose={() => setDailySparkOpen(false)} />
 
         {/* Smart Search & AI Ask Modal */}
         <SearchAskModal

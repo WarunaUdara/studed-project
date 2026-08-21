@@ -30,8 +30,8 @@ export function WavePreview({ title, puckData }: WavePreviewProps) {
           <Eye className="mb-3 h-10 w-10 text-muted-foreground" />
           <p className="font-medium text-foreground">Nothing to preview yet</p>
           <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-            Add blocks in the editor or ask the AI assistant to generate content, then switch
-            back to Preview to see the student experience.
+            Add blocks in the editor or ask the AI assistant to generate content, then switch back
+            to Preview to see the student experience.
           </p>
         </div>
       )}
@@ -105,10 +105,7 @@ function EvaluatePreview({ block, index }: { block: EvaluateBlockLike; index: nu
       {isTrueFalse && (
         <div className="flex gap-2 pl-9">
           {["True", "False"].map((opt) => (
-            <span
-              key={opt}
-              className="rounded-xl border px-5 py-2.5 text-sm text-foreground"
-            >
+            <span key={opt} className="rounded-xl border px-5 py-2.5 text-sm text-foreground">
               {opt}
             </span>
           ))}

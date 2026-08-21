@@ -16,10 +16,10 @@ import {
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { ChatMarkdown } from "@/components/educator/ChatMarkdown";
+import type { PuckData } from "@/components/puck-blocks/puck-config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/Input";
-import { type PuckData } from "@/components/puck-blocks/puck-config";
-import { type AgentEvent } from "@/lib/ai-chat";
+import type { AgentEvent } from "@/lib/ai-chat";
 import { cn } from "@/lib/utils";
 import { useAIAssistant } from "@/stores/ai-assistant";
 
@@ -128,7 +128,10 @@ export function AIAssistantPanel({
   const toolChip = (event: AgentEvent, index: number) => {
     if (event.type === "ocr") {
       return (
-        <div key={`ocr-${index}`} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <div
+          key={`ocr-${index}`}
+          className="flex items-center gap-1.5 text-xs text-muted-foreground"
+        >
           <ScanText className="h-3 w-3 text-primary" />
           <span>{event.message || "Analyzing uploaded images..."}</span>
         </div>
@@ -137,7 +140,10 @@ export function AIAssistantPanel({
     if (event.type !== "tool_start") return null;
     const label = TOOL_LABELS[event.tool ?? ""] ?? `Using tool: ${event.tool}`;
     return (
-      <div key={`tool-${index}`} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      <div
+        key={`tool-${index}`}
+        className="flex items-center gap-1.5 text-xs text-muted-foreground"
+      >
         <Wand2 className="h-3 w-3 text-primary" />
         <span>{label}</span>
       </div>
@@ -187,12 +193,12 @@ export function AIAssistantPanel({
                 <Bot className="h-4 w-4" /> I can build this wave&apos;s content with you.
               </p>
               <p>
-                Ask me to create any content — text, formulas, images, videos, callouts,
-                examples, interactive visualizations, MCQs, fill-in-the-blank, true/false,
-                numeric, and drag-and-drop. Generated blocks appear in your editor instantly.
-                You can also ask me to edit or remove blocks already in the editor, and I
-                respond in context across messages. Upload photos of notes or textbook pages
-                and I&apos;ll read them with high-effort OCR first.
+                Ask me to create any content — text, formulas, images, videos, callouts, examples,
+                interactive visualizations, MCQs, fill-in-the-blank, true/false, numeric, and
+                drag-and-drop. Generated blocks appear in your editor instantly. You can also ask me
+                to edit or remove blocks already in the editor, and I respond in context across
+                messages. Upload photos of notes or textbook pages and I&apos;ll read them with
+                high-effort OCR first.
               </p>
             </div>
             <div className="space-y-2">
@@ -319,8 +325,8 @@ export function AIAssistantPanel({
               {lastInserted && (
                 <>
                   <ArrowDownToLine className="h-3.5 w-3.5 text-success" />
-                  Added {lastInserted.learnBlocks.length} Learn, {lastInserted.evaluateBlocks.length}{" "}
-                  Evaluate block(s)
+                  Added {lastInserted.learnBlocks.length} Learn,{" "}
+                  {lastInserted.evaluateBlocks.length} Evaluate block(s)
                 </>
               )}
               {lastInserted && lastOps && <span className="text-muted-foreground">·</span>}
@@ -425,7 +431,11 @@ export function AIAssistantPanel({
             disabled={running || (!input.trim() && images.length === 0)}
             className="h-9 shrink-0"
           >
-            {running ? <Square className="h-3.5 w-3.5 fill-current" /> : <Sparkles className="h-4 w-4" />}
+            {running ? (
+              <Square className="h-3.5 w-3.5 fill-current" />
+            ) : (
+              <Sparkles className="h-4 w-4" />
+            )}
           </Button>
         </form>
         {running && (

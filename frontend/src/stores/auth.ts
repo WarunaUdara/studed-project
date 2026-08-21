@@ -24,7 +24,11 @@ export interface User {
   grade?: Grade | null;
   preferredLanguage: string;
   totalXp: number;
+  /** Consecutive days of learning. Advanced by activity, never by page loads. */
   streak: number;
+  longestStreak?: number;
+  /** ISO timestamp of the last day the student learned, null if never. */
+  lastActiveAt?: string | null;
 }
 
 interface AuthState {

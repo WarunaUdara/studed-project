@@ -155,7 +155,11 @@ function EditCoursePage() {
     <div className="mx-auto max-w-xl space-y-4">
       <div>
         <Link to="/educator/courses/$courseId" params={{ courseId }}>
-          <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1.5 text-muted-foreground hover:text-foreground"
+          >
             <ArrowLeft className="h-4 w-4" /> Back to Course
           </Button>
         </Link>

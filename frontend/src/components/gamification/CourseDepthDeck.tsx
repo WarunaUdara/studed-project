@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { CheckCircle2, Play, Sparkles, Zap } from "lucide-react";
 import { useState } from "react";
-import { DepthCarousel } from "@/components/ui/DepthCarousel";
 import { Button } from "@/components/ui/button";
+import { DepthCarousel } from "@/components/ui/DepthCarousel";
 
 export interface DeckCourseItem {
   id: string;

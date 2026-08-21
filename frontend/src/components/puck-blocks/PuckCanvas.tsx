@@ -1,6 +1,6 @@
+import { type Overrides, Puck, type UiState, usePuck } from "@puckeditor/core";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { Puck, usePuck, type Overrides, type UiState } from "@puckeditor/core";
 import "@puckeditor/core/puck.css";
 import "@/styles/puck-theme.css";
 import { type PuckData, puckConfig } from "@/components/puck-blocks/puck-config";

@@ -6,7 +6,7 @@ describe("unified HTML simulation renderer contract", () => {
       title: "Sodium and Water",
       description: "Interactive chemistry reaction",
       height: 560,
-      html: "<!doctype html><html><body><canvas id=\"reaction\"></canvas><script>requestAnimationFrame(()=>{});</script></body></html>",
+      html: '<!doctype html><html><body><canvas id="reaction"></canvas><script>requestAnimationFrame(()=>{});</script></body></html>',
     });
     const parsed = JSON.parse(metadata) as { title: string; html: string };
     expect(parsed.title).toBe("Sodium and Water");

@@ -126,10 +126,12 @@ const STATUS_STYLES: Record<string, { label: string; className: string }> = {
 
 function getStatusMeta(status?: string | null) {
   if (!status) return DEFAULT_STATUS_STYLE;
-  return STATUS_STYLES[status.toUpperCase()] ?? {
-    label: status,
-    className: "bg-muted text-muted-foreground border-border",
-  };
+  return (
+    STATUS_STYLES[status.toUpperCase()] ?? {
+      label: status,
+      className: "bg-muted text-muted-foreground border-border",
+    }
+  );
 }
 
 function formatDate(iso: string): string {

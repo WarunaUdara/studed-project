@@ -26,7 +26,9 @@ export interface RunCodeFailure {
   error: string;
 }
 
-export type RunCodeResponse = { ok: true; result: RunCodeResult } | { ok: false; failure: RunCodeFailure };
+export type RunCodeResponse =
+  | { ok: true; result: RunCodeResult }
+  | { ok: false; failure: RunCodeFailure };
 
 export async function runPython(
   request: RunCodeRequest,
@@ -42,7 +44,10 @@ export async function runPython(
       signal,
     });
   } catch {
-    return { ok: false, failure: { error: "Could not reach the code runner. Check your connection and try again." } };
+    return {
+      ok: false,
+      failure: { error: "Could not reach the code runner. Check your connection and try again." },
+    };
   }
 
   let payload: unknown;
@@ -58,7 +63,9 @@ export async function runPython(
   }
 
   const message =
-    typeof payload === "object" && payload !== null && typeof (payload as { error?: unknown }).error === "string"
+    typeof payload === "object" &&
+    payload !== null &&
+    typeof (payload as { error?: unknown }).error === "string"
       ? (payload as { error: string }).error
       : "The program could not be run.";
   return { ok: false, failure: { error: message } };
@@ -77,12 +84,18 @@ function isRunResult(payload: unknown): payload is RunCodeResult {
  * Turns a result into the one line shown above the output, so the panel does
  * not have to re-derive "did this work" from three fields.
  */
-export function describeRun(result: RunCodeResult): { tone: "success" | "error" | "warning"; message: string } {
+export function describeRun(result: RunCodeResult): {
+  tone: "success" | "error" | "warning";
+  message: string;
+} {
   if (result.timedOut) {
     return { tone: "warning", message: "Your program ran too long and was stopped." };
   }
   if (result.exitCode !== 0) {
-    return { tone: "error", message: "Your program stopped with an error. Read the red text below." };
+    return {
+      tone: "error",
+      message: "Your program stopped with an error. Read the red text below.",
+    };
   }
   if (result.stdout.trim() === "") {
     return { tone: "warning", message: "It ran with no errors, but it did not print anything." };

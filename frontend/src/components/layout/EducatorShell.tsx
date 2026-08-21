@@ -10,7 +10,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
@@ -153,7 +153,8 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
                 onClick={() => setCollapsed((c) => !c)}
                 className={cn(
                   "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground",
-                  collapsed && "absolute -right-2.5 top-3 z-10 h-6 w-6 rounded-full border bg-background shadow-sm",
+                  collapsed &&
+                    "absolute -right-2.5 top-3 z-10 h-6 w-6 rounded-full border bg-background shadow-sm",
                 )}
                 title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
                 aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -195,7 +196,9 @@ export function EducatorShell({ children, className }: EducatorShellProps) {
             </nav>
 
             <div className="mt-3 border-t border-sidebar-border pt-3">
-              <div className={cn("flex", collapsed ? "justify-center" : "items-center justify-end")}>
+              <div
+                className={cn("flex", collapsed ? "justify-center" : "items-center justify-end")}
+              >
                 <LogoutButton size="sm" variant="ghost" compact={collapsed} />
               </div>
             </div>

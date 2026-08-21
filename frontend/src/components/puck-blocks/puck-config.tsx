@@ -1,10 +1,7 @@
 import type { Config, Data } from "@puckeditor/core";
-import { MathFormula } from "@/components/ui/MathFormula";
-import { MarkdownContent } from "@/components/ui/MarkdownContent";
-import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
-import { TsCircuitBlock } from "@/components/learn/visualizations/TsCircuitBlock";
-import { HtmlSimulationBlock } from "@/components/learn/visualizations/HtmlSimulationBlock";
+import { EvaluateBlockRenderer } from "@/components/evaluate/EvaluateBlockRenderer";
 import { AnimationBlock } from "@/components/learn/interactive/AnimationBlock";
+import { SCENE_IDS } from "@/components/learn/interactive/animationRegistry";
 import { BlobDialogBlock } from "@/components/learn/interactive/BlobDialogBlock";
 import { CircuitLabBlock } from "@/components/learn/interactive/CircuitLabBlock";
 import { ForceLabBlock } from "@/components/learn/interactive/ForceLabBlock";
@@ -13,8 +10,11 @@ import { LeverLabBlock } from "@/components/learn/interactive/LeverLabBlock";
 import { OhmsLawLabBlock } from "@/components/learn/interactive/OhmsLawLabBlock";
 import { PythonRunnerBlock } from "@/components/learn/interactive/PythonRunnerBlock";
 import { WaterFlowBlock } from "@/components/learn/interactive/WaterFlowBlock";
-import { SCENE_IDS } from "@/components/learn/interactive/animationRegistry";
-import { EvaluateBlockRenderer } from "@/components/evaluate/EvaluateBlockRenderer";
+import { HtmlSimulationBlock } from "@/components/learn/visualizations/HtmlSimulationBlock";
+import { ManimBlock } from "@/components/learn/visualizations/ManimBlock";
+import { TsCircuitBlock } from "@/components/learn/visualizations/TsCircuitBlock";
+import { MarkdownContent } from "@/components/ui/MarkdownContent";
+import { MathFormula } from "@/components/ui/MathFormula";
 import { hasInteractiveConfig } from "@/lib/content/interactiveBlocks";
 
 // ---------------------------------------------------------------------------
@@ -190,7 +190,9 @@ export const puckConfig: Config = {
       render: ({ content }) => (
         <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
           <LearnBadge label="Heading" />
-          <h3 className="font-serif text-xl font-semibold text-foreground">{content || "Heading"}</h3>
+          <h3 className="font-serif text-xl font-semibold text-foreground">
+            {content || "Heading"}
+          </h3>
         </div>
       ),
     },
@@ -281,7 +283,9 @@ export const puckConfig: Config = {
               <div className="aspect-video overflow-hidden rounded-md border bg-black">
                 {src.includes("youtube.com") || src.includes("youtu.be") ? (
                   <iframe
-                    src={src.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")}
+                    src={src
+                      .replace("watch?v=", "embed/")
+                      .replace("youtu.be/", "youtube.com/embed/")}
                     title="Lesson video"
                     className="h-full w-full border-0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -548,13 +552,17 @@ export const puckConfig: Config = {
         }
         if (vizType === "chemviz_3dmol" && moleculeSmiles) {
           merged.title = merged.title ?? content ?? "Molecule";
-          merged.molecule = merged.molecule ?? { source_type: "smiles", source_value: moleculeSmiles };
+          merged.molecule = merged.molecule ?? {
+            source_type: "smiles",
+            source_value: moleculeSmiles,
+          };
           merged.style = merged.style ?? { stick: { radius: 0.15, colorscheme: "Jmol" } };
         }
-        return <VizBlockPreview vizType={vizType} content={content} metadata={JSON.stringify(merged)} />;
+        return (
+          <VizBlockPreview vizType={vizType} content={content} metadata={JSON.stringify(merged)} />
+        );
       },
     },
-
 
     // Circuit (tscircuit) — first-class palette block.
     CircuitBlock: {
@@ -580,7 +588,13 @@ export const puckConfig: Config = {
           merged.title = merged.title ?? content ?? "Circuit";
           merged.circuit_code = merged.circuit_code ?? circuitCode;
         }
-        return <VizBlockPreview vizType="elecsim_tscircuit" content={content} metadata={JSON.stringify(merged)} />;
+        return (
+          <VizBlockPreview
+            vizType="elecsim_tscircuit"
+            content={content}
+            metadata={JSON.stringify(merged)}
+          />
+        );
       },
     },
 
@@ -597,7 +611,9 @@ export const puckConfig: Config = {
           height: 560,
         }),
       },
-      render: ({ content, metadata }) => <HtmlSimulationBlock content={content} metadata={metadata} />,
+      render: ({ content, metadata }) => (
+        <HtmlSimulationBlock content={content} metadata={metadata} />
+      ),
     },
 
     MCQBlock: {
@@ -848,11 +864,20 @@ function learnBlockToItem(lb: LearnBlockRaw): PuckData["content"][number] {
     case "heading":
       return { type: "HeadingBlock", props: { ...common, content: lb.content } };
     case "code":
-      return { type: "CodeBlock", props: { ...common, content: lb.content, language: lb.metadata || "javascript" } };
+      return {
+        type: "CodeBlock",
+        props: { ...common, content: lb.content, language: lb.metadata || "javascript" },
+      };
     case "image":
-      return { type: "ImageBlock", props: { ...common, src: lb.content, alt: "Visual aid", caption: lb.metadata || "" } };
+      return {
+        type: "ImageBlock",
+        props: { ...common, src: lb.content, alt: "Visual aid", caption: lb.metadata || "" },
+      };
     case "video":
-      return { type: "VideoBlock", props: { ...common, src: lb.content, caption: lb.metadata || "" } };
+      return {
+        type: "VideoBlock",
+        props: { ...common, src: lb.content, caption: lb.metadata || "" },
+      };
     case "formula":
     case "math":
       return { type: "MathViz", props: { ...common, formula: lb.content } };
@@ -864,38 +889,81 @@ function learnBlockToItem(lb: LearnBlockRaw): PuckData["content"][number] {
     case "coordinate_plane":
     case "coordinate_grid":
     case "coordinates":
-      return { type: "VizBlock", props: { ...common, vizType: "coordinate_plane", content: lb.content, metadata: lb.metadata || "{}" } };
+      return {
+        type: "VizBlock",
+        props: {
+          ...common,
+          vizType: "coordinate_plane",
+          content: lb.content,
+          metadata: lb.metadata || "{}",
+        },
+      };
     case "mathviz_manim":
     case "manim":
     case "math_animation":
-      return { type: "VizBlock", props: { ...common, vizType: "mathviz_manim", content: lb.content, metadata: lb.metadata || "{}" } };
+      return {
+        type: "VizBlock",
+        props: {
+          ...common,
+          vizType: "mathviz_manim",
+          content: lb.content,
+          metadata: lb.metadata || "{}",
+        },
+      };
     case "chemviz_3dmol":
     case "molecule_3dmol":
     case "molecule":
     case "3dmol":
-      return { type: "HtmlSimulationBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
+      return {
+        type: "HtmlSimulationBlock",
+        props: { ...common, content: lb.content, metadata: lb.metadata || "{}" },
+      };
     case "elecsim_tscircuit":
     case "circuit_tscircuit":
     case "tscircuit":
     case "circuit":
-      return { type: "CircuitBlock", props: { ...common, vizType: "elecsim_tscircuit", circuitCode: circuitCodeFrom(lb), content: lb.content, metadata: lb.metadata || "{}" } };
+      return {
+        type: "CircuitBlock",
+        props: {
+          ...common,
+          vizType: "elecsim_tscircuit",
+          circuitCode: circuitCodeFrom(lb),
+          content: lb.content,
+          metadata: lb.metadata || "{}",
+        },
+      };
     case "html_simulation":
     case "simulation_html":
     case "simulation":
-      return { type: "HtmlSimulationBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
+      return {
+        type: "HtmlSimulationBlock",
+        props: { ...common, content: lb.content, metadata: lb.metadata || "{}" },
+      };
     case "force_lab":
     case "circuit_lab":
     case "water_flow":
     case "fraction_lab":
     case "lever_lab":
     case "ohms_law_lab":
-      return { type: "PhysicsLabBlock", props: { ...common, labType: type, content: lb.content, metadata: lb.metadata || "{}" } };
+      return {
+        type: "PhysicsLabBlock",
+        props: { ...common, labType: type, content: lb.content, metadata: lb.metadata || "{}" },
+      };
     case "blob_dialog":
-      return { type: "BlobDialogBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
+      return {
+        type: "BlobDialogBlock",
+        props: { ...common, content: lb.content, metadata: lb.metadata || "{}" },
+      };
     case "python_runner":
-      return { type: "PythonRunnerBlock", props: { ...common, content: lb.content, metadata: lb.metadata || "{}" } };
+      return {
+        type: "PythonRunnerBlock",
+        props: { ...common, content: lb.content, metadata: lb.metadata || "{}" },
+      };
     case "animation":
-      return { type: "AnimationBlock", props: { ...common, scene: sceneFrom(lb), metadata: lb.metadata || "{}" } };
+      return {
+        type: "AnimationBlock",
+        props: { ...common, scene: sceneFrom(lb), metadata: lb.metadata || "{}" },
+      };
     default:
       return { type: "TextBlock", props: { ...common, content: lb.content } };
   }
@@ -926,7 +994,12 @@ function circuitCodeFrom(lb: LearnBlockRaw): string {
 // Map a raw evaluate block to a Puck content item.
 function evaluateBlockToItem(eb: EvaluateBlockRaw): PuckData["content"][number] {
   const type = eb.type.toLowerCase();
-  const common = { id: eb.id, question: eb.question, correctAnswer: eb.correctAnswer || "", explanation: eb.explanation || "" };
+  const common = {
+    id: eb.id,
+    question: eb.question,
+    correctAnswer: eb.correctAnswer || "",
+    explanation: eb.explanation || "",
+  };
   switch (type) {
     case "multiple_choice":
     case "mcq":
@@ -1047,7 +1120,12 @@ export function puckToWaveData(puckData: PuckData) {
 
     switch (type) {
       case "HeadingBlock":
-        learnBlocks.push({ id, type: "heading", content: str(block.props.content), metadata: null });
+        learnBlocks.push({
+          id,
+          type: "heading",
+          content: str(block.props.content),
+          metadata: null,
+        });
         break;
       case "CodeBlock":
         learnBlocks.push({
@@ -1077,13 +1155,28 @@ export function puckToWaveData(puckData: PuckData) {
         });
         break;
       case "CalloutBlock":
-        learnBlocks.push({ id, type: "callout", content: str(block.props.content), metadata: null });
+        learnBlocks.push({
+          id,
+          type: "callout",
+          content: str(block.props.content),
+          metadata: null,
+        });
         break;
       case "ExampleBlock":
-        learnBlocks.push({ id, type: "example", content: str(block.props.content), metadata: null });
+        learnBlocks.push({
+          id,
+          type: "example",
+          content: str(block.props.content),
+          metadata: null,
+        });
         break;
       case "MathViz":
-        learnBlocks.push({ id, type: "formula", content: str(block.props.formula), metadata: null });
+        learnBlocks.push({
+          id,
+          type: "formula",
+          content: str(block.props.formula),
+          metadata: null,
+        });
         break;
       case "VizBlock":
         learnBlocks.push({

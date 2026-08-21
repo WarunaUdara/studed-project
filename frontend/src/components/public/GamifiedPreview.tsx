@@ -1,8 +1,8 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Confetti } from "@/components/gamification/Confetti";
+import type { LeaderboardEntry } from "@/components/gamification/LeaderboardRow";
 import { LeaderboardRow } from "@/components/gamification/LeaderboardRow";
-import type { LeaderboardEntry } from "@/components/gamification/LeaderboardTable";
 import { ProficiencyBadge } from "@/components/gamification/ProficiencyBadge";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { XPBar } from "@/components/gamification/XPBar";
@@ -32,12 +32,17 @@ export function GamifiedPreview() {
     };
   }, [reduce]);
 
+  // Illustrative data for the marketing page. Labelled as such below: the one
+  // place invented standings are allowed is where nobody could mistake them for
+  // their own.
   const snapshot: LeaderboardEntry[] = demoLeaderboardSnapshot(YOU_ID).map((e) => ({
     rank: e.rank,
-    user: e.user,
+    userId: e.user.id,
+    displayName: e.user.fullName,
     totalXp: e.totalXp,
+    isMe: e.user.id === YOU_ID,
   }));
-  const youRow = snapshot.find((e) => e.user.id === YOU_ID);
+  const youRow = snapshot.find((e) => e.isMe);
 
   return (
     <div className="relative">
@@ -78,14 +83,13 @@ export function GamifiedPreview() {
           {/* Mini leaderboard */}
           <div className="border-t bg-muted/20 px-3 py-3">
             <p className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Course leaderboard
+              Course leaderboard <span className="font-normal normal-case">(example)</span>
             </p>
             <ul className="space-y-1">
               {snapshot.slice(0, 4).map((entry) => (
                 <LeaderboardRow
-                  key={`${entry.rank}-${entry.user.id}`}
+                  key={`${entry.rank}-${entry.userId}`}
                   entry={entry}
-                  isYou={entry.user.id === YOU_ID}
                   className="bg-card"
                 />
               ))}

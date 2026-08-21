@@ -12,13 +12,33 @@ export interface CoursesQueryData {
   };
 }
 
+export interface LeaderboardEntryData {
+  rank: number;
+  userId: string;
+  /** Already masked by the gateway. */
+  displayName: string;
+  totalXp: number;
+  isMe: boolean;
+}
+
 export interface LeaderboardQueryData {
-  leaderboard?: Array<{
-    rank: number;
-    totalXp: number;
-    user: {
-      id: string;
-      fullName: string | null;
-    };
-  }>;
+  leaderboard?: {
+    totalRanked: number;
+    entries: LeaderboardEntryData[];
+    /** The viewer's standing, present even when they fall outside the page. */
+    me: LeaderboardEntryData | null;
+  };
+}
+
+export interface AchievementData {
+  id: string;
+  name: string;
+  description: string;
+  iconUrl: string | null;
+  unlocked: boolean;
+  unlockedAt: string | null;
+}
+
+export interface AchievementsQueryData {
+  achievements?: AchievementData[];
 }

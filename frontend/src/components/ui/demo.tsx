@@ -34,18 +34,13 @@ export default function DemoOne() {
               <div className="flex items-center gap-2 text-foreground">
                 <svg viewBox="0 0 24 24" className="size-5" aria-hidden>
                   <path d="M12 2 22 12 12 22 2 12Z" fill="currentColor" />
-                  <path
-                    d="M12 8 16 12 12 16 8 12Z"
-                    className="fill-background"
-                  />
+                  <path d="M12 8 16 12 12 16 8 12Z" className="fill-background" />
                 </svg>
-                <span className="font-mono text-sm uppercase tracking-widest">
-                  Lumen Studio
-                </span>
+                <span className="font-mono text-sm uppercase tracking-widest">Lumen Studio</span>
               </div>
               <p className="mt-4 max-w-xs text-sm text-muted-foreground">
-                Design tooling for teams who ship on Fridays. Built for the
-                browser, offline by default.
+                Design tooling for teams who ship on Fridays. Built for the browser, offline by
+                default.
               </p>
 
               <div className="mt-6 flex max-w-xs gap-2">

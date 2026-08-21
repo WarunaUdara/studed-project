@@ -1,5 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, CheckCircle, Clock, Lock, RotateCcw, Trophy, Zap } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle,
+  Clock,
+  Lock,
+  RotateCcw,
+  Trophy,
+  Zap,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -86,7 +95,15 @@ function WavePlayerPage() {
   const evaluateBlocks: EvaluateBlock[] = useMemo(() => wave?.evaluateBlocks ?? [], [wave]);
 
   const nextWave = useMemo(() => {
-    const courseLessons = (wave?.lesson?.course as { lessons?: Array<{ sequenceOrder?: number; waves?: Array<{ id: string; title: string; sequenceOrder?: number }> }> })?.lessons ?? [];
+    const courseLessons =
+      (
+        wave?.lesson?.course as {
+          lessons?: Array<{
+            sequenceOrder?: number;
+            waves?: Array<{ id: string; title: string; sequenceOrder?: number }>;
+          }>;
+        }
+      )?.lessons ?? [];
     const sortedLessons = [...courseLessons].sort(
       (a, b) => (a.sequenceOrder ?? 0) - (b.sequenceOrder ?? 0),
     );
@@ -225,8 +242,9 @@ function WavePlayerPage() {
   const attemptsCount = wave.myProgress?.attemptsCount ?? 0;
   const maxAttempts = wave.maxReattempts > 0 ? wave.maxReattempts : null;
   const canReattempt = result
-    ? !result.passed && (maxAttempts === null || result.remainingAttempts > 0 || result.remainingAttempts < 0)
-    : (maxAttempts === null || attemptsCount < maxAttempts);
+    ? !result.passed &&
+      (maxAttempts === null || result.remainingAttempts > 0 || result.remainingAttempts < 0)
+    : maxAttempts === null || attemptsCount < maxAttempts;
   const justEarnedXp = result?.passed && result.xpEarned > 0;
   const attemptsExhausted = maxAttempts !== null && attemptsCount >= maxAttempts && !isCompleted;
 
@@ -387,8 +405,8 @@ function WavePlayerPage() {
                           className="flex-1"
                         >
                           <Button className="w-full" size="lg">
-                            {displayResult.passed ? "Next Wave: " : "Skip & Go to Next Wave: "} {nextWave.title}{" "}
-                            <ArrowRight className="ml-1.5 h-4 w-4" />
+                            {displayResult.passed ? "Next Wave: " : "Skip & Go to Next Wave: "}{" "}
+                            {nextWave.title} <ArrowRight className="ml-1.5 h-4 w-4" />
                           </Button>
                         </Link>
                       ) : (
@@ -434,7 +452,11 @@ function WavePlayerPage() {
                         {submitResult.fetching ? "Submitting..." : "Submit Answers"}
                       </Button>
                       {nextWave ? (
-                        <Link to="/waves/$waveId" params={{ waveId: nextWave.id }} className="flex-1">
+                        <Link
+                          to="/waves/$waveId"
+                          params={{ waveId: nextWave.id }}
+                          className="flex-1"
+                        >
                           <Button variant="outline" className="w-full" size="lg">
                             Skip & Next Wave <ArrowRight className="ml-1.5 h-4 w-4" />
                           </Button>

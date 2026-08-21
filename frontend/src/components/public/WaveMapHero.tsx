@@ -3,8 +3,8 @@ import { Check, Lock, Trophy, Zap } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { StreakFlame } from "@/components/gamification/StreakFlame";
 import { XPBar } from "@/components/gamification/XPBar";
-import { type PublicStringKey, usePublicI18n } from "@/lib/i18n";
 import { HelmetCompanion } from "@/components/mascot/HelmetCompanion";
+import { type PublicStringKey, usePublicI18n } from "@/lib/i18n";
 import { playClickSound } from "@/lib/sounds";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +30,6 @@ interface WaveNodeDef {
   xp: number;
   state: NodeState;
 }
-
 
 function TravelingMascot({
   pathRef,
@@ -213,15 +212,14 @@ export function WaveMapHero() {
               animate={{ pathLength: COMPLETED_FRACTION }}
               transition={{ duration: 1.8, ease: "easeOut", delay: 0.4 }}
             />
+          </svg>
 
-            </svg>
-
-            {/* Traveling Mascot & Node buttons overlay */}
-            <div className="absolute inset-0">
-              {!reduce && (
-                <TravelingMascot pathRef={pathRef} viewWidth={VIEW_W} viewHeight={VIEW_H} />
-              )}
-              {points.map((p, i) => {
+          {/* Traveling Mascot & Node buttons overlay */}
+          <div className="absolute inset-0">
+            {!reduce && (
+              <TravelingMascot pathRef={pathRef} viewWidth={VIEW_W} viewHeight={VIEW_H} />
+            )}
+            {points.map((p, i) => {
               const node = NODES[i];
               if (!node) return null;
               const left = `${(p.x / VIEW_W) * 100}%`;

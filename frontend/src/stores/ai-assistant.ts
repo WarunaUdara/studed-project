@@ -1,9 +1,5 @@
 import { create } from "zustand";
-import {
-  type AgentEvent,
-  type AIChatTurn,
-  streamAgentChat,
-} from "@/lib/ai-chat";
+import { type AgentEvent, type AIChatTurn, streamAgentChat } from "@/lib/ai-chat";
 
 export interface AIChatMessage {
   role: "user" | "assistant";
@@ -136,13 +132,18 @@ export const useAIAssistant = create<AIAssistantState>((set, get) => ({
                 latestOps.deleteIDs = [...(latestOps.deleteIDs ?? []), ...event.blockOps.deleteIDs];
               }
               if (event.blockOps?.upsertLearn?.length) {
-                latestOps.upsertLearn = [...(latestOps.upsertLearn ?? []), ...event.blockOps.upsertLearn];
+                latestOps.upsertLearn = [
+                  ...(latestOps.upsertLearn ?? []),
+                  ...event.blockOps.upsertLearn,
+                ];
               }
               if (event.blockOps?.upsertEval?.length) {
-                latestOps.upsertEval = [...(latestOps.upsertEval ?? []), ...event.blockOps.upsertEval];
+                latestOps.upsertEval = [
+                  ...(latestOps.upsertEval ?? []),
+                  ...event.blockOps.upsertEval,
+                ];
               }
-              const count =
-                (event.learnBlocks?.length ?? 0) + (event.evaluateBlocks?.length ?? 0);
+              const count = (event.learnBlocks?.length ?? 0) + (event.evaluateBlocks?.length ?? 0);
               const summary = count
                 ? `Added ${event.learnBlocks?.length ?? 0} Learn block(s) and ${event.evaluateBlocks?.length ?? 0} Evaluate block(s) to your editor.`
                 : "";
@@ -162,7 +163,12 @@ export const useAIAssistant = create<AIAssistantState>((set, get) => ({
                   learnBlocks: latest.learnBlocks,
                   evaluateBlocks: latest.evaluateBlocks,
                 });
-                set({ lastInserted: { learnBlocks: latest.learnBlocks, evaluateBlocks: latest.evaluateBlocks } });
+                set({
+                  lastInserted: {
+                    learnBlocks: latest.learnBlocks,
+                    evaluateBlocks: latest.evaluateBlocks,
+                  },
+                });
               }
               const hasOps =
                 (latestOps.deleteIDs?.length ?? 0) > 0 ||

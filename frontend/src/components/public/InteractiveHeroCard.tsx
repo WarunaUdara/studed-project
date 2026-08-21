@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { Brain, CheckCircle2, Code2, Compass, Terminal } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 export function InteractiveHeroCard() {
   const [activeTab, setActiveTab] = useState<"math" | "science" | "code">("math");
@@ -141,9 +141,25 @@ export function InteractiveHeroCard() {
               <div className="relative w-full max-w-sm h-40 flex items-center justify-center">
                 <svg viewBox="0 0 320 140" className="w-full h-full overflow-visible">
                   {/* Grid Lines */}
-                  <line x1="20" y1="70" x2="200" y2="70" stroke="currentColor" strokeWidth="1" className="text-border" />
-                  <line x1="30" y1="20" x2="30" y2="120" stroke="currentColor" strokeWidth="1" className="text-border" />
-                  
+                  <line
+                    x1="20"
+                    y1="70"
+                    x2="200"
+                    y2="70"
+                    stroke="currentColor"
+                    strokeWidth="1"
+                    className="text-border"
+                  />
+                  <line
+                    x1="30"
+                    y1="20"
+                    x2="30"
+                    y2="120"
+                    stroke="currentColor"
+                    strokeWidth="1"
+                    className="text-border"
+                  />
+
                   {/* Cosine Wave Curve */}
                   <path
                     d="M 30 30 C 55 30 70 110 95 110 C 120 110 135 30 160 30 C 185 30 195 110 200 110"
@@ -154,9 +170,30 @@ export function InteractiveHeroCard() {
                   />
 
                   {/* Theta Axis Ticks */}
-                  <text x="30" y="85" textAnchor="middle" className="text-[9px] fill-muted-foreground font-mono">0</text>
-                  <text x="95" y="85" textAnchor="middle" className="text-[9px] fill-muted-foreground font-mono">π</text>
-                  <text x="160" y="85" textAnchor="middle" className="text-[9px] fill-muted-foreground font-mono">2π</text>
+                  <text
+                    x="30"
+                    y="85"
+                    textAnchor="middle"
+                    className="text-[9px] fill-muted-foreground font-mono"
+                  >
+                    0
+                  </text>
+                  <text
+                    x="95"
+                    y="85"
+                    textAnchor="middle"
+                    className="text-[9px] fill-muted-foreground font-mono"
+                  >
+                    π
+                  </text>
+                  <text
+                    x="160"
+                    y="85"
+                    textAnchor="middle"
+                    className="text-[9px] fill-muted-foreground font-mono"
+                  >
+                    2π
+                  </text>
 
                   {/* Slider Indicator along wave */}
                   {(() => {
@@ -165,8 +202,23 @@ export function InteractiveHeroCard() {
                     const waveY = 70 - Math.cos(normalized) * 40;
                     return (
                       <g transform={`translate(${waveX}, 0)`}>
-                        <line x1="0" y1="20" x2="0" y2="120" stroke="#ec4899" strokeWidth="2" strokeDasharray="3 3" />
-                        <circle cx="0" cy={waveY} r="5" fill="#3b82f6" stroke="#ffffff" strokeWidth="2" />
+                        <line
+                          x1="0"
+                          y1="20"
+                          x2="0"
+                          y2="120"
+                          stroke="#ec4899"
+                          strokeWidth="2"
+                          strokeDasharray="3 3"
+                        />
+                        <circle
+                          cx="0"
+                          cy={waveY}
+                          r="5"
+                          fill="#3b82f6"
+                          stroke="#ffffff"
+                          strokeWidth="2"
+                        />
                       </g>
                     );
                   })()}
@@ -174,12 +226,36 @@ export function InteractiveHeroCard() {
                   {/* Unit Circle (Right Side) */}
                   <g transform="translate(260, 70)">
                     {/* Circle */}
-                    <circle cx="0" cy="0" r="40" fill="none" stroke="#3b82f6" strokeWidth="2" opacity="0.4" />
+                    <circle
+                      cx="0"
+                      cy="0"
+                      r="40"
+                      fill="none"
+                      stroke="#3b82f6"
+                      strokeWidth="2"
+                      opacity="0.4"
+                    />
                     <circle cx="0" cy="0" r="22" fill="#3b82f6" opacity="0.1" />
                     {/* Axes */}
-                    <line x1="-48" y1="0" x2="48" y2="0" stroke="currentColor" strokeWidth="1" className="text-border" />
-                    <line x1="0" y1="-48" x2="0" y2="48" stroke="currentColor" strokeWidth="1" className="text-border" />
-                    
+                    <line
+                      x1="-48"
+                      y1="0"
+                      x2="48"
+                      y2="0"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                      className="text-border"
+                    />
+                    <line
+                      x1="0"
+                      y1="-48"
+                      x2="0"
+                      y2="48"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                      className="text-border"
+                    />
+
                     {/* Rotating Radius Arm */}
                     {(() => {
                       const angle = thetaPercent * Math.PI * 4;
@@ -187,7 +263,14 @@ export function InteractiveHeroCard() {
                       const armY = -Math.sin(angle) * 40;
                       return (
                         <>
-                          <line x1="0" y1="0" x2={armX} y2={armY} stroke="#3b82f6" strokeWidth="2.5" />
+                          <line
+                            x1="0"
+                            y1="0"
+                            x2={armX}
+                            y2={armY}
+                            stroke="#3b82f6"
+                            strokeWidth="2.5"
+                          />
                           <circle cx={armX} cy={armY} r="4" fill="#ec4899" />
                           <circle cx="0" cy="0" r="3" fill="#1e293b" />
                         </>
@@ -215,7 +298,10 @@ export function InteractiveHeroCard() {
                 <svg viewBox="0 0 240 130" className="w-60 h-32 overflow-visible">
                   {/* Left Gear (Lime Driver: Counter-Clockwise ↺) */}
                   <g transform="translate(68, 65)">
-                    <g className="animate-spin" style={{ animationDuration: "5s", animationDirection: "reverse" }}>
+                    <g
+                      className="animate-spin"
+                      style={{ animationDuration: "5s", animationDirection: "reverse" }}
+                    >
                       <circle cx="0" cy="0" r="42" fill="#84cc16" />
                       {Array.from({ length: 12 }).map((_, i) => (
                         <rect
@@ -236,14 +322,23 @@ export function InteractiveHeroCard() {
                     <circle cx="0" cy="0" r="3.5" fill="#0f172a" />
                     {/* Rotation Arrow */}
                     <g transform="translate(0, -58)" className="text-white drop-shadow-md">
-                      <path d="M -14 0 A 18 18 0 0 1 14 0" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                      <path
+                        d="M -14 0 A 18 18 0 0 1 14 0"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                      />
                       <polygon points="-17,-2 -11,5 -10,-4" fill="currentColor" />
                     </g>
                   </g>
 
                   {/* Right Gear (Cyan Driven: Clockwise ↻) */}
                   <g transform="translate(152, 65)">
-                    <g className="animate-spin" style={{ animationDuration: "5s", animationDirection: "normal" }}>
+                    <g
+                      className="animate-spin"
+                      style={{ animationDuration: "5s", animationDirection: "normal" }}
+                    >
                       <circle cx="0" cy="0" r="42" fill="#06b6d4" />
                       {Array.from({ length: 12 }).map((_, i) => (
                         <rect
@@ -264,7 +359,13 @@ export function InteractiveHeroCard() {
                     <circle cx="0" cy="0" r="3.5" fill="#0f172a" />
                     {/* Rotation Arrow */}
                     <g transform="translate(0, -58)" className="text-white drop-shadow-md">
-                      <path d="M -14 0 A 18 18 0 0 1 14 0" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                      <path
+                        d="M -14 0 A 18 18 0 0 1 14 0"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                      />
                       <polygon points="17,-2 11,5 10,-4" fill="currentColor" />
                     </g>
                   </g>

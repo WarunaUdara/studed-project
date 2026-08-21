@@ -13,6 +13,15 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+const (
+	// defaultLeaderboardPage is what a client gets when it asks for no page
+	// size; maxLeaderboardPage is the ceiling regardless of what it asks for.
+	// These live here rather than in the generated resolver file, which gqlgen
+	// rewrites.
+	defaultLeaderboardPage = 50
+	maxLeaderboardPage     = 100
+)
+
 func requireUser(ctx context.Context) (middleware.UserContext, error) {
 	userCtx, ok := middleware.UserFromContext(ctx)
 	if !ok || userCtx.UserID == "" {

@@ -17,12 +17,3 @@ export interface SparkTask {
 }
 
 export type SparkScreenState = "task" | "motivation" | "streak" | "charge" | "league";
-
-export interface LeagueMember {
-  rank: number;
-  name: string;
-  avatarLetter: string;
-  avatarColor: string; // e.g. "green" | "yellow" | "gold"
-  xp: number;
-  isCurrentUser?: boolean;
-}

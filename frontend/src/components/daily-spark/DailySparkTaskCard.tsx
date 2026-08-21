@@ -246,7 +246,9 @@ export function DailySparkTaskCard({
               onClick={(e) => e.stopPropagation()}
               className="w-full max-w-md rounded-2xl border border-white/20 bg-[#1e2026] p-6 shadow-2xl text-left"
             >
-              <h3 className="text-lg font-bold text-white mb-2">Geometric Proof &amp; Explanation</h3>
+              <h3 className="text-lg font-bold text-white mb-2">
+                Geometric Proof &amp; Explanation
+              </h3>
               <p className="text-sm text-neutral-300 leading-relaxed mb-6">{task.explanation}</p>
               <button
                 type="button"
