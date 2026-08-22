@@ -12,7 +12,7 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: studed2-ingress-ip
     kubernetes.io/ingress.allow-http: "true"
     kubernetes.io/ingress.redirect-http-to-https: "true"
-    networking.gke.io/managed-certificates: studed-api-cert-v2
+    ingress.gcp.kubernetes.io/pre-shared-cert: studed-le-cert
 spec:
   rules:
     - host: api.34.102.169.180.sslip.io
