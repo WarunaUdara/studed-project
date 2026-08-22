@@ -13,6 +13,7 @@ type LessonRepository interface {
 	Create(ctx context.Context, lesson *model.Lesson) error
 	GetByID(ctx context.Context, id string) (*model.Lesson, error)
 	ListByCourse(ctx context.Context, courseID string, publishedOnly bool) ([]*model.Lesson, error)
+	ListByCourseIDs(ctx context.Context, courseIDs []string, publishedOnly bool) ([]*model.Lesson, error)
 	Update(ctx context.Context, lesson *model.Lesson) error
 	GetCourseID(ctx context.Context, id string) (string, error)
 	Delete(ctx context.Context, id string) error
@@ -53,6 +54,25 @@ func (r *gormLessonRepository) ListByCourse(ctx context.Context, courseID string
 	var lessons []*model.Lesson
 	if err := query.Order("sequence_order ASC, created_at ASC").Find(&lessons).Error; err != nil {
 		return nil, fmt.Errorf("failed to list lessons: %w", err)
+	}
+	return lessons, nil
+}
+
+// ListByCourseIDs loads lessons for many courses in ONE query. The catalog
+// flow used to issue a per-course query (each ~250ms on Neon), burying a
+// 17-course page under ~4s of sequential round-trips.
+func (r *gormLessonRepository) ListByCourseIDs(ctx context.Context, courseIDs []string, publishedOnly bool) ([]*model.Lesson, error) {
+	if len(courseIDs) == 0 {
+		return []*model.Lesson{}, nil
+	}
+	query := r.db.WithContext(ctx).Where("course_id IN ?", courseIDs)
+	if publishedOnly {
+		query = query.Where("is_published = ?", true)
+	}
+
+	var lessons []*model.Lesson
+	if err := query.Order("course_id ASC, sequence_order ASC, created_at ASC").Find(&lessons).Error; err != nil {
+		return nil, fmt.Errorf("failed to list lessons by ids: %w", err)
 	}
 	return lessons, nil
 }

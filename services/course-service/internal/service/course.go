@@ -24,6 +24,7 @@ type CourseService interface {
 	CreateCourse(ctx context.Context, req *coursepb.CreateCourseRequest) (*coursepb.CourseResponse, error)
 	GetCourse(ctx context.Context, req *coursepb.GetCourseRequest) (*coursepb.CourseResponse, error)
 	ListCourses(ctx context.Context, req *coursepb.ListCoursesRequest) (*coursepb.CourseListResponse, error)
+	BatchGetCourses(ctx context.Context, req *coursepb.BatchGetCoursesRequest) (*coursepb.CourseListResponse, error)
 	UpdateCourse(ctx context.Context, req *coursepb.UpdateCourseRequest) (*coursepb.CourseResponse, error)
 	PublishCourse(ctx context.Context, req *coursepb.PublishCourseRequest) (*coursepb.CourseResponse, error)
 	DeleteCourse(ctx context.Context, req *coursepb.DeleteCourseRequest) (*coursepb.DeleteResponse, error)
@@ -49,6 +50,59 @@ type courseService struct {
 	lessonRepo  repository.LessonRepository
 	waveRepo    repository.WaveRepository
 	searchIndex CourseSearchIndex
+}
+
+func (s *courseService) BatchGetCourses(ctx context.Context, req *coursepb.BatchGetCoursesRequest) (*coursepb.CourseListResponse, error) {
+	if len(req.CourseIds) == 0 {
+		return &coursepb.CourseListResponse{}, nil
+	}
+
+	courses, err := s.courseRepo.ListByIDs(ctx, req.CourseIds)
+	if err != nil {
+		return nil, err
+	}
+
+	courseIDs := make([]string, 0, len(courses))
+	for _, c := range courses {
+		courseIDs = append(courseIDs, c.ID)
+	}
+
+	// Three queries total instead of the per-course/per-lesson cascade the
+	// gateway used to trigger (17 courses x lessons x waves of ~250ms Neon
+	// round-trips became ~4s of catalog latency).
+	lessons, err := s.lessonRepo.ListByCourseIDs(ctx, courseIDs, false)
+	if err != nil {
+		return nil, err
+	}
+	lessonIDs := make([]string, 0, len(lessons))
+	for _, l := range lessons {
+		lessonIDs = append(lessonIDs, l.ID)
+	}
+	waves, err := s.waveRepo.ListByLessonIDs(ctx, lessonIDs, false)
+	if err != nil {
+		return nil, err
+	}
+
+	lessonsByCourse := map[string][]*model.Lesson{}
+	for _, l := range lessons {
+		lessonsByCourse[l.CourseID] = append(lessonsByCourse[l.CourseID], l)
+	}
+	wavesByLesson := map[string][]*model.Wave{}
+	for _, w := range waves {
+		wavesByLesson[w.LessonID] = append(wavesByLesson[w.LessonID], w)
+	}
+	for _, c := range courses {
+		for _, l := range lessonsByCourse[c.ID] {
+			l.Waves = wavesByLesson[l.ID]
+		}
+		c.Lessons = lessonsByCourse[c.ID]
+	}
+
+	protoCourses := make([]*coursepb.Course, len(courses))
+	for i, c := range courses {
+		protoCourses[i] = c.ToProto()
+	}
+	return &coursepb.CourseListResponse{Courses: protoCourses}, nil
 }
 
 type Option func(*courseService)

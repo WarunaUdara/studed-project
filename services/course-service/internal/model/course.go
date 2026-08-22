@@ -44,6 +44,7 @@ type Course struct {
 	PublishedAt *time.Time
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
+	Lessons     []*Lesson `gorm:"-"`
 }
 
 func (Course) TableName() string {
@@ -64,6 +65,11 @@ func (c *Course) ToProto() *coursepb.Course {
 	}
 	if c.Price != nil {
 		course.Price = *c.Price
+	}
+	for _, l := range c.Lessons {
+		if l != nil {
+			course.Lessons = append(course.Lessons, l.ToProto())
+		}
 	}
 	return course
 }

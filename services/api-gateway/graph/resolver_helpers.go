@@ -85,10 +85,47 @@ func (r *Resolver) populateLessons(ctx context.Context, course *model.Course) {
 	course.Educator = full.Educator
 }
 
-// populateLessonsParallel attaches lessons (and their waves) to many courses
-// concurrently. Serializing this makes a catalog page pay one gRPC round-trip
-// per course; with bounded concurrency the page pays roughly one round-trip.
+// populateLessonsParallel attaches lessons (and their waves) to many courses.
+// The batch path costs 1 gRPC call + 3 DB queries on the course-service
+// instead of the old per-course serial cascade (which was ~4s of Neon
+// round-trips for a 17-course catalog). Falls back to per-course fetching if
+// the batch fails for any reason.
 func (r *Resolver) populateLessonsParallel(ctx context.Context, courses []*model.Course) {
+	if len(courses) == 0 {
+		return
+	}
+
+	ids := make([]string, 0, len(courses))
+	for _, course := range courses {
+		if course != nil {
+			ids = append(ids, course.ID)
+		}
+	}
+
+	full, err := r.CourseClient.BatchGetCoursesWithLessons(ctx, ids)
+	if err == nil && len(full) > 0 {
+		byID := make(map[string]*model.Course, len(full))
+		for _, c := range full {
+			if c != nil {
+				byID[c.ID] = c
+			}
+		}
+		for _, course := range courses {
+			if course == nil {
+				continue
+			}
+			if f, ok := byID[course.ID]; ok {
+				course.Lessons = f.Lessons
+				course.Educator = f.Educator
+			}
+		}
+		return
+	}
+	if err != nil {
+		slog.Warn("batch lesson population failed, falling back to per-course",
+			slog.Any("error", err))
+	}
+
 	g, ctx := errgroup.WithContext(ctx)
 	g.SetLimit(8)
 	for _, course := range courses {

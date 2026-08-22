@@ -117,6 +117,17 @@ func (r *fakeLessonRepo) ListByCourse(ctx context.Context, courseID string, publ
 	return out, nil
 }
 
+func (r *fakeLessonRepo) ListByCourseIDs(ctx context.Context, courseIDs []string, publishedOnly bool) ([]*model.Lesson, error) {
+	var out []*model.Lesson
+	for _, id := range courseIDs {
+		if l, err := r.ListByCourse(ctx, id, publishedOnly); err == nil {
+			out = append(out, l...)
+		}
+	}
+	return out, nil
+}
+
+
 func (r *fakeLessonRepo) Update(ctx context.Context, l *model.Lesson) error {
 	r.lessons[l.ID] = l
 	return nil

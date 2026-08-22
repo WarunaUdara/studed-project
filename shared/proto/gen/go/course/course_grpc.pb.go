@@ -22,6 +22,7 @@ const (
 	CourseService_CreateCourse_FullMethodName         = "/course.CourseService/CreateCourse"
 	CourseService_GetCourse_FullMethodName            = "/course.CourseService/GetCourse"
 	CourseService_ListCourses_FullMethodName          = "/course.CourseService/ListCourses"
+	CourseService_BatchGetCourses_FullMethodName      = "/course.CourseService/BatchGetCourses"
 	CourseService_UpdateCourse_FullMethodName         = "/course.CourseService/UpdateCourse"
 	CourseService_PublishCourse_FullMethodName        = "/course.CourseService/PublishCourse"
 	CourseService_DeleteCourse_FullMethodName         = "/course.CourseService/DeleteCourse"
@@ -47,6 +48,7 @@ type CourseServiceClient interface {
 	CreateCourse(ctx context.Context, in *CreateCourseRequest, opts ...grpc.CallOption) (*CourseResponse, error)
 	GetCourse(ctx context.Context, in *GetCourseRequest, opts ...grpc.CallOption) (*CourseResponse, error)
 	ListCourses(ctx context.Context, in *ListCoursesRequest, opts ...grpc.CallOption) (*CourseListResponse, error)
+	BatchGetCourses(ctx context.Context, in *BatchGetCoursesRequest, opts ...grpc.CallOption) (*CourseListResponse, error)
 	UpdateCourse(ctx context.Context, in *UpdateCourseRequest, opts ...grpc.CallOption) (*CourseResponse, error)
 	PublishCourse(ctx context.Context, in *PublishCourseRequest, opts ...grpc.CallOption) (*CourseResponse, error)
 	DeleteCourse(ctx context.Context, in *DeleteCourseRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
@@ -97,6 +99,16 @@ func (c *courseServiceClient) ListCourses(ctx context.Context, in *ListCoursesRe
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CourseListResponse)
 	err := c.cc.Invoke(ctx, CourseService_ListCourses_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *courseServiceClient) BatchGetCourses(ctx context.Context, in *BatchGetCoursesRequest, opts ...grpc.CallOption) (*CourseListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CourseListResponse)
+	err := c.cc.Invoke(ctx, CourseService_BatchGetCourses_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -270,6 +282,7 @@ type CourseServiceServer interface {
 	CreateCourse(context.Context, *CreateCourseRequest) (*CourseResponse, error)
 	GetCourse(context.Context, *GetCourseRequest) (*CourseResponse, error)
 	ListCourses(context.Context, *ListCoursesRequest) (*CourseListResponse, error)
+	BatchGetCourses(context.Context, *BatchGetCoursesRequest) (*CourseListResponse, error)
 	UpdateCourse(context.Context, *UpdateCourseRequest) (*CourseResponse, error)
 	PublishCourse(context.Context, *PublishCourseRequest) (*CourseResponse, error)
 	DeleteCourse(context.Context, *DeleteCourseRequest) (*DeleteResponse, error)
@@ -304,6 +317,9 @@ func (UnimplementedCourseServiceServer) GetCourse(context.Context, *GetCourseReq
 }
 func (UnimplementedCourseServiceServer) ListCourses(context.Context, *ListCoursesRequest) (*CourseListResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCourses not implemented")
+}
+func (UnimplementedCourseServiceServer) BatchGetCourses(context.Context, *BatchGetCoursesRequest) (*CourseListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method BatchGetCourses not implemented")
 }
 func (UnimplementedCourseServiceServer) UpdateCourse(context.Context, *UpdateCourseRequest) (*CourseResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateCourse not implemented")
@@ -424,6 +440,24 @@ func _CourseService_ListCourses_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CourseServiceServer).ListCourses(ctx, req.(*ListCoursesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CourseService_BatchGetCourses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchGetCoursesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourseServiceServer).BatchGetCourses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CourseService_BatchGetCourses_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourseServiceServer).BatchGetCourses(ctx, req.(*BatchGetCoursesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -734,6 +768,10 @@ var CourseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListCourses",
 			Handler:    _CourseService_ListCourses_Handler,
+		},
+		{
+			MethodName: "BatchGetCourses",
+			Handler:    _CourseService_BatchGetCourses_Handler,
 		},
 		{
 			MethodName: "UpdateCourse",

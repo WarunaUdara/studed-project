@@ -36,6 +36,10 @@ func (h *CourseGRPCHandler) ListCourses(ctx context.Context, req *coursepb.ListC
 	return h.svc.ListCourses(ctx, req)
 }
 
+func (h *CourseGRPCHandler) BatchGetCourses(ctx context.Context, req *coursepb.BatchGetCoursesRequest) (*coursepb.CourseListResponse, error) {
+	return h.svc.BatchGetCourses(ctx, req)
+}
+
 func (h *CourseGRPCHandler) UpdateCourse(ctx context.Context, req *coursepb.UpdateCourseRequest) (*coursepb.CourseResponse, error) {
 	resp, err := h.svc.UpdateCourse(ctx, req)
 	if err != nil {

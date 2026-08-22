@@ -29,6 +29,7 @@ message Course {
   CourseStatus status = 8;
   int64 created_at_unix = 9;
   int64 updated_at_unix = 10;
+  repeated Lesson lessons = 11;
 }
 
 message Lesson {
@@ -39,6 +40,7 @@ message Lesson {
   bool is_published = 5;
   int64 created_at_unix = 6;
   int64 updated_at_unix = 7;
+  repeated Wave waves = 8;
 }
 
 message Wave {
@@ -96,6 +98,10 @@ message UpdateCourseRequest {
 message CourseResponse {
   Course course = 1;
   string error = 2;
+}
+
+message BatchGetCoursesRequest {
+  repeated string course_ids = 1;
 }
 
 message CourseListResponse {
@@ -219,6 +225,7 @@ service CourseService {
   rpc CreateCourse(CreateCourseRequest) returns (CourseResponse);
   rpc GetCourse(GetCourseRequest) returns (CourseResponse);
   rpc ListCourses(ListCoursesRequest) returns (CourseListResponse);
+  rpc BatchGetCourses(BatchGetCoursesRequest) returns (CourseListResponse);
   rpc UpdateCourse(UpdateCourseRequest) returns (CourseResponse);
   rpc PublishCourse(PublishCourseRequest) returns (CourseResponse);
   rpc DeleteCourse(DeleteCourseRequest) returns (DeleteResponse);

@@ -14,6 +14,7 @@ type Lesson struct {
 	IsPublished   bool   `gorm:"not null;default:false"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
+	Waves         []*Wave `gorm:"-"`
 }
 
 func (Lesson) TableName() string {
@@ -21,7 +22,7 @@ func (Lesson) TableName() string {
 }
 
 func (l *Lesson) ToProto() *coursepb.Lesson {
-	return &coursepb.Lesson{
+	proto := &coursepb.Lesson{
 		Id:            l.ID,
 		CourseId:      l.CourseID,
 		Title:         l.Title,
@@ -30,4 +31,10 @@ func (l *Lesson) ToProto() *coursepb.Lesson {
 		CreatedAtUnix: l.CreatedAt.Unix(),
 		UpdatedAtUnix: l.UpdatedAt.Unix(),
 	}
+	for _, w := range l.Waves {
+		if w != nil {
+			proto.Waves = append(proto.Waves, w.ToProto())
+		}
+	}
+	return proto
 }

@@ -135,6 +135,7 @@ type Course struct {
 	Status        CourseStatus           `protobuf:"varint,8,opt,name=status,proto3,enum=course.CourseStatus" json:"status,omitempty"`
 	CreatedAtUnix int64                  `protobuf:"varint,9,opt,name=created_at_unix,json=createdAtUnix,proto3" json:"created_at_unix,omitempty"`
 	UpdatedAtUnix int64                  `protobuf:"varint,10,opt,name=updated_at_unix,json=updatedAtUnix,proto3" json:"updated_at_unix,omitempty"`
+	Lessons       []*Lesson              `protobuf:"bytes,11,rep,name=lessons,proto3" json:"lessons,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -239,6 +240,13 @@ func (x *Course) GetUpdatedAtUnix() int64 {
 	return 0
 }
 
+func (x *Course) GetLessons() []*Lesson {
+	if x != nil {
+		return x.Lessons
+	}
+	return nil
+}
+
 type Lesson struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -248,6 +256,7 @@ type Lesson struct {
 	IsPublished   bool                   `protobuf:"varint,5,opt,name=is_published,json=isPublished,proto3" json:"is_published,omitempty"`
 	CreatedAtUnix int64                  `protobuf:"varint,6,opt,name=created_at_unix,json=createdAtUnix,proto3" json:"created_at_unix,omitempty"`
 	UpdatedAtUnix int64                  `protobuf:"varint,7,opt,name=updated_at_unix,json=updatedAtUnix,proto3" json:"updated_at_unix,omitempty"`
+	Waves         []*Wave                `protobuf:"bytes,8,rep,name=waves,proto3" json:"waves,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -329,6 +338,13 @@ func (x *Lesson) GetUpdatedAtUnix() int64 {
 		return x.UpdatedAtUnix
 	}
 	return 0
+}
+
+func (x *Lesson) GetWaves() []*Wave {
+	if x != nil {
+		return x.Waves
+	}
+	return nil
 }
 
 type Wave struct {
@@ -871,6 +887,50 @@ func (x *CourseResponse) GetError() string {
 	return ""
 }
 
+type BatchGetCoursesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CourseIds     []string               `protobuf:"bytes,1,rep,name=course_ids,json=courseIds,proto3" json:"course_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BatchGetCoursesRequest) Reset() {
+	*x = BatchGetCoursesRequest{}
+	mi := &file_course_course_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BatchGetCoursesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BatchGetCoursesRequest) ProtoMessage() {}
+
+func (x *BatchGetCoursesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_course_course_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BatchGetCoursesRequest.ProtoReflect.Descriptor instead.
+func (*BatchGetCoursesRequest) Descriptor() ([]byte, []int) {
+	return file_course_course_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *BatchGetCoursesRequest) GetCourseIds() []string {
+	if x != nil {
+		return x.CourseIds
+	}
+	return nil
+}
+
 type CourseListResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Courses       []*Course              `protobuf:"bytes,1,rep,name=courses,proto3" json:"courses,omitempty"`
@@ -880,7 +940,7 @@ type CourseListResponse struct {
 
 func (x *CourseListResponse) Reset() {
 	*x = CourseListResponse{}
-	mi := &file_course_course_proto_msgTypes[9]
+	mi := &file_course_course_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -892,7 +952,7 @@ func (x *CourseListResponse) String() string {
 func (*CourseListResponse) ProtoMessage() {}
 
 func (x *CourseListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[9]
+	mi := &file_course_course_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -905,7 +965,7 @@ func (x *CourseListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CourseListResponse.ProtoReflect.Descriptor instead.
 func (*CourseListResponse) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{9}
+	return file_course_course_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CourseListResponse) GetCourses() []*Course {
@@ -927,7 +987,7 @@ type CreateLessonRequest struct {
 
 func (x *CreateLessonRequest) Reset() {
 	*x = CreateLessonRequest{}
-	mi := &file_course_course_proto_msgTypes[10]
+	mi := &file_course_course_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -939,7 +999,7 @@ func (x *CreateLessonRequest) String() string {
 func (*CreateLessonRequest) ProtoMessage() {}
 
 func (x *CreateLessonRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[10]
+	mi := &file_course_course_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -952,7 +1012,7 @@ func (x *CreateLessonRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateLessonRequest.ProtoReflect.Descriptor instead.
 func (*CreateLessonRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{10}
+	return file_course_course_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *CreateLessonRequest) GetCourseId() string {
@@ -992,7 +1052,7 @@ type GetLessonRequest struct {
 
 func (x *GetLessonRequest) Reset() {
 	*x = GetLessonRequest{}
-	mi := &file_course_course_proto_msgTypes[11]
+	mi := &file_course_course_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1004,7 +1064,7 @@ func (x *GetLessonRequest) String() string {
 func (*GetLessonRequest) ProtoMessage() {}
 
 func (x *GetLessonRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[11]
+	mi := &file_course_course_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1017,7 +1077,7 @@ func (x *GetLessonRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLessonRequest.ProtoReflect.Descriptor instead.
 func (*GetLessonRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{11}
+	return file_course_course_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetLessonRequest) GetId() string {
@@ -1037,7 +1097,7 @@ type ListLessonsRequest struct {
 
 func (x *ListLessonsRequest) Reset() {
 	*x = ListLessonsRequest{}
-	mi := &file_course_course_proto_msgTypes[12]
+	mi := &file_course_course_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1049,7 +1109,7 @@ func (x *ListLessonsRequest) String() string {
 func (*ListLessonsRequest) ProtoMessage() {}
 
 func (x *ListLessonsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[12]
+	mi := &file_course_course_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1062,7 +1122,7 @@ func (x *ListLessonsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListLessonsRequest.ProtoReflect.Descriptor instead.
 func (*ListLessonsRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{12}
+	return file_course_course_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListLessonsRequest) GetCourseId() string {
@@ -1089,7 +1149,7 @@ type PublishLessonRequest struct {
 
 func (x *PublishLessonRequest) Reset() {
 	*x = PublishLessonRequest{}
-	mi := &file_course_course_proto_msgTypes[13]
+	mi := &file_course_course_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1101,7 +1161,7 @@ func (x *PublishLessonRequest) String() string {
 func (*PublishLessonRequest) ProtoMessage() {}
 
 func (x *PublishLessonRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[13]
+	mi := &file_course_course_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1114,7 +1174,7 @@ func (x *PublishLessonRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublishLessonRequest.ProtoReflect.Descriptor instead.
 func (*PublishLessonRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{13}
+	return file_course_course_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *PublishLessonRequest) GetId() string {
@@ -1143,7 +1203,7 @@ type UpdateLessonRequest struct {
 
 func (x *UpdateLessonRequest) Reset() {
 	*x = UpdateLessonRequest{}
-	mi := &file_course_course_proto_msgTypes[14]
+	mi := &file_course_course_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1155,7 +1215,7 @@ func (x *UpdateLessonRequest) String() string {
 func (*UpdateLessonRequest) ProtoMessage() {}
 
 func (x *UpdateLessonRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[14]
+	mi := &file_course_course_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1168,7 +1228,7 @@ func (x *UpdateLessonRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateLessonRequest.ProtoReflect.Descriptor instead.
 func (*UpdateLessonRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{14}
+	return file_course_course_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *UpdateLessonRequest) GetId() string {
@@ -1209,7 +1269,7 @@ type LessonResponse struct {
 
 func (x *LessonResponse) Reset() {
 	*x = LessonResponse{}
-	mi := &file_course_course_proto_msgTypes[15]
+	mi := &file_course_course_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1221,7 +1281,7 @@ func (x *LessonResponse) String() string {
 func (*LessonResponse) ProtoMessage() {}
 
 func (x *LessonResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[15]
+	mi := &file_course_course_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1234,7 +1294,7 @@ func (x *LessonResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LessonResponse.ProtoReflect.Descriptor instead.
 func (*LessonResponse) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{15}
+	return file_course_course_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *LessonResponse) GetLesson() *Lesson {
@@ -1260,7 +1320,7 @@ type LessonListResponse struct {
 
 func (x *LessonListResponse) Reset() {
 	*x = LessonListResponse{}
-	mi := &file_course_course_proto_msgTypes[16]
+	mi := &file_course_course_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1272,7 +1332,7 @@ func (x *LessonListResponse) String() string {
 func (*LessonListResponse) ProtoMessage() {}
 
 func (x *LessonListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[16]
+	mi := &file_course_course_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1285,7 +1345,7 @@ func (x *LessonListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LessonListResponse.ProtoReflect.Descriptor instead.
 func (*LessonListResponse) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{16}
+	return file_course_course_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *LessonListResponse) GetLessons() []*Lesson {
@@ -1314,7 +1374,7 @@ type CreateWaveRequest struct {
 
 func (x *CreateWaveRequest) Reset() {
 	*x = CreateWaveRequest{}
-	mi := &file_course_course_proto_msgTypes[17]
+	mi := &file_course_course_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1326,7 +1386,7 @@ func (x *CreateWaveRequest) String() string {
 func (*CreateWaveRequest) ProtoMessage() {}
 
 func (x *CreateWaveRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[17]
+	mi := &file_course_course_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1339,7 +1399,7 @@ func (x *CreateWaveRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateWaveRequest.ProtoReflect.Descriptor instead.
 func (*CreateWaveRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{17}
+	return file_course_course_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *CreateWaveRequest) GetLessonId() string {
@@ -1428,7 +1488,7 @@ type GetWaveRequest struct {
 
 func (x *GetWaveRequest) Reset() {
 	*x = GetWaveRequest{}
-	mi := &file_course_course_proto_msgTypes[18]
+	mi := &file_course_course_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1440,7 +1500,7 @@ func (x *GetWaveRequest) String() string {
 func (*GetWaveRequest) ProtoMessage() {}
 
 func (x *GetWaveRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[18]
+	mi := &file_course_course_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1453,7 +1513,7 @@ func (x *GetWaveRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWaveRequest.ProtoReflect.Descriptor instead.
 func (*GetWaveRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{18}
+	return file_course_course_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GetWaveRequest) GetId() string {
@@ -1473,7 +1533,7 @@ type ListWavesRequest struct {
 
 func (x *ListWavesRequest) Reset() {
 	*x = ListWavesRequest{}
-	mi := &file_course_course_proto_msgTypes[19]
+	mi := &file_course_course_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1485,7 +1545,7 @@ func (x *ListWavesRequest) String() string {
 func (*ListWavesRequest) ProtoMessage() {}
 
 func (x *ListWavesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[19]
+	mi := &file_course_course_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1498,7 +1558,7 @@ func (x *ListWavesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWavesRequest.ProtoReflect.Descriptor instead.
 func (*ListWavesRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{19}
+	return file_course_course_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ListWavesRequest) GetLessonId() string {
@@ -1525,7 +1585,7 @@ type ListWavesByLessonIdsRequest struct {
 
 func (x *ListWavesByLessonIdsRequest) Reset() {
 	*x = ListWavesByLessonIdsRequest{}
-	mi := &file_course_course_proto_msgTypes[20]
+	mi := &file_course_course_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1537,7 +1597,7 @@ func (x *ListWavesByLessonIdsRequest) String() string {
 func (*ListWavesByLessonIdsRequest) ProtoMessage() {}
 
 func (x *ListWavesByLessonIdsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[20]
+	mi := &file_course_course_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1550,7 +1610,7 @@ func (x *ListWavesByLessonIdsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWavesByLessonIdsRequest.ProtoReflect.Descriptor instead.
 func (*ListWavesByLessonIdsRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{20}
+	return file_course_course_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ListWavesByLessonIdsRequest) GetLessonIds() []string {
@@ -1586,7 +1646,7 @@ type UpdateWaveRequest struct {
 
 func (x *UpdateWaveRequest) Reset() {
 	*x = UpdateWaveRequest{}
-	mi := &file_course_course_proto_msgTypes[21]
+	mi := &file_course_course_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1598,7 +1658,7 @@ func (x *UpdateWaveRequest) String() string {
 func (*UpdateWaveRequest) ProtoMessage() {}
 
 func (x *UpdateWaveRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[21]
+	mi := &file_course_course_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1611,7 +1671,7 @@ func (x *UpdateWaveRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateWaveRequest.ProtoReflect.Descriptor instead.
 func (*UpdateWaveRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{21}
+	return file_course_course_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *UpdateWaveRequest) GetId() string {
@@ -1701,7 +1761,7 @@ type PublishWaveRequest struct {
 
 func (x *PublishWaveRequest) Reset() {
 	*x = PublishWaveRequest{}
-	mi := &file_course_course_proto_msgTypes[22]
+	mi := &file_course_course_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1713,7 +1773,7 @@ func (x *PublishWaveRequest) String() string {
 func (*PublishWaveRequest) ProtoMessage() {}
 
 func (x *PublishWaveRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[22]
+	mi := &file_course_course_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1726,7 +1786,7 @@ func (x *PublishWaveRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublishWaveRequest.ProtoReflect.Descriptor instead.
 func (*PublishWaveRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{22}
+	return file_course_course_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *PublishWaveRequest) GetId() string {
@@ -1753,7 +1813,7 @@ type DeleteCourseRequest struct {
 
 func (x *DeleteCourseRequest) Reset() {
 	*x = DeleteCourseRequest{}
-	mi := &file_course_course_proto_msgTypes[23]
+	mi := &file_course_course_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1765,7 +1825,7 @@ func (x *DeleteCourseRequest) String() string {
 func (*DeleteCourseRequest) ProtoMessage() {}
 
 func (x *DeleteCourseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[23]
+	mi := &file_course_course_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1778,7 +1838,7 @@ func (x *DeleteCourseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCourseRequest.ProtoReflect.Descriptor instead.
 func (*DeleteCourseRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{23}
+	return file_course_course_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *DeleteCourseRequest) GetId() string {
@@ -1805,7 +1865,7 @@ type DeleteLessonRequest struct {
 
 func (x *DeleteLessonRequest) Reset() {
 	*x = DeleteLessonRequest{}
-	mi := &file_course_course_proto_msgTypes[24]
+	mi := &file_course_course_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1817,7 +1877,7 @@ func (x *DeleteLessonRequest) String() string {
 func (*DeleteLessonRequest) ProtoMessage() {}
 
 func (x *DeleteLessonRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[24]
+	mi := &file_course_course_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1830,7 +1890,7 @@ func (x *DeleteLessonRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteLessonRequest.ProtoReflect.Descriptor instead.
 func (*DeleteLessonRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{24}
+	return file_course_course_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *DeleteLessonRequest) GetId() string {
@@ -1857,7 +1917,7 @@ type DeleteWaveRequest struct {
 
 func (x *DeleteWaveRequest) Reset() {
 	*x = DeleteWaveRequest{}
-	mi := &file_course_course_proto_msgTypes[25]
+	mi := &file_course_course_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1869,7 +1929,7 @@ func (x *DeleteWaveRequest) String() string {
 func (*DeleteWaveRequest) ProtoMessage() {}
 
 func (x *DeleteWaveRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[25]
+	mi := &file_course_course_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1882,7 +1942,7 @@ func (x *DeleteWaveRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteWaveRequest.ProtoReflect.Descriptor instead.
 func (*DeleteWaveRequest) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{25}
+	return file_course_course_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *DeleteWaveRequest) GetId() string {
@@ -1909,7 +1969,7 @@ type DeleteResponse struct {
 
 func (x *DeleteResponse) Reset() {
 	*x = DeleteResponse{}
-	mi := &file_course_course_proto_msgTypes[26]
+	mi := &file_course_course_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1921,7 +1981,7 @@ func (x *DeleteResponse) String() string {
 func (*DeleteResponse) ProtoMessage() {}
 
 func (x *DeleteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[26]
+	mi := &file_course_course_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1934,7 +1994,7 @@ func (x *DeleteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteResponse.ProtoReflect.Descriptor instead.
 func (*DeleteResponse) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{26}
+	return file_course_course_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *DeleteResponse) GetSuccess() bool {
@@ -1961,7 +2021,7 @@ type WaveResponse struct {
 
 func (x *WaveResponse) Reset() {
 	*x = WaveResponse{}
-	mi := &file_course_course_proto_msgTypes[27]
+	mi := &file_course_course_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1973,7 +2033,7 @@ func (x *WaveResponse) String() string {
 func (*WaveResponse) ProtoMessage() {}
 
 func (x *WaveResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[27]
+	mi := &file_course_course_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1986,7 +2046,7 @@ func (x *WaveResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WaveResponse.ProtoReflect.Descriptor instead.
 func (*WaveResponse) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{27}
+	return file_course_course_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *WaveResponse) GetWave() *Wave {
@@ -2012,7 +2072,7 @@ type WaveListResponse struct {
 
 func (x *WaveListResponse) Reset() {
 	*x = WaveListResponse{}
-	mi := &file_course_course_proto_msgTypes[28]
+	mi := &file_course_course_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2024,7 +2084,7 @@ func (x *WaveListResponse) String() string {
 func (*WaveListResponse) ProtoMessage() {}
 
 func (x *WaveListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_course_course_proto_msgTypes[28]
+	mi := &file_course_course_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2037,7 +2097,7 @@ func (x *WaveListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WaveListResponse.ProtoReflect.Descriptor instead.
 func (*WaveListResponse) Descriptor() ([]byte, []int) {
-	return file_course_course_proto_rawDescGZIP(), []int{28}
+	return file_course_course_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *WaveListResponse) GetWaves() []*Wave {
@@ -2051,7 +2111,7 @@ var File_course_course_proto protoreflect.FileDescriptor
 
 const file_course_course_proto_rawDesc = "" +
 	"\n" +
-	"\x13course/course.proto\x12\x06course\x1a\x0fauth/auth.proto\"\xc7\x02\n" +
+	"\x13course/course.proto\x12\x06course\x1a\x0fauth/auth.proto\"\xf1\x02\n" +
 	"\x06Course\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
@@ -2065,7 +2125,8 @@ const file_course_course_proto_rawDesc = "" +
 	"\x06status\x18\b \x01(\x0e2\x14.course.CourseStatusR\x06status\x12&\n" +
 	"\x0fcreated_at_unix\x18\t \x01(\x03R\rcreatedAtUnix\x12&\n" +
 	"\x0fupdated_at_unix\x18\n" +
-	" \x01(\x03R\rupdatedAtUnix\"\xe5\x01\n" +
+	" \x01(\x03R\rupdatedAtUnix\x12(\n" +
+	"\alessons\x18\v \x03(\v2\x0e.course.LessonR\alessons\"\x89\x02\n" +
 	"\x06Lesson\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
 	"\tcourse_id\x18\x02 \x01(\tR\bcourseId\x12\x14\n" +
@@ -2073,7 +2134,8 @@ const file_course_course_proto_rawDesc = "" +
 	"\x0esequence_order\x18\x04 \x01(\x05R\rsequenceOrder\x12!\n" +
 	"\fis_published\x18\x05 \x01(\bR\visPublished\x12&\n" +
 	"\x0fcreated_at_unix\x18\x06 \x01(\x03R\rcreatedAtUnix\x12&\n" +
-	"\x0fupdated_at_unix\x18\a \x01(\x03R\rupdatedAtUnix\"\x95\x04\n" +
+	"\x0fupdated_at_unix\x18\a \x01(\x03R\rupdatedAtUnix\x12\"\n" +
+	"\x05waves\x18\b \x03(\v2\f.course.WaveR\x05waves\"\x95\x04\n" +
 	"\x04Wave\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
 	"\tlesson_id\x18\x02 \x01(\tR\blessonId\x12\x14\n" +
@@ -2126,7 +2188,10 @@ const file_course_course_proto_rawDesc = "" +
 	"\x05price\x18\a \x01(\x01R\x05price\"N\n" +
 	"\x0eCourseResponse\x12&\n" +
 	"\x06course\x18\x01 \x01(\v2\x0e.course.CourseR\x06course\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\tR\x05error\">\n" +
+	"\x05error\x18\x02 \x01(\tR\x05error\"7\n" +
+	"\x16BatchGetCoursesRequest\x12\x1d\n" +
+	"\n" +
+	"course_ids\x18\x01 \x03(\tR\tcourseIds\">\n" +
 	"\x12CourseListResponse\x12(\n" +
 	"\acourses\x18\x01 \x03(\v2\x0e.course.CourseR\acourses\"\x90\x01\n" +
 	"\x13CreateLessonRequest\x12\x1b\n" +
@@ -2229,12 +2294,13 @@ const file_course_course_proto_rawDesc = "" +
 	"\x16DIFFICULTY_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fDIFFICULTY_EASY\x10\x01\x12\x15\n" +
 	"\x11DIFFICULTY_MEDIUM\x10\x02\x12\x13\n" +
-	"\x0fDIFFICULTY_HARD\x10\x032\x98\n" +
+	"\x0fDIFFICULTY_HARD\x10\x032\xe7\n" +
 	"\n" +
 	"\rCourseService\x12C\n" +
 	"\fCreateCourse\x12\x1b.course.CreateCourseRequest\x1a\x16.course.CourseResponse\x12=\n" +
 	"\tGetCourse\x12\x18.course.GetCourseRequest\x1a\x16.course.CourseResponse\x12E\n" +
-	"\vListCourses\x12\x1a.course.ListCoursesRequest\x1a\x1a.course.CourseListResponse\x12C\n" +
+	"\vListCourses\x12\x1a.course.ListCoursesRequest\x1a\x1a.course.CourseListResponse\x12M\n" +
+	"\x0fBatchGetCourses\x12\x1e.course.BatchGetCoursesRequest\x1a\x1a.course.CourseListResponse\x12C\n" +
 	"\fUpdateCourse\x12\x1b.course.UpdateCourseRequest\x1a\x16.course.CourseResponse\x12E\n" +
 	"\rPublishCourse\x12\x1c.course.PublishCourseRequest\x1a\x16.course.CourseResponse\x12C\n" +
 	"\fDeleteCourse\x12\x1b.course.DeleteCourseRequest\x1a\x16.course.DeleteResponse\x12C\n" +
@@ -2268,7 +2334,7 @@ func file_course_course_proto_rawDescGZIP() []byte {
 }
 
 var file_course_course_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_course_course_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
+var file_course_course_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
 var file_course_course_proto_goTypes = []any{
 	(CourseStatus)(0),                   // 0: course.CourseStatus
 	(Difficulty)(0),                     // 1: course.Difficulty
@@ -2281,86 +2347,91 @@ var file_course_course_proto_goTypes = []any{
 	(*PublishCourseRequest)(nil),        // 8: course.PublishCourseRequest
 	(*UpdateCourseRequest)(nil),         // 9: course.UpdateCourseRequest
 	(*CourseResponse)(nil),              // 10: course.CourseResponse
-	(*CourseListResponse)(nil),          // 11: course.CourseListResponse
-	(*CreateLessonRequest)(nil),         // 12: course.CreateLessonRequest
-	(*GetLessonRequest)(nil),            // 13: course.GetLessonRequest
-	(*ListLessonsRequest)(nil),          // 14: course.ListLessonsRequest
-	(*PublishLessonRequest)(nil),        // 15: course.PublishLessonRequest
-	(*UpdateLessonRequest)(nil),         // 16: course.UpdateLessonRequest
-	(*LessonResponse)(nil),              // 17: course.LessonResponse
-	(*LessonListResponse)(nil),          // 18: course.LessonListResponse
-	(*CreateWaveRequest)(nil),           // 19: course.CreateWaveRequest
-	(*GetWaveRequest)(nil),              // 20: course.GetWaveRequest
-	(*ListWavesRequest)(nil),            // 21: course.ListWavesRequest
-	(*ListWavesByLessonIdsRequest)(nil), // 22: course.ListWavesByLessonIdsRequest
-	(*UpdateWaveRequest)(nil),           // 23: course.UpdateWaveRequest
-	(*PublishWaveRequest)(nil),          // 24: course.PublishWaveRequest
-	(*DeleteCourseRequest)(nil),         // 25: course.DeleteCourseRequest
-	(*DeleteLessonRequest)(nil),         // 26: course.DeleteLessonRequest
-	(*DeleteWaveRequest)(nil),           // 27: course.DeleteWaveRequest
-	(*DeleteResponse)(nil),              // 28: course.DeleteResponse
-	(*WaveResponse)(nil),                // 29: course.WaveResponse
-	(*WaveListResponse)(nil),            // 30: course.WaveListResponse
-	(auth.Grade)(0),                     // 31: auth.Grade
+	(*BatchGetCoursesRequest)(nil),      // 11: course.BatchGetCoursesRequest
+	(*CourseListResponse)(nil),          // 12: course.CourseListResponse
+	(*CreateLessonRequest)(nil),         // 13: course.CreateLessonRequest
+	(*GetLessonRequest)(nil),            // 14: course.GetLessonRequest
+	(*ListLessonsRequest)(nil),          // 15: course.ListLessonsRequest
+	(*PublishLessonRequest)(nil),        // 16: course.PublishLessonRequest
+	(*UpdateLessonRequest)(nil),         // 17: course.UpdateLessonRequest
+	(*LessonResponse)(nil),              // 18: course.LessonResponse
+	(*LessonListResponse)(nil),          // 19: course.LessonListResponse
+	(*CreateWaveRequest)(nil),           // 20: course.CreateWaveRequest
+	(*GetWaveRequest)(nil),              // 21: course.GetWaveRequest
+	(*ListWavesRequest)(nil),            // 22: course.ListWavesRequest
+	(*ListWavesByLessonIdsRequest)(nil), // 23: course.ListWavesByLessonIdsRequest
+	(*UpdateWaveRequest)(nil),           // 24: course.UpdateWaveRequest
+	(*PublishWaveRequest)(nil),          // 25: course.PublishWaveRequest
+	(*DeleteCourseRequest)(nil),         // 26: course.DeleteCourseRequest
+	(*DeleteLessonRequest)(nil),         // 27: course.DeleteLessonRequest
+	(*DeleteWaveRequest)(nil),           // 28: course.DeleteWaveRequest
+	(*DeleteResponse)(nil),              // 29: course.DeleteResponse
+	(*WaveResponse)(nil),                // 30: course.WaveResponse
+	(*WaveListResponse)(nil),            // 31: course.WaveListResponse
+	(auth.Grade)(0),                     // 32: auth.Grade
 }
 var file_course_course_proto_depIdxs = []int32{
-	31, // 0: course.Course.grade_level:type_name -> auth.Grade
+	32, // 0: course.Course.grade_level:type_name -> auth.Grade
 	0,  // 1: course.Course.status:type_name -> course.CourseStatus
-	1,  // 2: course.Wave.difficulty:type_name -> course.Difficulty
-	31, // 3: course.CreateCourseRequest.grade_level:type_name -> auth.Grade
-	31, // 4: course.ListCoursesRequest.grade_level:type_name -> auth.Grade
-	31, // 5: course.UpdateCourseRequest.grade_level:type_name -> auth.Grade
-	2,  // 6: course.CourseResponse.course:type_name -> course.Course
-	2,  // 7: course.CourseListResponse.courses:type_name -> course.Course
-	3,  // 8: course.LessonResponse.lesson:type_name -> course.Lesson
-	3,  // 9: course.LessonListResponse.lessons:type_name -> course.Lesson
-	1,  // 10: course.CreateWaveRequest.difficulty:type_name -> course.Difficulty
-	1,  // 11: course.UpdateWaveRequest.difficulty:type_name -> course.Difficulty
-	4,  // 12: course.WaveResponse.wave:type_name -> course.Wave
-	4,  // 13: course.WaveListResponse.waves:type_name -> course.Wave
-	5,  // 14: course.CourseService.CreateCourse:input_type -> course.CreateCourseRequest
-	6,  // 15: course.CourseService.GetCourse:input_type -> course.GetCourseRequest
-	7,  // 16: course.CourseService.ListCourses:input_type -> course.ListCoursesRequest
-	9,  // 17: course.CourseService.UpdateCourse:input_type -> course.UpdateCourseRequest
-	8,  // 18: course.CourseService.PublishCourse:input_type -> course.PublishCourseRequest
-	25, // 19: course.CourseService.DeleteCourse:input_type -> course.DeleteCourseRequest
-	12, // 20: course.CourseService.CreateLesson:input_type -> course.CreateLessonRequest
-	13, // 21: course.CourseService.GetLesson:input_type -> course.GetLessonRequest
-	14, // 22: course.CourseService.ListLessons:input_type -> course.ListLessonsRequest
-	16, // 23: course.CourseService.UpdateLesson:input_type -> course.UpdateLessonRequest
-	15, // 24: course.CourseService.PublishLesson:input_type -> course.PublishLessonRequest
-	26, // 25: course.CourseService.DeleteLesson:input_type -> course.DeleteLessonRequest
-	19, // 26: course.CourseService.CreateWave:input_type -> course.CreateWaveRequest
-	20, // 27: course.CourseService.GetWave:input_type -> course.GetWaveRequest
-	21, // 28: course.CourseService.ListWaves:input_type -> course.ListWavesRequest
-	22, // 29: course.CourseService.ListWavesByLessonIds:input_type -> course.ListWavesByLessonIdsRequest
-	23, // 30: course.CourseService.UpdateWave:input_type -> course.UpdateWaveRequest
-	24, // 31: course.CourseService.PublishWave:input_type -> course.PublishWaveRequest
-	27, // 32: course.CourseService.DeleteWave:input_type -> course.DeleteWaveRequest
-	10, // 33: course.CourseService.CreateCourse:output_type -> course.CourseResponse
-	10, // 34: course.CourseService.GetCourse:output_type -> course.CourseResponse
-	11, // 35: course.CourseService.ListCourses:output_type -> course.CourseListResponse
-	10, // 36: course.CourseService.UpdateCourse:output_type -> course.CourseResponse
-	10, // 37: course.CourseService.PublishCourse:output_type -> course.CourseResponse
-	28, // 38: course.CourseService.DeleteCourse:output_type -> course.DeleteResponse
-	17, // 39: course.CourseService.CreateLesson:output_type -> course.LessonResponse
-	17, // 40: course.CourseService.GetLesson:output_type -> course.LessonResponse
-	18, // 41: course.CourseService.ListLessons:output_type -> course.LessonListResponse
-	17, // 42: course.CourseService.UpdateLesson:output_type -> course.LessonResponse
-	17, // 43: course.CourseService.PublishLesson:output_type -> course.LessonResponse
-	28, // 44: course.CourseService.DeleteLesson:output_type -> course.DeleteResponse
-	29, // 45: course.CourseService.CreateWave:output_type -> course.WaveResponse
-	29, // 46: course.CourseService.GetWave:output_type -> course.WaveResponse
-	30, // 47: course.CourseService.ListWaves:output_type -> course.WaveListResponse
-	30, // 48: course.CourseService.ListWavesByLessonIds:output_type -> course.WaveListResponse
-	29, // 49: course.CourseService.UpdateWave:output_type -> course.WaveResponse
-	29, // 50: course.CourseService.PublishWave:output_type -> course.WaveResponse
-	28, // 51: course.CourseService.DeleteWave:output_type -> course.DeleteResponse
-	33, // [33:52] is the sub-list for method output_type
-	14, // [14:33] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	3,  // 2: course.Course.lessons:type_name -> course.Lesson
+	4,  // 3: course.Lesson.waves:type_name -> course.Wave
+	1,  // 4: course.Wave.difficulty:type_name -> course.Difficulty
+	32, // 5: course.CreateCourseRequest.grade_level:type_name -> auth.Grade
+	32, // 6: course.ListCoursesRequest.grade_level:type_name -> auth.Grade
+	32, // 7: course.UpdateCourseRequest.grade_level:type_name -> auth.Grade
+	2,  // 8: course.CourseResponse.course:type_name -> course.Course
+	2,  // 9: course.CourseListResponse.courses:type_name -> course.Course
+	3,  // 10: course.LessonResponse.lesson:type_name -> course.Lesson
+	3,  // 11: course.LessonListResponse.lessons:type_name -> course.Lesson
+	1,  // 12: course.CreateWaveRequest.difficulty:type_name -> course.Difficulty
+	1,  // 13: course.UpdateWaveRequest.difficulty:type_name -> course.Difficulty
+	4,  // 14: course.WaveResponse.wave:type_name -> course.Wave
+	4,  // 15: course.WaveListResponse.waves:type_name -> course.Wave
+	5,  // 16: course.CourseService.CreateCourse:input_type -> course.CreateCourseRequest
+	6,  // 17: course.CourseService.GetCourse:input_type -> course.GetCourseRequest
+	7,  // 18: course.CourseService.ListCourses:input_type -> course.ListCoursesRequest
+	11, // 19: course.CourseService.BatchGetCourses:input_type -> course.BatchGetCoursesRequest
+	9,  // 20: course.CourseService.UpdateCourse:input_type -> course.UpdateCourseRequest
+	8,  // 21: course.CourseService.PublishCourse:input_type -> course.PublishCourseRequest
+	26, // 22: course.CourseService.DeleteCourse:input_type -> course.DeleteCourseRequest
+	13, // 23: course.CourseService.CreateLesson:input_type -> course.CreateLessonRequest
+	14, // 24: course.CourseService.GetLesson:input_type -> course.GetLessonRequest
+	15, // 25: course.CourseService.ListLessons:input_type -> course.ListLessonsRequest
+	17, // 26: course.CourseService.UpdateLesson:input_type -> course.UpdateLessonRequest
+	16, // 27: course.CourseService.PublishLesson:input_type -> course.PublishLessonRequest
+	27, // 28: course.CourseService.DeleteLesson:input_type -> course.DeleteLessonRequest
+	20, // 29: course.CourseService.CreateWave:input_type -> course.CreateWaveRequest
+	21, // 30: course.CourseService.GetWave:input_type -> course.GetWaveRequest
+	22, // 31: course.CourseService.ListWaves:input_type -> course.ListWavesRequest
+	23, // 32: course.CourseService.ListWavesByLessonIds:input_type -> course.ListWavesByLessonIdsRequest
+	24, // 33: course.CourseService.UpdateWave:input_type -> course.UpdateWaveRequest
+	25, // 34: course.CourseService.PublishWave:input_type -> course.PublishWaveRequest
+	28, // 35: course.CourseService.DeleteWave:input_type -> course.DeleteWaveRequest
+	10, // 36: course.CourseService.CreateCourse:output_type -> course.CourseResponse
+	10, // 37: course.CourseService.GetCourse:output_type -> course.CourseResponse
+	12, // 38: course.CourseService.ListCourses:output_type -> course.CourseListResponse
+	12, // 39: course.CourseService.BatchGetCourses:output_type -> course.CourseListResponse
+	10, // 40: course.CourseService.UpdateCourse:output_type -> course.CourseResponse
+	10, // 41: course.CourseService.PublishCourse:output_type -> course.CourseResponse
+	29, // 42: course.CourseService.DeleteCourse:output_type -> course.DeleteResponse
+	18, // 43: course.CourseService.CreateLesson:output_type -> course.LessonResponse
+	18, // 44: course.CourseService.GetLesson:output_type -> course.LessonResponse
+	19, // 45: course.CourseService.ListLessons:output_type -> course.LessonListResponse
+	18, // 46: course.CourseService.UpdateLesson:output_type -> course.LessonResponse
+	18, // 47: course.CourseService.PublishLesson:output_type -> course.LessonResponse
+	29, // 48: course.CourseService.DeleteLesson:output_type -> course.DeleteResponse
+	30, // 49: course.CourseService.CreateWave:output_type -> course.WaveResponse
+	30, // 50: course.CourseService.GetWave:output_type -> course.WaveResponse
+	31, // 51: course.CourseService.ListWaves:output_type -> course.WaveListResponse
+	31, // 52: course.CourseService.ListWavesByLessonIds:output_type -> course.WaveListResponse
+	30, // 53: course.CourseService.UpdateWave:output_type -> course.WaveResponse
+	30, // 54: course.CourseService.PublishWave:output_type -> course.WaveResponse
+	29, // 55: course.CourseService.DeleteWave:output_type -> course.DeleteResponse
+	36, // [36:56] is the sub-list for method output_type
+	16, // [16:36] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_course_course_proto_init() }
@@ -2374,7 +2445,7 @@ func file_course_course_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_course_course_proto_rawDesc), len(file_course_course_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   29,
+			NumMessages:   30,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

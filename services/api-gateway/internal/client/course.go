@@ -149,6 +149,29 @@ func (c *CourseClient) GetCourseWithLessons(ctx context.Context, id string) (*mo
 	return course, nil
 }
 
+func (c *CourseClient) BatchGetCoursesWithLessons(ctx context.Context, ids []string) ([]*model.Course, error) {
+	resp, err := c.client.BatchGetCourses(ctx, &coursepb.BatchGetCoursesRequest{CourseIds: ids})
+	if err != nil {
+		return nil, fmt.Errorf("batch get courses failed: %w", err)
+	}
+
+	courses := make([]*model.Course, 0, len(resp.Courses))
+	for _, pc := range resp.Courses {
+		course := protoCourseToModel(pc)
+		course.Lessons = make([]*model.Lesson, 0, len(pc.Lessons))
+		for _, pl := range pc.Lessons {
+			lesson := protoLessonToModel(pl)
+			lesson.Waves = make([]*model.Wave, 0, len(pl.Waves))
+			for _, pw := range pl.Waves {
+				lesson.Waves = append(lesson.Waves, protoWaveToModel(ctx, pw))
+			}
+			course.Lessons = append(course.Lessons, lesson)
+		}
+		courses = append(courses, course)
+	}
+	return courses, nil
+}
+
 func (c *CourseClient) ListCourses(ctx context.Context, filter *model.CourseFilter, educatorID string) (*model.CourseConnection, error) {
 	req := &coursepb.ListCoursesRequest{}
 	if educatorID != "" {
