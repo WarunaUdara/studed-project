@@ -33,15 +33,18 @@ fi
 HOST="api.${IP}.sslip.io"
 changed=0
 for f in "${MANIFESTS[@]}"; do
-  if grep -q 'api\.PLACEHOLDER\.sslip\.io' "$f"; then
-    sed -i '' "s/api\.PLACEHOLDER\.sslip\.io/${HOST}/g" "$f"
+  # Re-pin unconditionally: replace PLACEHOLDER or any previously pinned
+  # api.<ip>.sslip.io host so a fresh static IP (project re-created) always
+  # ends up in the manifests before ArgoCD's first sync.
+  if grep -Eq 'api\.(PLACEHOLDER|[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.sslip\.io' "$f"; then
+    sed -i '' -E "s/api\.(PLACEHOLDER|[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.sslip\.io/${HOST}/g" "$f"
     echo "  updated $(basename "$f") -> host ${HOST}"
     changed=1
   fi
 done
 
 if [[ "$changed" -eq 0 ]]; then
-  echo "  ingress host already set (no PLACEHOLDER found)"
+  echo "  ingress host already correct (${HOST})"
   exit 0
 fi
 

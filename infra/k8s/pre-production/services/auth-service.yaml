@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: studed
+  labels:
+    app: auth-service
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: auth=ghcr.io/warunaudara/studed-auth-service
+    argocd-image-updater.argoproj.io/auth.update-strategy: latest
+    argocd-image-updater.argoproj.io/auth.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/auth.ignore-tags: regexp:^latest$
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      terminationGracePeriodSeconds: 45
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: auth-service
+          image: ghcr.io/warunaudara/studed-auth-service:latest
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: 8081
+            - containerPort: 8085
+          envFrom:
+            - configMapRef:
+                name: studed-config
+            - secretRef:
+                name: studed-secrets
+          resources:
+            requests:
+              memory: "30Mi"
+              cpu: "15m"
+            limits:
+              memory: "96Mi"
+              cpu: "150m"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "10"]
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8085
+            failureThreshold: 30
+            periodSeconds: 2
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8085
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8085
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: auth-service-pdb
+  namespace: studed
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: auth-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: studed
+spec:
+  ports:
+    - port: 8081
+      targetPort: 8081
+      name: grpc
+    - port: 8085
+      targetPort: 8085
+      name: http
+  selector:
+    app: auth-service

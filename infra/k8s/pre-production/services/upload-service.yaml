@@ -1,0 +1,139 @@
+# upload-service: course image and attachment storage backed by GCS.
+#
+# Authentication to GCS is via Workload Identity - the ServiceAccount below is
+# bound to the studed-upload GSA created in infra/gcp/terraform/storage.tf, so
+# no service account key ever exists. If project_id is changed from the default
+# "studed-prod", update the annotation to match.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: upload-service-sa
+  namespace: studed
+  annotations:
+    iam.gke.io/gcp-service-account: studed-upload@studed-prod.iam.gserviceaccount.com
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upload-service
+  namespace: studed
+  labels:
+    app: upload-service
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: upload=ghcr.io/warunaudara/studed-upload-service
+    argocd-image-updater.argoproj.io/upload.update-strategy: latest
+    argocd-image-updater.argoproj.io/upload.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/upload.ignore-tags: regexp:^latest$
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: upload-service
+  template:
+    metadata:
+      labels:
+        app: upload-service
+    spec:
+      serviceAccountName: upload-service-sa
+      # Unlike the other services this MUST stay true: the projected token is
+      # how Workload Identity authenticates the pod to GCS.
+      automountServiceAccountToken: true
+      terminationGracePeriodSeconds: 45
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: upload-service
+          image: ghcr.io/warunaudara/studed-upload-service:latest
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: 8093
+          env:
+            - name: GOMEMLIMIT
+              value: "220MiB"
+          envFrom:
+            - configMapRef:
+                name: studed-config
+            - secretRef:
+                name: studed-secrets
+          resources:
+            requests:
+              memory: "48Mi"
+              cpu: "25m"
+            limits:
+              # Uploads stream rather than buffer, but multipart parsing still
+              # spills to /tmp, so this sits above the other services.
+              memory: "256Mi"
+              cpu: "300m"
+          volumeMounts:
+            # Root filesystem is read-only; multipart spillover needs a writable
+            # scratch path.
+            - name: tmp
+              mountPath: /tmp
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "10"]
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8093
+            failureThreshold: 30
+            periodSeconds: 2
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8093
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8093
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 512Mi
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: upload-service-pdb
+  namespace: studed
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: upload-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upload-service
+  namespace: studed
+spec:
+  ports:
+    - port: 8093
+      targetPort: 8093
+      name: http
+  selector:
+    app: upload-service

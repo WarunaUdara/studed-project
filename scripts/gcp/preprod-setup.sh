@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# One-time setup for the pre-production environment:
+#   1. studed-preprod-database-url in Secret Manager (isolated Neon DB)
+#   2. Workload Identity binding so preprod's upload-service SA can use GCS
+#   3. reports the preprod ingress host (pin it with set-preprod-ingress-host.sh)
+# Idempotent: re-running is a no-op for each step.
+# Never echoes connection strings or credentials.
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+PROJECT_ID="${PROJECT_ID:-studed-prod}"
+SECRET="studed-preprod-database-url"
+
+if [[ ! -f "${REPO_ROOT}/.env" ]]; then
+  echo "error: ${REPO_ROOT}/.env not found (needs DATABASE_CONNECTION_STRING)" >&2
+  exit 1
+fi
+
+DB_URL="$(grep -E '^DATABASE_CONNECTION_STRING=' "${REPO_ROOT}/.env" | head -1 | cut -d= -f2-)"
+if [[ -z "${DB_URL}" ]]; then
+  echo "error: DATABASE_CONNECTION_STRING missing from .env" >&2
+  exit 1
+fi
+
+# Swap the database name for the isolated studed_preprod database, keeping the
+# rest of the connection string (credentials, host, sslmode) identical.
+PREPROD_URL="$(printf '%s' "${DB_URL}" | python3 -c '
+import sys
+url = sys.stdin.read().strip()
+base, _, query = url.partition("?")
+prefix, _, _ = base.rpartition("/")
+print(prefix + "/studed_preprod" + (f"?{query}" if query else ""))
+')"
+# Masked host/db only - never print the full URL.
+echo "preprod DB target: $(printf '%s' "${PREPROD_URL}" | sed -E 's|.*@|@|; s|\?.*||')"
+
+echo "==> 1/3 Secret Manager: ${SECRET}"
+if ! HTTPS_PROXY=http://127.0.0.1:3128 gcloud secrets describe "${SECRET}" --project "${PROJECT_ID}" >/dev/null 2>&1; then
+  HTTPS_PROXY=http://127.0.0.1:3128 gcloud secrets create "${SECRET}" \
+    --project "${PROJECT_ID}" --replication-policy=user-managed \
+    --locations=asia-south1 >/dev/null
+  echo "  created ${SECRET}"
+fi
+if ! HTTPS_PROXY=http://127.0.0.1:3128 gcloud secrets versions access latest --secret="${SECRET}" --project "${PROJECT_ID}" >/dev/null 2>&1; then
+  printf '%s' "${PREPROD_URL}" | HTTPS_PROXY=http://127.0.0.1:3128 gcloud secrets versions add "${SECRET}" --data-file=- >/dev/null
+  echo "  populated ${SECRET}"
+else
+  echo "  ${SECRET} already populated"
+fi
+
+echo "==> 2/3 Workload Identity: preprod upload SA -> studed-upload GSA"
+HTTPS_PROXY=http://127.0.0.1:3128 gcloud iam service-accounts add-iam-policy-binding \
+  "studed-upload@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role=roles/iam.workloadIdentityUser \
+  --member="serviceAccount:${PROJECT_ID}.svc.id.goog[studed-preprod/upload-service-sa]" \
+  >/dev/null 2>&1 || echo "  binding already present (or adjusted)"
+echo "  done (binding is additive; safe to re-run)"
+
+echo "==> 3/3 Next steps"
+IP="$(cd "${REPO_ROOT}/infra/gcp/terraform-prod" && HTTPS_PROXY=http://127.0.0.1:3128 tofu output -raw ingress_static_ip 2>/dev/null || true)"
+if [[ -n "${IP}" ]]; then
+  echo "  pin host: bash ${REPO_ROOT}/scripts/gcp/set-preprod-ingress-host.sh ${IP}"
+  echo "  preprod API: https://api-preprod.${IP}.sslip.io"
+else
+  echo "  ingress IP not available yet - run set-preprod-ingress-host.sh after tofu apply"
+fi

@@ -1,0 +1,20 @@
+# Cloud Armor WAF attached to the api-gateway backend via BackendConfig.
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: studed-backend-config
+  namespace: studed
+spec:
+  timeoutSec: 60
+  connectionDraining:
+    drainingTimeoutSec: 30
+  healthCheck:
+    checkIntervalSec: 10
+    timeoutSec: 5
+    healthyThreshold: 1
+    unhealthyThreshold: 2
+    port: 8080
+    type: HTTP
+    requestPath: /health
+  securityPolicy:
+    name: studed2-waf

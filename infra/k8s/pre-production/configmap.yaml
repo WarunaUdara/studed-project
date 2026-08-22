@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: studed-config
+  namespace: studed
+data:
+  # Service discovery (in-cluster DNS + gRPC ports) - identical to production.
+  AUTH_SERVICE_ADDR: "auth-service:8081"
+  COURSE_SERVICE_ADDR: "course-service:8083"
+  PROGRESS_SERVICE_ADDR: "progress-service:8086"
+  GAMIFICATION_SERVICE_ADDR: "gamification-service:8088"
+  AI_SERVICE_URL: "http://ai-service:8090"
+  PAYMENT_SERVICE_URL: "http://payment-service:8091"
+  NOTIFICATION_SERVICE_ADDR: ":8092"
+  UPLOAD_SERVICE_URL: "http://upload-service:8093"
+  UPLOAD_SERVICE_ADDR: ":8093"
+  UPLOAD_MAX_BYTES: "10485760"
+  REDIS_ADDR: "redis:6379"
+  ELASTICSEARCH_URL: "http://elasticsearch:9200"
+  API_GATEWAY_ADDR: ":8080"
+  GRAPHQL_PLAYGROUND: "false"
+  JWT_ACCESS_TTL: "15m"
+  JWT_REFRESH_TTL: "168h"
+  GEMINI_MODEL: "gemini-2.5-flash"
+  # No Tempo in pre-prod; the OTLP exporter connects lazily and drops spans
+  # when the endpoint is absent, so pointing at the prod-style address is safe.
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://tempo:4318"

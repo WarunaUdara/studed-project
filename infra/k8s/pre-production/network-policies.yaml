@@ -1,0 +1,433 @@
+# Default-deny NetworkPolicies for the studed namespace.
+#
+# The flat pod network (every pod can reach every pod) is the single largest
+# blast-radius risk on this cluster. These policies establish deny-by-default
+# and allow only the documented call paths:
+#   external LB -> api-gateway:8080
+#   api-gateway -> auth/course/progress/gamification (gRPC), ai/payment (HTTP)
+#   services -> redis, elasticsearch, Neon (external 5432), DNS, HTTPS
+#
+# Keep this file in sync with the service graph whenever a service is added.
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: studed
+spec:
+  podSelector: {}
+  policyTypes: ["Ingress", "Egress"]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: studed
+spec:
+  podSelector: {}
+  policyTypes: ["Egress"]
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+# Shared external egress for every workload: HTTPS (Gemini, external APIs),
+# and Neon Postgres (5432). Scoped by port only, since Neon/cloud IPs rotate.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-external-egress
+  namespace: studed
+spec:
+  podSelector: {}
+  policyTypes: ["Egress"]
+  egress:
+    - ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 5432
+---
+# Public entrypoint: GCE L7 LB health checks + proxied traffic to the gateway.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-gateway
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: api-gateway
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 8080
+---
+# api-gateway outbound: every internal service it calls.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-gateway-egress
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: api-gateway
+  policyTypes: ["Egress"]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: auth-service
+      ports:
+        - protocol: TCP
+          port: 8081
+    - to:
+        - podSelector:
+            matchLabels:
+              app: course-service
+      ports:
+        - protocol: TCP
+          port: 8083
+    - to:
+        - podSelector:
+            matchLabels:
+              app: progress-service
+      ports:
+        - protocol: TCP
+          port: 8086
+    - to:
+        - podSelector:
+            matchLabels:
+              app: gamification-service
+      ports:
+        - protocol: TCP
+          port: 8088
+    - to:
+        - podSelector:
+            matchLabels:
+              app: ai-service
+      ports:
+        - protocol: TCP
+          port: 8090
+    - to:
+        - podSelector:
+            matchLabels:
+              app: payment-service
+      ports:
+        - protocol: TCP
+          port: 8091
+    - to:
+        - podSelector:
+            matchLabels:
+              app: upload-service
+      ports:
+        - protocol: TCP
+          port: 8093
+    - to:
+        - podSelector:
+            matchLabels:
+              app: redis
+      ports:
+        - protocol: TCP
+          port: 6379
+---
+# upload-service is reachable only from the gateway, which is what enforces
+# educator-only writes; it is never exposed directly to the internet.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-upload-ingress-from-gateway
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: upload-service
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api-gateway
+      ports:
+        - protocol: TCP
+          port: 8093
+---
+# Egress to the Google Cloud Storage API (HTTPS) and to the GKE metadata server
+# for the Workload Identity token exchange.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-upload-gcs-egress
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: upload-service
+  policyTypes: ["Egress"]
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443
+    # metadata.google.internal - required for Workload Identity credentials.
+    - to:
+        - ipBlock:
+            cidr: 169.254.169.254/32
+      ports:
+        - protocol: TCP
+          port: 80
+---
+# Internal services accept only gateway-originated traffic.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-service-ingress-from-gateway
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: auth-service
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api-gateway
+      ports:
+        - protocol: TCP
+          port: 8081
+        - protocol: TCP
+          port: 8085
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-course-ingress
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: course-service
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api-gateway
+        - podSelector:
+            matchLabels:
+              app: progress-service
+      ports:
+        - protocol: TCP
+          port: 8083
+        - protocol: TCP
+          port: 8084
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-progress-egress
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: progress-service
+  policyTypes: ["Egress"]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: course-service
+      ports:
+        - protocol: TCP
+          port: 8083
+    - to:
+        - podSelector:
+            matchLabels:
+              app: gamification-service
+      ports:
+        - protocol: TCP
+          port: 8088
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-progress-ingress-from-gateway
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: progress-service
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api-gateway
+      ports:
+        - protocol: TCP
+          port: 8086
+        - protocol: TCP
+          port: 8087
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-gamification-ingress
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: gamification-service
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api-gateway
+        - podSelector:
+            matchLabels:
+              app: progress-service
+      ports:
+        - protocol: TCP
+          port: 8088
+        - protocol: TCP
+          port: 8089
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ai-ingress-from-gateway
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: ai-service
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api-gateway
+      ports:
+        - protocol: TCP
+          port: 8090
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-payment-ingress-from-gateway
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: payment-service
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api-gateway
+      ports:
+        - protocol: TCP
+          port: 8091
+---
+# The PayHere webhook arrives from the public internet (server-to-server).
+# Only the notify path is public; internal routes still require the service
+# token enforced by the application layer.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-payhere-webhook-ingress
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: payment-service
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 8091
+---
+# Services that consume redis: api-gateway (event bus), gamification
+# (leaderboards), progress (attempt caching).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-redis-ingress
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: redis
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api-gateway
+        - podSelector:
+            matchLabels:
+              app: gamification-service
+        - podSelector:
+            matchLabels:
+              app: progress-service
+      ports:
+        - protocol: TCP
+          port: 6379
+---
+# Elasticsearch: only course-service indexes/searches courses.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-elasticsearch-ingress
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: elasticsearch
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: course-service
+      ports:
+        - protocol: TCP
+          port: 9200
+---
+# Scope external egress from ai-service strictly to HTTPS (port 443) for Gemini AI API calls.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ai-external-egress
+  namespace: studed
+spec:
+  podSelector:
+    matchLabels:
+      app: ai-service
+  policyTypes: ["Egress"]
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443

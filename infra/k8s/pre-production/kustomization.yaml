@@ -1,0 +1,37 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# Pre-prod = production manifests, namespace-rewritten to studed-preprod,
+# one replica per service, isolated DB, host api-preprod.<ip>.sslip.io.
+# Tempo is intentionally excluded (no tracing needed for feature testing).
+namespace: studed-preprod
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - external-secrets.yaml
+  - backend-config.yaml
+  - network-policies.yaml
+  - redis-deployment.yaml
+  - elasticsearch-deployment.yaml
+  - ingress.yaml
+  - managed-cert.yaml
+  - services/notification-service.yaml
+  - services/payment-service.yaml
+  - services/course-service.yaml
+  - services/progress-service.yaml
+  - services/auth-service.yaml
+  - services/gamification-service.yaml
+  - services/upload-service.yaml
+  - services/ai-service.yaml
+  - services/api-gateway.yaml
+patches:
+  - path: patches/replicas-patch.yaml
+    target:
+      kind: Deployment
+  - path: patches/ingress-patch.yaml
+    target:
+      kind: Ingress
+      name: studed-ingress
+  - path: patches/managed-cert-patch.yaml
+    target:
+      kind: ManagedCertificate
+      name: studed-api-cert-v2

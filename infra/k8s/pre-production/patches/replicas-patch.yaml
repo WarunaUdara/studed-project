@@ -1,0 +1,9 @@
+# Pre-prod runs one replica of everything - enough for feature testing,
+# half the gateway footprint, and (with the idle-scout) zero node cost when
+# nobody is using it.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: all-deployments
+spec:
+  replicas: 1
