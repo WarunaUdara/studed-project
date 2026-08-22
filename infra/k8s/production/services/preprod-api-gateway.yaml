@@ -1,14 +1,20 @@
-# Cross-namespace bridge: the single GCE Ingress lives in studed and routes
-# api-preprod.<ip> here; ExternalName resolves to the preprod api-gateway
-# Service in studed-preprod (GCE ingress requires same-namespace backends).
 apiVersion: v1
 kind: Service
 metadata:
   name: preprod-api-gateway
   namespace: studed
 spec:
-  type: ExternalName
-  externalName: api-gateway.studed-preprod.svc.cluster.local
   ports:
     - port: 8080
       targetPort: 8080
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: preprod-api-gateway
+  namespace: studed
+subsets:
+  - addresses:
+      - ip: 10.1.0.154
+    ports:
+      - port: 8080
