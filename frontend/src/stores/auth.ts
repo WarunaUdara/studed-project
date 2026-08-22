@@ -41,13 +41,19 @@ interface AuthState {
   logout: () => void;
 }
 
+const hasInitialSession =
+  typeof window !== "undefined" &&
+  localStorage.getItem("studed_has_session") === "true";
+
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-  isLoading: true,
+  isLoading: hasInitialSession,
   isAuthenticated: false,
   setUser: (user) => {
     if (user !== null) {
       localStorage.setItem("studed_has_session", "true");
+    } else {
+      localStorage.removeItem("studed_has_session");
     }
     set({
       user,
