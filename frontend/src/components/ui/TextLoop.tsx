@@ -88,10 +88,13 @@ export function TextLoop({
   const rootRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
   const measureRef = useRef<SVGTextElement>(null);
-  const headRef = useRef<SVGTextPathElement>(null);
-  const tailRef = useRef<SVGTextPathElement>(null);
+  const textPathRef = useRef<SVGTextPathElement>(null);
 
-  const [metrics, setMetrics] = useState<{ length: number; reps: number }>({ length: 0, reps: 1 });
+  const [metrics, setMetrics] = useState<{ pathLength: number; unitWidth: number; reps: number }>({
+    pathLength: 0,
+    unitWidth: 0,
+    reps: 4,
+  });
 
   const rawId = useId();
   const pathId = `text-loop-${rawId.replace(/:/g, "")}`;
@@ -121,24 +124,27 @@ export function TextLoop({
 
     const measure = () => {
       if (cancelled) return;
-      let length = 0;
+      let pathLength = 0;
       let unitWidth = 0;
       try {
-        length = pathEl.getTotalLength();
+        pathLength = pathEl.getTotalLength();
         unitWidth = measureEl.getComputedTextLength();
       } catch {
         // Fallback for SVG measurement
       }
-      if (!length || length < 10) {
-        length = VIEW_W * 1.5;
+      if (!pathLength || pathLength < 10) {
+        pathLength = VIEW_W * 1.5;
       }
       if (!unitWidth || unitWidth < 10) {
         unitWidth = Math.max(50, unit.length * fontSize * 0.6);
       }
 
-      const reps = Math.max(2, Math.ceil((length * 1.5) / unitWidth));
+      // Reps required to cover pathLength + 2 * unitWidth seamlessly
+      const reps = Math.ceil((pathLength + unitWidth * 2) / unitWidth) + 1;
       setMetrics((prev) =>
-        prev.length === length && prev.reps === reps ? prev : { length, reps },
+        prev.pathLength === pathLength && prev.unitWidth === unitWidth && prev.reps === reps
+          ? prev
+          : { pathLength, unitWidth, reps },
       );
     };
 
@@ -157,16 +163,15 @@ export function TextLoop({
   }, [d, unit, fontSize, fontWeight, letterSpacing]);
 
   useEffect(() => {
-    const length = metrics.length || VIEW_W * 1.5;
-    const head = headRef.current;
-    const tail = tailRef.current;
-    if (!head || !tail) return undefined;
+    const { unitWidth } = metrics;
+    const textPath = textPathRef.current;
+    if (!textPath || !unitWidth) return undefined;
 
     const apply = (offset: number) => {
-      const normalized = ((offset % length) + length) % length;
-      const partner = normalized - length;
-      head.setAttribute("startOffset", `${normalized.toFixed(2)}`);
-      tail.setAttribute("startOffset", `${partner.toFixed(2)}`);
+      // Smoothly wrap offset modulo unitWidth to cycle seamlessly without overlapping text elements
+      const rawMod = offset % unitWidth;
+      const startOffset = rawMod > 0 ? rawMod - unitWidth : rawMod;
+      textPath.setAttribute("startOffset", `${startOffset.toFixed(2)}`);
     };
 
     apply(0);
@@ -218,7 +223,7 @@ export function TextLoop({
         root.removeEventListener("pointerleave", resume);
       }
     };
-  }, [metrics.length, speed, direction, pauseOnHover]);
+  }, [metrics, speed, direction, pauseOnHover]);
 
   const loopText = unit.repeat(metrics.reps);
 
@@ -253,19 +258,7 @@ export function TextLoop({
           dominantBaseline="central"
           aria-hidden="true"
         >
-          <textPath ref={headRef} href={`#${pathId}`} startOffset={0}>
-            {loopText}
-          </textPath>
-        </text>
-
-        <text
-          className="text-loop-text"
-          style={textStyle}
-          fill={color}
-          dominantBaseline="central"
-          aria-hidden="true"
-        >
-          <textPath ref={tailRef} href={`#${pathId}`} startOffset={0}>
+          <textPath ref={textPathRef} href={`#${pathId}`} startOffset={0}>
             {loopText}
           </textPath>
         </text>
