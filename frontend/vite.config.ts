@@ -16,7 +16,27 @@ export default defineConfig(({ mode }) => {
   console.log("[vite.config] Proxy target resolved to:", target);
 
   return {
-    plugins: [TanStackRouterVite({ autoCodeSplitting: true }), react(), tailwindcss()],
+    plugins: [
+      TanStackRouterVite({ autoCodeSplitting: true }),
+      react(),
+      tailwindcss(),
+      {
+        // The Puck editor chunk (908 kB) is educator-only. Roldown-vite
+        // preloads it into the entry HTML even though only a lazy dynamic
+        // import references it; strip the preload hints so students never
+        // fetch it. The chunk still loads on demand when the editor mounts.
+        name: "strip-educator-chunk-preloads",
+        transformIndexHtml(html) {
+          return html.replace(
+            /<link rel="modulepreload"[^>]*href="[^"]*vendor-puck[^"]*"[^>]*>/g,
+            "",
+          ).replace(
+            /<link rel="stylesheet"[^>]*href="[^"]*vendor-puck[^"]*"[^>]*>/g,
+            "",
+          );
+        },
+      },
+    ],
     resolve: {
       dedupe: ["react", "react-dom"],
       alias: {
@@ -71,6 +91,12 @@ export default defineConfig(({ mode }) => {
               { name: "vendor-graphql", test: /node_modules[\\/](urql|@urql|graphql)[\\/]/ },
               { name: "vendor-baseui", test: /node_modules[\\/]@base-ui[\\/]/ },
               { name: "vendor-zod", test: /node_modules[\\/]zod[\\/]/ },
+              // The puck group regex would otherwise swallow @puckeditor/core's NESTED
+              // zustand + use-sync-external-store copies; the app's own stores
+              // resolve into them, dragging the whole 908 kB Puck editor into
+              // the entry preload of every page, students included. Give both
+              // their own groups (matched first) so they stay entry-sized.
+              { name: "vendor-zustand", test: /node_modules[\\/](zustand|use-sync-external-store)[\\/]/ },
               { name: "vendor-puck", test: /node_modules[\\/]@puckeditor[\\/]/ },
               {
                 name: "vendor-three",
