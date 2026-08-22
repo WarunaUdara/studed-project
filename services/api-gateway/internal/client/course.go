@@ -31,10 +31,13 @@ func NewCourseClient(addr, serviceToken string) (*CourseClient, error) {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithChainUnaryInterceptor(interceptors...),
 	}
+	opts = append(opts, grpcauth.ClientKeepalive()...)
 	conn, err := grpc.NewClient(addr, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to course service: %w", err)
 	}
+	// Connect eagerly so the first RPC does not pay channel establishment cost.
+	conn.Connect()
 
 	return &CourseClient{
 		client: coursepb.NewCourseServiceClient(conn),

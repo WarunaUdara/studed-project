@@ -136,12 +136,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	grpcServer := grpc.NewServer(
+	serverOpts := []grpc.ServerOption{
 		grpc.ChainUnaryInterceptor(
 			grpcauth.UnaryServerTraceInterceptor(),
 			grpcauth.UnaryServerInterceptor(cfg.ServiceToken),
 		),
-	)
+	}
+	serverOpts = append(serverOpts, grpcauth.ServerKeepalive()...)
+	grpcServer := grpc.NewServer(serverOpts...)
 	gampb.RegisterGamificationServiceServer(grpcServer, grpcHandler)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)

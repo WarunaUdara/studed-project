@@ -33,10 +33,16 @@ func NewAuthClient(addr, serviceToken string) (*AuthClient, error) {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithChainUnaryInterceptor(interceptors...),
 	}
+	opts = append(opts, grpcauth.ClientKeepalive()...)
 	conn, err := grpc.NewClient(addr, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to auth service: %w", err)
 	}
+	// Connect eagerly: the first outbound TCP from a fresh container can pay
+	// repeated failures on Docker Desktop NAT and grpc-go's exponential backoff
+	// (up to ~10s on the first user-facing RPC). Connecting at boot moves that
+	// cost out of the request path.
+	conn.Connect()
 
 	return &AuthClient{
 		client: authpb.NewAuthServiceClient(conn),

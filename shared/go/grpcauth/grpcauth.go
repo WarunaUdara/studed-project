@@ -14,9 +14,38 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
+
+// ClientKeepalive returns dial options that keep idle gRPC channels healthy.
+// Without pings, a silently dropped TCP connection (Docker NAT, GKE LB idle
+// timeout) is only noticed when the next RPC fails; grpc-go then pays its
+// exponential reconnect backoff (1s, 1.6s, 2.6s, 4.1s...) on the first
+// user-facing call, which showed up as 5-10s logins after idle. Pinging every
+// 20s detects the dead connection and reconnects in the background instead.
+func ClientKeepalive() []grpc.DialOption {
+	return []grpc.DialOption{
+		grpc.WithKeepaliveParams(keepalive.ClientParameters{
+			Time:                20 * time.Second,
+			Timeout:             3 * time.Second,
+			PermitWithoutStream: true,
+		}),
+	}
+}
+
+// ServerKeepalive relaxes the server's ping enforcement so the client's idle
+// keepalive pings above are accepted. grpc-go's server default (MinTime 5m,
+// idle pings refused) would otherwise GOAWAY the channel as "too many pings".
+func ServerKeepalive() []grpc.ServerOption {
+	return []grpc.ServerOption{
+		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
+			MinTime:             10 * time.Second,
+			PermitWithoutStream: true,
+		}),
+	}
+}
 
 // UnaryServerInterceptor rejects calls whose metadata does not carry the shared
 // service token as "authorization: Bearer <token>". An empty expected token

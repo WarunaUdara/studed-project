@@ -30,10 +30,13 @@ func NewProgressClient(addr string, courseClient *CourseClient, serviceToken str
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithChainUnaryInterceptor(interceptors...),
 	}
+	opts = append(opts, grpcauth.ClientKeepalive()...)
 	conn, err := grpc.NewClient(addr, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to progress service: %w", err)
 	}
+	// Connect eagerly so the first RPC does not pay channel establishment cost.
+	conn.Connect()
 
 	return &ProgressClient{
 		client:       progresspb.NewProgressServiceClient(conn),

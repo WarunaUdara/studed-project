@@ -30,10 +30,13 @@ func NewGamificationClient(addr, serviceToken string) (*GamificationClient, erro
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithChainUnaryInterceptor(interceptors...),
 	}
+	opts = append(opts, grpcauth.ClientKeepalive()...)
 	conn, err := grpc.NewClient(addr, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to gamification service: %w", err)
 	}
+	// Connect eagerly so the first RPC does not pay channel establishment cost.
+	conn.Connect()
 
 	return &GamificationClient{
 		client: gampb.NewGamificationServiceClient(conn),

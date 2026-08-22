@@ -119,6 +119,7 @@ func main() {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithChainUnaryInterceptor(dialInterceptors...),
 	}
+	dialOpts = append(dialOpts, grpcauth.ClientKeepalive()...)
 
 	courseConn, err := grpc.NewClient(cfg.CourseServiceAddr, dialOpts...)
 	if err != nil {
@@ -126,6 +127,8 @@ func main() {
 		os.Exit(1)
 	}
 	defer courseConn.Close()
+	// Connect eagerly so the first RPC does not pay channel establishment cost.
+	courseConn.Connect()
 
 	gamificationConn, err := grpc.NewClient(cfg.GamificationServiceAddr, dialOpts...)
 	if err != nil {
@@ -133,6 +136,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer gamificationConn.Close()
+	gamificationConn.Connect()
 
 	courseClient := coursepb.NewCourseServiceClient(courseConn)
 	gamificationClient := gampb.NewGamificationServiceClient(gamificationConn)
@@ -147,12 +151,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	grpcServer := grpc.NewServer(
+	serverOpts := []grpc.ServerOption{
 		grpc.ChainUnaryInterceptor(
 			grpcauth.UnaryServerTraceInterceptor(),
 			grpcauth.UnaryServerInterceptor(cfg.ServiceToken),
 		),
-	)
+	}
+	serverOpts = append(serverOpts, grpcauth.ServerKeepalive()...)
+	grpcServer := grpc.NewServer(serverOpts...)
 	progresspb.RegisterProgressServiceServer(grpcServer, grpcHandler)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
