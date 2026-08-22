@@ -53,3 +53,14 @@ spec:
                 name: api-gateway
                 port:
                   number: 8080
+    - host: api-preprod.34.102.169.180.sslip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: preprod-api-gateway
+                port:
+                  number: 8080
+
