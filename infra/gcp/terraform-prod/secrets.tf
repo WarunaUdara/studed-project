@@ -6,6 +6,7 @@
 resource "google_secret_manager_secret" "studed_secrets" {
   for_each = toset([
     "database-url", # Neon Postgres connection string (sslmode=require)
+    "database-owner-url", # schema-owner connection string for boot migrations
     "jwt-access-secret",
     "jwt-refresh-secret",
     "service-token",

@@ -69,9 +69,20 @@ func main() {
 		time.Sleep(1 * time.Second)
 	}
 
-	if err := db.AutoMigrate(&model.User{}); err != nil {
+	// Schema DDL runs as the database owner: Neon hardens schema public, so the
+	// least-privilege app role cannot ALTER tables it does not own. Serving
+	// continues on the app role.
+	ownerDB, err := gorm.Open(postgres.Open(cfg.DatabaseOwnerURL), &gorm.Config{})
+	if err != nil {
+		log.Error("failed to open owner database for migrations", slog.Any("error", err))
+		os.Exit(1)
+	}
+	if err := ownerDB.AutoMigrate(&model.User{}); err != nil {
 		log.Error("failed to run migrations", slog.Any("error", err))
 		os.Exit(1)
+	}
+	if ownerSQL, dbErr := ownerDB.DB(); dbErr == nil {
+		_ = ownerSQL.Close()
 	}
 
 	userRepo := repository.NewUserRepository(db)

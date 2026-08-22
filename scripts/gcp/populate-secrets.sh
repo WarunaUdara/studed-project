@@ -52,6 +52,10 @@ put_secret() {
 # Neon Postgres connection string from .env (rotated, never the exposed owner cred)
 put_secret "studed-database-url" "${DATABASE_CONNECTION_STRING:-}"
 
+# Schema-owner connection string: boot migrations (AutoMigrate/golang-migrate)
+# run DDL as the owner because Neon hardens schema public against the app role.
+put_secret "studed-database-owner-url" "${DATABASE_OWNER_CONNECTION_STRING:-}"
+
 # JWT secrets. In rotation mode, mint fresh values and store them.
 if [[ "$ROTATE" == "true" ]] || ! has_version "studed-jwt-access-secret"; then
   JWT_ACCESS="$(openssl rand -base64 48 | tr -d '\n')"

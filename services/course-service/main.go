@@ -68,13 +68,23 @@ func main() {
 		time.Sleep(1 * time.Second)
 	}
 
-	if err := db.AutoMigrate(&model.Course{}, &model.Lesson{}, &model.Wave{}); err != nil {
-		if db.Migrator().HasTable(&model.Wave{}) && db.Migrator().HasTable(&model.Course{}) && db.Migrator().HasTable(&model.Lesson{}) {
+	// Schema DDL runs as the database owner (Neon hardens schema public, so
+	// the least-privilege app role cannot ALTER tables it does not own).
+	ownerDB, err := gorm.Open(postgres.Open(cfg.DatabaseOwnerURL), &gorm.Config{})
+	if err != nil {
+		log.Error("failed to open owner database for migrations", slog.Any("error", err))
+		os.Exit(1)
+	}
+	if err := ownerDB.AutoMigrate(&model.Course{}, &model.Lesson{}, &model.Wave{}); err != nil {
+		if ownerDB.Migrator().HasTable(&model.Wave{}) && ownerDB.Migrator().HasTable(&model.Course{}) && ownerDB.Migrator().HasTable(&model.Lesson{}) {
 			log.Warn("auto-migration schema update skipped (tables exist)", slog.Any("error", err))
 		} else {
 			log.Error("failed to run migrations", slog.Any("error", err))
 			os.Exit(1)
 		}
+	}
+	if ownerSQL, dbErr := ownerDB.DB(); dbErr == nil {
+		_ = ownerSQL.Close()
 	}
 
 	courseRepo := repository.NewCourseRepository(db)

@@ -54,9 +54,20 @@ func main() {
 		time.Sleep(1 * time.Second)
 	}
 
-	if err := db.AutoMigrate(&model.Subscription{}); err != nil {
+	// Schema DDL runs as the database owner (Neon hardens schema public, so
+	// the least-privilege app role cannot ALTER tables it does not own).
+	databaseOwnerURL := getEnv("DATABASE_OWNER_URL", databaseURL)
+	ownerDB, err := gorm.Open(postgres.Open(databaseOwnerURL), &gorm.Config{})
+	if err != nil {
+		log.Error("failed to open owner database for migrations", slog.Any("error", err))
+		os.Exit(1)
+	}
+	if err := ownerDB.AutoMigrate(&model.Subscription{}); err != nil {
 		log.Error("failed to run migrations", slog.Any("error", err))
 		os.Exit(1)
+	}
+	if ownerSQL, dbErr := ownerDB.DB(); dbErr == nil {
+		_ = ownerSQL.Close()
 	}
 
 	phConfig := payhere.Config{

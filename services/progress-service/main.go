@@ -76,13 +76,21 @@ func main() {
 		time.Sleep(1 * time.Second)
 	}
 
-	sqlDB, err := db.DB()
+	// Migrations run as the DB owner (Neon hardens schema public; the app
+	// role cannot DDL). Serving keeps the least-privilege app role.
+	ownerDB, err := gorm.Open(postgres.Open(cfg.DatabaseOwnerURL), &gorm.Config{})
 	if err != nil {
-		log.Error("failed to get sql db", slog.Any("error", err))
+		log.Error("failed to open owner database for migrations", slog.Any("error", err))
 		os.Exit(1)
 	}
+	ownerSQL, err := ownerDB.DB()
+	if err != nil {
+		log.Error("failed to get owner sql db", slog.Any("error", err))
+		os.Exit(1)
+	}
+	defer ownerSQL.Close()
 
-	driver, err := postgres_migrate.WithInstance(sqlDB, &postgres_migrate.Config{
+	driver, err := postgres_migrate.WithInstance(ownerSQL, &postgres_migrate.Config{
 		MigrationsTable: "progress_schema_migrations",
 	})
 	if err != nil {

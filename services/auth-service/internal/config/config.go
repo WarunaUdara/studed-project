@@ -9,6 +9,7 @@ import (
 type Config struct {
 	ServiceAddr        string
 	DatabaseURL        string
+	DatabaseOwnerURL   string
 	AccessSecret       string
 	RefreshSecret      string
 	ServiceToken       string
@@ -43,6 +44,7 @@ func Load() (*Config, error) {
 	return &Config{
 		ServiceAddr:        getEnv("LISTEN_ADDR", ":8081"),
 		DatabaseURL:        getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable"),
+		DatabaseOwnerURL:   getEnv("DATABASE_OWNER_URL", getEnv("DATABASE_URL", "postgres://studed:studed@localhost:5433/studed?sslmode=disable")),
 		AccessSecret:       accessSecret,
 		RefreshSecret:      refreshSecret,
 		ServiceToken:       getEnv("SERVICE_TOKEN", ""),
