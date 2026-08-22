@@ -814,7 +814,12 @@ function AudienceSegments() {
                   <item.icon className="h-6 w-6" />
                 </div>
                 <h3 className="mt-5 text-lg font-bold text-foreground">{item.title}</h3>
-                <p className={cn("mt-0.5 text-xs font-semibold uppercase tracking-wider", item.accent)}>
+                <p
+                  className={cn(
+                    "mt-0.5 text-xs font-semibold uppercase tracking-wider",
+                    item.accent,
+                  )}
+                >
                   {item.sub}
                 </p>
                 <p className="mt-3.5 text-xs sm:text-sm leading-relaxed text-muted-foreground">

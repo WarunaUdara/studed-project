@@ -393,22 +393,18 @@ function WaveEditorPage() {
                 Load preview...
               </div>
             )
-          ) : (
-            <>
-              {puckData && (
-                <Suspense
-                  fallback={
-                    <div className="flex h-full items-center justify-center">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                      <span className="ml-2 text-muted-foreground">Loading editor...</span>
-                    </div>
-                  }
-                >
-                  <PuckCanvas data={puckData} onChange={setPuckData} onPublish={handleSave} />
-                </Suspense>
-              )}
-            </>
-          )}
+          ) : puckData ? (
+            <Suspense
+              fallback={
+                <div className="flex h-full items-center justify-center">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <span className="ml-2 text-muted-foreground">Loading editor...</span>
+                </div>
+              }
+            >
+              <PuckCanvas data={puckData} onChange={setPuckData} onPublish={handleSave} />
+            </Suspense>
+          ) : null}
         </main>
 
         {/* Resizable AI dock */}

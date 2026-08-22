@@ -12,6 +12,13 @@ import "./styles/index.css";
 const queryClient = new QueryClient();
 const router = createRouter({ routeTree });
 
+window.addEventListener("vite:preloadError", (event) => {
+  // Prevent Vite's default throw behaviour for CSS/chunk preload failures
+  // so transient asset mismatches or network glitches do not crash the app.
+  event.preventDefault();
+  console.warn("[vite:preloadError] Resource preload failed (ignored):", (event as any).payload);
+});
+
 window.addEventListener("unhandledrejection", (event) => {
   const reason = event.reason instanceof Error ? event.reason.message : String(event.reason ?? "");
   // Prevents the browser's default console noise and routes the rejection to a
