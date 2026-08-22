@@ -5,6 +5,6 @@ cluster_name          = "studed-prod"
 node_machine_type     = "e2-standard-2"
 node_count            = 2
 node_disk_size_gb     = 30
-authorized_cidrs      = ["143.198.207.212/32"]
+authorized_cidrs      = ["112.134.154.235/32", "143.198.207.212/32"]
 sslip_api_hostname    = "api"
 waf_rate_limit_per_ip = 120
