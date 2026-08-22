@@ -1,0 +1,1768 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/name: studed
+    app.kubernetes.io/part-of: studed-platform
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/warn: restricted
+  name: studed-preprod
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: api-gateway-sa
+  namespace: studed-preprod
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    iam.gke.io/gcp-service-account: studed-upload@studed-prod.iam.gserviceaccount.com
+  name: upload-service-sa
+  namespace: studed-preprod
+---
+apiVersion: v1
+data:
+  AI_SERVICE_URL: http://ai-service:8090
+  API_GATEWAY_ADDR: :8080
+  AUTH_SERVICE_ADDR: auth-service:8081
+  COURSE_SERVICE_ADDR: course-service:8083
+  ELASTICSEARCH_URL: http://elasticsearch:9200
+  GAMIFICATION_SERVICE_ADDR: gamification-service:8088
+  GEMINI_MODEL: gemini-2.5-flash
+  GRAPHQL_PLAYGROUND: "false"
+  JWT_ACCESS_TTL: 15m
+  JWT_REFRESH_TTL: 168h
+  NOTIFICATION_SERVICE_ADDR: :8092
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
+  PAYMENT_SERVICE_URL: http://payment-service:8091
+  PROGRESS_SERVICE_ADDR: progress-service:8086
+  REDIS_ADDR: redis:6379
+  UPLOAD_MAX_BYTES: "10485760"
+  UPLOAD_SERVICE_ADDR: :8093
+  UPLOAD_SERVICE_URL: http://upload-service:8093
+kind: ConfigMap
+metadata:
+  name: studed-config
+  namespace: studed-preprod
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-service
+  namespace: studed-preprod
+spec:
+  ports:
+  - name: http
+    port: 8090
+    targetPort: 8090
+  selector:
+    app: ai-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    cloud.google.com/backend-config: '{"default": "studed-backend-config"}'
+  name: api-gateway
+  namespace: studed-preprod
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: api-gateway
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: studed-preprod
+spec:
+  ports:
+  - name: grpc
+    port: 8081
+    targetPort: 8081
+  - name: http
+    port: 8085
+    targetPort: 8085
+  selector:
+    app: auth-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-service
+  namespace: studed-preprod
+spec:
+  ports:
+  - name: grpc
+    port: 8083
+    targetPort: 8083
+  - name: http
+    port: 8084
+    targetPort: 8084
+  selector:
+    app: course-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  namespace: studed-preprod
+spec:
+  ports:
+  - port: 9200
+    targetPort: 9200
+  selector:
+    app: elasticsearch
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gamification-service
+  namespace: studed-preprod
+spec:
+  ports:
+  - name: grpc
+    port: 8088
+    targetPort: 8088
+  - name: http
+    port: 8089
+    targetPort: 8089
+  selector:
+    app: gamification-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+  namespace: studed-preprod
+spec:
+  ports:
+  - name: http
+    port: 8092
+    targetPort: 8092
+  selector:
+    app: notification-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  namespace: studed-preprod
+spec:
+  ports:
+  - name: http
+    port: 8091
+    targetPort: 8091
+  selector:
+    app: payment-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: progress-service
+  namespace: studed-preprod
+spec:
+  ports:
+  - name: grpc
+    port: 8086
+    targetPort: 8086
+  - name: http
+    port: 8087
+    targetPort: 8087
+  selector:
+    app: progress-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: studed-preprod
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upload-service
+  namespace: studed-preprod
+spec:
+  ports:
+  - name: http
+    port: 8093
+    targetPort: 8093
+  selector:
+    app: upload-service
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elasticsearch-data
+  namespace: studed-preprod
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-data
+  namespace: studed-preprod
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/ai.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/ai.ignore-tags: regexp:^latest$
+    argocd-image-updater.argoproj.io/ai.update-strategy: latest
+    argocd-image-updater.argoproj.io/image-list: ai=ghcr.io/warunaudara/studed-ai-service
+  labels:
+    app: ai-service
+  name: ai-service
+  namespace: studed-preprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: ai-service
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: studed-config
+        - secretRef:
+            name: studed-secrets
+        image: ghcr.io/warunaudara/studed-ai-service:sha-9f9ecc4
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sleep
+              - "10"
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8090
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: ai-service
+        ports:
+        - containerPort: 8090
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8090
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 150m
+            memory: 96Mi
+          requests:
+            cpu: 15m
+            memory: 30Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: 8090
+          periodSeconds: 2
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 45
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/gateway.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/gateway.ignore-tags: regexp:^latest$
+    argocd-image-updater.argoproj.io/gateway.update-strategy: latest
+    argocd-image-updater.argoproj.io/image-list: gateway=ghcr.io/warunaudara/studed-api-gateway
+  labels:
+    app: api-gateway
+  name: api-gateway
+  namespace: studed-preprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - env:
+        - name: GOMEMLIMIT
+          value: 110MiB
+        envFrom:
+        - configMapRef:
+            name: studed-config
+        - secretRef:
+            name: studed-secrets
+        image: ghcr.io/warunaudara/studed-api-gateway:sha-9f9ecc4
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sleep
+              - "10"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: api-gateway
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 250m
+            memory: 128Mi
+          requests:
+            cpu: 25m
+            memory: 40Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: 8080
+          periodSeconds: 2
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: api-gateway-sa
+      terminationGracePeriodSeconds: 45
+      topologySpreadConstraints:
+      - labelSelector:
+          matchLabels:
+            app: api-gateway
+        maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/auth.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/auth.ignore-tags: regexp:^latest$
+    argocd-image-updater.argoproj.io/auth.update-strategy: latest
+    argocd-image-updater.argoproj.io/image-list: auth=ghcr.io/warunaudara/studed-auth-service
+  labels:
+    app: auth-service
+  name: auth-service
+  namespace: studed-preprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: studed-config
+        - secretRef:
+            name: studed-secrets
+        image: ghcr.io/warunaudara/studed-auth-service:sha-9f9ecc4
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sleep
+              - "10"
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8085
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: auth-service
+        ports:
+        - containerPort: 8081
+        - containerPort: 8085
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8085
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 150m
+            memory: 96Mi
+          requests:
+            cpu: 15m
+            memory: 30Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: 8085
+          periodSeconds: 2
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 45
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/course.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/course.ignore-tags: regexp:^latest$
+    argocd-image-updater.argoproj.io/course.update-strategy: latest
+    argocd-image-updater.argoproj.io/image-list: course=ghcr.io/warunaudara/studed-course-service
+  labels:
+    app: course-service
+  name: course-service
+  namespace: studed-preprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: course-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: course-service
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: studed-config
+        - secretRef:
+            name: studed-secrets
+        image: ghcr.io/warunaudara/studed-course-service:sha-9f9ecc4
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sleep
+              - "10"
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8084
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: course-service
+        ports:
+        - containerPort: 8083
+        - containerPort: 8084
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8084
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 150m
+            memory: 96Mi
+          requests:
+            cpu: 15m
+            memory: 30Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: 8084
+          periodSeconds: 2
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 45
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: elasticsearch
+  name: elasticsearch
+  namespace: studed-preprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+      - env:
+        - name: discovery.type
+          value: single-node
+        - name: xpack.security.enabled
+          value: "false"
+        - name: ES_JAVA_OPTS
+          value: -Xms512m -Xmx512m
+        image: elasticsearch:8.14.0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 5
+          initialDelaySeconds: 180
+          periodSeconds: 20
+          tcpSocket:
+            port: 9200
+        name: elasticsearch
+        ports:
+        - containerPort: 9200
+        readinessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          tcpSocket:
+            port: 9200
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1.5Gi
+          requests:
+            cpu: 100m
+            memory: 768Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: false
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: elasticsearch-data
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - name: elasticsearch-data
+        persistentVolumeClaim:
+          claimName: elasticsearch-data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/gamification.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/gamification.ignore-tags: regexp:^latest$
+    argocd-image-updater.argoproj.io/gamification.update-strategy: latest
+    argocd-image-updater.argoproj.io/image-list: gamification=ghcr.io/warunaudara/studed-gamification-service
+  labels:
+    app: gamification-service
+  name: gamification-service
+  namespace: studed-preprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gamification-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: gamification-service
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: studed-config
+        - secretRef:
+            name: studed-secrets
+        image: ghcr.io/warunaudara/studed-gamification-service:sha-9f9ecc4
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sleep
+              - "10"
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8089
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: gamification-service
+        ports:
+        - containerPort: 8088
+        - containerPort: 8089
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8089
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 150m
+            memory: 96Mi
+          requests:
+            cpu: 15m
+            memory: 30Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: 8089
+          periodSeconds: 2
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 45
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: notification=ghcr.io/warunaudara/studed-notification-service
+    argocd-image-updater.argoproj.io/notification.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/notification.ignore-tags: regexp:^latest$
+    argocd-image-updater.argoproj.io/notification.update-strategy: latest
+  labels:
+    app: notification-service
+  name: notification-service
+  namespace: studed-preprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: studed-config
+        - secretRef:
+            name: studed-secrets
+        image: ghcr.io/warunaudara/studed-notification-service:sha-9f9ecc4
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sleep
+              - "10"
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8092
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: notification-service
+        ports:
+        - containerPort: 8092
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8092
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 150m
+            memory: 96Mi
+          requests:
+            cpu: 15m
+            memory: 30Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: 8092
+          periodSeconds: 2
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 45
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: payment=ghcr.io/warunaudara/studed-payment-service
+    argocd-image-updater.argoproj.io/payment.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/payment.ignore-tags: regexp:^latest$
+    argocd-image-updater.argoproj.io/payment.update-strategy: latest
+  labels:
+    app: payment-service
+  name: payment-service
+  namespace: studed-preprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: studed-config
+        - secretRef:
+            name: studed-secrets
+        image: ghcr.io/warunaudara/studed-payment-service:sha-9f9ecc4
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sleep
+              - "10"
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8091
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: payment-service
+        ports:
+        - containerPort: 8091
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8091
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 150m
+            memory: 96Mi
+          requests:
+            cpu: 15m
+            memory: 30Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: 8091
+          periodSeconds: 2
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 45
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: progress=ghcr.io/warunaudara/studed-progress-service
+    argocd-image-updater.argoproj.io/progress.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/progress.ignore-tags: regexp:^latest$
+    argocd-image-updater.argoproj.io/progress.update-strategy: latest
+  labels:
+    app: progress-service
+  name: progress-service
+  namespace: studed-preprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: progress-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: progress-service
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: studed-config
+        - secretRef:
+            name: studed-secrets
+        image: ghcr.io/warunaudara/studed-progress-service:sha-9f9ecc4
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sleep
+              - "10"
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8087
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: progress-service
+        ports:
+        - containerPort: 8086
+        - containerPort: 8087
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8087
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 150m
+            memory: 96Mi
+          requests:
+            cpu: 15m
+            memory: 30Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: 8087
+          periodSeconds: 2
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 45
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: redis
+  name: redis
+  namespace: studed-preprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - args:
+        - --appendonly
+        - "yes"
+        - --maxmemory
+        - 96mb
+        - --maxmemory-policy
+        - allkeys-lru
+        image: redis:7-alpine
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          failureThreshold: 3
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: redis
+        ports:
+        - containerPort: 6379
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 16Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /data
+          name: redis-data
+      securityContext:
+        fsGroup: 999
+        runAsGroup: 999
+        runAsNonRoot: true
+        runAsUser: 999
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: redis-data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: upload=ghcr.io/warunaudara/studed-upload-service
+    argocd-image-updater.argoproj.io/upload.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/upload.ignore-tags: regexp:^latest$
+    argocd-image-updater.argoproj.io/upload.update-strategy: latest
+  labels:
+    app: upload-service
+  name: upload-service
+  namespace: studed-preprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: upload-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: upload-service
+    spec:
+      automountServiceAccountToken: true
+      containers:
+      - env:
+        - name: GOMEMLIMIT
+          value: 220MiB
+        envFrom:
+        - configMapRef:
+            name: studed-config
+        - secretRef:
+            name: studed-secrets
+        image: ghcr.io/warunaudara/studed-upload-service:sha-9f9ecc4
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sleep
+              - "10"
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8093
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: upload-service
+        ports:
+        - containerPort: 8093
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8093
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 300m
+            memory: 256Mi
+          requests:
+            cpu: 25m
+            memory: 48Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: 8093
+          periodSeconds: 2
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: upload-service-sa
+      terminationGracePeriodSeconds: 45
+      volumes:
+      - emptyDir:
+          sizeLimit: 512Mi
+        name: tmp
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: api-gateway-pdb
+  namespace: studed-preprod
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: auth-service-pdb
+  namespace: studed-preprod
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: auth-service
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: upload-service-pdb
+  namespace: studed-preprod
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: upload-service
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: studed-backend-config
+  namespace: studed-preprod
+spec:
+  connectionDraining:
+    drainingTimeoutSec: 30
+  healthCheck:
+    checkIntervalSec: 10
+    healthyThreshold: 1
+    port: 8080
+    requestPath: /health
+    timeoutSec: 5
+    type: HTTP
+    unhealthyThreshold: 2
+  securityPolicy:
+    name: studed2-waf
+  timeoutSec: 60
+---
+apiVersion: external-secrets.io/v1
+kind: ClusterSecretStore
+metadata:
+  name: gcp-secret-store
+  namespace: studed-preprod
+spec:
+  provider:
+    gcpsm:
+      auth:
+        workloadIdentity:
+          clusterLocation: asia-south1-a
+          clusterName: studed-prod
+          serviceAccountRef:
+            name: external-secrets
+            namespace: external-secrets
+      projectID: studed-prod
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: studed-secrets
+  namespace: studed-preprod
+spec:
+  data:
+  - remoteRef:
+      key: studed-preprod-database-url
+      version: latest
+    secretKey: DATABASE_URL
+  - remoteRef:
+      key: studed-preprod-database-owner-url
+      version: latest
+    secretKey: DATABASE_OWNER_URL
+  - remoteRef:
+      key: studed-jwt-access-secret
+      version: latest
+    secretKey: JWT_ACCESS_SECRET
+  - remoteRef:
+      key: studed-jwt-refresh-secret
+      version: latest
+    secretKey: JWT_REFRESH_SECRET
+  - remoteRef:
+      key: studed-service-token
+      version: latest
+    secretKey: SERVICE_TOKEN
+  - remoteRef:
+      key: studed-gemini-api-key
+      version: latest
+    secretKey: GEMINI_API_KEY
+  - remoteRef:
+      key: studed-opencode-api-key
+      version: latest
+    secretKey: OPENCODE_API_KEY
+  - remoteRef:
+      key: studed-payhere-merchant-id
+      version: latest
+    secretKey: PAYHERE_MERCHANT_ID
+  - remoteRef:
+      key: studed-payhere-merchant-secret
+      version: latest
+    secretKey: PAYHERE_MERCHANT_SECRET
+  - remoteRef:
+      key: studed-payhere-notify-url
+      version: latest
+    secretKey: PAYHERE_NOTIFY_URL
+  - remoteRef:
+      key: studed-gcs-bucket-name
+      version: latest
+    secretKey: GCS_BUCKET_NAME
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: gcp-secret-store
+  target:
+    creationPolicy: Owner
+    name: studed-secrets
+    template:
+      type: Opaque
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: studed-api-cert-v2
+  namespace: studed-preprod
+spec:
+  domains:
+  - api-preprod.34.102.169.180.sslip.io
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
+    kubernetes.io/ingress.class: gce
+    kubernetes.io/ingress.global-static-ip-name: studed2-ingress-ip
+    networking.gke.io/managed-certificates: studed-api-cert-v2
+  name: studed-ingress
+  namespace: studed-preprod
+spec:
+  rules:
+  - host: api-preprod.34.102.169.180.sslip.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: api-gateway
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ai-external-egress
+  namespace: studed-preprod
+spec:
+  egress:
+  - ports:
+    - port: 443
+      protocol: TCP
+    to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+  podSelector:
+    matchLabels:
+      app: ai-service
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ai-ingress-from-gateway
+  namespace: studed-preprod
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: api-gateway
+    ports:
+    - port: 8090
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: ai-service
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-course-ingress
+  namespace: studed-preprod
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: api-gateway
+    - podSelector:
+        matchLabels:
+          app: progress-service
+    ports:
+    - port: 8083
+      protocol: TCP
+    - port: 8084
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: course-service
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: studed-preprod
+spec:
+  egress:
+  - ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+    to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+  podSelector: {}
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-elasticsearch-ingress
+  namespace: studed-preprod
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: course-service
+    ports:
+    - port: 9200
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: elasticsearch
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-external-egress
+  namespace: studed-preprod
+spec:
+  egress:
+  - ports:
+    - port: 443
+      protocol: TCP
+    - port: 5432
+      protocol: TCP
+  podSelector: {}
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-gamification-ingress
+  namespace: studed-preprod
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: api-gateway
+    - podSelector:
+        matchLabels:
+          app: progress-service
+    ports:
+    - port: 8088
+      protocol: TCP
+    - port: 8089
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: gamification-service
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-gateway-egress
+  namespace: studed-preprod
+spec:
+  egress:
+  - ports:
+    - port: 8081
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: auth-service
+  - ports:
+    - port: 8083
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: course-service
+  - ports:
+    - port: 8086
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: progress-service
+  - ports:
+    - port: 8088
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: gamification-service
+  - ports:
+    - port: 8090
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: ai-service
+  - ports:
+    - port: 8091
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: payment-service
+  - ports:
+    - port: 8093
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: upload-service
+  - ports:
+    - port: 6379
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: redis
+  podSelector:
+    matchLabels:
+      app: api-gateway
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-gateway
+  namespace: studed-preprod
+spec:
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+    ports:
+    - port: 8080
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: api-gateway
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-payhere-webhook-ingress
+  namespace: studed-preprod
+spec:
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+    ports:
+    - port: 8091
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: payment-service
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-payment-ingress-from-gateway
+  namespace: studed-preprod
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: api-gateway
+    ports:
+    - port: 8091
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: payment-service
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-progress-egress
+  namespace: studed-preprod
+spec:
+  egress:
+  - ports:
+    - port: 8083
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: course-service
+  - ports:
+    - port: 8088
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: gamification-service
+  podSelector:
+    matchLabels:
+      app: progress-service
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-progress-ingress-from-gateway
+  namespace: studed-preprod
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: api-gateway
+    ports:
+    - port: 8086
+      protocol: TCP
+    - port: 8087
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: progress-service
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-redis-ingress
+  namespace: studed-preprod
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: api-gateway
+    - podSelector:
+        matchLabels:
+          app: gamification-service
+    - podSelector:
+        matchLabels:
+          app: progress-service
+    ports:
+    - port: 6379
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: redis
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-service-ingress-from-gateway
+  namespace: studed-preprod
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: api-gateway
+    ports:
+    - port: 8081
+      protocol: TCP
+    - port: 8085
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: auth-service
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-upload-gcs-egress
+  namespace: studed-preprod
+spec:
+  egress:
+  - ports:
+    - port: 443
+      protocol: TCP
+    to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+  - ports:
+    - port: 80
+      protocol: TCP
+    to:
+    - ipBlock:
+        cidr: 169.254.169.254/32
+  podSelector:
+    matchLabels:
+      app: upload-service
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-upload-ingress-from-gateway
+  namespace: studed-preprod
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: api-gateway
+    ports:
+    - port: 8093
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: upload-service
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: studed-preprod
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
