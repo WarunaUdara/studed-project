@@ -221,7 +221,6 @@ export function TextLoop({
   }, [metrics.length, speed, direction, pauseOnHover]);
 
   const loopText = unit.repeat(metrics.reps);
-  const fitLength = metrics.length || undefined;
 
   return (
     <div ref={rootRef} className={`text-loop ${className}`.trim()} style={style}>
@@ -254,13 +253,7 @@ export function TextLoop({
           dominantBaseline="central"
           aria-hidden="true"
         >
-          <textPath
-            ref={headRef}
-            href={`#${pathId}`}
-            startOffset={0}
-            textLength={fitLength}
-            lengthAdjust="spacing"
-          >
+          <textPath ref={headRef} href={`#${pathId}`} startOffset={0}>
             {loopText}
           </textPath>
         </text>
@@ -272,13 +265,7 @@ export function TextLoop({
           dominantBaseline="central"
           aria-hidden="true"
         >
-          <textPath
-            ref={tailRef}
-            href={`#${pathId}`}
-            startOffset={0}
-            textLength={fitLength}
-            lengthAdjust="spacing"
-          >
+          <textPath ref={tailRef} href={`#${pathId}`} startOffset={0}>
             {loopText}
           </textPath>
         </text>
