@@ -1310,38 +1310,6 @@ spec:
     template:
       type: Opaque
 ---
-apiVersion: networking.gke.io/v1
-kind: ManagedCertificate
-metadata:
-  name: studed-api-cert-v2
-  namespace: studed-preprod
-spec:
-  domains:
-  - api-preprod.34.102.169.180.sslip.io
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  annotations:
-    kubernetes.io/ingress.allow-http: "false"
-    kubernetes.io/ingress.class: gce
-    kubernetes.io/ingress.global-static-ip-name: studed2-ingress-ip
-    networking.gke.io/managed-certificates: studed-api-cert-v2
-  name: studed-ingress
-  namespace: studed-preprod
-spec:
-  rules:
-  - host: api-preprod.34.102.169.180.sslip.io
-    http:
-      paths:
-      - backend:
-          service:
-            name: api-gateway
-            port:
-              number: 8080
-        path: /
-        pathType: Prefix
----
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
