@@ -36,7 +36,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: course-service
-          image: ghcr.io/warunaudara/studed-course-service:sha-9f9ecc4
+          image: ghcr.io/warunaudara/studed-course-service:sha-3fde3ef
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
