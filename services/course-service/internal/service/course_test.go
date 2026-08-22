@@ -205,6 +205,11 @@ func (r *fakeWaveRepo) ListByLessonIDs(ctx context.Context, lessonIDs []string, 
 	return out, nil
 }
 
+func (r *fakeWaveRepo) ListByLessonIDsLight(ctx context.Context, lessonIDs []string, publishedOnly bool) ([]*model.Wave, error) {
+	return r.ListByLessonIDs(ctx, lessonIDs, publishedOnly)
+}
+
+
 func (r *fakeWaveRepo) Update(ctx context.Context, w *model.Wave) error {
 	r.waves[w.ID] = w
 	return nil

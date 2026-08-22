@@ -69,7 +69,9 @@ func (s *courseService) BatchGetCourses(ctx context.Context, req *coursepb.Batch
 
 	// Three queries total instead of the per-course/per-lesson cascade the
 	// gateway used to trigger (17 courses x lessons x waves of ~250ms Neon
-	// round-trips became ~4s of catalog latency).
+	// round-trips became ~4s of catalog latency). Content JSON stays out of
+	// the batch: waves carry their learn/evaluate blocks only in the detail
+	// (GetWave) path, so the catalog does not haul megabytes across the wire.
 	lessons, err := s.lessonRepo.ListByCourseIDs(ctx, courseIDs, false)
 	if err != nil {
 		return nil, err
@@ -78,7 +80,7 @@ func (s *courseService) BatchGetCourses(ctx context.Context, req *coursepb.Batch
 	for _, l := range lessons {
 		lessonIDs = append(lessonIDs, l.ID)
 	}
-	waves, err := s.waveRepo.ListByLessonIDs(ctx, lessonIDs, false)
+	waves, err := s.waveRepo.ListByLessonIDsLight(ctx, lessonIDs, false)
 	if err != nil {
 		return nil, err
 	}

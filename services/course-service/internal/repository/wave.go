@@ -14,6 +14,7 @@ type WaveRepository interface {
 	GetByID(ctx context.Context, id string) (*model.Wave, error)
 	ListByLesson(ctx context.Context, lessonID string, publishedOnly bool) ([]*model.Wave, error)
 	ListByLessonIDs(ctx context.Context, lessonIDs []string, publishedOnly bool) ([]*model.Wave, error)
+	ListByLessonIDsLight(ctx context.Context, lessonIDs []string, publishedOnly bool) ([]*model.Wave, error)
 	Update(ctx context.Context, wave *model.Wave) error
 	GetLessonID(ctx context.Context, id string) (string, error)
 	Delete(ctx context.Context, id string) error
@@ -64,6 +65,28 @@ func (r *gormWaveRepository) ListByLessonIDs(ctx context.Context, lessonIDs []st
 	}
 
 	query := r.db.WithContext(ctx).Where("lesson_id IN ?", lessonIDs)
+	if publishedOnly {
+		query = query.Where("is_published = ?", true)
+	}
+
+	var waves []*model.Wave
+	if err := query.Order("sequence_order ASC, created_at ASC").Find(&waves).Error; err != nil {
+		return nil, fmt.Errorf("failed to list waves: %w", err)
+	}
+	return waves, nil
+}
+
+// ListByLessonIDsLight is ListByLessonIDs without the learn/evaluate content
+// JSON columns. Catalog and educator list pages only render titles/order/XP,
+// so skipping the blocks keeps a bounded payload regardless of course size.
+func (r *gormWaveRepository) ListByLessonIDsLight(ctx context.Context, lessonIDs []string, publishedOnly bool) ([]*model.Wave, error) {
+	if len(lessonIDs) == 0 {
+		return nil, nil
+	}
+
+	query := r.db.WithContext(ctx).
+		Select("id", "lesson_id", "title", "sequence_order", "xp_reward", "is_published", "created_at", "updated_at").
+		Where("lesson_id IN ?", lessonIDs)
 	if publishedOnly {
 		query = query.Where("is_published = ?", true)
 	}
