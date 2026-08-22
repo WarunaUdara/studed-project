@@ -25,7 +25,7 @@ metadata:
     argocd-image-updater.argoproj.io/upload.allow-tags: regexp:^sha-
     argocd-image-updater.argoproj.io/upload.ignore-tags: regexp:^latest$
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:

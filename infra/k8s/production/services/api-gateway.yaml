@@ -17,7 +17,7 @@ metadata:
     argocd-image-updater.argoproj.io/gateway.allow-tags: regexp:^sha-
     argocd-image-updater.argoproj.io/gateway.ignore-tags: regexp:^latest$
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -105,7 +105,7 @@ metadata:
   name: api-gateway-pdb
   namespace: studed
 spec:
-  minAvailable: 1
+  minAvailable: 0
   selector:
     matchLabels:
       app: api-gateway
