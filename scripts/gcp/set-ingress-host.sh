@@ -48,6 +48,12 @@ if [[ "$changed" -eq 0 ]]; then
 fi
 
 git -C "${REPO_ROOT}" add infra/k8s/production/ingress.yaml
+if git -C "${REPO_ROOT}" diff --cached --quiet; then
+  # The host was already pinned to this exact value (re-pin rewrote the same
+  # string); nothing to commit.
+  echo "  no manifest changes to commit (host already ${HOST})"
+  exit 0
+fi
 git -C "${REPO_ROOT}" commit -m "chore(k8s): pin ingress host to ${HOST}" >/dev/null
 if ! git -C "${REPO_ROOT}" push origin HEAD 2>/dev/null; then
   echo "  push rejected (remote moved) - rebasing then retrying once"
