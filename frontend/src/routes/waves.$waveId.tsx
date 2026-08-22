@@ -24,7 +24,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { PointsBadge } from "@/components/ui/points-badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
-import { SUBMIT_WAVE_ANSWERS_MUTATION, WAVE_PLAYER_QUERY } from "@/graphql/student";
+import {
+  RESET_WAVE_ATTEMPTS_MUTATION,
+  SUBMIT_WAVE_ANSWERS_MUTATION,
+  WAVE_PLAYER_QUERY,
+} from "@/graphql/student";
 import { findLocalWave } from "@/lib/content/localCourses";
 import { gradeWaveLocally } from "@/lib/content/localGrading";
 import { sanitizeGraphQLError } from "@/lib/errors";
@@ -79,6 +83,7 @@ function WavePlayerPage() {
     pause: Boolean(localWave),
   });
   const [submitResult, submitAnswers] = useMutation(SUBMIT_WAVE_ANSWERS_MUTATION);
+  const [resetResult, resetAttempts] = useMutation(RESET_WAVE_ATTEMPTS_MUTATION);
   const { user, updateTotalXp } = useAuthStore();
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -177,6 +182,19 @@ function WavePlayerPage() {
   const handleTryAgain = () => {
     setAnswers({});
     setResult(null);
+  };
+
+  const handleResetAttempts = async () => {
+    const reset = await resetAttempts({ waveId });
+    if (reset.error) {
+      setSubmitError(sanitizeGraphQLError(reset.error).message);
+      return;
+    }
+
+    setAnswers({});
+    setResult(null);
+    setSubmitError(null);
+    reexecuteQuery({ requestPolicy: "network-only" });
   };
 
   if (fetching) {
@@ -396,6 +414,8 @@ function WavePlayerPage() {
                       justEarnedXp={!!justEarnedXp}
                       canReattempt={canReattempt}
                       onTryAgain={handleTryAgain}
+                      onResetAttempts={handleResetAttempts}
+                      resetting={resetResult.fetching}
                     />
                     <div className="flex flex-col sm:flex-row gap-3 pt-2">
                       {nextWave ? (
@@ -494,6 +514,8 @@ interface ResultCardProps {
   justEarnedXp: boolean;
   canReattempt: boolean;
   onTryAgain: () => void;
+  onResetAttempts?: () => void;
+  resetting: boolean;
 }
 
 function ResultCard({
@@ -506,6 +528,8 @@ function ResultCard({
   justEarnedXp,
   canReattempt,
   onTryAgain,
+  onResetAttempts,
+  resetting,
 }: ResultCardProps) {
   return (
     <Card
@@ -557,8 +581,20 @@ function ResultCard({
         )}
 
         {!passed && remainingAttempts >= 0 && remainingAttempts === 0 && (
-          <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-center text-sm text-amber-500 font-medium">
-            Maximum attempts reached. You can skip to the next wave or reset attempts to try again.
+          <div className="space-y-2">
+            <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-center text-sm text-amber-500 font-medium">
+              Maximum attempts reached. You can skip to the next wave or reset attempts to try again.
+            </div>
+            {onResetAttempts && (
+              <Button
+                onClick={onResetAttempts}
+                disabled={resetting}
+                variant="outline"
+                className="w-full text-amber-500 border-amber-500/40 hover:bg-amber-500/10"
+              >
+                <RotateCcw className="mr-1.5 h-4 w-4" /> {resetting ? "Resetting..." : "Reset Attempts"}
+              </Button>
+            )}
           </div>
         )}
       </CardContent>

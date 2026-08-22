@@ -77,7 +77,13 @@ func (r *mutationResolver) GoogleLogin(ctx context.Context, input model.GoogleLo
 	// doesn't render 0 XP until the first `me` query.
 	if payload.User != nil {
 		if streak, err := r.GamificationClient.GetUserStreak(ctx, payload.User.ID); err == nil {
-			payload.User.Streak = streak
+			payload.User.Streak = streak.Current
+			payload.User.LongestStreak = streak.Longest
+			payload.User.LastActiveAt = streak.LastActiveAt
+		}
+		if err := r.GamificationClient.UpdateLeaderboard(ctx, payload.User.ID, payload.User.FullName, "", payload.User.Grade); err != nil {
+			slog.Warn("could not refresh leaderboard identity on login",
+				slog.String("user_id", payload.User.ID), slog.Any("error", err))
 		}
 		if totalXp, err := r.GamificationClient.GetUserXp(ctx, payload.User.ID); err == nil {
 			payload.User.TotalXp = totalXp
