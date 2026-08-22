@@ -133,7 +133,7 @@ submodules without checking the recursive-clone impact on Pages.
 All development agents must follow this exact workflow:
 
 ```bash
-# 1. Ensure you are on your active branch (e.g., main or dev/malshan)
+# 1. Ensure you are on your active branch (e.g., main or dev or feature branch)
 git checkout <active-branch>
 
 # 2. Make your changes
@@ -149,7 +149,7 @@ git push origin <active-branch>
 
 ### Rules
 - **On `main` branch**: Push directly to `origin main`.
-- **On `dev/malshan` (or feature branches)**: Push strictly to `origin dev/malshan` (or `origin <current-branch>`). NEVER push to `main` while working on `dev/malshan`.
+- **On feature branches (e.g., `dev` or `feature/<name>`)**: Push strictly to `origin <current-branch>`. NEVER push to `main` while working on feature branches.
 - Pull updates from `main` locally (`git pull origin main`) to resolve any merge conflicts before pushing to your branch.
 - Keep commits small and focused.
 
