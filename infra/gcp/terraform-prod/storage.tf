@@ -81,5 +81,7 @@ resource "google_service_account_iam_binding" "upload_wi_binding" {
   role               = "roles/iam.workloadIdentityUser"
   members = [
     "serviceAccount:${local.project_id}.svc.id.goog[studed/upload-service-sa]",
+    # pre-prod upload SA (same GCS bucket; isolated DB only)
+    "serviceAccount:${local.project_id}.svc.id.goog[studed-preprod/upload-service-sa]",
   ]
 }

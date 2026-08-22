@@ -89,3 +89,4 @@ scripts/tools/**/rotate-*
 
 # Local scratch (Pi agent work, temp files)
 .tmp/
+.terraform.tfstate.lock.info
