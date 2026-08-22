@@ -12,6 +12,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/studed/auth-service/internal/config"
+	"github.com/studed/auth-service/internal/google"
 	"github.com/studed/auth-service/internal/handler"
 	"github.com/studed/auth-service/internal/jwt"
 	"github.com/studed/auth-service/internal/model"
@@ -75,7 +76,13 @@ func main() {
 
 	userRepo := repository.NewUserRepository(db)
 	jwtMgr := jwt.NewManager(cfg.AccessSecret, cfg.RefreshSecret, cfg.AccessTokenTTL, cfg.RefreshTokenTTL)
-	authSvc := service.NewAuthService(userRepo, jwtMgr)
+
+	googleClient, err := google.NewClient(cfg.GoogleClientID, cfg.GoogleClientSecret, cfg.GoogleRedirectURI)
+	if err != nil {
+		log.Warn("google auth disabled", slog.Any("error", err))
+	}
+
+	authSvc := service.NewAuthService(userRepo, jwtMgr, googleClient)
 	grpcHandler := handler.NewAuthGRPCHandler(authSvc)
 
 	grpcListener, err := net.Listen("tcp", cfg.ServiceAddr)

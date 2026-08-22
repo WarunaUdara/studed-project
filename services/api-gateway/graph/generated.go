@@ -145,6 +145,7 @@ type ComplexityRoot struct {
 		GenerateEvaluateBlocks func(childComplexity int, content string, count *int) int
 		GenerateLearnBlocks    func(childComplexity int, prompt string, language *string, grade *model.Grade) int
 		GenerateVisualization  func(childComplexity int, concept string, vizType model.VizType, grade *string) int
+		GoogleLogin            func(childComplexity int, input model.GoogleLoginInput) int
 		Login                  func(childComplexity int, input model.LoginInput) int
 		Logout                 func(childComplexity int) int
 		PublishCourse          func(childComplexity int, id string) int
@@ -265,6 +266,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	Register(ctx context.Context, input model.RegisterInput) (*model.AuthPayload, error)
 	Login(ctx context.Context, input model.LoginInput) (*model.AuthPayload, error)
+	GoogleLogin(ctx context.Context, input model.GoogleLoginInput) (*model.AuthPayload, error)
 	RefreshToken(ctx context.Context, refreshToken string) (*model.AuthPayload, error)
 	Logout(ctx context.Context) (bool, error)
 	CreateCourse(ctx context.Context, input model.CreateCourseInput) (*model.Course, error)
@@ -815,6 +817,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Mutation.GenerateVisualization(childComplexity, args["concept"].(string), args["vizType"].(model.VizType), args["grade"].(*string)), true
+	case "Mutation.googleLogin":
+		if e.ComplexityRoot.Mutation.GoogleLogin == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_googleLogin_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.GoogleLogin(childComplexity, args["input"].(model.GoogleLoginInput)), true
 	case "Mutation.login":
 		if e.ComplexityRoot.Mutation.Login == nil {
 			break
@@ -1432,6 +1445,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateSubscriptionInput,
 		ec.unmarshalInputCreateWaveInput,
 		ec.unmarshalInputEvaluateBlockInput,
+		ec.unmarshalInputGoogleLoginInput,
 		ec.unmarshalInputLearnBlockInput,
 		ec.unmarshalInputLoginInput,
 		ec.unmarshalInputPaginationInput,
@@ -2230,6 +2244,20 @@ func (ec *executionContext) field_Mutation_generateVisualization_args(ctx contex
 		return nil, err
 	}
 	args["grade"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_googleLogin_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (model.GoogleLoginInput, error) {
+			return ec.unmarshalNGoogleLoginInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐGoogleLoginInput(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -4197,6 +4225,50 @@ func (ec *executionContext) fieldContext_Mutation_login(ctx context.Context, fie
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_login_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_googleLogin(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_googleLogin(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().GoogleLogin(ctx, fc.Args["input"].(model.GoogleLoginInput))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *model.AuthPayload) graphql.Marshaler {
+			return ec.marshalNAuthPayload2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐAuthPayload(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_googleLogin(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_AuthPayload(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_googleLogin_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -8591,6 +8663,43 @@ func (ec *executionContext) unmarshalInputEvaluateBlockInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGoogleLoginInput(ctx context.Context, obj any) (model.GoogleLoginInput, error) {
+	var it model.GoogleLoginInput
+	if obj == nil {
+		return it, nil
+	}
+
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"code", "codeVerifier"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "code":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("code"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Code = data
+		case "codeVerifier":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("codeVerifier"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CodeVerifier = data
+		}
+	}
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputLearnBlockInput(ctx context.Context, obj any) (model.LearnBlockInput, error) {
 	var it model.LearnBlockInput
 	if obj == nil {
@@ -9717,6 +9826,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "login":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_login(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "googleLogin":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_googleLogin(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -11376,6 +11492,11 @@ func (ec *executionContext) marshalNEvaluateBlock2ᚖgithubᚗcomᚋstudedᚋapi
 func (ec *executionContext) unmarshalNEvaluateBlockInput2ᚖgithubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐEvaluateBlockInput(ctx context.Context, v any) (*model.EvaluateBlockInput, error) {
 	res, err := ec.unmarshalInputEvaluateBlockInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNGoogleLoginInput2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐGoogleLoginInput(ctx context.Context, v any) (model.GoogleLoginInput, error) {
+	res, err := ec.unmarshalInputGoogleLoginInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNGrade2githubᚗcomᚋstudedᚋapiᚑgatewayᚋgraphᚋmodelᚐGrade(ctx context.Context, v any) (model.Grade, error) {

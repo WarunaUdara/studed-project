@@ -120,6 +120,11 @@ type EvaluateBlockInput struct {
 	Metadata      *string  `json:"metadata,omitempty"`
 }
 
+type GoogleLoginInput struct {
+	Code         string `json:"code"`
+	CodeVerifier string `json:"codeVerifier"`
+}
+
 // One place on a leaderboard. It carries a display name rather than a User:
 // a ranked row is not a user profile, and building a half-empty User to hold a
 // name invited the rest of the profile to leak alongside it.

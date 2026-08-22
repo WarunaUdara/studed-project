@@ -13,7 +13,7 @@ import (
 func TestAuthSession_RefreshTokenRotation(t *testing.T) {
 	repo := &inMemoryUserRepo{}
 	jwtMgr := jwt.NewManager("access-secret", "refresh-secret", 15*time.Minute, 60*time.Minute)
-	svc := NewAuthService(repo, jwtMgr)
+	svc := NewAuthService(repo, jwtMgr, nil)
 	ctx := context.Background()
 
 	// 1. Register user
@@ -43,7 +43,7 @@ func TestAuthSession_RefreshTokenRotation(t *testing.T) {
 func TestAuthSession_ExpiredOrInvalidRefreshTokenRejected(t *testing.T) {
 	repo := &inMemoryUserRepo{}
 	jwtMgr := jwt.NewManager("access-secret", "refresh-secret", 15*time.Minute, -1*time.Minute) // Expired immediately
-	svc := NewAuthService(repo, jwtMgr)
+	svc := NewAuthService(repo, jwtMgr, nil)
 	ctx := context.Background()
 
 	// Register user

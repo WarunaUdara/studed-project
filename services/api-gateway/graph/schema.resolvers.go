@@ -65,6 +65,34 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*
 	return payload, nil
 }
 
+// GoogleLogin is the resolver for the googleLogin field.
+func (r *mutationResolver) GoogleLogin(ctx context.Context, input model.GoogleLoginInput) (*model.AuthPayload, error) {
+	payload, err := r.AuthClient.GoogleLogin(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	setAuthCookies(ctx, payload.AccessToken, payload.RefreshToken)
+
+	// Attach streak/XP exactly like the email/password Login path so the client
+	// doesn't render 0 XP until the first `me` query.
+	if payload.User != nil {
+		if streak, err := r.GamificationClient.GetUserStreak(ctx, payload.User.ID); err == nil {
+			payload.User.Streak = streak.Current
+			payload.User.LongestStreak = streak.Longest
+			payload.User.LastActiveAt = streak.LastActiveAt
+		}
+		if err := r.GamificationClient.UpdateLeaderboard(ctx, payload.User.ID, payload.User.FullName, "", payload.User.Grade); err != nil {
+			slog.Warn("could not refresh leaderboard identity on login",
+				slog.String("user_id", payload.User.ID), slog.Any("error", err))
+		}
+		if totalXp, err := r.GamificationClient.GetUserXp(ctx, payload.User.ID); err == nil {
+			payload.User.TotalXp = totalXp
+		}
+	}
+
+	return payload, nil
+}
+
 // RefreshToken is the resolver for the refreshToken field.
 func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken string) (*model.AuthPayload, error) {
 	if refreshToken == "" {

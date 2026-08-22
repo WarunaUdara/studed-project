@@ -16,6 +16,25 @@ export const LOGIN_MUTATION = `
   }
 ` as const;
 
+export const GOOGLE_LOGIN_MUTATION = `
+  mutation GoogleLogin($input: GoogleLoginInput!) {
+    googleLogin(input: $input) {
+      accessToken
+      refreshToken
+      user {
+        id
+        email
+        fullName
+        role
+        grade
+        preferredLanguage
+        totalXp
+        streak
+      }
+    }
+  }
+` as const;
+
 export const REGISTER_MUTATION = `
   mutation Register($input: RegisterInput!) {
     register(input: $input) {

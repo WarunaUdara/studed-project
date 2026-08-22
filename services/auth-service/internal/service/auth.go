@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/studed/auth-service/internal/google"
 	"github.com/studed/auth-service/internal/jwt"
 	"github.com/studed/auth-service/internal/model"
 	"github.com/studed/auth-service/internal/repository"
@@ -15,19 +16,25 @@ import (
 type AuthService interface {
 	Register(ctx context.Context, email, password, fullName string, grade *model.Grade, preferredLanguage string) (*authpb.AuthResponse, error)
 	Login(ctx context.Context, email, password string) (*authpb.AuthResponse, error)
+	GoogleLogin(ctx context.Context, code, codeVerifier string) (*authpb.AuthResponse, error)
 	RefreshToken(ctx context.Context, refreshToken string) (*authpb.AuthResponse, error)
 	ValidateToken(ctx context.Context, accessToken string) (*authpb.ValidateTokenResponse, error)
 	GetUser(ctx context.Context, userID string) (*authpb.User, error)
 	UpdateUser(ctx context.Context, req *authpb.UpdateUserRequest) (*authpb.User, error)
 }
 
+type googleAuthenticator interface {
+	ExchangeAndVerify(ctx context.Context, code, codeVerifier string) (*google.Claims, error)
+}
+
 type authService struct {
 	repo   repository.UserRepository
 	jwtMgr *jwt.Manager
+	google googleAuthenticator
 }
 
-func NewAuthService(repo repository.UserRepository, jwtMgr *jwt.Manager) AuthService {
-	return &authService{repo: repo, jwtMgr: jwtMgr}
+func NewAuthService(repo repository.UserRepository, jwtMgr *jwt.Manager, google googleAuthenticator) AuthService {
+	return &authService{repo: repo, jwtMgr: jwtMgr, google: google}
 }
 
 func (s *authService) Register(ctx context.Context, email, password, fullName string, grade *model.Grade, preferredLanguage string) (*authpb.AuthResponse, error) {
@@ -65,12 +72,13 @@ func (s *authService) Register(ctx context.Context, email, password, fullName st
 	// ADMIN) must be provisioned by an operator, never accepted from client input.
 	user := &model.User{
 		Email:             email,
-		PasswordHash:      string(hash),
 		FullName:          strings.TrimSpace(fullName),
 		Role:              model.RoleStudent,
 		Grade:             grade,
 		PreferredLanguage: preferredLanguage,
 	}
+	passwordHash := string(hash)
+	user.PasswordHash = &passwordHash
 
 	if err := s.repo.Create(ctx, user); err != nil {
 		return nil, fmt.Errorf("failed to create user: %w", err)
@@ -103,8 +111,84 @@ func (s *authService) Login(ctx context.Context, email, password string) (*authp
 		return nil, fmt.Errorf("invalid credentials")
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
+	if user.PasswordHash == nil {
+		return nil, fmt.Errorf("this account uses Google sign-in")
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(*user.PasswordHash), []byte(password)); err != nil {
 		return nil, fmt.Errorf("invalid credentials")
+	}
+
+	tokens, err := s.jwtMgr.Generate(user.ID, user.Email, user.FullName, string(user.Role), user.PreferredLanguage)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate tokens: %w", err)
+	}
+
+	return &authpb.AuthResponse{
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+		User:         toProtoUser(user),
+	}, nil
+}
+
+func (s *authService) GoogleLogin(ctx context.Context, code, codeVerifier string) (*authpb.AuthResponse, error) {
+	if s.google == nil {
+		return nil, fmt.Errorf("google authentication is not configured")
+	}
+
+	claims, err := s.google.ExchangeAndVerify(ctx, code, codeVerifier)
+	if err != nil {
+		return nil, fmt.Errorf("google authentication failed: %w", err)
+	}
+
+	email := strings.ToLower(strings.TrimSpace(claims.Email))
+	if email == "" {
+		return nil, fmt.Errorf("google account has no email")
+	}
+	if claims.Subject == "" {
+		return nil, fmt.Errorf("google account has no subject")
+	}
+
+	exists, err := s.repo.EmailExists(ctx, email)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check email: %w", err)
+	}
+
+	var user *model.User
+	if exists {
+		user, err = s.repo.GetByEmail(ctx, email)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get user: %w", err)
+		}
+		if user.GoogleID == nil {
+			// Existing password account: link the Google identity so later
+			// sign-ins match by provider, not just by email.
+			sub := claims.Subject
+			user.GoogleID = &sub
+			if err := s.repo.Update(ctx, user); err != nil {
+				return nil, fmt.Errorf("failed to link google account: %w", err)
+			}
+		} else if *user.GoogleID != claims.Subject {
+			return nil, fmt.Errorf("google account does not match the linked identity")
+		}
+	} else {
+		// First Google sign-in for this email: create a STUDENT account with no
+		// password. Matches the self-registration role rule.
+		fullName := strings.TrimSpace(claims.Name)
+		if fullName == "" {
+			fullName = email
+		}
+		sub := claims.Subject
+		user = &model.User{
+			Email:             email,
+			GoogleID:          &sub,
+			FullName:          fullName,
+			Role:              model.RoleStudent,
+			PreferredLanguage: "en",
+		}
+		if err := s.repo.Create(ctx, user); err != nil {
+			return nil, fmt.Errorf("failed to create user: %w", err)
+		}
 	}
 
 	tokens, err := s.jwtMgr.Generate(user.ID, user.Email, user.FullName, string(user.Role), user.PreferredLanguage)

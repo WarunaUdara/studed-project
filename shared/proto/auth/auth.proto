@@ -53,6 +53,11 @@ message LoginRequest {
   string password = 2;
 }
 
+message GoogleLoginRequest {
+  string code = 1;
+  string code_verifier = 2;
+}
+
 message AuthResponse {
   string access_token = 1;
   string refresh_token = 2;
@@ -92,6 +97,7 @@ message UpdateUserRequest {
 service AuthService {
   rpc Register(RegisterRequest) returns (AuthResponse);
   rpc Login(LoginRequest) returns (AuthResponse);
+  rpc GoogleLogin(GoogleLoginRequest) returns (AuthResponse);
   rpc RefreshToken(RefreshTokenRequest) returns (AuthResponse);
   rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
   rpc GetUser(GetUserRequest) returns (User);

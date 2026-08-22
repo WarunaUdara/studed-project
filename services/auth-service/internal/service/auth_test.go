@@ -3,9 +3,11 @@ package service
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 	"time"
 
+	googlereader "github.com/studed/auth-service/internal/google"
 	"github.com/studed/auth-service/internal/jwt"
 	"github.com/studed/auth-service/internal/model"
 	authpb "github.com/studed/shared/proto/gen/go/auth"
@@ -13,6 +15,17 @@ import (
 
 type inMemoryUserRepo struct {
 	users []*model.User
+}
+
+type fakeGoogleAuthenticator struct {
+	claims *googlereader.Claims
+}
+
+func (f *fakeGoogleAuthenticator) ExchangeAndVerify(_ context.Context, code, codeVerifier string) (*googlereader.Claims, error) {
+	if code != "auth-code" || codeVerifier != "verifier" {
+		return nil, errors.New("unexpected oauth request")
+	}
+	return f.claims, nil
 }
 
 func (r *inMemoryUserRepo) Create(ctx context.Context, user *model.User) error {
@@ -73,7 +86,7 @@ func generateID() string {
 func newTestService() AuthService {
 	repo := &inMemoryUserRepo{}
 	jwtMgr := jwt.NewManager("access-secret", "refresh-secret", testAccessTTL, testRefreshTTL)
-	return NewAuthService(repo, jwtMgr)
+	return NewAuthService(repo, jwtMgr, nil)
 }
 
 const testAccessTTL = 15 * time.Minute
@@ -109,6 +122,33 @@ func TestRegisterAndLogin(t *testing.T) {
 	_, err = svc.Login(ctx, "test@example.com", "wrongpassword")
 	if err == nil {
 		t.Fatal("expected login failure with wrong password")
+	}
+}
+
+func TestGoogleLoginCreatesStudentWithoutPassword(t *testing.T) {
+	repo := &inMemoryUserRepo{}
+	googleClient := &fakeGoogleAuthenticator{claims: &googlereader.Claims{
+		Email:         "Google.User@Example.com",
+		EmailVerified: true,
+		Name:          "Google User",
+		Subject:       "google-subject",
+	}}
+	svc := NewAuthService(repo, jwt.NewManager("access-secret", "refresh-secret", testAccessTTL, testRefreshTTL), googleClient)
+
+	resp, err := svc.GoogleLogin(context.Background(), "auth-code", "verifier")
+	if err != nil {
+		t.Fatalf("google login failed: %v", err)
+	}
+	if resp.User.Role != authpb.Role_ROLE_STUDENT {
+		t.Fatalf("expected student role, got %v", resp.User.Role)
+	}
+	if len(repo.users) != 1 || repo.users[0].PasswordHash != nil {
+		t.Fatal("expected a Google-only account without a password hash")
+	}
+
+	_, err = svc.Login(context.Background(), "google.user@example.com", "any-password")
+	if err == nil || !strings.Contains(err.Error(), "Google sign-in") {
+		t.Fatalf("expected password login to be rejected for Google-only account, got %v", err)
 	}
 }
 

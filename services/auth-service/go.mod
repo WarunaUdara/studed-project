@@ -3,20 +3,24 @@ module github.com/studed/auth-service
 go 1.25.0
 
 require (
+	github.com/coreos/go-oidc/v3 v3.20.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/studed/shared/go v0.0.0
 	github.com/studed/shared/proto/gen/go v0.0.0
 	golang.org/x/crypto v0.54.0
+	golang.org/x/oauth2 v0.36.0
 	google.golang.org/grpc v1.83.0
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.31.2
 )
 
 require (
+	cloud.google.com/go/compute/metadata v0.9.0 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect

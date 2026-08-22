@@ -52,6 +52,9 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-local-dev-refresh-secret-min-32-bytes}
       JWT_ACCESS_TTL: 15m
       JWT_REFRESH_TTL: 168h
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-http://localhost:5173}
       SERVICE_TOKEN: ${SERVICE_TOKEN:-local-dev-service-token-secret}
       OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
     ports:
