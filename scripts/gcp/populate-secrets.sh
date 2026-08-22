@@ -66,6 +66,7 @@ put_secret "studed-jwt-refresh-secret" "$JWT_REFRESH"
 
 # Placeholders - populate manually when real keys exist
 put_secret "studed-gemini-api-key" "${GEMINI_API_KEY:-}"
+put_secret "studed-opencode-api-key" "${OPENCODE_API_KEY:-}"
 put_secret "studed-payhere-merchant-id" "${PAYHERE_MERCHANT_ID:-}"
 put_secret "studed-payhere-merchant-secret" "${PAYHERE_MERCHANT_SECRET:-}"
 put_secret "studed-payhere-notify-url" "${PAYHERE_NOTIFY_URL:-}"

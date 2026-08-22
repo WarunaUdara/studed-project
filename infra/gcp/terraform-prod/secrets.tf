@@ -11,6 +11,7 @@ resource "google_secret_manager_secret" "studed_secrets" {
     "service-token",
     "gcs-bucket-name",
     "gemini-api-key",      # empty placeholder until a real key is provided
+    "opencode-api-key",    # empty placeholder until a real key is provided
     "payhere-merchant-id", # empty placeholder
     "payhere-merchant-secret",
     "payhere-notify-url",
