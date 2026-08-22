@@ -1,0 +1,7 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: studed-preprod-api-cert
+spec:
+  domains:
+    - api-preprod.34.102.169.180.sslip.io

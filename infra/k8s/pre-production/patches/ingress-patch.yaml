@@ -1,0 +1,19 @@
+# Pre-prod shares the prod static IP (host-based routing on the same GCE LB).
+# set-preprod-ingress-host.sh replaces PLACEHOLDER with the real IP before
+# ArgoCD's first sync, mirroring the production flow.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: studed-preprod-ingress
+spec:
+  rules:
+    - host: api-preprod.34.102.169.180.sslip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
