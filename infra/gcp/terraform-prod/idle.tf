@@ -9,7 +9,10 @@ resource "google_service_account" "idle_scout_sa" {
 }
 
 resource "google_project_iam_custom_role" "idle_scout_role" {
-  role_id     = "studed2IdleScout"
+  # The original studed2IdleScout id carries a soft-delete marker from the
+  # project deletion/restore cycle that the IAM API keeps replaying; a fresh
+  # id has no marker so creation is deterministic.
+  role_id     = "studed2IdleScout2"
   title       = "StudEd Idle Scout (isolated stack)"
   description = "Scale the StudEd GKE primary node pool only"
   permissions = ["container.clusters.update"]
