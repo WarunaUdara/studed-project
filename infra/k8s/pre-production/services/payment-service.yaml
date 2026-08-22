@@ -36,7 +36,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: payment-service
-          image: ghcr.io/warunaudara/studed-payment-service:latest
+          image: ghcr.io/warunaudara/studed-payment-service:sha-9f9ecc4
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
