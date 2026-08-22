@@ -374,16 +374,18 @@ function HowItWorks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: i * 0.15 }}
-              className="relative rounded-3xl border bg-card p-7 shadow-sm lift-on-hover hover:shadow-md"
+              className="relative flex min-h-[270px] sm:min-h-[290px] flex-col justify-between overflow-hidden rounded-[28px] border border-border/80 bg-card p-8 sm:p-9 shadow-sm lift-on-hover hover:shadow-md transition-all"
             >
-              <div className="flex items-start justify-between">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/20">
-                  <Icon className="h-6 w-6" />
+              <div>
+                <div className="flex items-start justify-between">
+                  <div className="inline-flex h-13 w-13 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                    <Icon className="h-6.5 w-6.5" />
+                  </div>
+                  <span className="font-serif text-4xl italic text-primary/30">{num}</span>
                 </div>
-                <span className="font-serif text-3xl italic text-primary/30">{num}</span>
+                <h3 className="mt-6 text-xl font-bold">{heading}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{copy}</p>
               </div>
-              <h3 className="mt-5 text-lg font-semibold">{heading}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{copy}</p>
             </motion.div>
           ))}
         </div>
@@ -692,35 +694,37 @@ function FeaturedCourseCard({ course, delay }: { course: FeaturedCourse; delay: 
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay }}
       whileHover={{ y: -4 }}
-      className="group flex h-full flex-col overflow-hidden rounded-3xl border bg-card shadow-sm transition-shadow hover:shadow-md"
+      className="group flex min-h-[350px] sm:min-h-[380px] flex-col overflow-hidden rounded-[28px] border border-border/80 bg-card shadow-sm transition-all hover:shadow-lg"
     >
       <div
         className={cn(
-          "relative h-24 overflow-hidden bg-gradient-to-br",
+          "relative h-36 sm:h-40 overflow-hidden bg-gradient-to-br",
           SUBJECT_COVER[course.subjectIcon],
         )}
       >
         <div className="absolute inset-0 flex items-center justify-center">
-          <Icon className="h-10 w-10 text-foreground/25 transition-transform group-hover:scale-110" />
+          <Icon className="h-14 w-14 text-foreground/20 transition-transform duration-300 group-hover:scale-110" />
         </div>
-        <span className="absolute right-3 top-3 rounded-full bg-background/80 px-2 py-0.5 text-[10px] font-semibold backdrop-blur">
+        <span className="absolute right-3.5 top-3.5 rounded-full bg-background/90 px-3 py-1 text-xs font-bold text-foreground shadow-xs backdrop-blur">
           {course.gradeLevel}
         </span>
       </div>
-      <CardContent className="flex flex-1 flex-col gap-3 p-5">
-        <div className="space-y-1">
-          <h3 className="text-base font-semibold leading-tight group-hover:text-primary">
+      <CardContent className="flex flex-1 flex-col justify-between gap-4 p-6 sm:p-7">
+        <div className="space-y-2">
+          <h3 className="text-lg font-bold leading-snug group-hover:text-primary transition-colors">
             {course.title}
           </h3>
-          <p className="line-clamp-2 text-xs text-muted-foreground">{course.description}</p>
+          <p className="line-clamp-3 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+            {course.description}
+          </p>
         </div>
-        <div className="mt-auto flex items-center justify-between pt-2">
-          <div className="flex items-center gap-2">
-            <ProgressRing value={percent} size={36} strokeWidth={4} className="text-primary">
-              <span className="text-xs font-bold">{percent}%</span>
+        <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-3">
+          <div className="flex items-center gap-2.5">
+            <ProgressRing value={percent} size={38} strokeWidth={4} className="text-primary">
+              <span className="text-[11px] font-bold">{percent}%</span>
             </ProgressRing>
-            <span className="text-xs text-muted-foreground">
-              {completed}/{total}
+            <span className="text-xs font-medium text-muted-foreground">
+              {completed}/{total} waves
             </span>
           </div>
           <span className="text-xs" title={meta.label} role="img" aria-label={meta.label}>
@@ -742,28 +746,36 @@ function AudienceSegments() {
       title: t("audiencePrimaryTitle"),
       sub: t("audiencePrimarySub"),
       copy: t("audiencePrimaryCopy"),
-      accent: "from-primary/15 to-primary/5",
+      bg: "bg-gradient-to-b from-emerald-500/10 via-card to-card border-emerald-500/20",
+      accent: "text-emerald-600 dark:text-emerald-400",
+      iconBg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
     },
     {
       icon: CalendarClock,
       title: t("audienceJuniorTitle"),
       sub: t("audienceJuniorSub"),
       copy: t("audienceJuniorCopy"),
-      accent: "from-success/15 to-success/5",
+      bg: "bg-gradient-to-b from-teal-500/10 via-card to-card border-teal-500/20",
+      accent: "text-teal-600 dark:text-teal-400",
+      iconBg: "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20",
     },
     {
       icon: GraduationCap,
       title: t("audienceSeniorTitle"),
       sub: t("audienceSeniorSub"),
       copy: t("audienceSeniorCopy"),
-      accent: "from-gold/15 to-gold/5",
+      bg: "bg-gradient-to-b from-amber-500/10 via-card to-card border-amber-500/20",
+      accent: "text-amber-600 dark:text-amber-400",
+      iconBg: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
     },
     {
       icon: Trophy,
       title: t("audienceALTitle"),
       sub: t("audienceALSub"),
       copy: t("audienceALCopy"),
-      accent: "from-purple/15 to-purple/5",
+      bg: "bg-gradient-to-b from-purple-500/10 via-card to-card border-purple-500/20",
+      accent: "text-purple-600 dark:text-purple-400",
+      iconBg: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
     },
   ];
 
@@ -778,7 +790,7 @@ function AudienceSegments() {
       />
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("audienceHeading")} />
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {items.map((item, i) => (
             <motion.div
               key={item.title}
@@ -787,22 +799,27 @@ function AudienceSegments() {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
               whileHover={{ y: -4 }}
-              className="relative overflow-hidden rounded-3xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+              className={cn(
+                "relative flex min-h-[280px] sm:min-h-[300px] flex-col justify-between overflow-hidden rounded-[28px] border p-7 sm:p-8 shadow-xs transition-all hover:shadow-lg",
+                item.bg,
+              )}
             >
-              <div
-                aria-hidden
-                className={cn(
-                  "absolute -right-8 -top-8 h-28 w-28 rounded-full bg-gradient-to-br blur-2xl",
-                  item.accent,
-                )}
-              />
-              <div className="relative">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-background/60 text-primary ring-1 ring-primary/20 backdrop-blur">
-                  <item.icon className="h-5 w-5" />
+              <div>
+                <div
+                  className={cn(
+                    "inline-flex h-12 w-12 items-center justify-center rounded-2xl border shadow-2xs backdrop-blur",
+                    item.iconBg,
+                  )}
+                >
+                  <item.icon className="h-6 w-6" />
                 </div>
-                <h3 className="text-base font-semibold">{item.title}</h3>
-                <p className="text-xs font-medium text-primary">{item.sub}</p>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.copy}</p>
+                <h3 className="mt-5 text-lg font-bold text-foreground">{item.title}</h3>
+                <p className={cn("mt-0.5 text-xs font-semibold uppercase tracking-wider", item.accent)}>
+                  {item.sub}
+                </p>
+                <p className="mt-3.5 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                  {item.copy}
+                </p>
               </div>
             </motion.div>
           ))}

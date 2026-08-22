@@ -98,12 +98,12 @@ export function InteractiveHeroCard() {
   }, [activeTab]);
 
   return (
-    <div ref={containerRef} className="relative mx-auto w-full max-w-lg select-none">
+    <div ref={containerRef} className="relative mx-auto w-full max-w-xl select-none">
       {/* Subtle Glow */}
       <div className="absolute -inset-1 rounded-[32px] bg-gradient-to-tr from-primary/20 via-emerald-500/10 to-teal-500/20 blur-xl opacity-60 pointer-events-none" />
 
       {/* Main Clean Card with locked static height to prevent layout shift */}
-      <div className="relative h-[460px] flex flex-col justify-between overflow-hidden rounded-[28px] border border-border/80 bg-card p-6 shadow-2xl backdrop-blur-xl transition-all">
+      <div className="relative h-[480px] flex flex-col justify-between overflow-hidden rounded-[28px] border border-border/80 bg-card p-7 shadow-2xl backdrop-blur-xl transition-all">
         {/* Subject Switcher Header */}
         <div className="flex items-center justify-between border-b border-border/60 pb-3.5 shrink-0">
           <div className="flex items-center gap-1.5 rounded-full bg-muted/70 p-1">
@@ -167,8 +167,8 @@ export function InteractiveHeroCard() {
                 Harmonic motion mapped to angular unit circle rotation
               </p>
 
-              {/* Slot 2: Visual Simulation Canvas (Fixed Height h-44) */}
-              <div className="relative w-full max-w-sm h-44 flex items-center justify-center">
+              {/* Slot 2: Visual Simulation Canvas (Fixed Height h-48) */}
+              <div className="relative w-full max-w-md h-48 flex items-center justify-center">
                 <svg viewBox="0 0 320 140" className="w-full h-full overflow-visible">
                   {/* Grid Lines */}
                   <line
@@ -298,7 +298,7 @@ export function InteractiveHeroCard() {
 
               {/* Slot 3: Bottom Status Badge */}
               <div className="flex items-center gap-2 h-7">
-                <span className="rounded-full bg-blue-500/15 px-3 py-1 text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1.5 shadow-2xs">
+                <span className="rounded-full bg-blue-500/15 px-3.5 py-1 text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1.5 shadow-2xs">
                   <CheckCircle2 className="size-3.5" /> f(θ) = cos(θ) · Continuous Waveform
                 </span>
               </div>
@@ -316,9 +316,9 @@ export function InteractiveHeroCard() {
                 Adjacent gears in a mechanical train rotate in opposite directions
               </p>
 
-              {/* Slot 2: Visual Simulation Canvas (Fixed Height h-44) */}
-              <div className="relative w-full max-w-sm h-44 flex items-center justify-center p-1">
-                <svg viewBox="0 0 240 130" className="w-64 h-36 overflow-visible">
+              {/* Slot 2: Visual Simulation Canvas (Fixed Height h-48) */}
+              <div className="relative w-full max-w-md h-48 flex items-center justify-center p-1">
+                <svg viewBox="0 0 240 130" className="w-72 h-40 overflow-visible">
                   {/* Left Gear (Lime Driver: Counter-Clockwise ↺) */}
                   <g transform="translate(68, 65)">
                     <g
@@ -397,7 +397,7 @@ export function InteractiveHeroCard() {
 
               {/* Slot 3: Bottom Status Badge */}
               <div className="flex items-center gap-2 h-7">
-                <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 shadow-2xs">
+                <span className="rounded-full bg-emerald-500/15 px-3.5 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 shadow-2xs">
                   <CheckCircle2 className="size-3.5" /> 1:1 Speed Ratio · Mechanical Parity
                 </span>
               </div>
@@ -415,10 +415,10 @@ export function InteractiveHeroCard() {
                 Iterative logic & line-by-line algorithm execution
               </p>
 
-              {/* Slot 2: Visual Simulation Canvas (Fixed Height h-44) */}
-              <div className="relative w-full max-w-sm h-44 flex flex-col justify-between p-1">
+              {/* Slot 2: Visual Simulation Canvas (Fixed Height h-48) */}
+              <div className="relative w-full max-w-md h-48 flex flex-col justify-between p-1">
                 {/* Code blocks with animated active line indicator */}
-                <div className="w-full rounded-xl border border-border/80 bg-muted/30 p-2 space-y-0.5 font-mono text-[11px] text-left shadow-inner">
+                <div className="w-full rounded-xl border border-border/80 bg-muted/30 p-2.5 space-y-1 font-mono text-[11px] text-left shadow-inner">
                   {/* Line 1 */}
                   <div
                     className={`flex items-center gap-2 rounded px-2 py-0.5 transition-all duration-300 ${
@@ -480,16 +480,16 @@ export function InteractiveHeroCard() {
                       return (
                         <div
                           key={idx}
-                          className={`size-6 rounded flex items-center justify-center text-xs font-bold transition-all ${
+                          className={`size-7 rounded flex items-center justify-center text-xs font-bold transition-all ${
                             isHero
                               ? "bg-emerald-500/20 border border-emerald-500 shadow-xs scale-105"
                               : "bg-muted/40 border border-border/40"
                           }`}
                         >
                           {isHero ? (
-                            <Bot className="size-3 text-emerald-500" />
+                            <Bot className="size-3.5 text-emerald-500" />
                           ) : hasGem ? (
-                            <Gem className="size-3 text-amber-500 animate-bounce" />
+                            <Gem className="size-3.5 text-amber-500 animate-bounce" />
                           ) : null}
                         </div>
                       );
@@ -497,7 +497,7 @@ export function InteractiveHeroCard() {
                   </div>
 
                   {/* Live Console Output Bar */}
-                  <div className="flex-1 flex items-center gap-1.5 rounded-lg border border-border/70 bg-background/90 px-2 py-1 font-mono text-[10px] text-foreground truncate shadow-2xs">
+                  <div className="flex-1 flex items-center gap-1.5 rounded-lg border border-border/70 bg-background/90 px-2 py-1.5 font-mono text-[10.5px] text-foreground truncate shadow-2xs">
                     <Terminal className="size-3 text-primary shrink-0" />
                     <span className="truncate text-muted-foreground">{terminalLog}</span>
                   </div>
@@ -506,7 +506,7 @@ export function InteractiveHeroCard() {
 
               {/* Slot 3: Bottom Status Badge */}
               <div className="flex items-center gap-2 h-7">
-                <span className="rounded-full bg-purple-500/15 px-3 py-1 text-xs font-bold text-purple-600 dark:text-purple-400 flex items-center gap-1.5 shadow-2xs">
+                <span className="rounded-full bg-purple-500/15 px-3.5 py-1 text-xs font-bold text-purple-600 dark:text-purple-400 flex items-center gap-1.5 shadow-2xs">
                   <CheckCircle2 className="size-3.5" /> Python 3.12 · State Machine Parity
                 </span>
               </div>
