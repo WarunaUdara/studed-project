@@ -15,7 +15,6 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TF_DIR="${PROD_TF_DIR:-${REPO_ROOT}/infra/gcp/terraform-prod}"
 MANIFESTS=(
   "${REPO_ROOT}/infra/k8s/production/ingress.yaml"
-  "${REPO_ROOT}/infra/k8s/production/managed-cert.yaml"
 )
 
 if [[ -n "${1:-}" ]]; then
@@ -48,11 +47,11 @@ if [[ "$changed" -eq 0 ]]; then
   exit 0
 fi
 
-git -C "${REPO_ROOT}" add infra/k8s/production/ingress.yaml infra/k8s/production/managed-cert.yaml
-git -C "${REPO_ROOT}" commit -m "chore(k8s): pin ingress/managed-cert host to ${HOST}" >/dev/null
+git -C "${REPO_ROOT}" add infra/k8s/production/ingress.yaml
+git -C "${REPO_ROOT}" commit -m "chore(k8s): pin ingress host to ${HOST}" >/dev/null
 if ! git -C "${REPO_ROOT}" push origin HEAD 2>/dev/null; then
   echo "  push rejected (remote moved) - rebasing then retrying once"
   git -C "${REPO_ROOT}" pull --rebase origin main
   git -C "${REPO_ROOT}" push origin HEAD
 fi
-echo "  committed + pushed: ingress/managed-cert host = ${HOST}"
+echo "  committed + pushed: ingress host = ${HOST}"
