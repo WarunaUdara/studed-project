@@ -103,7 +103,7 @@ export function InteractiveHeroCard() {
       <div className="absolute -inset-1 rounded-[32px] bg-gradient-to-tr from-primary/20 via-emerald-500/10 to-teal-500/20 blur-xl opacity-60 pointer-events-none" />
 
       {/* Main Clean Card with locked static height to prevent layout shift */}
-      <div className="relative h-[440px] flex flex-col justify-between overflow-hidden rounded-[28px] border border-border/80 bg-card p-6 shadow-2xl backdrop-blur-xl transition-all">
+      <div className="relative h-[460px] flex flex-col justify-between overflow-hidden rounded-[28px] border border-border/80 bg-card p-6 shadow-2xl backdrop-blur-xl transition-all">
         {/* Subject Switcher Header */}
         <div className="flex items-center justify-between border-b border-border/60 pb-3.5 shrink-0">
           <div className="flex items-center gap-1.5 rounded-full bg-muted/70 p-1">
@@ -148,25 +148,27 @@ export function InteractiveHeroCard() {
           {/* Progress cycle pill */}
           <div className="flex items-center gap-1 text-[11px] font-bold text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="capitalize">{activeTab} Simulation</span>
+            <span className="capitalize">
+              {activeTab === "code" ? "Coding" : activeTab} Simulation
+            </span>
           </div>
         </div>
 
         {/* Interactive Canvas Body - fixed height container */}
-        <div className="relative w-full flex-1 py-3 overflow-hidden flex flex-col items-center justify-center">
+        <div className="relative w-full flex-1 py-3 overflow-hidden flex flex-col items-center justify-between">
           {/* TAB 1: MATH TRIGONOMETRIC WAVE & UNIT CIRCLE */}
           {activeTab === "math" && (
             <div
               ref={mathRef}
               className="flex flex-col items-center justify-between h-full w-full py-1"
             >
-              {/* Formula Badge */}
-              <div className="rounded-lg border border-border/80 bg-muted/50 px-3 py-1 font-mono text-xs font-bold text-foreground shadow-2xs">
-                f(θ) = cos(θ)
-              </div>
+              {/* Slot 1: Top Concept Subtitle */}
+              <p className="text-xs font-medium text-muted-foreground text-center h-6 flex items-center">
+                Harmonic motion mapped to angular unit circle rotation
+              </p>
 
-              {/* Trigonometric Wave & Unit Circle Diagram */}
-              <div className="relative w-full max-w-sm h-36 flex items-center justify-center">
+              {/* Slot 2: Visual Simulation Canvas (Fixed Height h-44) */}
+              <div className="relative w-full max-w-sm h-44 flex items-center justify-center">
                 <svg viewBox="0 0 320 140" className="w-full h-full overflow-visible">
                   {/* Grid Lines */}
                   <line
@@ -294,9 +296,12 @@ export function InteractiveHeroCard() {
                 </svg>
               </div>
 
-              <p className="text-xs font-semibold text-muted-foreground text-center">
-                Harmonic motion mapped to angular unit circle rotation.
-              </p>
+              {/* Slot 3: Bottom Status Badge */}
+              <div className="flex items-center gap-2 h-7">
+                <span className="rounded-full bg-blue-500/15 px-3 py-1 text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1.5 shadow-2xs">
+                  <CheckCircle2 className="size-3.5" /> f(θ) = cos(θ) · Continuous Waveform
+                </span>
+              </div>
             </div>
           )}
 
@@ -306,13 +311,14 @@ export function InteractiveHeroCard() {
               ref={scienceRef}
               className="flex flex-col items-center justify-between h-full w-full py-1"
             >
-              <p className="text-xs font-medium text-muted-foreground text-center">
+              {/* Slot 1: Top Concept Subtitle */}
+              <p className="text-xs font-medium text-muted-foreground text-center h-6 flex items-center">
                 Adjacent gears in a mechanical train rotate in opposite directions
               </p>
 
-              {/* 2 Meshed Rotating Gears */}
-              <div className="relative flex items-center justify-center p-1 h-36">
-                <svg viewBox="0 0 240 130" className="w-56 h-30 overflow-visible">
+              {/* Slot 2: Visual Simulation Canvas (Fixed Height h-44) */}
+              <div className="relative w-full max-w-sm h-44 flex items-center justify-center p-1">
+                <svg viewBox="0 0 240 130" className="w-64 h-36 overflow-visible">
                   {/* Left Gear (Lime Driver: Counter-Clockwise ↺) */}
                   <g transform="translate(68, 65)">
                     <g
@@ -389,7 +395,8 @@ export function InteractiveHeroCard() {
                 </svg>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* Slot 3: Bottom Status Badge */}
+              <div className="flex items-center gap-2 h-7">
                 <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 shadow-2xs">
                   <CheckCircle2 className="size-3.5" /> 1:1 Speed Ratio · Mechanical Parity
                 </span>
@@ -403,90 +410,105 @@ export function InteractiveHeroCard() {
               ref={codeRef}
               className="flex flex-col items-center justify-between h-full w-full py-1"
             >
-              {/* Code blocks with animated active line indicator */}
-              <div className="w-full rounded-2xl border border-border/80 bg-muted/30 p-2.5 space-y-1 font-mono text-[11px] text-left shadow-inner">
-                {/* Line 1 */}
-                <div
-                  className={`flex items-center gap-2 rounded-md px-2 py-0.5 transition-all duration-300 ${
-                    codeActiveLine === 1
-                      ? "bg-primary/20 text-foreground font-bold border-l-2 border-primary"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  <span className="w-3 text-[9px] opacity-60">1</span>
-                  <span className="text-primary font-bold">while</span>
-                  <span>gems_remaining &gt; 0:</span>
+              {/* Slot 1: Top Concept Subtitle */}
+              <p className="text-xs font-medium text-muted-foreground text-center h-6 flex items-center">
+                Iterative logic & line-by-line algorithm execution
+              </p>
+
+              {/* Slot 2: Visual Simulation Canvas (Fixed Height h-44) */}
+              <div className="relative w-full max-w-sm h-44 flex flex-col justify-between p-1">
+                {/* Code blocks with animated active line indicator */}
+                <div className="w-full rounded-xl border border-border/80 bg-muted/30 p-2 space-y-0.5 font-mono text-[11px] text-left shadow-inner">
+                  {/* Line 1 */}
+                  <div
+                    className={`flex items-center gap-2 rounded px-2 py-0.5 transition-all duration-300 ${
+                      codeActiveLine === 1
+                        ? "bg-primary/20 text-foreground font-bold border-l-2 border-primary"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    <span className="w-3 text-[9px] opacity-60">1</span>
+                    <span className="text-primary font-bold">while</span>
+                    <span>gems_remaining &gt; 0:</span>
+                  </div>
+
+                  {/* Line 2 */}
+                  <div
+                    className={`flex items-center gap-2 pl-4 rounded px-2 py-0.5 transition-all duration-300 ${
+                      codeActiveLine === 2
+                        ? "bg-emerald-500/20 text-foreground font-bold border-l-2 border-emerald-500"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    <span className="w-3 text-[9px] opacity-60">2</span>
+                    <span className="text-emerald-500 font-semibold">move_forward()</span>
+                  </div>
+
+                  {/* Line 3 */}
+                  <div
+                    className={`flex items-center gap-2 pl-4 rounded px-2 py-0.5 transition-all duration-300 ${
+                      codeActiveLine === 3
+                        ? "bg-amber-500/20 text-foreground font-bold border-l-2 border-amber-500"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    <span className="w-3 text-[9px] opacity-60">3</span>
+                    <span className="text-amber-500 font-bold">if</span>
+                    <span>is_at_gem():</span>
+                  </div>
+
+                  {/* Line 4 */}
+                  <div
+                    className={`flex items-center gap-2 pl-7 rounded px-2 py-0.5 transition-all duration-300 ${
+                      codeActiveLine === 4
+                        ? "bg-purple-500/20 text-foreground font-bold border-l-2 border-purple-500"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    <span className="w-3 text-[9px] opacity-60">4</span>
+                    <span className="text-purple-500 font-semibold">collect_gem()</span>
+                  </div>
                 </div>
 
-                {/* Line 2 */}
-                <div
-                  className={`flex items-center gap-2 pl-4 rounded-md px-2 py-0.5 transition-all duration-300 ${
-                    codeActiveLine === 2
-                      ? "bg-emerald-500/20 text-foreground font-bold border-l-2 border-emerald-500"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  <span className="w-3 text-[9px] opacity-60">2</span>
-                  <span className="text-emerald-500 font-semibold">move_forward()</span>
-                </div>
+                {/* Live Mini Visual Grid Arena */}
+                <div className="w-full flex items-center justify-between gap-2">
+                  {/* 3-Tile Mini Arena */}
+                  <div className="flex items-center gap-1 rounded-lg bg-background border border-border/70 p-1">
+                    {[0, 1, 2].map((idx) => {
+                      const isHero = characterPos === idx;
+                      const hasGem = idx === 1 && gemCount === 0;
+                      return (
+                        <div
+                          key={idx}
+                          className={`size-6 rounded flex items-center justify-center text-xs font-bold transition-all ${
+                            isHero
+                              ? "bg-emerald-500/20 border border-emerald-500 shadow-xs scale-105"
+                              : "bg-muted/40 border border-border/40"
+                          }`}
+                        >
+                          {isHero ? (
+                            <Bot className="size-3 text-emerald-500" />
+                          ) : hasGem ? (
+                            <Gem className="size-3 text-amber-500 animate-bounce" />
+                          ) : null}
+                        </div>
+                      );
+                    })}
+                  </div>
 
-                {/* Line 3 */}
-                <div
-                  className={`flex items-center gap-2 pl-4 rounded-md px-2 py-0.5 transition-all duration-300 ${
-                    codeActiveLine === 3
-                      ? "bg-amber-500/20 text-foreground font-bold border-l-2 border-amber-500"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  <span className="w-3 text-[9px] opacity-60">3</span>
-                  <span className="text-amber-500 font-bold">if</span>
-                  <span>is_at_gem():</span>
-                </div>
-
-                {/* Line 4 */}
-                <div
-                  className={`flex items-center gap-2 pl-7 rounded-md px-2 py-0.5 transition-all duration-300 ${
-                    codeActiveLine === 4
-                      ? "bg-purple-500/20 text-foreground font-bold border-l-2 border-purple-500"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  <span className="w-3 text-[9px] opacity-60">4</span>
-                  <span className="text-purple-500 font-semibold">collect_gem()</span>
+                  {/* Live Console Output Bar */}
+                  <div className="flex-1 flex items-center gap-1.5 rounded-lg border border-border/70 bg-background/90 px-2 py-1 font-mono text-[10px] text-foreground truncate shadow-2xs">
+                    <Terminal className="size-3 text-primary shrink-0" />
+                    <span className="truncate text-muted-foreground">{terminalLog}</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Live Mini Visual Grid Arena */}
-              <div className="w-full flex items-center justify-between gap-2 px-1">
-                {/* 3-Tile Mini Arena */}
-                <div className="flex items-center gap-1 rounded-xl bg-background border border-border/70 p-1">
-                  {[0, 1, 2].map((idx) => {
-                    const isHero = characterPos === idx;
-                    const hasGem = idx === 1 && gemCount === 0;
-                    return (
-                      <div
-                        key={idx}
-                        className={`size-7.5 rounded-md flex items-center justify-center text-xs font-bold transition-all ${
-                          isHero
-                            ? "bg-emerald-500/20 border border-emerald-500 shadow-xs scale-105"
-                            : "bg-muted/40 border border-border/40"
-                        }`}
-                      >
-                        {isHero ? (
-                          <Bot className="size-3.5" />
-                        ) : hasGem ? (
-                          <Gem className="size-3.5" />
-                        ) : null}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Live Console Output Bar */}
-                <div className="flex-1 flex items-center gap-1.5 rounded-xl border border-border/70 bg-background/90 px-2 py-1.5 font-mono text-[10.5px] text-foreground truncate shadow-2xs">
-                  <Terminal className="size-3 text-primary shrink-0" />
-                  <span className="truncate text-muted-foreground">{terminalLog}</span>
-                </div>
+              {/* Slot 3: Bottom Status Badge */}
+              <div className="flex items-center gap-2 h-7">
+                <span className="rounded-full bg-purple-500/15 px-3 py-1 text-xs font-bold text-purple-600 dark:text-purple-400 flex items-center gap-1.5 shadow-2xs">
+                  <CheckCircle2 className="size-3.5" /> Python 3.12 · State Machine Parity
+                </span>
               </div>
             </div>
           )}
