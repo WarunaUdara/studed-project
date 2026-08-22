@@ -37,7 +37,9 @@ test.describe("Authentication and Authorization Flow", () => {
     // and the course deck.
     await expect(page.getByPlaceholder("What do you want to learn?")).toBeVisible();
     await expect(page.getByRole("button", { name: "Ask" })).toBeVisible();
-    await expect(page.getByRole("banner").getByRole("button", { name: "User profile menu" })).toBeVisible();
+    await expect(
+      page.getByRole("banner").getByRole("button", { name: "User profile menu" }),
+    ).toBeVisible();
   });
 
   test("should trigger logout confirmation modal with emotional reactions", async ({ page }) => {

@@ -52,7 +52,9 @@ export function solveGearDirections(
 
   // Build adjacency list
   const adj: Record<string, string[]> = {};
-  nodes.forEach((n) => (adj[n.id] = []));
+  nodes.forEach((n) => {
+    adj[n.id] = [];
+  });
   edges.forEach((e) => {
     adj[e.from]?.push(e.to);
     adj[e.to]?.push(e.from);

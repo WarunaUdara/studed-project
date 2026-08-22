@@ -4,9 +4,7 @@ interface DailySparkStreakChargeProps {
   onContinue: () => void;
 }
 
-export function DailySparkStreakCharge({
-  onContinue,
-}: DailySparkStreakChargeProps) {
+export function DailySparkStreakCharge({ onContinue }: DailySparkStreakChargeProps) {
   const reduce = useReducedMotion();
   return (
     <div className="relative flex min-h-[580px] w-full max-w-4xl flex-col items-center justify-between overflow-hidden rounded-3xl border border-white/10 bg-[oklch(0.398_0.011_270.1)] p-8 text-white shadow-2xl text-center">
@@ -98,14 +96,7 @@ export function DailySparkStreakCharge({
               </defs>
 
               {/* Shadow Base below Capsule */}
-              <ellipse
-                cx="100"
-                cy="176"
-                rx="38"
-                ry="9"
-                fill="oklch(0.245 0 0)"
-                opacity="0.35"
-              />
+              <ellipse cx="100" cy="176" rx="38" ry="9" fill="oklch(0.245 0 0)" opacity="0.35" />
 
               {/* Cylindrical Glass Chamber Tube */}
               {/* Outer Capsule Glow Layer */}
@@ -127,33 +118,12 @@ export function DailySparkStreakCharge({
               />
 
               {/* Metal Contact Top / Bottom Bands */}
-              <rect
-                x="68"
-                y="34"
-                width="64"
-                height="10"
-                rx="5"
-                fill="url(#battery-cap)"
-              />
+              <rect x="68" y="34" width="64" height="10" rx="5" fill="url(#battery-cap)" />
               {/* Terminal Tip */}
-              <rect
-                x="88"
-                y="26"
-                width="24"
-                height="10"
-                rx="4"
-                fill="url(#battery-cap)"
-              />
+              <rect x="88" y="26" width="24" height="10" rx="4" fill="url(#battery-cap)" />
 
               {/* Bottom Metal Base Band */}
-              <rect
-                x="68"
-                y="158"
-                width="64"
-                height="10"
-                rx="5"
-                fill="url(#battery-cap)"
-              />
+              <rect x="68" y="158" width="64" height="10" rx="5" fill="url(#battery-cap)" />
 
               {/* Intense Lightning Spark Emblem Inside Glass */}
               <path

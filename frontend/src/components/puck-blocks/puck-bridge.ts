@@ -1,7 +1,6 @@
 import type { PuckData } from "@/components/puck-blocks/puck-config";
 
 // Generic dispatch handle to avoid top-level Puck imports
-// biome-ignore lint/suspicious/noExplicitAny: generic dispatch receiver
 type Dispatch = (action: any) => void;
 
 let puckDispatch: Dispatch | null = null;

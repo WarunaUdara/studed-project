@@ -16,8 +16,8 @@ import {
 import { useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { Button } from "@/components/ui/button";
 import { BlobAvatar } from "@/components/ui/BlobAvatar";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";

@@ -61,7 +61,9 @@ test.describe("Grade 4-5 Physics demo", () => {
   test("opens a coding wave with a runnable editor", async ({ page }) => {
     await page.goto("/waves/ict-grade-6-8-l2-w2");
 
-    await expect(page.getByText("Your program will break. Mine breaks too, every single day.")).toBeVisible({
+    await expect(
+      page.getByText("Your program will break. Mine breaks too, every single day."),
+    ).toBeVisible({
       timeout: 20000,
     });
 
@@ -78,7 +80,9 @@ test.describe("Grade 4-5 Physics demo", () => {
     // The gear puzzles now arrive as a learn block inside the normal wave
     // shell, so the Learn and Evaluate tabs are both present.
     await expect(
-      page.getByText("Two gears with meshing teeth cannot turn the same way. It is physically impossible."),
+      page.getByText(
+        "Two gears with meshing teeth cannot turn the same way. It is physically impossible.",
+      ),
     ).toBeVisible({ timeout: 20000 });
     await expect(page.getByRole("tab", { name: /Learn/ })).toBeVisible();
     await expect(page.getByRole("button", { name: "Start Evaluation" })).toBeVisible();
@@ -87,7 +91,9 @@ test.describe("Grade 4-5 Physics demo", () => {
   test("lights the bulb in the electricity wave and warns on a short circuit", async ({ page }) => {
     await page.goto("/waves/physics-grade-4-5-l2-w1");
 
-    await expect(page.getByText("Electricity is shy. It only travels in a full circle.")).toBeVisible({
+    await expect(
+      page.getByText("Electricity is shy. It only travels in a full circle."),
+    ).toBeVisible({
       timeout: 20000,
     });
 

@@ -11,7 +11,7 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { StudentShell } from "@/components/layout/StudentShell";
 import { LearningPathRibbon } from "@/components/learning-paths/LearningPathRibbon";

@@ -54,12 +54,7 @@ export function FractionTriangle({
         className="w-full max-w-[340px] drop-shadow-md select-none"
         aria-label="Interactive partitioned geometric triangle"
       >
-        <g
-          stroke="oklch(1 0 89.9)"
-          strokeWidth="2.5"
-          strokeLinejoin="round"
-          strokeLinecap="round"
-        >
+        <g stroke="oklch(1 0 89.9)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round">
           {TRIANGLE_REGIONS.map((region) => {
             const isSelected = selectedIds.has(region.id);
 
@@ -69,9 +64,7 @@ export function FractionTriangle({
             // - Selected & Correct: vibrant royal blue (oklch 0.49 0.2 264 / 0.6 0.19 256)
             let fillColor = "oklch(0.24 0.013 253)";
             if (isSelected) {
-              fillColor = isCorrect
-                ? "oklch(0.6 0.19 256)"
-                : "oklch(0.33 0.12 266)";
+              fillColor = isCorrect ? "oklch(0.6 0.19 256)" : "oklch(0.33 0.12 266)";
             }
 
             return (
@@ -83,9 +76,7 @@ export function FractionTriangle({
                   if (!disabled) onToggleRegion(region.id);
                 }}
                 className={`transition-colors duration-150 ${
-                  disabled
-                    ? "cursor-default"
-                    : "cursor-pointer hover:brightness-125"
+                  disabled ? "cursor-default" : "cursor-pointer hover:brightness-125"
                 }`}
                 whileTap={disabled ? undefined : { scale: 0.98 }}
                 style={{

@@ -32,6 +32,7 @@ if "%TARGET%"=="dev-up"             goto :dev_up
 if "%TARGET%"=="dev-down"           goto :dev_down
 if "%TARGET%"=="dev-logs"           goto :dev_logs
 if "%TARGET%"=="launch"             goto :launch
+if "%TARGET%"=="prod-dev"           goto :prod_dev
 if "%TARGET%"=="monitoring-up"      goto :monitoring_up
 if "%TARGET%"=="monitoring-down"    goto :monitoring_down
 if "%TARGET%"=="floci-gcp-up"       goto :floci_up
@@ -69,6 +70,13 @@ docker compose logs -f
 exit /b %errorlevel%
 
 :launch
+bun run scripts/launch.ts
+exit /b %errorlevel%
+
+:prod_dev
+call :preflight
+if errorlevel 1 exit /b 1
+docker compose -f docker-compose.yml up -d --remove-orphans
 bun run scripts/launch.ts
 exit /b %errorlevel%
 

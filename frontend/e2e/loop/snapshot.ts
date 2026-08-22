@@ -1,7 +1,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { type Browser, type Page } from "@playwright/test";
+import type { Browser, Page } from "@playwright/test";
 import { formatColorToOklch } from "./color-utils";
 import { setupMockGraphQL } from "./mock-api";
 import type {
@@ -33,7 +33,11 @@ export const VIEWPORTS: Record<ViewportMode, { width: number; height: number }> 
  */
 export function getPathSlug(routePath: string, viewport: ViewportMode, state: ScreenState): string {
   const clean = routePath.replace(/^\/+/, "").replace(/[^a-zA-Z0-9_-]/g, "_") || "root";
-  const hash = crypto.createHash("sha256").update(`${routePath}:${viewport}:${state}`).digest("hex").slice(0, 8);
+  const hash = crypto
+    .createHash("sha256")
+    .update(`${routePath}:${viewport}:${state}`)
+    .digest("hex")
+    .slice(0, 8);
   return `${clean}_${viewport}_${state}_${hash}`;
 }
 
@@ -72,7 +76,8 @@ async function extractBrowserFingerprint(page: Page): Promise<{
     function buildDomOutline(node: Element, depth = 0): DomOutlineNode | null {
       if (depth > 6) return null; // Prevent runaway nesting
       const rect = node.getBoundingClientRect();
-      const isVisible = rect.width > 0 && rect.height > 0 && window.getComputedStyle(node).display !== "none";
+      const isVisible =
+        rect.width > 0 && rect.height > 0 && window.getComputedStyle(node).display !== "none";
 
       if (!isVisible && depth > 1) return null;
 
@@ -136,7 +141,7 @@ async function extractBrowserFingerprint(page: Page): Promise<{
 
     // Query candidate interactive & structural elements
     const candidateNodes = document.querySelectorAll(
-      "h1, h2, h3, h4, h5, h6, p, button, a, input, select, textarea, [role='button'], [role='tab'], [role='alert'], [role='dialog'], header, nav, main, article, section, [data-testid]"
+      "h1, h2, h3, h4, h5, h6, p, button, a, input, select, textarea, [role='button'], [role='tab'], [role='alert'], [role='dialog'], header, nav, main, article, section, [data-testid]",
     );
 
     for (const node of Array.from(candidateNodes)) {
@@ -144,7 +149,11 @@ async function extractBrowserFingerprint(page: Page): Promise<{
       const rect = el.getBoundingClientRect();
       const style = window.getComputedStyle(el);
 
-      const isVisible = rect.width > 0 && rect.height > 0 && style.display !== "none" && style.visibility !== "hidden";
+      const isVisible =
+        rect.width > 0 &&
+        rect.height > 0 &&
+        style.display !== "none" &&
+        style.visibility !== "hidden";
       if (!isVisible) continue;
 
       const selector = getCssSelector(el);
@@ -227,11 +236,15 @@ async function extractBrowserFingerprint(page: Page): Promise<{
         const href = el.getAttribute("href") || "";
         const resolvedUrl = (el as HTMLAnchorElement).href || "";
         linkInventory.push({
-          text: text.slice(0, 50).replace(/\s+/g, " ") || el.getAttribute("aria-label") || "[Icon Link]",
+          text:
+            text.slice(0, 50).replace(/\s+/g, " ") ||
+            el.getAttribute("aria-label") ||
+            "[Icon Link]",
           href,
           resolvedUrl,
           isInternal: resolvedUrl.startsWith(window.location.origin),
-          isDisabled: el.getAttribute("aria-disabled") === "true" || el.classList.contains("disabled"),
+          isDisabled:
+            el.getAttribute("aria-disabled") === "true" || el.classList.contains("disabled"),
           selector,
         });
       }
@@ -240,8 +253,8 @@ async function extractBrowserFingerprint(page: Page): Promise<{
     // 5. Focus Order Walk
     const focusableElements = Array.from(
       document.querySelectorAll(
-        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      )
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
     ).filter((el) => {
       const r = el.getBoundingClientRect();
       const s = window.getComputedStyle(el);
@@ -262,11 +275,21 @@ async function extractBrowserFingerprint(page: Page): Promise<{
     }));
 
     // 6. Dopamine Probes
-    const confettiCanvas = document.querySelector("canvas[style*='pointer-events: none'], [data-confetti='true']");
-    const xpToast = document.querySelector("[role='alert'], [role='status'], .xp-toast, [data-xp-toast='true']");
-    const streakElement = document.querySelector("[title*='Streak'], [aria-label*='Streak'], [data-streak='true']");
-    const keysElement = document.querySelector("[title*='Keys'], [aria-label*='Keys'], [data-keys='true']");
-    const progressRing = document.querySelector("[role='progressbar'], svg circle[stroke-dasharray], .progress-ring");
+    const confettiCanvas = document.querySelector(
+      "canvas[style*='pointer-events: none'], [data-confetti='true']",
+    );
+    const xpToast = document.querySelector(
+      "[role='alert'], [role='status'], .xp-toast, [data-xp-toast='true']",
+    );
+    const streakElement = document.querySelector(
+      "[title*='Streak'], [aria-label*='Streak'], [data-streak='true']",
+    );
+    const keysElement = document.querySelector(
+      "[title*='Keys'], [aria-label*='Keys'], [data-keys='true']",
+    );
+    const progressRing = document.querySelector(
+      "[role='progressbar'], svg circle[stroke-dasharray], .progress-ring",
+    );
 
     const dopamineProbes: DopamineProbeResult = {
       confettiPresent: !!confettiCanvas,
@@ -297,7 +320,8 @@ async function extractBrowserFingerprint(page: Page): Promise<{
         node.getAttribute("alt") ||
         (node.children.length === 0 ? (node.textContent || "").trim().slice(0, 50) : "");
 
-      const disabled = node.hasAttribute("disabled") || node.getAttribute("aria-disabled") === "true";
+      const disabled =
+        node.hasAttribute("disabled") || node.getAttribute("aria-disabled") === "true";
       const expanded = node.getAttribute("aria-expanded") === "true";
       const checked = node.getAttribute("aria-checked") === "true";
 
@@ -307,7 +331,11 @@ async function extractBrowserFingerprint(page: Page): Promise<{
         if (c) children.push(c);
       }
 
-      if (!name && children.length === 0 && !["button", "a", "input", "h1", "h2", "h3", "h4", "h5", "h6"].includes(tag)) {
+      if (
+        !name &&
+        children.length === 0 &&
+        !["button", "a", "input", "h1", "h2", "h3", "h4", "h5", "h6"].includes(tag)
+      ) {
         return null;
       }
 
@@ -364,7 +392,7 @@ export async function captureScreenSnapshot(
   page: Page,
   screen: DiscoveredScreen,
   viewport: ViewportMode = "desktop",
-  state: ScreenState = "default"
+  state: ScreenState = "default",
 ): Promise<ScreenSnapshot> {
   const size = VIEWPORTS[viewport];
   await page.setViewportSize(size);
@@ -467,7 +495,7 @@ export async function captureAllSnapshots(
   role: UserRole,
   credentials: { email: string; pass: string },
   screens: DiscoveredScreen[],
-  viewports: ViewportMode[] = ["desktop", "mobile"]
+  viewports: ViewportMode[] = ["desktop", "mobile"],
 ): Promise<ScreenSnapshot[]> {
   const context = await browser.newContext();
   const page = await context.newPage();
@@ -525,7 +553,9 @@ export async function captureAllSnapshots(
 /**
  * High-level engine runner that reads discovery.json and captures snapshots for all roles.
  */
-export async function runSnapshotEngine(viewports: ViewportMode[] = ["desktop", "mobile"]): Promise<ScreenSnapshot[]> {
+export async function runSnapshotEngine(
+  viewports: ViewportMode[] = ["desktop", "mobile"],
+): Promise<ScreenSnapshot[]> {
   const { chromium } = await import("@playwright/test");
   const DISCOVERY_FILE = path.resolve(__dirname, "discovery.json");
 
@@ -541,26 +571,30 @@ export async function runSnapshotEngine(viewports: ViewportMode[] = ["desktop", 
   try {
     // 1. Student Journey
     if (discovery.roles?.student?.screens?.length) {
-      console.log(`[snapshot] Capturing ${discovery.roles.student.screens.length} Student screens...`);
+      console.log(
+        `[snapshot] Capturing ${discovery.roles.student.screens.length} Student screens...`,
+      );
       const studentSnaps = await captureAllSnapshots(
         browser,
         "student",
         { email: "demo.student@studed.lk", pass: "password1234" },
         discovery.roles.student.screens,
-        viewports
+        viewports,
       );
       allSnapshots.push(...studentSnaps);
     }
 
     // 2. Educator Journey
     if (discovery.roles?.educator?.screens?.length) {
-      console.log(`[snapshot] Capturing ${discovery.roles.educator.screens.length} Educator screens...`);
+      console.log(
+        `[snapshot] Capturing ${discovery.roles.educator.screens.length} Educator screens...`,
+      );
       const educatorSnaps = await captureAllSnapshots(
         browser,
         "educator",
         { email: "demo.educator@studed.lk", pass: "password1234" },
         discovery.roles.educator.screens,
-        viewports
+        viewports,
       );
       allSnapshots.push(...educatorSnaps);
     }
@@ -571,4 +605,3 @@ export async function runSnapshotEngine(viewports: ViewportMode[] = ["desktop", 
   console.log(`[snapshot] Finished capturing ${allSnapshots.length} total snapshots.`);
   return allSnapshots;
 }
-

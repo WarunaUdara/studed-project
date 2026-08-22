@@ -1,8 +1,8 @@
-import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { Flame } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useEffect, useRef } from "react";
 import { prefersReducedMotion } from "@/lib/motion";
+import { cn } from "@/lib/utils";
 
 export interface StreakFlameProps {
   dayCount: number;
@@ -72,10 +72,7 @@ export function StreakFlame({
       {isActive && (
         <span ref={pulseRef} className="inline-block">
           <Flame
-            className={cn(
-              dim,
-              isActive ? "fill-orange/30 text-orange" : "text-muted-foreground",
-            )}
+            className={cn(dim, isActive ? "fill-orange/30 text-orange" : "text-muted-foreground")}
           />
         </span>
       )}
@@ -84,11 +81,7 @@ export function StreakFlame({
         <span
           className={cn(
             "tabular-nums",
-            size === "sm"
-              ? "text-[10px]"
-              : size === "lg"
-                ? "text-sm"
-                : "text-xs",
+            size === "sm" ? "text-[10px]" : size === "lg" ? "text-sm" : "text-xs",
           )}
         >
           {label}

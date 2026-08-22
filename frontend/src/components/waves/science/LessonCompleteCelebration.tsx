@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { Sparkles, Zap } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { prefersReducedMotion } from "@/lib/motion";
 
@@ -81,47 +81,12 @@ export function LessonCompleteCelebration({
               aria-label="Happy blob mascot"
             >
               <title>Happy blob mascot</title>
-              <rect
-                x="18"
-                y="18"
-                width="64"
-                height="64"
-                rx="28"
-                fill="oklch(0.72 0.19 146)"
-              />
-              <ellipse
-                cx="50"
-                cy="74"
-                rx="22"
-                ry="6"
-                fill="oklch(0.53 0.15 148)"
-                opacity="0.35"
-              />
+              <rect x="18" y="18" width="64" height="64" rx="28" fill="oklch(0.72 0.19 146)" />
+              <ellipse cx="50" cy="74" rx="22" ry="6" fill="oklch(0.53 0.15 148)" opacity="0.35" />
               {/* Cute Smiling Face with Eye Visor */}
-              <rect
-                x="36"
-                y="36"
-                width="28"
-                height="28"
-                rx="8"
-                fill="oklch(0.21 0.04 265)"
-              />
-              <rect
-                x="42"
-                y="42"
-                width="16"
-                height="16"
-                rx="4"
-                fill="oklch(0.99 0 0)"
-              />
-              <rect
-                x="47"
-                y="47"
-                width="6"
-                height="6"
-                rx="1.5"
-                fill="oklch(0.72 0.19 146)"
-              />
+              <rect x="36" y="36" width="28" height="28" rx="8" fill="oklch(0.21 0.04 265)" />
+              <rect x="42" y="42" width="16" height="16" rx="4" fill="oklch(0.99 0 0)" />
+              <rect x="47" y="47" width="6" height="6" rx="1.5" fill="oklch(0.72 0.19 146)" />
             </svg>
           </div>
 

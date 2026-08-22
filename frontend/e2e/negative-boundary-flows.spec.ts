@@ -13,9 +13,7 @@ test.describe("Negative & Boundary Flow Simulations", () => {
 
     // Verify user remains on login page and error toast or message is shown
     await expect(page).toHaveURL(/\/login/);
-    await expect(
-      page.getByText("That email or password doesn't match our records."),
-    ).toBeVisible();
+    await expect(page.getByText("That email or password doesn't match our records.")).toBeVisible();
   });
 
   test("should enforce client-side validation on empty registration form", async ({ page }) => {
@@ -28,14 +26,18 @@ test.describe("Negative & Boundary Flow Simulations", () => {
     await expect(page).toHaveURL(/\/register/);
   });
 
-  test("should redirect unauthenticated users attempting to access educator routes", async ({ page }) => {
+  test("should redirect unauthenticated users attempting to access educator routes", async ({
+    page,
+  }) => {
     await page.goto("/educator/courses");
 
     // Assert auto-redirect to login page
     await expect(page).toHaveURL(/\/login/);
   });
 
-  test("should redirect student trying to access educator portal back to student dashboard", async ({ page }) => {
+  test("should redirect student trying to access educator portal back to student dashboard", async ({
+    page,
+  }) => {
     // 1. Log in as student
     await page.goto("/login");
     await page.locator("#email").fill("demo.student@studed.lk");

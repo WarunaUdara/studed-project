@@ -23,7 +23,9 @@ export function DailySparkMascotMotivation({
           {/* 3D Floating Blob Character with Dumbbells */}
           <motion.div
             initial={{ y: 20, scale: 0.8, opacity: 0 }}
-            animate={reduce ? { y: 0, scale: 1, opacity: 1 } : { y: [0, -10, 0], scale: 1, opacity: 1 }}
+            animate={
+              reduce ? { y: 0, scale: 1, opacity: 1 } : { y: [0, -10, 0], scale: 1, opacity: 1 }
+            }
             transition={{
               y: { repeat: Infinity, duration: 2.6, ease: "easeInOut" },
               scale: { duration: 0.5, type: "spring", bounce: 0.4 },
@@ -110,40 +112,12 @@ export function DailySparkMascotMotivation({
                 />
 
                 {/* Left Weight Plates */}
-                <rect
-                  x="14"
-                  y="30"
-                  width="16"
-                  height="38"
-                  rx="6"
-                  fill="url(#dumbbell-grad)"
-                />
-                <rect
-                  x="30"
-                  y="36"
-                  width="12"
-                  height="26"
-                  rx="5"
-                  fill="url(#dumbbell-grad)"
-                />
+                <rect x="14" y="30" width="16" height="38" rx="6" fill="url(#dumbbell-grad)" />
+                <rect x="30" y="36" width="12" height="26" rx="5" fill="url(#dumbbell-grad)" />
 
                 {/* Right Weight Plates */}
-                <rect
-                  x="170"
-                  y="30"
-                  width="16"
-                  height="38"
-                  rx="6"
-                  fill="url(#dumbbell-grad)"
-                />
-                <rect
-                  x="158"
-                  y="36"
-                  width="12"
-                  height="26"
-                  rx="5"
-                  fill="url(#dumbbell-grad)"
-                />
+                <rect x="170" y="30" width="16" height="38" rx="6" fill="url(#dumbbell-grad)" />
+                <rect x="158" y="36" width="12" height="26" rx="5" fill="url(#dumbbell-grad)" />
               </g>
 
               {/* Little arms holding the dumbbell bar */}

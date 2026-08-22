@@ -1,5 +1,5 @@
 .PHONY: eval-progression
-.PHONY: dev-up dev-down dev dev-stop launch test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint frontend-e2e go-build go-test shared-test proto-gen seed content-validate content-sync demo-public
+.PHONY: dev-up dev-down dev dev-stop launch prod-dev test lint build frontend-install frontend-dev frontend-build frontend-typecheck frontend-lint frontend-e2e go-build go-test shared-test proto-gen seed content-validate content-sync demo-public
 
 # Development
 # Pre-builds each service on the host so the Dockerfiles can copy bin/linux_service
@@ -7,7 +7,7 @@
 # arch, not a hardcoded value: on an amd64 host (every Windows/Intel dev) a
 # hardcoded arm64 binary gets baked into an amd64 image and the container dies at
 # runtime with "exec format error". Ask Docker what it runs, fall back to the host.
- go-build-linux:
+go-build-linux:
 	@ARCH=$$(docker info --format '{{.Architecture}}' 2>/dev/null); \
 	case "$$ARCH" in \
 		aarch64|arm64) GOARCH=arm64 ;; \
@@ -28,8 +28,20 @@ dev-up: docker-mem-check docker-buildx-check
 	# OOM a 16GB dev laptop (each build already runs with GOFLAGS=-p=2).
 	COMPOSE_PARALLEL_LIMIT=2 docker compose -f docker-compose.yml up --build -d --remove-orphans
 
- launch:
+launch:
 	bun run scripts/launch.ts
+
+prod-dev: docker-mem-check docker-buildx-check
+	@echo "Starting StudEd full production-simulated environment (with floci-gcp)..."
+	COMPOSE_PARALLEL_LIMIT=2 docker compose -f docker-compose.yml up -d --remove-orphans
+	@echo "Waiting for postgres to become ready..."
+	@for _ in {1..30}; do \
+		if docker exec studed-postgres pg_isready -U studed -d studed >/dev/null 2>&1; then break; fi; \
+		sleep 1; \
+	done
+	@echo "Seeding deterministic demo curriculum and student data..."
+	@./scripts/mock-data-loader.sh >/dev/null 2>&1 || true
+	@bun run scripts/launch.ts
 
  dev-down:
 	docker compose -f docker-compose.yml down

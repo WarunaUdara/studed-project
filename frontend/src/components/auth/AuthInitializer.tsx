@@ -14,8 +14,7 @@ const REFRESH_TOKEN_MUTATION = `
 export function AuthInitializer({ children }: { children: React.ReactNode }) {
   const { setUser } = useAuthStore();
   const hasSession =
-    typeof window !== "undefined" &&
-    localStorage.getItem("studed_has_session") === "true";
+    typeof window !== "undefined" && localStorage.getItem("studed_has_session") === "true";
 
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: ME_QUERY,

@@ -89,14 +89,7 @@ export function DailySparkStreakScreen({ streakCount = 1, onFinish }: DailySpark
                   strokeWidth="4"
                 />
                 {/* Mascot Square Visor / Eyes */}
-                <rect
-                  x="30"
-                  y="32"
-                  width="40"
-                  height="26"
-                  rx="8"
-                  fill="oklch(1 0 89.9)"
-                />
+                <rect x="30" y="32" width="40" height="26" rx="8" fill="oklch(1 0 89.9)" />
                 <circle cx="42" cy="45" r="5" fill="oklch(0.447 0.051 261.4)" />
                 <circle cx="58" cy="45" r="5" fill="oklch(0.447 0.051 261.4)" />
                 <circle cx="44" cy="43" r="1.5" fill="oklch(1 0 89.9)" />
@@ -150,9 +143,7 @@ export function DailySparkStreakScreen({ streakCount = 1, onFinish }: DailySpark
                   )}
                 </div>
                 <span
-                  className={`text-xs font-bold ${
-                    isToday ? "text-lime-400" : "text-neutral-500"
-                  }`}
+                  className={`text-xs font-bold ${isToday ? "text-lime-400" : "text-neutral-500"}`}
                 >
                   {dayLetter}
                 </span>

@@ -39,7 +39,12 @@ export function DailyLessonLimitGate({
               transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
               className="flex size-16 items-center justify-center drop-shadow-xl"
             >
-              <svg viewBox="0 0 100 100" className="size-full" role="img" aria-label="Curious blob mascot">
+              <svg
+                viewBox="0 0 100 100"
+                className="size-full"
+                role="img"
+                aria-label="Curious blob mascot"
+              >
                 <title>Curious blob mascot</title>
                 <rect x="18" y="18" width="64" height="64" rx="28" fill="#22c55e" />
                 <ellipse cx="50" cy="74" rx="22" ry="6" fill="#15803d" opacity="0.35" />

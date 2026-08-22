@@ -23,10 +23,13 @@ interface ServiceDef {
 const SERVICES: ServiceDef[] = [
   { name: "PostgreSQL", port: 5433, healthPath: "", kind: "docker" },
   { name: "Redis", port: 6379, healthPath: "", kind: "docker" },
+  { name: "Floci GCP", port: 4588, healthPath: "", kind: "docker" },
   { name: "Auth Service", port: 8085, healthPath: "/health", kind: "docker" },
   { name: "Course Service", port: 8084, healthPath: "/health", kind: "docker" },
   { name: "Progress Service", port: 8087, healthPath: "/health", kind: "docker" },
   { name: "Gamification", port: 8089, healthPath: "/health", kind: "docker" },
+  { name: "AI Service", port: 8090, healthPath: "/health", kind: "docker" },
+  { name: "Upload Service", port: 8093, healthPath: "/health", kind: "docker" },
   { name: "API Gateway", port: 8080, healthPath: "/health", kind: "docker" },
   { name: "Frontend (Vite)", port: 5173, healthPath: "", kind: "local" },
 ];

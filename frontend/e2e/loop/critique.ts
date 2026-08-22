@@ -46,7 +46,9 @@ export class CritiqueRunner {
   }
 
   public runCritique(): CritiqueOutput {
-    console.log(`[critique] Executing 3-pass critique engine across fingerprints & audit faults...`);
+    console.log(
+      `[critique] Executing 3-pass critique engine across fingerprints & audit faults...`,
+    );
 
     const passA = this.evaluatePassADefects();
     const passB = this.evaluatePassBDarkPatterns();
@@ -97,7 +99,7 @@ export class CritiqueRunner {
 ${critique.passA
   .map(
     (d) =>
-      `| **${d.severity}** | \`${d.screen}\` | \`${d.component}\` | ${d.rootCause} | ${d.suggestedFix} |`
+      `| **${d.severity}** | \`${d.screen}\` | \`${d.component}\` | ${d.rootCause} | ${d.suggestedFix} |`,
   )
   .join("\n")}
 
@@ -114,7 +116,7 @@ ${
 - **Screen**: \`${b.screen}\`
 - **Description**: ${b.description}
 - **Verdict**: **${b.servesVsExploitsVerdict}**
-- **Recommendation**: ${b.recommendation}`
+- **Recommendation**: ${b.recommendation}`,
         )
         .join("\n\n")
 }
@@ -129,7 +131,7 @@ ${critique.passC
 - **Target Screen**: \`${c.screen}\`
 - **Description**: ${c.description}
 - **Pedagogical Rationale**: ${c.rationale}
-- **Human Approval**: Mandatory prior to coding.`
+- **Human Approval**: Mandatory prior to coding.`,
   )
   .join("\n\n")}
 
@@ -160,7 +162,8 @@ ${critique.passC
         component: fault.elementSelector || fault.category,
         evidence: JSON.stringify(fault.evidence),
         rootCause: fault.message,
-        suggestedFix: fault.suggestedFix || "Refactor component styles/markup according to design system.",
+        suggestedFix:
+          fault.suggestedFix || "Refactor component styles/markup according to design system.",
       });
     }
 
@@ -183,7 +186,8 @@ ${critique.passC
           patternName: "Manufactured Urgency",
           category: "exploitative",
           screen: snap.metadata.path,
-          description: "Detected artificial time pressure or scarcity language without pedagogical purpose.",
+          description:
+            "Detected artificial time pressure or scarcity language without pedagogical purpose.",
           servesVsExploitsVerdict:
             "EXPLOITS — Induces unnecessary student anxiety rather than intrinsic learning motivation.",
           recommendation: "Replace with calm, self-paced progress messaging.",
@@ -197,10 +201,12 @@ ${critique.passC
           patternName: "Reattempt Safety & Low-Anxiety Practice",
           category: "missing-healthy",
           screen: snap.metadata.path,
-          description: "Wave puzzle interface allows repeatable simulation attempts without penalty.",
+          description:
+            "Wave puzzle interface allows repeatable simulation attempts without penalty.",
           servesVsExploitsVerdict:
             "SERVES — Encourages experimentation, exploratory physics, and fearless mastery.",
-          recommendation: "Preserve immediate mechanical reset button without deducting Explorer XP.",
+          recommendation:
+            "Preserve immediate mechanical reset button without deducting Explorer XP.",
         });
       }
 
@@ -214,7 +220,8 @@ ${critique.passC
           description: "XP awards fire in direct correlation with problem-solving milestones.",
           servesVsExploitsVerdict:
             "SERVES — Reinforces genuine conceptual comprehension through instant multi-sensory feedback.",
-          recommendation: "Ensure toast animation duration remains under 1200ms to avoid blocking navigation.",
+          recommendation:
+            "Ensure toast animation duration remains under 1200ms to avoid blocking navigation.",
         });
       }
     }

@@ -60,7 +60,11 @@ function LeaderboardPage() {
   );
 
   // Deterministic seeded cohort fallback when offline, erroring, or cold-starting
-  const fallbackCohort: { entries: LeaderboardEntryData[]; totalRanked: number; me: LeaderboardEntryData | null } = useMemo(() => {
+  const fallbackCohort: {
+    entries: LeaderboardEntryData[];
+    totalRanked: number;
+    me: LeaderboardEntryData | null;
+  } = useMemo(() => {
     const rawDemo = buildDemoLeaderboard(
       user?.id ?? "student-user-id",
       user?.totalXp ?? 425,
@@ -97,11 +101,7 @@ function LeaderboardPage() {
       ? fallbackCohort.totalRanked
       : 0;
 
-  const me = hasLiveEntries
-    ? (board?.me ?? null)
-    : error || !fetching
-      ? fallbackCohort.me
-      : null;
+  const me = hasLiveEntries ? (board?.me ?? null) : error || !fetching ? fallbackCohort.me : null;
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -286,7 +286,11 @@ function PodiumStep({ entry, place }: { entry?: LeaderboardEntryData; place: 1 |
         {place === 1 && <Crown className="h-5 w-5 text-gold fill-gold/20 mb-0.5" />}
         {entry && (
           <div className="mb-1">
-            <BlobAvatar name={entry.userId} size={place === 1 ? 40 : 32} title={entry.displayName} />
+            <BlobAvatar
+              name={entry.userId}
+              size={place === 1 ? 40 : 32}
+              title={entry.displayName}
+            />
           </div>
         )}
         <p

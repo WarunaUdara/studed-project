@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { gsap } from "gsap";
+import { useEffect, useState } from "react";
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 

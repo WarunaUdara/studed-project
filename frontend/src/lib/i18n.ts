@@ -196,8 +196,8 @@ export const PUBLIC_STRINGS = {
   },
   mechanicLeaderboardTitle: { EN: "Leaderboards", SI: "ලීඩර්බෝඩ්" },
   mechanicLeaderboardCopy: {
-EN: "Compete globally, by grade and by course. Top 0.1% earn the diamond glyph.",
-  SI: "ගෝලීය වශයෙන්, ශ්‍රේණිය සහ පාඨමාලාව අනුව තරඟ කරන්න. ඉහළ 0.1% ට දියමන්ති සංකේතය හිමිවේ.",
+    EN: "Compete globally, by grade and by course. Top 0.1% earn the diamond glyph.",
+    SI: "ගෝලීය වශයෙන්, ශ්‍රේණිය සහ පාඨමාලාව අනුව තරඟ කරන්න. ඉහළ 0.1% ට දියමන්ති සංකේතය හිමිවේ.",
   },
   mechanicProficiencyTitle: { EN: "Proficiency ladder", SI: "ප්‍රාඵල්‍යතා පඩිපෙළ" },
   mechanicProficiencyCopy: {

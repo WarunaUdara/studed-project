@@ -41,7 +41,10 @@ export function DashboardLeagueWidget() {
 
   const board = data?.leaderboard;
   const hasLive = Boolean(board?.entries && board.entries.length > 0);
-  const entries = useMemo(() => (hasLive ? board!.entries : fallbackEntries), [hasLive, board, fallbackEntries]);
+  const entries = useMemo(
+    () => (hasLive ? board!.entries : fallbackEntries),
+    [hasLive, board, fallbackEntries],
+  );
   const me = hasLive ? (board?.me ?? null) : (fallbackEntries.find((e) => e.isMe) ?? null);
   const totalRanked = hasLive ? board!.totalRanked : fallbackEntries.length;
 

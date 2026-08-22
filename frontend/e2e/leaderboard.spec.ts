@@ -145,9 +145,9 @@ test.describe("Dashboard progression", () => {
 
   test("shows where each enrolled course stands", async ({ page }) => {
     // The dashboard previously carried no course progress at all.
-    await expect(
-      page.getByText(/Continue learning|Nothing on the go/i).first(),
-    ).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(/Continue learning|Nothing on the go/i).first()).toBeVisible({
+      timeout: 15000,
+    });
   });
 
   test("shows a real standing, not invented classmates", async ({ page }) => {

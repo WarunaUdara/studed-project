@@ -981,14 +981,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -1004,14 +997,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -1027,14 +1013,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -1205,14 +1184,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -1288,14 +1260,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -1311,14 +1276,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -1334,14 +1292,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -1538,14 +1489,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -1711,14 +1655,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -1844,14 +1781,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -2940,14 +2870,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -2963,14 +2886,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -2986,14 +2902,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -3164,14 +3073,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -3287,14 +3189,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -3310,14 +3205,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -3333,14 +3221,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."
@@ -3402,14 +3283,7 @@
       "evidence": {
         "detectedOklch": "oklch(0.577 0.245 27.3)",
         "hue": 27.3,
-        "allowedHues": [
-          145,
-          252,
-          55,
-          295,
-          247,
-          285
-        ]
+        "allowedHues": [145, 252, 55, 295, 247, 285]
       },
       "message": "Color hue (27) deviates from the OKLCH design system tokens.",
       "suggestedFix": "Replace with semantic design system tokens (--primary, --science, --commerce, --gold)."

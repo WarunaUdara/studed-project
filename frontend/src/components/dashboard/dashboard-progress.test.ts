@@ -108,9 +108,7 @@ describe("resumePoints", () => {
   });
 
   it("points at the first wave that is not complete", () => {
-    const [point] = resumePoints([
-      course("a", 2, 3, ["COMPLETED", "COMPLETED", "AVAILABLE"]),
-    ]);
+    const [point] = resumePoints([course("a", 2, 3, ["COMPLETED", "COMPLETED", "AVAILABLE"])]);
     expect(point.nextWaveId).toBe("a-w3");
   });
 

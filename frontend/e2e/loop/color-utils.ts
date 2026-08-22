@@ -28,7 +28,10 @@ export function parseRgbString(colorStr: string): [number, number, number, numbe
   if (trimmed.startsWith("#")) {
     let hex = trimmed.slice(1);
     if (hex.length === 3 || hex.length === 4) {
-      hex = hex.split("").map((char) => char + char).join("");
+      hex = hex
+        .split("")
+        .map((char) => char + char)
+        .join("");
     }
     if (hex.length === 6) {
       const num = parseInt(hex, 16);
@@ -36,13 +39,15 @@ export function parseRgbString(colorStr: string): [number, number, number, numbe
     }
     if (hex.length === 8) {
       const num = parseInt(hex, 16);
-      return [(num >> 24) & 255, (num >> 16) & 255, (num >> 8) & 255, ((num & 255) / 255)];
+      return [(num >> 24) & 255, (num >> 16) & 255, (num >> 8) & 255, (num & 255) / 255];
     }
     return null;
   }
 
   // rgb(r, g, b) or rgba(r, g, b, a)
-  const match = trimmed.match(/^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)$/);
+  const match = trimmed.match(
+    /^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)$/,
+  );
   if (match) {
     const r = parseFloat(match[1]);
     const g = parseFloat(match[2]);
@@ -59,7 +64,7 @@ export function parseRgbString(colorStr: string): [number, number, number, numbe
  */
 function sRgbToLinear(c: number): number {
   const v = c / 255;
-  return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
 }
 
 /**
@@ -82,9 +87,9 @@ export function rgbToOklch(r: number, g: number, b: number, a = 1): OklchColor {
   const s_ = Math.cbrt(s);
 
   // 4. LMS to OKLab
-  const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
-  const A = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
-  const B = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+  const L = 0.2104542553 * l_ + 0.793617785 * m_ - 0.0040720468 * s_;
+  const A = 1.9779984951 * l_ - 2.428592205 * m_ + 0.4505937099 * s_;
+  const B = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.808675766 * s_;
 
   // 5. OKLab to OKLCH
   const C = Math.sqrt(A * A + B * B);
@@ -148,7 +153,10 @@ export function parseCssColor(colorStr: string): ParsedColor {
 
   // oklch(0.5 0.15 145 / 0.8)
   if (trimmed.startsWith("oklch(")) {
-    const parts = trimmed.replace("oklch(", "").replace(")", "").split(/[\s/]+/);
+    const parts = trimmed
+      .replace("oklch(", "")
+      .replace(")", "")
+      .split(/[\s/]+/);
     const l = parseFloat(parts[0]) || 0;
     const c = parseFloat(parts[1]) || 0;
     const h = parseFloat(parts[2]) || 0;
@@ -210,4 +218,3 @@ export function calculateContrastRatio(fgStr: string, bgStr: string): number {
 
   return (l1 + 0.05) / (l2 + 0.05);
 }
-

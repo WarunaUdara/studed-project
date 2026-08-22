@@ -252,12 +252,7 @@ export function emptyXpBreakdown(): XpBreakdown {
 
 /* ----- League Tiers & Progression ----- */
 
-export type LeagueTier =
-  | "HYDROGEN"
-  | "LITHIUM"
-  | "CARBON"
-  | "TITANIUM"
-  | "QUANTUM";
+export type LeagueTier = "HYDROGEN" | "LITHIUM" | "CARBON" | "TITANIUM" | "QUANTUM";
 
 export interface LeagueMeta {
   tier: LeagueTier;

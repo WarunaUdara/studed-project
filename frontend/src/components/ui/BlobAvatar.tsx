@@ -1,5 +1,5 @@
-import { memo } from "react";
 import { Blobatar } from "@blobatar/react";
+import { memo } from "react";
 import "blobatar/motion.css";
 import { cn } from "@/lib/utils";
 

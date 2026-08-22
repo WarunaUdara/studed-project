@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { Zap } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { prefersReducedMotion } from "@/lib/motion";
 
 export interface XPToastProps {
@@ -10,12 +10,7 @@ export interface XPToastProps {
   duration?: number;
 }
 
-export function XPToast({
-  amount,
-  show,
-  onDismiss,
-  duration = 2600,
-}: XPToastProps) {
+export function XPToast({ amount, show, onDismiss, duration = 2600 }: XPToastProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -64,9 +59,7 @@ export function XPToast({
     >
       <div className="flex items-center gap-2 rounded-full border border-gold/30 bg-gradient-to-r from-gold to-orange px-5 py-2.5 shadow-lg shadow-gold/30">
         <Zap className="h-5 w-5 fill-white text-white" />
-        <span className="text-base font-extrabold text-white drop-shadow">
-          +{amount} XP
-        </span>
+        <span className="text-base font-extrabold text-white drop-shadow">+{amount} XP</span>
       </div>
     </div>
   );

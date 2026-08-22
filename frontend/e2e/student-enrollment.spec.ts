@@ -64,7 +64,7 @@ test.describe("Student Course Search, Filter, and Enrollment Flow", () => {
       .filter({ hasText: "G10" })
       .first();
 
-    let targetCard = enrollableG10Card;
+    const targetCard = enrollableG10Card;
 
     // Open the detail sheet for the G10 course
     await expect(targetCard).toBeVisible({ timeout: 10000 });

@@ -583,7 +583,8 @@ function ResultCard({
         {!passed && remainingAttempts >= 0 && remainingAttempts === 0 && (
           <div className="space-y-2">
             <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-center text-sm text-amber-500 font-medium">
-              Maximum attempts reached. You can skip to the next wave or reset attempts to try again.
+              Maximum attempts reached. You can skip to the next wave or reset attempts to try
+              again.
             </div>
             {onResetAttempts && (
               <Button
@@ -592,7 +593,8 @@ function ResultCard({
                 variant="outline"
                 className="w-full text-amber-500 border-amber-500/40 hover:bg-amber-500/10"
               >
-                <RotateCcw className="mr-1.5 h-4 w-4" /> {resetting ? "Resetting..." : "Reset Attempts"}
+                <RotateCcw className="mr-1.5 h-4 w-4" />{" "}
+                {resetting ? "Resetting..." : "Reset Attempts"}
               </Button>
             )}
           </div>

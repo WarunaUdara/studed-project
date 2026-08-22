@@ -1,6 +1,6 @@
+import { gsap } from "gsap";
 import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
 import { StreakScreen, useLiquidGlass } from "./StreakScreen";
 import "./streak.css";
 import { prefersReducedMotion } from "@/lib/motion";
@@ -43,11 +43,7 @@ export function StreakCelebrationModal({
       return;
     }
     const tweens = [
-      gsap.fromTo(
-        overlayRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.25 },
-      ),
+      gsap.fromTo(overlayRef.current, { opacity: 0 }, { opacity: 1, duration: 0.25 }),
       gsap.fromTo(
         panelRef.current,
         { scale: 0.9, opacity: 0, y: 20 },
@@ -74,10 +70,7 @@ export function StreakCelebrationModal({
   if (!isOpen) return null;
 
   return (
-    <div
-      ref={overlayRef}
-      className="fixed inset-0 z-[200] flex items-center justify-center p-4"
-    >
+    <div ref={overlayRef} className="fixed inset-0 z-[200] flex items-center justify-center p-4">
       <button
         type="button"
         aria-label="Close streak celebration"

@@ -45,7 +45,10 @@ export function DailySparkLeagueRank({ onFinish }: DailySparkLeagueRankProps) {
 
   const board = data?.leaderboard;
   const hasLive = Boolean(board?.entries && board.entries.length > 0);
-  const entries = useMemo(() => (hasLive ? board!.entries : fallbackEntries), [hasLive, board, fallbackEntries]);
+  const entries = useMemo(
+    () => (hasLive ? board!.entries : fallbackEntries),
+    [hasLive, board, fallbackEntries],
+  );
   const me = hasLive ? (board?.me ?? null) : (fallbackEntries.find((e) => e.isMe) ?? null);
   const totalRanked = hasLive ? board!.totalRanked : fallbackEntries.length;
 
@@ -125,11 +128,7 @@ export function DailySparkLeagueRank({ onFinish }: DailySparkLeagueRankProps) {
               strokeLinejoin="round"
             />
             <circle cx="50" cy="48" r="16" fill="url(#sun-grad)" />
-            <path
-              d="M 38,62 Q 44,54 52,54 Q 60,54 64,62 Z"
-              fill="oklch(1 0 89.9)"
-              opacity="0.9"
-            />
+            <path d="M 38,62 Q 44,54 52,54 Q 60,54 64,62 Z" fill="oklch(1 0 89.9)" opacity="0.9" />
           </svg>
         </motion.div>
 

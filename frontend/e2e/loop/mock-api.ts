@@ -124,7 +124,8 @@ export async function setupMockGraphQL(page: Page) {
                       id: "science-thinking",
                       title: "Scientific Thinking",
                       slug: "science-thinking",
-                      description: "Learn mechanical physics, gear train parity, and kinematics with interactive simulations.",
+                      description:
+                        "Learn mechanical physics, gear train parity, and kinematics with interactive simulations.",
                       gradeLevel: "G9",
                       price: 0,
                       isPublished: true,
@@ -136,7 +137,8 @@ export async function setupMockGraphQL(page: Page) {
                       id: "math-coordinate-geometry",
                       title: "Coordinate Geometry",
                       slug: "coordinate-geometry",
-                      description: "Master Cartesian coordinates, slope formulas, and distance equations.",
+                      description:
+                        "Master Cartesian coordinates, slope formulas, and distance equations.",
                       gradeLevel: "G10",
                       price: 0,
                       isPublished: true,
@@ -239,11 +241,23 @@ export async function setupMockGraphQL(page: Page) {
                 totalRanked: 15,
                 entries: [
                   { rank: 1, userId: "u-1", displayName: "Senuri W.", totalXp: 12450, isMe: false },
-                  { rank: 2, userId: "u-2", displayName: "Kavindu J.", totalXp: 11820, isMe: false },
+                  {
+                    rank: 2,
+                    userId: "u-2",
+                    displayName: "Kavindu J.",
+                    totalXp: 11820,
+                    isMe: false,
+                  },
                   { rank: 3, userId: "u-3", displayName: "Dinuka P.", totalXp: 10950, isMe: false },
                   { rank: 4, userId: "u-4", displayName: "Thisara B.", totalXp: 9800, isMe: false },
                   { rank: 5, userId: "u-5", displayName: "Rashmi G.", totalXp: 9150, isMe: false },
-                  { rank: 6, userId: "demo-student-id", displayName: "Demo S.", totalXp: 425, isMe: true },
+                  {
+                    rank: 6,
+                    userId: "demo-student-id",
+                    displayName: "Demo S.",
+                    totalXp: 425,
+                    isMe: true,
+                  },
                 ],
                 me: {
                   rank: 6,

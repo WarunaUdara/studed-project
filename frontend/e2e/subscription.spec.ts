@@ -10,7 +10,9 @@ test.describe("GraphQL Subscriptions (SEC-23b)", () => {
     await expect(page).toHaveURL(/\/dashboard/);
   });
 
-  test("should establish WebSocket subscription and receive updates on leaderboard page", async ({ page }) => {
+  test("should establish WebSocket subscription and receive updates on leaderboard page", async ({
+    page,
+  }) => {
     let wsConnected = false;
 
     page.on("websocket", (ws) => {

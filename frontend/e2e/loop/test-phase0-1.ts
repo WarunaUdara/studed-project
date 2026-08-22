@@ -1,6 +1,6 @@
 import { chromium } from "@playwright/test";
-import { setupMockGraphQL } from "./mock-api";
 import { runDiscovery } from "./discover";
+import { setupMockGraphQL } from "./mock-api";
 import { captureScreenSnapshot } from "./snapshot";
 
 async function main() {
@@ -47,7 +47,9 @@ async function main() {
     }
 
     // Capture Student Dashboard (Desktop + Mobile)
-    const dashboardScreen = discovery.roles.student.screens.find((s) => s.path === "/dashboard") || {
+    const dashboardScreen = discovery.roles.student.screens.find(
+      (s) => s.path === "/dashboard",
+    ) || {
       path: "/dashboard",
       routeFile: "frontend/src/routes/dashboard.tsx",
       depth: 0,
@@ -57,14 +59,20 @@ async function main() {
 
     console.log("Capturing Student Dashboard (desktop)...");
     const desktopSnap = await captureScreenSnapshot(page, dashboardScreen, "desktop", "default");
-    console.log(`Captured ${desktopSnap.styledElements.length} styled elements, ${desktopSnap.linkInventory.length} links, ${desktopSnap.focusOrder.length} focusable items.`);
+    console.log(
+      `Captured ${desktopSnap.styledElements.length} styled elements, ${desktopSnap.linkInventory.length} links, ${desktopSnap.focusOrder.length} focusable items.`,
+    );
 
     console.log("Capturing Student Dashboard (mobile)...");
     const mobileSnap = await captureScreenSnapshot(page, dashboardScreen, "mobile", "default");
-    console.log(`Captured mobile fingerprint: ${mobileSnap.styledElements.length} styled elements.`);
+    console.log(
+      `Captured mobile fingerprint: ${mobileSnap.styledElements.length} styled elements.`,
+    );
 
     // Capture Course Map (Desktop)
-    const courseScreen = discovery.roles.student.screens.find((s) => s.path.includes("science")) || {
+    const courseScreen = discovery.roles.student.screens.find((s) =>
+      s.path.includes("science"),
+    ) || {
       path: "/courses/science-thinking",
       routeFile: "frontend/src/routes/courses.$courseId.tsx",
       depth: 1,
@@ -74,7 +82,9 @@ async function main() {
 
     console.log(`Capturing Science Course Map (${courseScreen.path})...`);
     const courseSnap = await captureScreenSnapshot(page, courseScreen, "desktop", "default");
-    console.log(`Captured course map fingerprint: ${courseSnap.styledElements.length} styled elements.`);
+    console.log(
+      `Captured course map fingerprint: ${courseSnap.styledElements.length} styled elements.`,
+    );
 
     console.log("\nPhase 0 and Phase 1 test run completed successfully!");
   } finally {

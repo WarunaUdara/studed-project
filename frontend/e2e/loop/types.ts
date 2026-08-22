@@ -234,4 +234,3 @@ export interface CritiqueOutput {
   passB: CritiquePassBItem[];
   passC: CritiquePassCItem[];
 }
-

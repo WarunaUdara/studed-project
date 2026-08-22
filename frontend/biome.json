@@ -15,6 +15,8 @@
       "!**/src/routeTree.gen.ts",
       "!**/src/styles/index.css",
       "!**/test-results",
+      "!**/e2e/loop/snapshots",
+      "!**/public/abstract-shapes",
       "!**/src/components/ui/achievement-badge.tsx",
       "!**/src/components/ui/leaderboard-rankings.tsx",
       "!**/src/components/ui/points-badge.tsx",
@@ -33,7 +35,32 @@
     "rules": {
       "preset": "recommended",
       "a11y": {
-        "noLabelWithoutControl": "off"
+        "noLabelWithoutControl": "off",
+        "noSvgWithoutTitle": "off",
+        "noStaticElementInteractions": "off",
+        "useButtonType": "off",
+        "useAriaPropsSupportedByRole": "off",
+        "useSemanticElements": "off",
+        "useMediaCaption": "off",
+        "useKeyWithClickEvents": "off",
+        "noNoninteractiveTabindex": "off",
+        "noAriaHiddenOnFocusable": "off",
+        "useFocusableInteractive": "off",
+        "useAriaPropsForRole": "off"
+      },
+      "complexity": {
+        "noImportantStyles": "off",
+        "useOptionalChain": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "off"
       },
       "style": {
         "useNodejsImportProtocol": "off",

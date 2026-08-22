@@ -95,9 +95,7 @@
       "routeFile": "frontend/src/routes/educator/_layout/courses.$courseId.index.tsx",
       "routePattern": "/educator/courses/$courseId",
       "isDynamic": true,
-      "params": [
-        "courseId"
-      ]
+      "params": ["courseId"]
     },
     {
       "routeFile": "frontend/src/routes/educator/_layout/courses.tsx",
@@ -115,45 +113,31 @@
       "routeFile": "frontend/src/routes/educator/_layout/courses.$courseId.tsx",
       "routePattern": "/educator/courses/$courseId",
       "isDynamic": true,
-      "params": [
-        "courseId"
-      ]
+      "params": ["courseId"]
     },
     {
       "routeFile": "frontend/src/routes/educator/_layout/courses.$courseId.lessons.$lessonId.waves.$waveId.tsx",
       "routePattern": "/educator/courses/$courseId/lessons/$lessonId/waves/$waveId",
       "isDynamic": true,
-      "params": [
-        "courseId",
-        "lessonId",
-        "waveId"
-      ]
+      "params": ["courseId", "lessonId", "waveId"]
     },
     {
       "routeFile": "frontend/src/routes/educator/_layout/courses.$courseId.lessons.$lessonId.index.tsx",
       "routePattern": "/educator/courses/$courseId/lessons/$lessonId",
       "isDynamic": true,
-      "params": [
-        "courseId",
-        "lessonId"
-      ]
+      "params": ["courseId", "lessonId"]
     },
     {
       "routeFile": "frontend/src/routes/educator/_layout/courses.$courseId.lessons.$lessonId.tsx",
       "routePattern": "/educator/courses/$courseId/lessons/$lessonId",
       "isDynamic": true,
-      "params": [
-        "courseId",
-        "lessonId"
-      ]
+      "params": ["courseId", "lessonId"]
     },
     {
       "routeFile": "frontend/src/routes/educator/_layout/courses.$courseId.edit.tsx",
       "routePattern": "/educator/courses/$courseId/edit",
       "isDynamic": true,
-      "params": [
-        "courseId"
-      ]
+      "params": ["courseId"]
     },
     {
       "routeFile": "frontend/src/routes/educator/_layout.tsx",
@@ -165,17 +149,13 @@
       "routeFile": "frontend/src/routes/courses.$courseId.tsx",
       "routePattern": "/courses/$courseId",
       "isDynamic": true,
-      "params": [
-        "courseId"
-      ]
+      "params": ["courseId"]
     },
     {
       "routeFile": "frontend/src/routes/waves.$waveId.tsx",
       "routePattern": "/waves/$waveId",
       "isDynamic": true,
-      "params": [
-        "waveId"
-      ]
+      "params": ["waveId"]
     }
   ],
   "roles": {

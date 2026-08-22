@@ -12,12 +12,7 @@ import {
   setPuckSidebarVisible,
 } from "./puck-bridge";
 
-export {
-  getPuckDispatch,
-  pushPuckData,
-  setPuckPanelsVisible,
-  setPuckSidebarVisible,
-};
+export { getPuckDispatch, pushPuckData, setPuckPanelsVisible, setPuckSidebarVisible };
 
 interface PuckCanvasProps {
   data: PuckData;

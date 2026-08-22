@@ -38,7 +38,6 @@ export function MathFormula({ formula, displayMode = true, className }: MathProp
   }
 
   return (
-    // biome-ignore lint/security/noDangerouslySetInnerHtml: katex.renderToString sanitizes its own output
     <div
       aria-label={formula}
       role="img"

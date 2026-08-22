@@ -109,7 +109,9 @@ export class DeterministicAuditor {
     };
 
     fs.writeFileSync(AUDIT_OUTPUT_FILE, JSON.stringify(output, null, 2));
-    console.log(`[audit] Audit complete. Emitted ${this.faults.length} faults to ${AUDIT_OUTPUT_FILE}`);
+    console.log(
+      `[audit] Audit complete. Emitted ${this.faults.length} faults to ${AUDIT_OUTPUT_FILE}`,
+    );
     return output;
   }
 
@@ -132,7 +134,10 @@ export class DeterministicAuditor {
       if (ratio < minRatio && ratio > 1.05) {
         const severity: FaultSeverity = ratio < 2.5 ? "P0" : "P1";
         this.faults.push({
-          id: `contrast-${snap.metadata.role}-${snap.metadata.path}-${elem.selector}`.replace(/[^a-zA-Z0-9-]/g, "_"),
+          id: `contrast-${snap.metadata.role}-${snap.metadata.path}-${elem.selector}`.replace(
+            /[^a-zA-Z0-9-]/g,
+            "_",
+          ),
           category: "contrast",
           severity,
           screen: snap.metadata.path,
@@ -168,7 +173,11 @@ export class DeterministicAuditor {
         const fontSize = styled ? parseFloat(styled.styles.fontSize) || 16 : 16;
 
         // Check heading hierarchy inversion (e.g. H2 larger than H1 on same screen)
-        if (prevHeadingLevel > 0 && item.level > prevHeadingLevel && fontSize > prevHeadingSize + 2) {
+        if (
+          prevHeadingLevel > 0 &&
+          item.level > prevHeadingLevel &&
+          fontSize > prevHeadingSize + 2
+        ) {
           this.faults.push({
             id: `typo-inversion-${snap.metadata.path}-${item.level}`.replace(/[^a-zA-Z0-9-]/g, "_"),
             category: "typography",
@@ -224,7 +233,10 @@ export class DeterministicAuditor {
       // Horizontal overflow beyond screen boundaries
       if (box.x + box.width > vpWidth + 6 && box.width > 0) {
         this.faults.push({
-          id: `overflow-${snap.metadata.viewport}-${snap.metadata.path}-${selector}`.replace(/[^a-zA-Z0-9-]/g, "_"),
+          id: `overflow-${snap.metadata.viewport}-${snap.metadata.path}-${selector}`.replace(
+            /[^a-zA-Z0-9-]/g,
+            "_",
+          ),
           category: "overlap",
           severity: "P1",
           screen: snap.metadata.path,
@@ -242,7 +254,12 @@ export class DeterministicAuditor {
       }
 
       // Unintentional text clipping without scroll affordance
-      if (box.scrollWidth && box.clientWidth && box.scrollWidth > box.clientWidth + 8 && !box.isClipped) {
+      if (
+        box.scrollWidth &&
+        box.clientWidth &&
+        box.scrollWidth > box.clientWidth + 8 &&
+        !box.isClipped
+      ) {
         this.faults.push({
           id: `clipping-${snap.metadata.path}-${selector}`.replace(/[^a-zA-Z0-9-]/g, "_"),
           category: "overlap",
@@ -304,7 +321,10 @@ export class DeterministicAuditor {
           const isKnown = KNOWN_HUES.some((kh) => Math.abs(kh - parsed.h!) < 20);
           if (!isKnown) {
             this.faults.push({
-              id: `token-drift-${snap.metadata.path}-${elem.selector}`.replace(/[^a-zA-Z0-9-]/g, "_"),
+              id: `token-drift-${snap.metadata.path}-${elem.selector}`.replace(
+                /[^a-zA-Z0-9-]/g,
+                "_",
+              ),
               category: "token-drift",
               severity: "P2",
               screen: snap.metadata.path,

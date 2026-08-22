@@ -87,5 +87,5 @@ variable "use_floci_gcp" {
 variable "floci_gcp_endpoint" {
   description = "Endpoint URL for the local floci-gcp emulator"
   type        = string
-  default     = "http://localhost:4588"
+  default     = "http://localhost:4588/"
 }

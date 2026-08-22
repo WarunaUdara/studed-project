@@ -19,10 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Progress } from "@/components/ui/Progress";
-import {
-  REQUEST_PASSWORD_RESET_MUTATION,
-  RESET_PASSWORD_MUTATION,
-} from "@/graphql/auth";
+import { REQUEST_PASSWORD_RESET_MUTATION, RESET_PASSWORD_MUTATION } from "@/graphql/auth";
 import { playClickSound, playLevelUpSound, playSuccessSound } from "@/lib/sounds";
 
 /** Hexagon mask for the level badge, matching the comp's beveled badge. */
@@ -202,7 +199,11 @@ export function LoginAuthCard() {
               </div>
             )}
 
-            <form onSubmit={submit} className="mt-6 space-y-4 short:mt-4 short:space-y-3" noValidate>
+            <form
+              onSubmit={submit}
+              className="mt-6 space-y-4 short:mt-4 short:space-y-3"
+              noValidate
+            >
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-semibold text-login-ink">
                   Email
@@ -257,7 +258,9 @@ export function LoginAuthCard() {
                     )}
                   </button>
                 </div>
-                {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+                {errors.password && (
+                  <p className="text-sm text-destructive">{errors.password.message}</p>
+                )}
               </div>
 
               <div className="flex justify-end">

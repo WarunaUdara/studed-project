@@ -1,5 +1,5 @@
-import { Flame } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
+import { Flame } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Confetti } from "@/components/gamification/Confetti";
 import type { LeaderboardEntry } from "@/components/gamification/LeaderboardRow";

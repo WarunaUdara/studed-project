@@ -77,10 +77,7 @@ function generateReport(iteration: number, audit: any, critique: CritiqueOutput)
 | Severity | Screen | Root Cause / Fault | Suggested Fix |
 |---|---|---|---|
 ${critique.passA
-  .map(
-    (d) =>
-      `| **${d.severity}** | \`${d.screen}\` | ${d.rootCause} | ${d.suggestedFix} |`
-  )
+  .map((d) => `| **${d.severity}** | \`${d.screen}\` | ${d.rootCause} | ${d.suggestedFix} |`)
   .join("\n")}
 
 ---
@@ -96,7 +93,7 @@ ${
 - **Screen**: \`${b.screen}\`
 - **Description**: ${b.description}
 - **Verdict**: **${b.servesVsExploitsVerdict}**
-- **Recommendation**: ${b.recommendation}`
+- **Recommendation**: ${b.recommendation}`,
         )
         .join("\n\n")
 }
@@ -111,7 +108,7 @@ ${critique.passC
 - **Target Screen**: \`${c.screen}\`
 - **Description**: ${c.description}
 - **Pedagogical Rationale**: ${c.rationale}
-- **Human Approval**: Mandatory prior to coding.`
+- **Human Approval**: Mandatory prior to coding.`,
   )
   .join("\n\n")}
 

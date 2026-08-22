@@ -94,7 +94,7 @@ function TravelingMascot({
 
             if (elapsed < travelDuration) {
               const t = elapsed / travelDuration;
-              const ease = 1 - Math.pow(1 - t, 3);
+              const ease = 1 - (1 - t) ** 3;
               currentFraction = ease * maxTarget;
               setIsStationary(false);
             } else {
@@ -125,7 +125,7 @@ function TravelingMascot({
     <div
       className={cn(
         "absolute pointer-events-none z-30 -translate-x-1/2 -translate-y-1/2 transition-transform duration-300",
-        isStationary && "animate-bounce"
+        isStationary && "animate-bounce",
       )}
       style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
     >

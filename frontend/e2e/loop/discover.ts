@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { chromium, type Browser, type Page } from "@playwright/test";
+import { type Browser, chromium, type Page } from "@playwright/test";
 import { setupMockGraphQL } from "./mock-api";
 import type { DiscoveredScreen, DiscoveryOutput, StaticRoute, UserRole } from "./types";
 
@@ -79,11 +79,7 @@ export function matchRouteFile(pathname: string, staticRoutes: StaticRoute[]): s
   for (const route of staticRoutes) {
     if (!route.isDynamic) continue;
     const regexStr =
-      "^" +
-      route.routePattern
-        .replace(/\$([a-zA-Z0-9_]+)/g, "[^/]+")
-        .replace(/\//g, "\\/") +
-      "$";
+      "^" + route.routePattern.replace(/\$([a-zA-Z0-9_]+)/g, "[^/]+").replace(/\//g, "\\/") + "$";
     const regex = new RegExp(regexStr);
     if (regex.test(cleanPath)) {
       return route.routeFile;
@@ -114,7 +110,9 @@ async function authenticateUser(page: Page, email: string, pass: string): Promis
       await page.evaluate(() => {
         window.localStorage.setItem("studed_has_session", "true");
       });
-      const dest = email.includes("educator") ? `${BASE_URL}/educator/courses` : `${BASE_URL}/dashboard`;
+      const dest = email.includes("educator")
+        ? `${BASE_URL}/educator/courses`
+        : `${BASE_URL}/dashboard`;
       await page.goto(dest, { waitUntil: "domcontentloaded" });
     }
     return true;
@@ -133,7 +131,7 @@ export async function crawlRole(
   credentials: { email: string; pass: string },
   staticRoutes: StaticRoute[],
   maxDepth = 3,
-  maxScreens = 25
+  maxScreens = 25,
 ): Promise<{
   screens: DiscoveredScreen[];
   redirects: Array<{ from: string; to: string }>;
@@ -206,7 +204,10 @@ export async function crawlRole(
       const is404 =
         response?.status() === 404 ||
         title.toLowerCase().includes("not found") ||
-        (await page.locator("text=Wave Not Found, text=Course Not Found, text=404").count().catch(() => 0)) > 0;
+        (await page
+          .locator("text=Wave Not Found, text=Course Not Found, text=404")
+          .count()
+          .catch(() => 0)) > 0;
 
       if (is404) {
         errors404.push(cleanCurrentPath);
@@ -230,7 +231,10 @@ export async function crawlRole(
           .evaluateAll((elements) =>
             elements
               .map((el) => el.getAttribute("href"))
-              .filter((href): href is string => !!href && href.startsWith("/") && !href.startsWith("/api"))
+              .filter(
+                (href): href is string =>
+                  !!href && href.startsWith("/") && !href.startsWith("/api"),
+              ),
           )
           .catch(() => []);
 
@@ -278,7 +282,7 @@ export async function runDiscovery(): Promise<DiscoveryOutput> {
       browser,
       "student",
       { email: "demo.student@studed.lk", pass: "password1234" },
-      staticRoutes
+      staticRoutes,
     );
 
     console.log("[discover] Crawling Educator journey...");
@@ -286,7 +290,7 @@ export async function runDiscovery(): Promise<DiscoveryOutput> {
       browser,
       "educator",
       { email: "demo.educator@studed.lk", pass: "password1234" },
-      staticRoutes
+      staticRoutes,
     );
 
     const output: DiscoveryOutput = {

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import React from "react";
+import type React from "react";
 import { cn } from "@/lib/utils";
 
 interface AnimatedLinkProps {
@@ -17,7 +17,7 @@ const ArrowIcon = ({ className }: { className?: string }) => (
   <svg
     className={cn(
       "ml-[0.3em] size-[0.55em] transition-all duration-300 [motion-reduce:transition-none]",
-      className
+      className,
     )}
     fill="none"
     viewBox="0 0 10 10"
@@ -50,14 +50,7 @@ function BaseLink({
 }: AnimatedLinkProps) {
   if (to) {
     return (
-      <Link
-        to={to}
-        className={className}
-        title={title}
-        onClick={onClick}
-        target={target}
-        rel={rel}
-      >
+      <Link to={to} className={className} title={title} onClick={onClick} target={target} rel={rel}>
         {children}
       </Link>
     );
@@ -80,13 +73,7 @@ function BaseLink({
 /**
  * Link000: Underline expansion from right to left on hover
  */
-export const Link000 = ({
-  children,
-  to,
-  href,
-  className,
-  ...props
-}: AnimatedLinkProps) => {
+export const Link000 = ({ children, to, href, className, ...props }: AnimatedLinkProps) => {
   return (
     <BaseLink
       to={to}
@@ -96,7 +83,7 @@ export const Link000 = ({
         "before:pointer-events-none before:absolute before:bottom-0 before:left-0 before:h-[0.05em] before:w-full before:bg-current before:content-['']",
         "before:origin-right before:scale-x-0 before:transition-transform before:duration-300 before:ease-[cubic-bezier(0.4,0,0.2,1)] [motion-reduce:before:transition-none]",
         "hover:before:origin-left hover:before:scale-x-100",
-        className
+        className,
       )}
       {...props}
     >
@@ -108,13 +95,7 @@ export const Link000 = ({
 /**
  * Link001: Underline with gliding arrow icon appearing on hover
  */
-export const Link001 = ({
-  children,
-  to,
-  href,
-  className,
-  ...props
-}: AnimatedLinkProps) => {
+export const Link001 = ({ children, to, href, className, ...props }: AnimatedLinkProps) => {
   return (
     <BaseLink
       to={to}
@@ -124,7 +105,7 @@ export const Link001 = ({
         "before:pointer-events-none before:absolute before:left-0 before:bottom-[-2px] before:h-[0.05em] before:w-full before:bg-current before:content-['']",
         "before:origin-right before:scale-x-0 before:transition-transform before:duration-300 before:ease-[cubic-bezier(0.4,0,0.2,1)] [motion-reduce:before:transition-none]",
         "hover:before:origin-left hover:before:scale-x-100",
-        className
+        className,
       )}
       {...props}
     >
@@ -137,13 +118,7 @@ export const Link001 = ({
 /**
  * Link002: Underline with left-to-right origin and gliding arrow icon
  */
-export const Link002 = ({
-  children,
-  to,
-  href,
-  className,
-  ...props
-}: AnimatedLinkProps) => {
+export const Link002 = ({ children, to, href, className, ...props }: AnimatedLinkProps) => {
   return (
     <BaseLink
       to={to}
@@ -153,7 +128,7 @@ export const Link002 = ({
         "before:pointer-events-none before:absolute before:left-0 before:bottom-[-2px] before:h-[0.05em] before:w-full before:bg-current before:content-['']",
         "before:origin-left before:scale-x-0 before:transition-transform before:duration-300 before:ease-[cubic-bezier(0.4,0,0.2,1)] [motion-reduce:before:transition-none]",
         "hover:before:origin-right hover:before:scale-x-100",
-        className
+        className,
       )}
       {...props}
     >
@@ -166,13 +141,7 @@ export const Link002 = ({
 /**
  * Link003: Center-origin expanding underline with arrow
  */
-export const Link003 = ({
-  children,
-  to,
-  href,
-  className,
-  ...props
-}: AnimatedLinkProps) => {
+export const Link003 = ({ children, to, href, className, ...props }: AnimatedLinkProps) => {
   return (
     <BaseLink
       to={to}
@@ -182,7 +151,7 @@ export const Link003 = ({
         "before:pointer-events-none before:absolute before:left-0 before:bottom-[-2px] before:h-[0.05em] before:w-full before:bg-current before:content-['']",
         "before:origin-center before:scale-x-0 before:transition-transform before:duration-300 before:ease-[cubic-bezier(0.4,0,0.2,1)] [motion-reduce:before:transition-none]",
         "hover:before:scale-x-100",
-        className
+        className,
       )}
       {...props}
     >
@@ -195,13 +164,7 @@ export const Link003 = ({
 /**
  * Link004: Difference mix-blend background vertical highlight with rotating arrow
  */
-export const Link004 = ({
-  children,
-  to,
-  href,
-  className,
-  ...props
-}: AnimatedLinkProps) => {
+export const Link004 = ({ children, to, href, className, ...props }: AnimatedLinkProps) => {
   return (
     <BaseLink
       to={to}
@@ -211,7 +174,7 @@ export const Link004 = ({
         "before:pointer-events-none before:absolute before:left-0 before:bottom-0 before:h-0 before:w-full before:bg-foreground before:content-['']",
         "before:origin-center before:transition-all before:duration-300 before:ease-[cubic-bezier(0.4,0,0.2,1)] [motion-reduce:before:transition-none]",
         "before:z-0 before:mix-blend-difference hover:before:h-full hover:before:scale-x-100",
-        className
+        className,
       )}
       {...props}
     >
@@ -224,13 +187,7 @@ export const Link004 = ({
 /**
  * Link005: Difference mix-blend horizontal highlight with slide arrow
  */
-export const Link005 = ({
-  children,
-  to,
-  href,
-  className,
-  ...props
-}: AnimatedLinkProps) => {
+export const Link005 = ({ children, to, href, className, ...props }: AnimatedLinkProps) => {
   return (
     <BaseLink
       to={to}
@@ -240,7 +197,7 @@ export const Link005 = ({
         "before:pointer-events-none before:absolute before:left-0 before:top-0 before:h-full before:w-full before:bg-foreground before:content-['']",
         "before:origin-left before:scale-x-0 before:transition-all before:duration-300 before:ease-[cubic-bezier(0.4,0,0.2,1)] [motion-reduce:before:transition-none]",
         "before:z-0 before:mix-blend-difference hover:before:scale-x-100",
-        className
+        className,
       )}
       {...props}
     >

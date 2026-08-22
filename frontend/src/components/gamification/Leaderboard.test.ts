@@ -82,7 +82,9 @@ describe("Gamification & Leaderboard System", () => {
       expect(privateLeaderboardName("Dinuka")).toBe("Dinuka");
       expect(privateLeaderboardName("")).toBe("Student Scholar");
       // Raw UUIDs
-      expect(privateLeaderboardName("123e4567-e89b-12d3-a456-426614174000")).toBe("Student Scholar");
+      expect(privateLeaderboardName("123e4567-e89b-12d3-a456-426614174000")).toBe(
+        "Student Scholar",
+      );
     });
   });
 

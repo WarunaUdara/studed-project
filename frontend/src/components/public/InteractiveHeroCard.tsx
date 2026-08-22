@@ -156,7 +156,10 @@ export function InteractiveHeroCard() {
         <div className="relative w-full flex-1 py-3 overflow-hidden flex flex-col items-center justify-center">
           {/* TAB 1: MATH TRIGONOMETRIC WAVE & UNIT CIRCLE */}
           {activeTab === "math" && (
-            <div ref={mathRef} className="flex flex-col items-center justify-between h-full w-full py-1">
+            <div
+              ref={mathRef}
+              className="flex flex-col items-center justify-between h-full w-full py-1"
+            >
               {/* Formula Badge */}
               <div className="rounded-lg border border-border/80 bg-muted/50 px-3 py-1 font-mono text-xs font-bold text-foreground shadow-2xs">
                 f(θ) = cos(θ)
@@ -299,7 +302,10 @@ export function InteractiveHeroCard() {
 
           {/* TAB 2: SCIENCE INTERACTIVE GEARS & MECHANICAL PARITY */}
           {activeTab === "science" && (
-            <div ref={scienceRef} className="flex flex-col items-center justify-between h-full w-full py-1">
+            <div
+              ref={scienceRef}
+              className="flex flex-col items-center justify-between h-full w-full py-1"
+            >
               <p className="text-xs font-medium text-muted-foreground text-center">
                 Adjacent gears in a mechanical train rotate in opposite directions
               </p>
@@ -393,7 +399,10 @@ export function InteractiveHeroCard() {
 
           {/* TAB 3: CODING ALGORITHM INTERPRETER RUNNING LINE BY LINE */}
           {activeTab === "code" && (
-            <div ref={codeRef} className="flex flex-col items-center justify-between h-full w-full py-1">
+            <div
+              ref={codeRef}
+              className="flex flex-col items-center justify-between h-full w-full py-1"
+            >
               {/* Code blocks with animated active line indicator */}
               <div className="w-full rounded-2xl border border-border/80 bg-muted/30 p-2.5 space-y-1 font-mono text-[11px] text-left shadow-inner">
                 {/* Line 1 */}
@@ -463,7 +472,11 @@ export function InteractiveHeroCard() {
                             : "bg-muted/40 border border-border/40"
                         }`}
                       >
-                        {isHero ? <Bot className="size-3.5" /> : hasGem ? <Gem className="size-3.5" /> : null}
+                        {isHero ? (
+                          <Bot className="size-3.5" />
+                        ) : hasGem ? (
+                          <Gem className="size-3.5" />
+                        ) : null}
                       </div>
                     );
                   })}

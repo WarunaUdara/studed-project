@@ -42,8 +42,7 @@ interface AuthState {
 }
 
 const hasInitialSession =
-  typeof window !== "undefined" &&
-  localStorage.getItem("studed_has_session") === "true";
+  typeof window !== "undefined" && localStorage.getItem("studed_has_session") === "true";
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,

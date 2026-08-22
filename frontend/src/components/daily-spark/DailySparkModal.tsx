@@ -121,10 +121,7 @@ export function DailySparkModal({ isOpen, onClose }: DailySparkModalProps) {
 
     try {
       const todayStr = new Date().toISOString().slice(0, 10);
-      localStorage.setItem(
-        `daily_spark_${user?.id ?? "guest"}_${todayStr}`,
-        "completed",
-      );
+      localStorage.setItem(`daily_spark_${user?.id ?? "guest"}_${todayStr}`, "completed");
     } catch {
       // Ignore in private storage mode
     }

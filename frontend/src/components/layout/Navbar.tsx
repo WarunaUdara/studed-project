@@ -369,7 +369,12 @@ export function Navbar() {
                   className="flex items-center justify-center rounded-full border border-primary/40 hover:scale-105 transition-transform"
                   aria-label="User profile menu"
                 >
-                  <BlobAvatar name={user?.id ?? "guest"} size={36} animate="hover" title={user?.fullName ?? "Your profile"} />
+                  <BlobAvatar
+                    name={user?.id ?? "guest"}
+                    size={36}
+                    animate="hover"
+                    title={user?.fullName ?? "Your profile"}
+                  />
                 </button>
 
                 {/* Profile Menu Dropdown */}
@@ -491,11 +496,7 @@ export function Navbar() {
                 </AnimatePresence>
               </div>
             ) : (
-              <Button
-                asChild
-                size="sm"
-                className="rounded-full font-bold text-xs px-4"
-              >
+              <Button asChild size="sm" className="rounded-full font-bold text-xs px-4">
                 <Link to="/login">Log In</Link>
               </Button>
             )}

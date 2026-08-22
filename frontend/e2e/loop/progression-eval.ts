@@ -488,7 +488,7 @@ async function runLivePass(): Promise<void> {
     "query{courses(pagination:{first:40}){edges{node{id title isPublished lessons{waves{id isPublished evaluateBlocks{id options}}}}}}}",
   );
   const edges =
-    ((cat.data?.courses as { edges?: Array<{ node: Record<string, any> }> })?.edges ?? []);
+    (cat.data?.courses as { edges?: Array<{ node: Record<string, any> }> })?.edges ?? [];
   let course: Record<string, any> | null = null;
   let wave: Record<string, any> | null = null;
   for (const edge of edges) {
@@ -721,7 +721,9 @@ async function main() {
   }
 
   const total = passed.length + findings.length;
-  console.log(`\n${passed.length}/${total} invariants hold. Report: ${path.relative(REPO, REPORT_FILE)}`);
+  console.log(
+    `\n${passed.length}/${total} invariants hold. Report: ${path.relative(REPO, REPORT_FILE)}`,
+  );
 
   // Only critical and high findings fail the run; medium is a nudge.
   const blocking = findings.filter((f) => f.severity !== "medium").length;

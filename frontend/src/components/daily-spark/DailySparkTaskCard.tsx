@@ -89,8 +89,7 @@ export function DailySparkTaskCard({
         {/* Center: Segmented Pills Progress Bar */}
         <div className="flex items-center gap-2">
           {Array.from({ length: totalTasks }).map((_, i) => {
-            const isCompleted =
-              i < currentIndex || (i === currentIndex && isCorrect);
+            const isCompleted = i < currentIndex || (i === currentIndex && isCorrect);
             const isCurrent = i === currentIndex && !isCorrect;
 
             return (
@@ -148,9 +147,7 @@ export function DailySparkTaskCard({
           <h2 className="flex items-center justify-center gap-1.5 text-lg font-bold text-neutral-100 sm:text-xl">
             <span>Color</span>
             <span className="inline-flex flex-col items-center px-1 text-sm leading-none font-extrabold text-white">
-              <span className="border-b-2 border-white pb-0.5">
-                {task.numerator}
-              </span>
+              <span className="border-b-2 border-white pb-0.5">{task.numerator}</span>
               <span className="pt-0.5">{task.denominator}</span>
             </span>
             <span>of the triangle.</span>
@@ -195,9 +192,7 @@ export function DailySparkTaskCard({
               {/* Left Indicator */}
               <div className="flex items-center gap-2">
                 <PartyPopper className="size-5 text-emerald-400" />
-                <span className="font-extrabold text-base text-white">
-                  Correct!
-                </span>
+                <span className="font-extrabold text-base text-white">Correct!</span>
               </div>
 
               {/* Right Action Buttons */}
@@ -264,9 +259,7 @@ export function DailySparkTaskCard({
               <h3 className="text-lg font-bold text-white mb-2">
                 Geometric Proof &amp; Explanation
               </h3>
-              <p className="text-sm text-neutral-300 leading-relaxed mb-6">
-                {task.explanation}
-              </p>
+              <p className="text-sm text-neutral-300 leading-relaxed mb-6">{task.explanation}</p>
               <button
                 type="button"
                 onClick={() => setShowExplanation(false)}

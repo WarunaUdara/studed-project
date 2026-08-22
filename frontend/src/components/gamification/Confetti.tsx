@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef } from "react";
 import { gsap } from "gsap";
-import { cn } from "@/lib/utils";
+import { useEffect, useMemo, useRef } from "react";
 import { prefersReducedMotion } from "@/lib/motion";
+import { cn } from "@/lib/utils";
 
 const COLORS = [
   "oklch(0.76 0.18 75)",
