@@ -61,6 +61,8 @@ export function Navbar() {
   const isLandingPage = pathname === "/";
   const [isScrolled, setIsScrolled] = useState(false);
 
+  const isEducator =
+    user?.role === "EDUCATOR" || user?.role === "HEAD_EDUCATOR" || user?.role === "ADMIN";
   const streak = Math.max(1, user?.streak ?? 1);
   const keys = 2;
   const totalXp = Math.max(0, user?.totalXp ?? 140);
@@ -250,7 +252,7 @@ export function Navbar() {
         items={NAV_ITEMS}
         logoNode={
           <Link
-            to={isAuthenticated ? "/dashboard" : "/"}
+            to={isAuthenticated ? (isEducator ? "/educator" : "/dashboard") : "/"}
             className="flex items-center gap-1 font-serif text-2xl font-bold tracking-tight text-foreground hover:opacity-90 transition-opacity"
           >
             Stud<span className="italic text-primary">Ed</span>
@@ -360,14 +362,16 @@ export function Navbar() {
 
                       {/* Navigation Links */}
                       <div className="py-1 space-y-0.5">
-                        <Link
-                          to="/dashboard"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
-                        >
-                          <Home className="size-3.5 text-primary" />
-                          <span>Home</span>
-                        </Link>
+                        {!isEducator && (
+                          <Link
+                            to="/dashboard"
+                            onClick={() => setUserDropdownOpen(false)}
+                            className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
+                          >
+                            <Home className="size-3.5 text-primary" />
+                            <span>Home</span>
+                          </Link>
+                        )}
                         <Link
                           to="/achievements"
                           onClick={() => setUserDropdownOpen(false)}
