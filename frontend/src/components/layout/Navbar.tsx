@@ -2,15 +2,14 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Award,
-  BookOpen,
   Brain,
   Code,
   Compass,
   Crown,
   Flame,
   GraduationCap,
+  Home,
   Key,
-  LayoutDashboard,
   LayoutGrid,
   LogOut,
   Moon,
@@ -189,24 +188,6 @@ export function Navbar() {
           icon: <LayoutGrid className="size-4 text-purple-500" />,
         },
       ],
-      previewCards: [
-        {
-          title: "Scientific Thinking",
-          subtitle:
-            "Explore gear train physics, angular velocity, and mechanical parity with interactive 3D simulations.",
-          href: "/courses/science-thinking",
-          gradient: "bg-gradient-to-tr from-amber-600/30 via-orange-500/20 to-yellow-400/20",
-          icon: <Brain className="size-6 text-amber-400" />,
-        },
-        {
-          title: "Thinking in Python",
-          subtitle:
-            "Master algorithmic thinking by guiding the Blob Mascot through dynamic code mazes.",
-          href: "/courses",
-          gradient: "bg-gradient-to-tr from-emerald-600/30 via-teal-500/20 to-cyan-400/20",
-          icon: <Code className="size-6 text-emerald-400" />,
-        },
-      ],
     },
     {
       id: "leagues",
@@ -233,16 +214,6 @@ export function Navbar() {
           icon: <Award className="size-4 text-rose-500" />,
         },
       ],
-      previewCards: [
-        {
-          title: "Weekly League Standings",
-          subtitle:
-            "Compete against students in your tier this week. Complete daily waves to climb the leaderboard.",
-          href: "/leaderboard",
-          gradient: "bg-gradient-to-tr from-indigo-600/30 via-purple-500/20 to-pink-500/20",
-          icon: <Trophy className="size-6 text-amber-400" />,
-        },
-      ],
     },
     {
       id: "quests",
@@ -267,16 +238,6 @@ export function Navbar() {
           href: "/dashboard",
           description: "Maintain your continuous daily learning streak",
           icon: <Flame className="size-4 text-orange-500" />,
-        },
-      ],
-      previewCards: [
-        {
-          title: "Daily Spark Challenge",
-          subtitle:
-            "Earn extra XP and maintain your 7-day study streak with daily bite-sized puzzles.",
-          href: "/dashboard",
-          gradient: "bg-gradient-to-tr from-lime-600/30 via-emerald-500/20 to-teal-400/20",
-          icon: <Zap className="size-6 text-lime-400" />,
         },
       ],
     },
@@ -404,16 +365,8 @@ export function Navbar() {
                           onClick={() => setUserDropdownOpen(false)}
                           className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
                         >
-                          <LayoutDashboard className="size-3.5 text-primary" />
-                          <span>Dashboard</span>
-                        </Link>
-                        <Link
-                          to="/courses"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
-                        >
-                          <BookOpen className="size-3.5 text-amber-500" />
-                          <span>My Courses</span>
+                          <Home className="size-3.5 text-primary" />
+                          <span>Home</span>
                         </Link>
                         <Link
                           to="/achievements"
@@ -429,7 +382,7 @@ export function Navbar() {
                           className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
                         >
                           <Crown className="size-3.5 text-amber-400" />
-                          <span>Subscription &amp; Keys</span>
+                          <span>Subscription Plan</span>
                         </Link>
                         <Link
                           to="/settings"

@@ -24,7 +24,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: "/educator", label: "Dashboard", icon: Home, matchPrefix: "/educator" },
+  { to: "/educator", label: "Home", icon: Home, matchPrefix: "/educator" },
   {
     to: "/educator/courses",
     label: "My Courses",

@@ -183,99 +183,143 @@ export function FloatingCardNav({
 
       {/* Floating Mega-Menu Dropdown Card (Absolute Overlay - Zero Layout Shift) */}
       <AnimatePresence>
-        {activeItem && activeItem.links.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: -8, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.98 }}
-            transition={{ duration: 0.18, ease: "easeOut" }}
-            onMouseEnter={handleMouseEnterDropdown}
-            className="absolute left-0 right-0 top-16 z-40 mx-auto w-full max-w-5xl px-4 pt-2 pointer-events-auto"
-          >
-            <div className="relative rounded-3xl border border-border/80 bg-card/95 p-6 shadow-2xl backdrop-blur-2xl">
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-                {/* Left Column: Categorized Navigation Links */}
-                <div className="lg:col-span-5 space-y-1.5">
-                  <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    {activeItem.label}
-                  </div>
-                  {activeItem.links.map((subLink, idx) => (
-                    <Link
-                      key={idx}
-                      to={subLink.href as any}
-                      onClick={() => setActiveTabId(null)}
-                      className="group flex items-center justify-between rounded-2xl p-3 transition-colors hover:bg-muted/80"
-                    >
-                      <div className="flex items-center gap-3.5">
-                        <div className="flex size-9 items-center justify-center rounded-xl bg-muted group-hover:bg-primary/15 transition-colors">
-                          {subLink.icon}
-                        </div>
-                        <div>
-                          <div className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                            {subLink.label}
-                          </div>
-                          {subLink.description && (
-                            <div className="text-[11px] text-muted-foreground font-normal">
-                              {subLink.description}
-                            </div>
-                          )}
-                        </div>
+        {activeItem && activeItem.links.length > 0 && (() => {
+          const hasPreviewCards = Boolean(activeItem.previewCards && activeItem.previewCards.length > 0);
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: -8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.98 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+              onMouseEnter={handleMouseEnterDropdown}
+              className={`absolute left-0 right-0 top-16 z-40 mx-auto w-full ${
+                hasPreviewCards ? "max-w-5xl" : "max-w-3xl"
+              } px-4 pt-2 pointer-events-auto`}
+            >
+              <div className="relative rounded-3xl border border-border/80 bg-card/95 p-5 sm:p-6 shadow-2xl backdrop-blur-2xl">
+                {hasPreviewCards ? (
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+                    {/* Left Column: Categorized Navigation Links */}
+                    <div className="lg:col-span-5 space-y-1.5">
+                      <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        {activeItem.label}
                       </div>
-
-                      {subLink.badge ? (
-                        <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold text-primary">
-                          {subLink.badge}
-                        </span>
-                      ) : (
-                        <ArrowRight className="size-3.5 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                      )}
-                    </Link>
-                  ))}
-                </div>
-
-                {/* Right Column: Visual Preview Cards (Sarvam AI style) */}
-                {activeItem.previewCards && activeItem.previewCards.length > 0 && (
-                  <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 border-t lg:border-t-0 lg:border-l border-border/60 pt-4 lg:pt-0 lg:pl-6">
-                    {activeItem.previewCards.map((card, idx) => (
-                      <Link
-                        key={idx}
-                        to={card.href as any}
-                        onClick={() => setActiveTabId(null)}
-                        className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-muted/50 to-muted/20 p-4 transition-all hover:border-primary/50 hover:shadow-lg"
-                      >
-                        {/* Thumbnail / Gradient Header */}
-                        <div
-                          className={`relative mb-3 flex h-28 w-full items-center justify-center rounded-xl overflow-hidden shadow-inner ${
-                            card.gradient ||
-                            "bg-gradient-to-tr from-amber-500/20 via-primary/20 to-purple-500/20"
-                          }`}
+                      {activeItem.links.map((subLink, idx) => (
+                        <Link
+                          key={idx}
+                          to={subLink.href as any}
+                          onClick={() => setActiveTabId(null)}
+                          className="group flex items-center justify-between rounded-2xl p-3 transition-colors hover:bg-muted/80"
                         >
-                          <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px]" />
-                          <div className="relative z-10 flex size-12 items-center justify-center rounded-2xl bg-card/80 backdrop-blur-md shadow-md border border-white/20 group-hover:scale-110 transition-transform">
-                            {card.icon || <Sparkles className="size-6 text-primary" />}
+                          <div className="flex items-center gap-3.5">
+                            <div className="flex size-9 items-center justify-center rounded-xl bg-muted group-hover:bg-primary/15 transition-colors">
+                              {subLink.icon}
+                            </div>
+                            <div>
+                              <div className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                                {subLink.label}
+                              </div>
+                              {subLink.description && (
+                                <div className="text-[11px] text-muted-foreground font-normal">
+                                  {subLink.description}
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Card Info */}
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">
-                              {card.title}
+                          {subLink.badge ? (
+                            <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold text-primary">
+                              {subLink.badge}
                             </span>
-                            <ArrowRight className="size-3 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                          ) : (
+                            <ArrowRight className="size-3.5 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                          )}
+                        </Link>
+                      ))}
+                    </div>
+
+                    {/* Right Column: Visual Preview Cards (Sarvam AI style) */}
+                    <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 border-t lg:border-t-0 lg:border-l border-border/60 pt-4 lg:pt-0 lg:pl-6">
+                      {activeItem.previewCards!.map((card, idx) => (
+                        <Link
+                          key={idx}
+                          to={card.href as any}
+                          onClick={() => setActiveTabId(null)}
+                          className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-muted/50 to-muted/20 p-4 transition-all hover:border-primary/50 hover:shadow-lg"
+                        >
+                          {/* Thumbnail / Gradient Header */}
+                          <div
+                            className={`relative mb-3 flex h-28 w-full items-center justify-center rounded-xl overflow-hidden shadow-inner ${
+                              card.gradient ||
+                              "bg-gradient-to-tr from-amber-500/20 via-primary/20 to-purple-500/20"
+                            }`}
+                          >
+                            <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px]" />
+                            <div className="relative z-10 flex size-12 items-center justify-center rounded-2xl bg-card/80 backdrop-blur-md shadow-md border border-white/20 group-hover:scale-110 transition-transform">
+                              {card.icon || <Sparkles className="size-6 text-primary" />}
+                            </div>
                           </div>
-                          <p className="text-[11px] text-muted-foreground line-clamp-2">
-                            {card.subtitle}
-                          </p>
-                        </div>
-                      </Link>
-                    ))}
+
+                          {/* Card Info */}
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">
+                                {card.title}
+                              </span>
+                              <ArrowRight className="size-3 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                            </div>
+                            <p className="text-[11px] text-muted-foreground line-clamp-2">
+                              {card.subtitle}
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="px-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      {activeItem.label}
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {activeItem.links.map((subLink, idx) => (
+                        <Link
+                          key={idx}
+                          to={subLink.href as any}
+                          onClick={() => setActiveTabId(null)}
+                          className="group flex items-start gap-3.5 rounded-2xl border border-border/40 bg-card/50 hover:bg-muted/80 hover:border-border/80 p-3.5 transition-all hover:shadow-xs min-h-[74px]"
+                        >
+                          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted group-hover:bg-primary/15 transition-colors">
+                            {subLink.icon}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between gap-1.5">
+                              <span className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                                {subLink.label}
+                              </span>
+                              {subLink.badge ? (
+                                <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.2 text-[10px] font-bold text-primary">
+                                  {subLink.badge}
+                                </span>
+                              ) : (
+                                <ArrowRight className="size-3.5 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0" />
+                              )}
+                            </div>
+                            {subLink.description && (
+                              <p className="mt-1 text-[11px] text-muted-foreground font-normal line-clamp-2 leading-relaxed">
+                                {subLink.description}
+                              </p>
+                            )}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          );
+        })()}
       </AnimatePresence>
 
       {/* Mobile Slide-down Drawer */}
