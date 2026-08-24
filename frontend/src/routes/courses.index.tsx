@@ -38,6 +38,61 @@ const CATEGORY_TABS: { id: PathCategory; label: string; icon: ReactNode }[] = [
   { id: "LANGUAGES", label: "Languages", icon: <BookOpen className="size-4" /> },
 ];
 
+const CURATED_PYTHON_COURSES: CourseNode[] = [
+  {
+    id: "thinking-in-python",
+    title: "Thinking in Python",
+    description:
+      "Build Python programs step by step to develop strong foundations for creating with code. From variables to loop logic.",
+    slug: "thinking-in-python",
+    gradeLevel: "GRADE_6_8",
+    myProgress: { completedWaves: 1, totalWaves: 8 },
+  },
+  {
+    id: "functions-in-python",
+    title: "Functions in Python",
+    description:
+      "Master modular programming, parameters, return values, and reusable computational logic.",
+    slug: "functions-in-python",
+    gradeLevel: "GRADE_6_8",
+  },
+  {
+    id: "recursion-in-python",
+    title: "Recursion in Python",
+    description:
+      "Understand base cases, recursive call stacks, and fractal self-similar problem solving.",
+    slug: "recursion-in-python",
+    gradeLevel: "GRADE_9_11",
+  },
+  {
+    id: "algorithms-in-python",
+    title: "Algorithms in Python",
+    description:
+      "Explore sorting, binary search, Big-O complexity, and runtime performance optimization.",
+    slug: "algorithms-in-python",
+    gradeLevel: "GRADE_9_11",
+    isNew: true,
+  },
+  {
+    id: "oop-in-python",
+    title: "Object-Oriented Programming in Python",
+    description:
+      "Design real-world systems with classes, inheritance, encapsulation, and object architecture.",
+    slug: "oop-in-python",
+    gradeLevel: "OL",
+    isNew: true,
+  },
+  {
+    id: "data-structures-in-python",
+    title: "Data Structures in Python",
+    description:
+      "Work with lists, dictionaries, stacks, queues, trees, and high-performance hash maps.",
+    slug: "data-structures-in-python",
+    gradeLevel: "AL",
+    isNew: true,
+  },
+];
+
 function CoursesCatalogPage() {
   const [search, setSearch] = useState(() => {
     if (typeof window !== "undefined") {
@@ -98,14 +153,25 @@ function CoursesCatalogPage() {
           c.slug.includes("math")),
     );
 
-    // CS & Coding Courses
-    const csCourses = allCourses.filter(
-      (c) =>
-        matchesSearch(c) &&
-        (c.title.toLowerCase().includes("python") ||
-          c.title.toLowerCase().includes("code") ||
-          c.slug.includes("python")),
-    );
+    // CS & Coding Courses (Curated Python track matching reference order)
+    const pythonCourses = CURATED_PYTHON_COURSES.map((curated) => {
+      const match = allCourses.find(
+        (c) =>
+          c.slug === curated.slug ||
+          c.id === curated.id ||
+          c.title.toLowerCase() === curated.title.toLowerCase(),
+      );
+      if (match) {
+        return {
+          ...curated,
+          id: match.id,
+          title: match.title || curated.title,
+          description: match.description || curated.description,
+          myProgress: match.myProgress ?? curated.myProgress,
+        };
+      }
+      return curated;
+    }).filter(matchesSearch);
 
     // Science & Physics Courses
     const scienceDbCourses = allCourses.filter(
@@ -132,7 +198,7 @@ function CoursesCatalogPage() {
     // Other/Additional Courses (e.g. educator drafts / test courses)
     const categorizedIds = new Set([
       ...mathCourses.map((c) => c.id),
-      ...csCourses.map((c) => c.id),
+      ...pythonCourses.map((c) => c.id),
       ...scienceCourses.map((c) => c.id),
       ...langCourses.map((c) => c.id),
     ]);
@@ -151,14 +217,14 @@ function CoursesCatalogPage() {
       });
     }
 
-    if (csCourses.length > 0) {
+    if (pythonCourses.length > 0) {
       paths.push({
-        id: "programming-cs",
-        title: "Programming & Computer Science",
-        subtitle: "Speak the language of computers and build programs in Python.",
-        levelBadge: "FOUNDATIONAL · ALL AGES",
+        id: "python",
+        title: "Python",
+        subtitle: "Translate ideas into powerful code",
+        levelBadge: "INTERMEDIATE",
         category: "CS",
-        courses: csCourses,
+        courses: pythonCourses,
       });
     }
 

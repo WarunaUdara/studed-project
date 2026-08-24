@@ -6,8 +6,14 @@ import type { CourseNode } from "./types";
 const KNOWN_COVERS: Record<string, string> = {
   "coordinate-geometry": "/covers/coordinate-geometry.jpg",
   "g10-mathematics": "/covers/g10-mathematics.jpg",
-  "thinking-in-python": "/covers/thinking-in-python.jpg",
-  "python-10-challenges": "/covers/python-10-challenges.jpg",
+  "thinking-in-python": "/courses/python/thinking-in-python.png",
+  "functions-in-python": "/courses/python/functions-in-python.png",
+  "recursion-in-python": "/courses/python/recursion-in-python.png",
+  "algorithms-in-python": "/courses/python/algorithms-in-python.png",
+  "oop-in-python": "/courses/python/oop-in-python.png",
+  "object-oriented-programming-in-python": "/courses/python/oop-in-python.png",
+  "data-structures-in-python": "/courses/python/data-structures-in-python.png",
+  "python-10-challenges": "/courses/python/functions-in-python.png",
   "al-physics": "/covers/al-physics.jpg",
   "g10-science": "/covers/g10-science.jpg",
   "ol-english": "/covers/ol-english.jpg",
@@ -68,7 +74,12 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
             <img
               src={coverUrl}
               alt={course.title}
-              className="size-full object-cover rounded-2xl"
+              className={cn(
+                "size-full rounded-2xl transition-transform duration-300",
+                coverUrl.includes("/courses/python/")
+                  ? "object-contain p-1 drop-shadow-sm"
+                  : "object-cover",
+              )}
               loading="lazy"
             />
           ) : (
