@@ -35,13 +35,14 @@ if [[ -n "${clusters}" ]]; then
   done
 fi
 
-echo "Waiting for GCP instance groups to be completely released..."
-for _ in {1..30}; do
-  if ! gcloud compute instance-groups list --project="${PROJECT_ID}" --format="value(name)" 2>/dev/null | grep -q "gke-"; then
-    break
+echo "Cleaning lingering GKE firewall rules in ${PROJECT_ID}..."
+gcloud compute firewall-rules list --project="${PROJECT_ID}" --filter="name ~ ^k8s" --format="value(name)" 2>/dev/null | while read -r fw; do
+  if [[ -n "${fw}" ]]; then
+    echo "  deleting firewall rule ${fw}..."
+    gcloud compute firewall-rules delete "${fw}" --project="${PROJECT_ID}" --quiet 2>/dev/null || true
   fi
-  sleep 5
 done
+
 
 (cd "${TF_DIR}" && tofu init >/dev/null && tofu destroy -exclude="google_project_iam_custom_role.idle_scout_role" -auto-approve | tail -20)
 
