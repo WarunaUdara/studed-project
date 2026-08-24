@@ -222,10 +222,10 @@ export const PUBLIC_STRINGS = {
     EN: "Earn XP for every wave. Level up from Rookie to Grand Master.",
     SI: "සෑම තරංගයකටම XP අත්පත් කරගන්න. Rookie සිට Grand Master දක්වා මට්ටම් නඟින්න.",
   },
-  mechanicLeaderboardTitle: { EN: "Leaderboards", SI: "ලීඩර්බෝඩ්" },
+  mechanicLeaderboardTitle: { EN: "Weekly leaderboard", SI: "සතිපතා ශ්‍රේණිගත කිරීම්" },
   mechanicLeaderboardCopy: {
-    EN: "Compete globally, by grade and by course. Top 0.1% earn the diamond glyph.",
-    SI: "ගෝලීය වශයෙන්, ශ්‍රේණිය සහ පාඨමාලාව අනුව තරඟ කරන්න. ඉහළ 0.1% ට දියමන්ති සංකේතය හිමිවේ.",
+    EN: "Complete practice waves daily to earn XP, climb your grade rankings, and celebrate progress with friends across Sri Lanka.",
+    SI: "දිනපතා waves පුහුණු වී XP උපයන්න, ඔබේ ශ්‍රේණියේ ඉහළටම යන්න, සහ මිතුරන් සමඟ එකට ඉගෙනගන්න.",
   },
   mechanicProficiencyTitle: { EN: "Proficiency ladder", SI: "ප්‍රාඵල්‍යතා පඩිපෙළ" },
   mechanicProficiencyCopy: {
