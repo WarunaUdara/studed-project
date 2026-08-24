@@ -1,0 +1,95 @@
+# One-shot Let's Encrypt bootstrap: nginx serves the HTTP-01 webroot while
+# the certbot sidecar writes challenge tokens into the same volume (validates
+# instantly) and stores the issued cert under /etc/letsencrypt.
+# After issuance: kubectl cp <pod>:/etc/letsencrypt/live/<domain>/ ... then
+# import via gcloud compute ssl-certificates create. Delete this deployment
+# once the LB serves the imported cert.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acme-challenge
+  namespace: studed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: acme-challenge
+  template:
+    metadata:
+      labels:
+        app: acme-challenge
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: web
+          image: python:3.13-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          command: ["python3", "-m", "http.server", "8080", "--directory", "/usr/share/nginx/html"]
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: webroot
+              mountPath: /usr/share/nginx/html
+        - name: certbot
+          image: certbot/certbot:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          env:
+            - name: HOME
+              value: /tmp
+          command:
+            - /bin/sh
+            - -c
+            - |
+              certbot certonly --webroot -w /usr/share/nginx/html \
+                --config-dir /tmp/certbot-conf --work-dir /tmp/certbot-work --logs-dir /tmp/certbot-logs \
+                --non-interactive --agree-tos \
+                -m warunaudarasam2003@gmail.com \
+                -d api.34.102.169.180.sslip.io && sleep 600
+          volumeMounts:
+            - name: webroot
+              mountPath: /usr/share/nginx/html
+            - name: acme-state
+              mountPath: /tmp
+      volumes:
+        - name: webroot
+          emptyDir: {}
+        - name: acme-state
+          persistentVolumeClaim:
+            claimName: acme-state
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: acme-state
+  namespace: studed
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: acme-challenge
+  namespace: studed
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+  selector:
+    app: acme-challenge

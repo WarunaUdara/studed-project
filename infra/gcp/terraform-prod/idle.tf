@@ -16,6 +16,11 @@ resource "google_project_iam_custom_role" "idle_scout_role" {
   title       = "StudEd Idle Scout (isolated stack)"
   description = "Scale the StudEd GKE primary node pool only"
   permissions = ["container.clusters.update"]
+  lifecycle {
+    # Destroying the role leaves a soft-delete marker that blocks re-creation
+    # with the same id for 7 days; it is free, so keep it across teardowns.
+    prevent_destroy = true
+  }
 }
 
 resource "google_project_iam_member" "idle_scout_cluster" {
