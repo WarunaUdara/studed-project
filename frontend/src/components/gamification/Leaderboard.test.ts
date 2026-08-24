@@ -1,40 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { buildDemoLeaderboard, SEEDED_STUDENTS, SRI_LANKAN_SCHOOLS } from "@/lib/demoData";
-import {
-  getLeagueInfo,
-  LEAGUE_TIERS,
-  privateLeaderboardName,
-  rankBadgeGlyph,
-  rankMedal,
-} from "@/lib/gamification";
+import { leaderboardDisplayName, rankBadgeGlyph, rankMedal } from "@/lib/gamification";
 
 describe("Gamification & Leaderboard System", () => {
-  describe("League Tiers", () => {
-    it("assigns correct league tier based on XP", () => {
-      expect(getLeagueInfo(0).tier).toBe("HYDROGEN");
-      expect(getLeagueInfo(450).tier).toBe("HYDROGEN");
-      expect(getLeagueInfo(1000).tier).toBe("LITHIUM");
-      expect(getLeagueInfo(2499).tier).toBe("LITHIUM");
-      expect(getLeagueInfo(2500).tier).toBe("CARBON");
-      expect(getLeagueInfo(4999).tier).toBe("CARBON");
-      expect(getLeagueInfo(5000).tier).toBe("TITANIUM");
-      expect(getLeagueInfo(9999).tier).toBe("TITANIUM");
-      expect(getLeagueInfo(10000).tier).toBe("QUANTUM");
-      expect(getLeagueInfo(50000).tier).toBe("QUANTUM");
-    });
-
-    it("has valid metadata for all 5 tiers", () => {
-      const tiers = ["HYDROGEN", "LITHIUM", "CARBON", "TITANIUM", "QUANTUM"] as const;
-      for (const tier of tiers) {
-        const meta = LEAGUE_TIERS[tier];
-        expect(meta).toBeDefined();
-        expect(meta.name).toContain("League");
-        expect(meta.promotionCutoff).toBeGreaterThan(0);
-        expect(meta.badgeBg).toBeDefined();
-      }
-    });
-  });
-
   describe("Seeded Student Cohort & buildDemoLeaderboard", () => {
     it("contains 50 unique Sri Lankan seeded students", () => {
       expect(SEEDED_STUDENTS.length).toBe(50);
@@ -75,16 +43,13 @@ describe("Gamification & Leaderboard System", () => {
     });
   });
 
-  describe("Privacy & Name Formatting", () => {
-    it("formats full names into private 'Firstname Initial.' format", () => {
-      expect(privateLeaderboardName("Senuri Wickramasinghe")).toBe("Senuri W.");
-      expect(privateLeaderboardName("Kavindu Jayawardena")).toBe("Kavindu J.");
-      expect(privateLeaderboardName("Dinuka")).toBe("Dinuka");
-      expect(privateLeaderboardName("")).toBe("Student Scholar");
-      // Raw UUIDs
-      expect(privateLeaderboardName("123e4567-e89b-12d3-a456-426614174000")).toBe(
-        "Student Scholar",
-      );
+  describe("Display Name Fallback", () => {
+    it("falls back to 'Student Scholar' when display name is empty or null", () => {
+      expect(leaderboardDisplayName("")).toBe("Student Scholar");
+      expect(leaderboardDisplayName("   ")).toBe("Student Scholar");
+      expect(leaderboardDisplayName(null)).toBe("Student Scholar");
+      expect(leaderboardDisplayName(undefined)).toBe("Student Scholar");
+      expect(leaderboardDisplayName("Nuwan K.")).toBe("Nuwan K.");
     });
   });
 

@@ -203,15 +203,38 @@ export function getRelativeLuminance(r: number, g: number, b: number): number {
 }
 
 /**
- * Calculates WCAG 2.2 contrast ratio between two colors (Foreground on Background).
+ * Alpha-composites a foreground color with alpha over a solid background color.
+ */
+export function compositeRgb(
+  top: { r: number; g: number; b: number; alpha: number },
+  bottom: { r: number; g: number; b: number } = { r: 16, g: 17, b: 20 }, // default dark slate base canvas #101114
+): { r: number; g: number; b: number } {
+  const a = top.alpha;
+  return {
+    r: Math.round(top.r * a + bottom.r * (1 - a)),
+    g: Math.round(top.g * a + bottom.g * (1 - a)),
+    b: Math.round(top.b * a + bottom.b * (1 - a)),
+  };
+}
+
+/**
+ * Calculates WCAG 2.2 contrast ratio between two colors (Foreground on Background),
+ * accounting for alpha transparency via alpha compositing.
  * Returns ratio from 1.0 to 21.0.
  */
-export function calculateContrastRatio(fgStr: string, bgStr: string): number {
+export function calculateContrastRatio(
+  fgStr: string,
+  bgStr: string,
+  baseBg: { r: number; g: number; b: number } = { r: 16, g: 17, b: 20 },
+): number {
   const fg = parseCssColor(fgStr);
   const bg = parseCssColor(bgStr);
 
-  const lumFg = getRelativeLuminance(fg.r, fg.g, fg.b);
-  const lumBg = getRelativeLuminance(bg.r, bg.g, bg.b);
+  const compBg = bg.alpha < 1 ? compositeRgb(bg, baseBg) : bg;
+  const compFg = fg.alpha < 1 ? compositeRgb(fg, compBg) : fg;
+
+  const lumFg = getRelativeLuminance(compFg.r, compFg.g, compFg.b);
+  const lumBg = getRelativeLuminance(compBg.r, compBg.g, compBg.b);
 
   const l1 = Math.max(lumFg, lumBg);
   const l2 = Math.min(lumFg, lumBg);

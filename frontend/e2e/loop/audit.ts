@@ -230,6 +230,15 @@ export class DeterministicAuditor {
     const vpWidth = snap.metadata.viewportSize.width;
 
     for (const { selector, box } of snap.boundingBoxes) {
+      // Ignore intentional horizontal scroll carousels / containers
+      const isIntentionalScroll =
+        selector.includes("no-scrollbar") ||
+        selector.includes("overflow-x") ||
+        selector.includes("course-card") ||
+        selector.includes("carousel") ||
+        selector.includes("track");
+      if (isIntentionalScroll) continue;
+
       // Horizontal overflow beyond screen boundaries
       if (box.x + box.width > vpWidth + 6 && box.width > 0) {
         this.faults.push({

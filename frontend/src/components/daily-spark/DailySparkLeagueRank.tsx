@@ -4,7 +4,7 @@ import { useQuery } from "urql";
 import { LeaderboardRow } from "@/components/gamification/LeaderboardRow";
 import { LEADERBOARD_QUERY } from "@/graphql/courses";
 import { buildDemoLeaderboard } from "@/lib/demoData";
-import { maskStudentName } from "@/lib/gamification";
+import { leaderboardDisplayName } from "@/lib/gamification";
 import type { LeaderboardEntryData, LeaderboardQueryData } from "@/lib/graphqlTypes";
 import { useAuthStore } from "@/stores/auth";
 
@@ -37,7 +37,7 @@ export function DailySparkLeagueRank({ onFinish }: DailySparkLeagueRankProps) {
     return rawDemo.map((e) => ({
       rank: e.rank,
       userId: e.user.id,
-      displayName: maskStudentName(e.user.fullName),
+      displayName: leaderboardDisplayName(e.user.fullName),
       totalXp: e.totalXp,
       isMe: e.user.id === (user?.id ?? "student-user-id"),
     }));

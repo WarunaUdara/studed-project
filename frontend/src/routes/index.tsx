@@ -198,7 +198,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
                     {t("ctaLearner")}
                   </Button>
                 </Link>
-                <Link to="/courses">
+                <Link to="/educator">
                   <Button
                     size="lg"
                     variant="outline"

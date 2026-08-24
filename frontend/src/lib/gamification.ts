@@ -214,25 +214,6 @@ export function rankBadgeGlyph(rank: number, total?: number): string {
   return "";
 }
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-export function privateLeaderboardName(fullName: string | null | undefined): string {
-  if (!fullName) return "Student Scholar";
-  const trimmed = fullName.trim();
-  if (!trimmed || UUID_RE.test(trimmed)) return "Student Scholar";
-  const parts = trimmed.split(/\s+/);
-  if (parts.length <= 1) return parts[0];
-  const first = parts[0];
-  const last = parts[parts.length - 1];
-  if (last.endsWith(".") && last.length <= 2) {
-    return `${first} ${last}`;
-  }
-  const lastInitial = last[0].toUpperCase();
-  return `${first} ${lastInitial}.`;
-}
-
-export const maskStudentName = privateLeaderboardName;
-
 export function leaderboardDisplayName(displayName: string | null | undefined): string {
   const trimmed = (displayName ?? "").trim();
   return trimmed === "" ? "Student Scholar" : trimmed;
@@ -248,86 +229,4 @@ export interface XpBreakdown {
 
 export function emptyXpBreakdown(): XpBreakdown {
   return { waves: 0, proficiencyBonuses: 0, streaks: 0, perfectScores: 0 };
-}
-
-/* ----- League Tiers & Progression ----- */
-
-export type LeagueTier = "HYDROGEN" | "LITHIUM" | "CARBON" | "TITANIUM" | "QUANTUM";
-
-export interface LeagueMeta {
-  tier: LeagueTier;
-  name: string;
-  metal: string;
-  minXp: number;
-  badgeBg: string;
-  textColor: string;
-  ringColor: string;
-  promotionCutoff: number;
-  demotionCutoff: number;
-}
-
-export const LEAGUE_TIERS: Record<LeagueTier, LeagueMeta> = {
-  HYDROGEN: {
-    tier: "HYDROGEN",
-    name: "Hydrogen League",
-    metal: "Bronze",
-    minXp: 0,
-    badgeBg: "from-amber-600 to-orange-700",
-    textColor: "text-amber-500",
-    ringColor: "ring-amber-600/30",
-    promotionCutoff: 10,
-    demotionCutoff: 0,
-  },
-  LITHIUM: {
-    tier: "LITHIUM",
-    name: "Lithium League",
-    metal: "Silver",
-    minXp: 1000,
-    badgeBg: "from-slate-400 to-slate-600",
-    textColor: "text-slate-300",
-    ringColor: "ring-slate-400/30",
-    promotionCutoff: 10,
-    demotionCutoff: 5,
-  },
-  CARBON: {
-    tier: "CARBON",
-    name: "Carbon League",
-    metal: "Gold",
-    minXp: 2500,
-    badgeBg: "from-amber-400 to-yellow-600",
-    textColor: "text-gold",
-    ringColor: "ring-gold/30",
-    promotionCutoff: 7,
-    demotionCutoff: 5,
-  },
-  TITANIUM: {
-    tier: "TITANIUM",
-    name: "Titanium League",
-    metal: "Diamond",
-    minXp: 5000,
-    badgeBg: "from-cyan-400 to-blue-600",
-    textColor: "text-cyan-400",
-    ringColor: "ring-cyan-400/30",
-    promotionCutoff: 5,
-    demotionCutoff: 5,
-  },
-  QUANTUM: {
-    tier: "QUANTUM",
-    name: "Quantum League",
-    metal: "Obsidian",
-    minXp: 10000,
-    badgeBg: "from-purple-500 to-indigo-800",
-    textColor: "text-purple-400",
-    ringColor: "ring-purple-500/30",
-    promotionCutoff: 3,
-    demotionCutoff: 5,
-  },
-};
-
-export function getLeagueInfo(xp: number): LeagueMeta {
-  if (xp >= 10000) return LEAGUE_TIERS.QUANTUM;
-  if (xp >= 5000) return LEAGUE_TIERS.TITANIUM;
-  if (xp >= 2500) return LEAGUE_TIERS.CARBON;
-  if (xp >= 1000) return LEAGUE_TIERS.LITHIUM;
-  return LEAGUE_TIERS.HYDROGEN;
 }

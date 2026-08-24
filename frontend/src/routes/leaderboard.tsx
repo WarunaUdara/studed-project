@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { LEADERBOARD_QUERY } from "@/graphql/courses";
 import { buildDemoLeaderboard } from "@/lib/demoData";
-import { leaderboardDisplayName, maskStudentName } from "@/lib/gamification";
+import { leaderboardDisplayName } from "@/lib/gamification";
 import type { LeaderboardEntryData, LeaderboardQueryData } from "@/lib/graphqlTypes";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth";
@@ -74,7 +74,7 @@ function LeaderboardPage() {
     const mapped: LeaderboardEntryData[] = rawDemo.map((e) => ({
       rank: e.rank,
       userId: e.user.id,
-      displayName: maskStudentName(e.user.fullName),
+      displayName: leaderboardDisplayName(e.user.fullName),
       totalXp: e.totalXp,
       isMe: e.user.id === (user?.id ?? "student-user-id"),
     }));
