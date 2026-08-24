@@ -34,19 +34,17 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
 
   return (
     <motion.div
-      // The end-to-end suite reaches student course cards through this hook,
-      // exactly as it does the educator list.
       data-testid="course-card"
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
+      transition={{ duration: 0.25, delay: index * 0.04 }}
       onClick={onClick}
-      className="group relative flex flex-col items-center cursor-pointer shrink-0 w-[170px] sm:w-[190px]"
+      className="group relative flex flex-col items-center cursor-pointer shrink-0 w-[165px] sm:w-[180px]"
     >
-      {/* Squircle Card Container */}
+      {/* Deep Dark Squircle Card Container */}
       <div
         className={cn(
-          "relative flex h-[190px] w-full flex-col justify-between rounded-3xl border border-border/80 bg-card p-3.5 shadow-sm transition-all duration-300 backdrop-blur-sm",
+          "relative flex h-[180px] w-full flex-col justify-between rounded-[22px] border border-border/80 bg-background/95 p-3.5 shadow-sm transition-all duration-200 backdrop-blur-sm",
           "hover:-translate-y-1.5 hover:shadow-xl hover:border-white/20",
           isEnrolled && "border-border",
         )}
@@ -58,18 +56,18 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
           </span>
 
           {course.isNew ? (
-            <span className="flex items-center gap-0.5 rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
+            <span className="flex items-center gap-0.5 rounded-full bg-emerald-500 text-black px-2 py-0.5 text-[10px] font-black uppercase tracking-tight shadow-2xs">
               <Sparkles className="size-2.5" /> NEW
             </span>
           ) : isEnrolled ? (
-            <span className="flex items-center gap-0.5 rounded-full bg-primary/20 px-2 py-0.5 text-xs font-extrabold text-primary">
+            <span className="flex items-center gap-0.5 rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-extrabold text-primary">
               <CheckCircle2 className="size-2.5" /> {percent}%
             </span>
           ) : null}
         </div>
 
-        {/* Center 3D Icon / Cover */}
-        <div className="relative my-auto flex size-24 items-center justify-center overflow-hidden rounded-2xl bg-muted/40 shadow-inner group-hover:scale-105 transition-transform duration-300">
+        {/* Center Mascot / Artwork Icon */}
+        <div className="relative my-auto flex size-24 items-center justify-center overflow-hidden rounded-2xl bg-muted/30 shadow-inner group-hover:scale-105 transition-transform duration-300">
           {coverUrl ? (
             <img
               src={coverUrl}
@@ -77,7 +75,7 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
               className={cn(
                 "size-full rounded-2xl transition-transform duration-300",
                 coverUrl.includes("/courses/python/")
-                  ? "object-contain p-1 drop-shadow-sm"
+                  ? "object-contain p-1.5 drop-shadow-md"
                   : "object-cover",
               )}
               loading="lazy"
@@ -91,7 +89,7 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
 
         {/* Bottom Progress Bar */}
         <div className="w-full">
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted/60">
             <div
               className="h-full rounded-full bg-primary transition-all duration-500"
               style={{ width: `${isEnrolled ? Math.max(8, percent) : 0}%` }}
@@ -101,7 +99,7 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
       </div>
 
       {/* Course Title Below Card */}
-      <h3 className="mt-2.5 w-full text-center text-xs font-bold text-foreground transition-colors group-hover:text-primary line-clamp-2 px-1">
+      <h3 className="mt-2.5 w-full text-center text-xs font-semibold text-foreground/90 transition-colors group-hover:text-foreground line-clamp-2 px-1">
         {course.title}
       </h3>
     </motion.div>
@@ -110,10 +108,17 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
 
 function formatGrade(grade: string): string {
   if (grade.startsWith("GRADE_")) {
-    return `GR ${grade.replace("GRADE_", "")}`;
+    const num = grade.replace("GRADE_", "");
+    if (num === "6_8" || num === "68") return "GR 6–8";
+    if (num === "9_11" || num === "911") return "GR 9–11";
+    if (num === "4_5" || num === "45") return "GR 4–5";
+    return `GR ${num}`;
   }
   if (grade === "OL") return "O/L";
   if (grade === "AL") return "A/L";
+  if (grade === "G10") return "GR 10";
+  if (grade === "G9") return "GR 9";
+  if (grade === "G5") return "GR 5";
   return grade;
 }
 
@@ -149,21 +154,12 @@ function DefaultSubjectIcon({ title }: { title: string }) {
   if (t.includes("science") || t.includes("gear") || t.includes("physic")) {
     return (
       <svg viewBox="0 0 64 64" className="size-full">
-        <rect x="12" y="12" width="40" height="40" rx="10" fill="#f59e0b" opacity="0.2" />
-        <circle
-          cx="32"
-          cy="32"
-          r="14"
-          fill="#f59e0b"
-          fillOpacity="0.3"
-          stroke="#f59e0b"
-          strokeWidth="3"
-        />
-        <circle cx="32" cy="32" r="5" fill="#f59e0b" />
+        <rect x="12" y="12" width="40" height="40" rx="10" fill="#10b981" opacity="0.2" />
+        <circle cx="32" cy="32" r="12" stroke="#10b981" strokeWidth="4" fill="none" />
         <path
-          d="M 32,14 L 32,18 M 32,46 L 32,50 M 14,32 L 18,32 M 46,32 L 50,32 M 19,19 L 22,22 M 42,42 L 45,45 M 19,45 L 22,42 M 42,22 L 45,19"
-          stroke="#f59e0b"
-          strokeWidth="3"
+          d="M 32,16 L 32,20 M 32,44 L 32,48 M 16,32 L 20,32 M 44,32 L 48,32"
+          stroke="#10b981"
+          strokeWidth="4"
           strokeLinecap="round"
         />
       </svg>
@@ -171,8 +167,13 @@ function DefaultSubjectIcon({ title }: { title: string }) {
   }
   return (
     <svg viewBox="0 0 64 64" className="size-full">
-      <rect x="12" y="12" width="40" height="40" rx="10" fill="#10b981" opacity="0.2" />
-      <circle cx="32" cy="32" r="12" fill="#10b981" />
+      <rect x="12" y="12" width="40" height="40" rx="10" fill="#f59e0b" opacity="0.2" />
+      <path
+        d="M 20,24 L 44,24 M 20,32 L 38,32 M 20,40 L 32,40"
+        stroke="#f59e0b"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }

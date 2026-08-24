@@ -761,4 +761,13 @@
   .animate-rippling {
     animation: rippling var(--duration, 600ms) ease-out forwards;
   }
+
+  /* Hide scrollbars cleanly across all browsers */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

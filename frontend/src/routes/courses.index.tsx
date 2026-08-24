@@ -390,7 +390,7 @@ function CoursesCatalogPage() {
 
         {/* Learning Paths List */}
         {!fetching && !error && filteredPaths.length > 0 && (
-          <div className="space-y-8">
+          <div className="space-y-12">
             <div className="space-y-1">
               <h2 className="text-xl font-bold font-serif text-foreground">Your learning paths</h2>
             </div>

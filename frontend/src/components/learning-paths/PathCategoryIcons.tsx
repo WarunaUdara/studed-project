@@ -30,23 +30,38 @@ export function CodeIsometricIcon({ className = "size-12" }: { className?: strin
     <svg viewBox="0 0 100 100" className={className} fill="none">
       <defs>
         <linearGradient id="code-grad-1" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#c084fc" />
-          <stop offset="100%" stopColor="#9333ea" />
+          <stop offset="0%" stopColor="#d8b4fe" />
+          <stop offset="50%" stopColor="#a855f7" />
+          <stop offset="100%" stopColor="#6b21a8" />
         </linearGradient>
         <linearGradient id="code-grad-2" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#a855f7" />
-          <stop offset="100%" stopColor="#7e22ce" />
+          <stop offset="0%" stopColor="#c084fc" />
+          <stop offset="100%" stopColor="#581c87" />
         </linearGradient>
       </defs>
-      {/* 3D Isometric Stacked Cubes / Algorithmic Layers */}
-      <path d="M 50,15 L 82,32 L 50,48 L 18,32 Z" fill="url(#code-grad-1)" />
-      <path d="M 18,32 L 50,48 L 50,62 L 18,46 Z" fill="url(#code-grad-2)" />
-      <path d="M 82,32 L 50,48 L 50,62 L 82,46 Z" fill="#6b21a8" />
-
-      {/* Layer 2 */}
-      <path d="M 50,52 L 82,68 L 50,84 L 18,68 Z" fill="url(#code-grad-1)" />
-      <path d="M 18,68 L 50,84 L 50,94 L 18,78 Z" fill="url(#code-grad-2)" />
-      <path d="M 82,68 L 50,84 L 50,94 L 82,78 Z" fill="#6b21a8" />
+      {/* 3D Isometric Violet Code Brackets { [ ] } */}
+      <g>
+        {/* Left curly brace { */}
+        <path
+          d="M 32,18 C 20,18 16,28 16,38 C 16,46 10,49 4,49 C 10,51 16,54 16,62 C 16,72 20,82 32,82 L 32,70 C 26,70 24,65 24,59 C 24,51 18,49 14,49 C 18,49 24,47 24,39 C 24,33 26,30 32,30 Z"
+          fill="url(#code-grad-1)"
+        />
+        {/* Center [ ] */}
+        <path
+          d="M 40,24 L 54,24 L 54,34 L 48,34 L 48,66 L 54,66 L 54,76 L 40,76 Z"
+          fill="url(#code-grad-2)"
+        />
+        <path
+          d="M 60,24 L 46,24 L 46,34 L 52,34 L 52,66 L 46,66 L 46,76 L 60,76 Z"
+          fill="url(#code-grad-2)"
+          transform="translate(106, 0) scale(-1, 1)"
+        />
+        {/* Right curly brace } */}
+        <path
+          d="M 68,18 C 80,18 84,28 84,38 C 84,46 90,49 96,49 C 90,51 84,54 84,62 C 84,72 80,82 68,82 L 68,70 C 74,70 76,65 76,59 C 76,51 82,49 86,49 C 82,49 76,47 76,39 C 76,33 74,30 68,30 Z"
+          fill="url(#code-grad-1)"
+        />
+      </g>
     </svg>
   );
 }
