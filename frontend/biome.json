@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.2/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.7/schema.json",
   "assist": {
     "actions": {
       "source": {
@@ -12,6 +12,7 @@
       "**",
       "!**/dist",
       "!**/node_modules",
+      "!**/.opencode",
       "!**/src/routeTree.gen.ts",
       "!**/src/styles/index.css",
       "!**/test-results",
