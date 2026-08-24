@@ -70,30 +70,27 @@
     --color-violet-12: oklch(0.924 0.063 295);
 
     /* Core surface tokens (oklch) */
-    --background: oklch(0.988 0.003 145);       /* Calming Natural Parchment */
-    --foreground: oklch(0.178 0.029 145);       /* Deep Ink Forest */
+    --background: oklch(0.988 0.002 260);       /* Clean Light Slate / Paper */
+    --foreground: oklch(0.16 0.01 260);         /* Deep Slate Ink */
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.178 0.029 145);
+    --card-foreground: oklch(0.16 0.01 260);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.178 0.029 145);
+    --popover-foreground: oklch(0.16 0.01 260);
 
     /* Action tokens */
     --primary: oklch(0.484 0.164 145);          /* Focused Emerald #059669 */
     --primary-foreground: oklch(0.988 0.003 145);
-    --secondary: oklch(0.95 0.015 145);
-    --secondary-foreground: oklch(0.209 0.041 145);
-    --muted: oklch(0.95 0.015 145);
-    /* Secondary text keeps only a trace of the forest hue. Chroma here must stay
-       far below --primary (0.164), or every caption reads as a link and the
-       primary/secondary text hierarchy collapses. */
-    --muted-foreground: oklch(0.44 0.022 145);
-    --accent: oklch(0.919 0.063 145);
-    --accent-foreground: oklch(0.272 0.076 145);
+    --secondary: oklch(0.96 0.004 260);
+    --secondary-foreground: oklch(0.16 0.01 260);
+    --muted: oklch(0.96 0.004 260);
+    --muted-foreground: oklch(0.46 0.01 260);
+    --accent: oklch(0.94 0.006 260);
+    --accent-foreground: oklch(0.16 0.01 260);
     --destructive: oklch(0.577 0.245 27.3);
     --destructive-foreground: oklch(0.985 0.002 95);
 
-    --border: oklch(0.88 0.03 145);
-    --input: oklch(0.88 0.03 145);
+    --border: oklch(0.89 0.006 260);
+    --input: oklch(0.89 0.006 260);
     --ring: oklch(0.484 0.164 145);
     --radius: 1.5rem;                           /* 24px rounded corners */
 
@@ -126,10 +123,10 @@
     --rank-3-foreground: oklch(0.985 0.002 95);
 
     /* Sidebar / shell surfaces */
-    --sidebar: oklch(0.988 0.003 145);
-    --sidebar-foreground: oklch(0.178 0.029 145);
-    --sidebar-border: oklch(0.88 0.03 145);
-    --sidebar-accent: oklch(0.919 0.063 145);
+    --sidebar: oklch(0.988 0.002 260);
+    --sidebar-foreground: oklch(0.16 0.01 260);
+    --sidebar-border: oklch(0.89 0.006 260);
+    --sidebar-accent: oklch(0.94 0.006 260);
 
     /* Chart palette (Recharts) */
     --chart-xp: oklch(0.484 0.164 145);
@@ -241,31 +238,31 @@
 
   .dark {
     --pullcord-ink: rgba(255, 255, 255, 0.4);
-    --background: oklch(0.14 0.02 145);         /* Deep Forest Slate */
-    --foreground: oklch(0.935 0.05 145);
-    --card: oklch(0.19 0.035 145);
-    --card-foreground: oklch(0.935 0.05 145);
-    --popover: oklch(0.19 0.035 145);
-    --popover-foreground: oklch(0.935 0.05 145);
+    --background: oklch(0.12 0.004 260);         /* Pure Deep Slate / Black #101114 */
+    --foreground: oklch(0.985 0 0);             /* Pure Crisp White #f8fafc */
+    --card: oklch(0.165 0.006 260);             /* Elevated Dark Slate #18191d */
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.165 0.006 260);
+    --popover-foreground: oklch(0.985 0 0);
 
-    /* Lighter, soft luminous green for Dark Mode legibility */
-    --primary: oklch(0.76 0.15 145);
-    --primary-foreground: oklch(0.14 0.02 145);
-    --secondary: oklch(0.25 0.05 145);
-    --secondary-foreground: oklch(0.935 0.05 145);
-    --muted: oklch(0.25 0.05 145);
-    --muted-foreground: oklch(0.78 0.022 145);
-    --accent: oklch(0.3 0.07 145);
-    --accent-foreground: oklch(0.935 0.05 145);
-    --destructive: oklch(0.704 0.19 22);
-    --destructive-foreground: oklch(0.12 0.02 22);
+    /* Luminous focused Emerald for dark actions & badges */
+    --primary: oklch(0.72 0.17 145);
+    --primary-foreground: oklch(0.12 0 0);
+    --secondary: oklch(0.21 0.008 260);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.19 0.006 260);
+    --muted-foreground: oklch(0.70 0.01 260);
+    --accent: oklch(0.23 0.008 260);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.68 0.20 25);
+    --destructive-foreground: oklch(0.985 0 0);
 
-    --border: oklch(1 0 0 / 12%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.76 0.15 145);
+    --border: oklch(1 0 0 / 8%);
+    --input: oklch(1 0 0 / 10%);
+    --ring: oklch(0.72 0.17 145);
 
-    --success: oklch(0.76 0.15 145);
-    --success-foreground: oklch(0.14 0.02 145);
+    --success: oklch(0.72 0.17 145);
+    --success-foreground: oklch(0.12 0 0);
     --warning: oklch(0.8 0.16 75);
     --warning-foreground: oklch(0.22 0.02 75);
     --info: oklch(0.78 0.14 252);
@@ -290,10 +287,10 @@
     --rank-3: oklch(0.75 0.12 66);
     --rank-3-foreground: oklch(0.985 0 0);
 
-    --sidebar: oklch(0.19 0.015 264);
-    --sidebar-foreground: oklch(0.985 0.002 95);
-    --sidebar-border: oklch(1 0 0 / 8%);
-    --sidebar-accent: oklch(0.28 0.03 262);
+    --sidebar: oklch(0.13 0.004 260);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 7%);
+    --sidebar-accent: oklch(0.21 0.008 260);
 
     --chart-xp: oklch(0.62 0.19 262.9);
     --chart-xp-soft: oklch(0.62 0.19 262.9 / 0.5);
@@ -671,9 +668,7 @@
   }
   .dark .bg-gradient-sarvam-hero {
     background: 
-      radial-gradient(ellipse 70% 50% at 50% -10%, oklch(0.769 0.188 70.1 / 0.1) 0%, oklch(0.769 0.188 70.1 / 0.02) 35%, transparent 70%),
-      radial-gradient(circle 50vw at 0vw 15vh, oklch(0.272 0.076 145 / 0.3) 0%, oklch(0.272 0.076 145 / 0.08) 40%, transparent 80%),
-      radial-gradient(circle 50vw at 100vw 15vh, oklch(0.322 0.103 145 / 0.3) 0%, oklch(0.322 0.103 145 / 0.08) 40%, transparent 80%),
+      radial-gradient(ellipse 70% 50% at 50% -10%, oklch(0.24 0.01 260 / 0.5) 0%, transparent 70%),
       var(--background);
   }
   /*
@@ -688,8 +683,8 @@
   }
   .dark .bg-login-panel-brand {
     background:
-      radial-gradient(62% 50% at 55% 46%, #1d6640 0%, #123d28 40%, transparent 74%),
-      linear-gradient(160deg, #071a11 0%, #0a2417 45%, #050f0a 100%);
+      radial-gradient(62% 50% at 55% 46%, #1e2026 0%, #131418 40%, transparent 74%),
+      linear-gradient(160deg, #101114 0%, #15161a 45%, #0b0c0e 100%);
   }
   .bg-login-panel-sky {
     background:
@@ -697,7 +692,7 @@
   }
   .dark .bg-login-panel-sky {
     background:
-      radial-gradient(90% 70% at 50% 28%, #0b1220 0%, #060a14 58%, #04070e 100%);
+      radial-gradient(90% 70% at 50% 28%, #161820 0%, #0e1017 58%, #08090e 100%);
   }
 
   /* Superseded by the two utilities above; removed once the login components
@@ -713,10 +708,10 @@
   }
 
   .bg-gradient-intelligence {
-    background: linear-gradient(135deg, oklch(0.484 0.164 145 / 0.06), oklch(0.571 0.181 145 / 0.06));
+    background: linear-gradient(135deg, oklch(0.22 0.008 260 / 0.4), oklch(0.16 0.004 260 / 0.4));
   }
   .bg-gradient-growth {
-    background: linear-gradient(to top, oklch(0.696 0.17 162.5 / 0.06), transparent);
+    background: linear-gradient(to top, oklch(0.22 0.008 260 / 0.4), transparent);
   }
   .bg-gradient-amber {
     background: radial-gradient(circle at center, oklch(0.769 0.188 70.1 / 0.08), transparent 70%);
@@ -729,9 +724,9 @@
     border: 1px solid oklch(1 0 0 / 0.6);
   }
   .dark .glass {
-    background: oklch(0.21 0.015 264 / 0.72);
-    backdrop-filter: blur(16px) saturate(1.4);
-    border: 1px solid oklch(1 0 0 / 0.1);
+    background: oklch(0.16 0.006 260 / 0.8);
+    backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid oklch(1 0 0 / 0.08);
   }
 
   /* IBM Plex Serif font weights */

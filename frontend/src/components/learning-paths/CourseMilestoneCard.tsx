@@ -40,9 +40,9 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
       {/* Squircle Card Container */}
       <div
         className={cn(
-          "relative flex h-[190px] w-full flex-col justify-between rounded-3xl border bg-card/90 p-3.5 shadow-sm transition-all duration-300 backdrop-blur-sm",
-          "hover:-translate-y-2 hover:shadow-xl hover:border-primary/40 group-hover:bg-card",
-          isEnrolled && "border-primary/30 ring-1 ring-primary/20",
+          "relative flex h-[190px] w-full flex-col justify-between rounded-3xl border border-border/80 bg-card p-3.5 shadow-sm transition-all duration-300 backdrop-blur-sm",
+          "hover:-translate-y-1.5 hover:shadow-xl hover:border-white/20",
+          isEnrolled && "border-border",
         )}
       >
         {/* Top Strip */}
