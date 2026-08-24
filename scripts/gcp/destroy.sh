@@ -45,6 +45,10 @@ done
 
 (cd "${TF_DIR}" && tofu init >/dev/null && tofu destroy -auto-approve | tail -20)
 
+# Clean any residual SSL certificates
+echo "Cleaning residual SSL certificates in ${PROJECT_ID}..."
+HTTPS_PROXY="${HTTPS_PROXY:-http://127.0.0.1:3128}" gcloud compute ssl-certificates delete studed-le-cert --project="${PROJECT_ID}" --quiet 2>/dev/null || true
+
 log "2/3 Cloudflare Pages - deleting frontend project"
 if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   (cd "${REPO_ROOT}" && bunx wrangler pages project delete studed-project-frontend --force 2>&1 | tail -3 || true)

@@ -16,7 +16,7 @@ if [[ ! -f "${REPO_ROOT}/.env" ]]; then
   exit 1
 fi
 
-DB_URL="$(grep -E '^DATABASE_CONNECTION_STRING=' "${REPO_ROOT}/.env" | head -1 | cut -d= -f2-)"
+DB_URL="$(grep -E '^DATABASE_CONNECTION_STRING=' "${REPO_ROOT}/.env" | head -1 | cut -d= -f2- | sed -E 's/^["'"'"']|["'"'"']$//g')"
 if [[ -z "${DB_URL}" ]]; then
   echo "error: DATABASE_CONNECTION_STRING missing from .env" >&2
   exit 1
@@ -41,14 +41,10 @@ if ! HTTPS_PROXY=http://127.0.0.1:3128 gcloud secrets describe "${SECRET}" --pro
     --locations=asia-south1 >/dev/null
   echo "  created ${SECRET}"
 fi
-if ! HTTPS_PROXY=http://127.0.0.1:3128 gcloud secrets versions access latest --secret="${SECRET}" --project "${PROJECT_ID}" >/dev/null 2>&1; then
-  printf '%s' "${PREPROD_URL}" | HTTPS_PROXY=http://127.0.0.1:3128 gcloud secrets versions add "${SECRET}" --data-file=- >/dev/null
-  echo "  populated ${SECRET}"
-else
-  echo "  ${SECRET} already populated"
-fi
+printf '%s' "${PREPROD_URL}" | HTTPS_PROXY=http://127.0.0.1:3128 gcloud secrets versions add "${SECRET}" --data-file=- >/dev/null
+echo "  populated ${SECRET}"
 
-OWNER_URL="$(grep -E '^DATABASE_OWNER_CONNECTION_STRING=' "${REPO_ROOT}/.env" | head -1 | cut -d= -f2-)"
+OWNER_URL="$(grep -E '^DATABASE_OWNER_CONNECTION_STRING=' "${REPO_ROOT}/.env" | head -1 | cut -d= -f2- | sed -E 's/^["'"'"']|["'"'"']$//g')"
 PREPROD_OWNER_URL="$(printf '%s' "${OWNER_URL}" | python3 -c '
 import sys
 url = sys.stdin.read().strip()
@@ -63,12 +59,8 @@ if ! HTTPS_PROXY=http://127.0.0.1:3128 gcloud secrets describe "${OWNER_SECRET}"
     --locations=asia-south1 >/dev/null
   echo "  created ${OWNER_SECRET}"
 fi
-if ! HTTPS_PROXY=http://127.0.0.1:3128 gcloud secrets versions access latest --secret="${OWNER_SECRET}" --project "${PROJECT_ID}" >/dev/null 2>&1; then
-  printf '%s' "${PREPROD_OWNER_URL}" | HTTPS_PROXY=http://127.0.0.1:3128 gcloud secrets versions add "${OWNER_SECRET}" --data-file=- >/dev/null
-  echo "  populated ${OWNER_SECRET}"
-else
-  echo "  ${OWNER_SECRET} already populated"
-fi
+printf '%s' "${PREPROD_OWNER_URL}" | HTTPS_PROXY=http://127.0.0.1:3128 gcloud secrets versions add "${OWNER_SECRET}" --data-file=- >/dev/null
+echo "  populated ${OWNER_SECRET}"
 
 echo "==> 2/5 Neon grants for studed_app on studed_preprod"
 if [[ -n "${PREPROD_OWNER_URL}" ]]; then

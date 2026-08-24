@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-GATEWAY="http://localhost:8080"
+GATEWAY="${GATEWAY:-http://localhost:8080}"
 COOKIE_JAR="${REPO_ROOT}/.seed-cookies"
 
 wait_for_gateway() {

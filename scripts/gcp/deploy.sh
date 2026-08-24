@@ -90,20 +90,47 @@ wait_healthy() {
   kubectl -n studed get pods
 }
 
-wait_ingress() {
-  log "6/7 Ingress - waiting for HTTPS + managed certificate"
+setup_tls_and_wait_ingress() {
+  local ip="$1"
+  log "6/7 Ingress - configuring TLS certificate and verifying HTTPS"
+  
+  local cert_name="studed-le-cert"
+  local tmp_dir="/tmp/studed-cert-${ip}"
+  mkdir -p "${tmp_dir}"
+
+  echo "  waiting for acme-challenge to issue Let's Encrypt certificate..."
+  local cert_tries=0
+  until kubectl logs -n studed deploy/acme-challenge -c certbot 2>/dev/null | grep -q "Successfully received certificate"; do
+    cert_tries=$((cert_tries + 1))
+    if [ "$cert_tries" -ge 30 ]; then
+      break
+    fi
+    sleep 5
+  done
+
+  if kubectl exec -n studed deploy/acme-challenge -c certbot -- tar -chf - -C "/tmp/certbot-conf/live/api.${ip}.sslip.io" fullchain.pem privkey.pem 2>/dev/null | tar -xf - -C "${tmp_dir}" 2>/dev/null; then
+    echo "  extracted Let's Encrypt certificate for api.${ip}.sslip.io"
+    if ! HTTPS_PROXY="${HTTPS_PROXY:-http://127.0.0.1:3128}" gcloud compute ssl-certificates describe "${cert_name}" --project="${PROJECT_ID}" >/dev/null 2>&1; then
+      echo "  creating GCP SSL certificate ${cert_name}..."
+      HTTPS_PROXY="${HTTPS_PROXY:-http://127.0.0.1:3128}" gcloud compute ssl-certificates create "${cert_name}" \
+        --certificate="${tmp_dir}/fullchain.pem" \
+        --private-key="${tmp_dir}/privkey.pem" \
+        --global --project="${PROJECT_ID}" >/dev/null 2>&1 || true
+    fi
+    kubectl annotate ingress studed-ingress -n studed last-synced="$(date +%s)" --overwrite >/dev/null 2>&1 || true
+  fi
+
   local tries=0
-  until curl -sf "https://api.${1}.sslip.io/health" >/dev/null 2>&1; do
+  until curl -sf "https://api.${ip}.sslip.io/health" >/dev/null 2>&1; do
     tries=$((tries + 1))
     if [ "$tries" -ge 60 ]; then
-      echo "warning: backend health endpoint not reachable yet - check the certificate status" >&2
-      kubectl get managedcertificate -n studed >&2 2>/dev/null || true
+      echo "warning: backend health endpoint not reachable yet over HTTPS" >&2
       break
     fi
     echo "  ...waiting for HTTPS (${tries}/60)"
     sleep 10
   done
-  curl -s -o /dev/null -w "  backend health: HTTP %{http_code}\n" "https://api.${1}.sslip.io/health"
+  curl -s -o /dev/null -w "  backend health: HTTP %{http_code}\n" "https://api.${ip}.sslip.io/health" || true
 }
 
 deploy_frontend() {
@@ -154,7 +181,7 @@ main() {
   cluster_credentials
   deploy_gitops
   wait_healthy
-  wait_ingress "${ip}"
+  setup_tls_and_wait_ingress "${ip}"
   deploy_frontend
   seed_demo
 
