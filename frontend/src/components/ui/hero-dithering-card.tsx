@@ -49,7 +49,7 @@ export function CTASection({ authed: propAuthed }: CTASectionProps) {
           {/* Content */}
           <div className="relative z-10 px-6 max-w-4xl mx-auto text-center flex flex-col items-center py-12">
             {/* XP / Gamification Pill */}
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs sm:text-sm font-semibold text-primary backdrop-blur-md shadow-xs">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs sm:text-sm font-semibold text-foreground backdrop-blur-md shadow-xs">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>

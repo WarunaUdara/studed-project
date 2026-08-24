@@ -14,7 +14,7 @@ export interface StreakFlameProps {
 
 /**
  * StreakFlame — subtle pulsing flame animation with day count.
- * The pulse is driven by framer-motion, so it is gated on useReducedMotion;
+ * The pulse is driven by GSAP, so it is gated on the shared reduced-motion check;
  * the global CSS keyframe gate only covers CSS animations, not JS-driven ones.
  */
 export function StreakFlame({
@@ -36,7 +36,7 @@ export function StreakFlame({
       keyframes: { scale: [1, 1.18, 1] },
       repeat: -1,
       duration: 2.4,
-      ease: "easeInOut",
+      ease: "sine.inOut",
     });
     return () => {
       tween.kill();

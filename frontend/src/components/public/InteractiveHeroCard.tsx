@@ -24,6 +24,7 @@ export function InteractiveHeroCard() {
 
   // Auto-switch tabs periodically (every 7 seconds)
   useEffect(() => {
+    if (prefersReducedMotion()) return;
     const tabs: Array<"math" | "science" | "code"> = ["math", "science", "code"];
     const interval = setInterval(() => {
       setActiveTab((curr) => {
@@ -98,19 +99,19 @@ export function InteractiveHeroCard() {
   }, [activeTab]);
 
   return (
-    <div ref={containerRef} className="relative mx-auto w-full max-w-xl select-none">
+    <div ref={containerRef} className="relative mx-auto w-full min-w-0 max-w-xl select-none">
       {/* Subtle Glow */}
       <div className="absolute -inset-1 rounded-[32px] bg-gradient-to-tr from-primary/20 via-emerald-500/10 to-teal-500/20 blur-xl opacity-60 pointer-events-none" />
 
       {/* Main Clean Card with locked static height to prevent layout shift */}
-      <div className="relative h-[480px] flex flex-col justify-between overflow-hidden rounded-[28px] border border-border/80 bg-card p-7 shadow-2xl backdrop-blur-xl transition-all">
+      <div className="relative flex h-[480px] min-w-0 flex-col justify-between overflow-hidden rounded-[28px] border border-border/80 bg-card p-5 shadow-2xl backdrop-blur-xl transition-all sm:p-7">
         {/* Subject Switcher Header */}
         <div className="flex items-center justify-between border-b border-border/60 pb-3.5 shrink-0">
-          <div className="flex items-center gap-1.5 rounded-full bg-muted/70 p-1">
+          <div className="flex items-center gap-0.5 rounded-full bg-muted/70 p-1 sm:gap-1.5">
             <button
               type="button"
               onClick={() => setActiveTab("math")}
-              className={`flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-all ${
+              className={`flex min-h-11 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold transition-all sm:px-3.5 ${
                 activeTab === "math"
                   ? "bg-background text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
@@ -122,7 +123,7 @@ export function InteractiveHeroCard() {
             <button
               type="button"
               onClick={() => setActiveTab("science")}
-              className={`flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-all ${
+              className={`flex min-h-11 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold transition-all sm:px-3.5 ${
                 activeTab === "science"
                   ? "bg-background text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
@@ -134,7 +135,7 @@ export function InteractiveHeroCard() {
             <button
               type="button"
               onClick={() => setActiveTab("code")}
-              className={`flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-all ${
+              className={`flex min-h-11 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold transition-all sm:px-3.5 ${
                 activeTab === "code"
                   ? "bg-background text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
@@ -148,7 +149,7 @@ export function InteractiveHeroCard() {
           {/* Progress cycle pill */}
           <div className="flex items-center gap-1 text-[11px] font-bold text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="capitalize">
+            <span className="hidden capitalize sm:inline">
               {activeTab === "code" ? "Coding" : activeTab} Simulation
             </span>
           </div>

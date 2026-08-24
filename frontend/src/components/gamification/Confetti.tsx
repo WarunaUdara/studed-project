@@ -54,7 +54,7 @@ export function Confetti({ show, count = 28 }: ConfettiProps) {
         rotate: spin,
         duration,
         delay,
-        ease: "easeIn",
+        ease: "power1.in",
       });
     });
     return () => {

@@ -36,7 +36,7 @@ export function LessonCompleteCelebration({
             keyframes: { y: [-6, 6, -6], rotate: [-2, 2, -2] },
             repeat: -1,
             duration: 3,
-            ease: "easeInOut",
+            ease: "sine.inOut",
           }),
         );
       }

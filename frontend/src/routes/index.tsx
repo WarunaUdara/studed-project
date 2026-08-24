@@ -106,7 +106,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
         <div className="absolute -top-40 left-[-10%] h-[500px] w-[60vw] rounded-full bg-[radial-gradient(circle_at_center,oklch(0.484_0.164_145_/_0.08)_0%,transparent_70%)] blur-[100px]" />
       </div>
 
-      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+      <div className="relative z-10 mx-auto grid w-full min-w-0 max-w-6xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
         {/* Copy */}
         <div className="flex flex-col items-start gap-5 sm:gap-6">
           <motion.div
@@ -193,7 +193,7 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
                 <Link to="/register">
                   <Button
                     size="lg"
-                    className="h-13 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 text-base shadow-sm hover:shadow-md transition-all active:scale-98"
+                    className="h-13 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-8 text-base shadow-sm hover:shadow-md transition-all active:scale-98"
                   >
                     {t("ctaLearner")}
                   </Button>
