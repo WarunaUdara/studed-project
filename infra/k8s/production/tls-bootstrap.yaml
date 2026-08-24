@@ -57,7 +57,7 @@ spec:
                 --config-dir /tmp/certbot-conf --work-dir /tmp/certbot-work --logs-dir /tmp/certbot-logs \
                 --non-interactive --agree-tos \
                 -m warunaudarasam2003@gmail.com \
-                -d api.34.102.169.180.sslip.io && sleep 600
+                -d api.8.233.122.132.sslip.io && sleep 600
           volumeMounts:
             - name: webroot
               mountPath: /usr/share/nginx/html
