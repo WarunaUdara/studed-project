@@ -181,6 +181,34 @@ export const PUBLIC_STRINGS = {
   },
   liveLbYou: { EN: "You", SI: "ඔබ" },
 
+  /* Meet Fluffy (AI tutor & companion) */
+  fluffyBadge: { EN: "Meet Your AI Study Companion", SI: "ඔබේ AI අධ්‍යාපන මිතුරා හඳුනාගන්න" },
+  fluffyTitle: {
+    EN: "Meet Fluffy, your 24/7 AI tutor & companion",
+    SI: "Fluffy හඳුනාගන්න — ඔබේ 24/7 AI ගුරුවරයා හා මිතුරා",
+  },
+  fluffySubhead: {
+    EN: "Always by your side to explain tricky problems, provide step-by-step hints, and celebrate every breakthrough. Fluent in English and Sinhala, Fluffy adapts to your learning pace and keeps curiosity alive.",
+    SI: "අපහසු ගැටලු සරලව පැහැදිලි කිරීමටත්, පියවරෙන් පියවර මඟපෙන්වීමටත්, ඔබේ ජයග්‍රහණ සැමරීමටත් Fluffy 24/7 ඔබ ළඟින්ම සිටී. සිංහලෙන් සහ ඉංග්‍රීසියෙන් ඕනෑම වේලාවක උපකාර ලබාගන්න.",
+  },
+  fluffyCta: { EN: "Start learning with Fluffy", SI: "Fluffy සමඟ ඉගෙනුම අරඹන්න" },
+  fluffyFeature1: { EN: "Step-by-step Socratic hints", SI: "පියවරෙන් පියවර මඟපෙන්වීම්" },
+  fluffyFeature2: { EN: "Fluent in English & සිංහල", SI: "සිංහල සහ ඉංග්‍රීසි භාෂා ද්විත්වයෙන්ම" },
+  fluffyFeature3: { EN: "Live wave explanations", SI: "සජීවී Waves පැහැදිලි කිරීම්" },
+  fluffyFeature4: { EN: "24/7 streak & motivation partner", SI: "නොනවතින ධෛර්යය හා පෙළඹවීම" },
+  fluffyTip1: {
+    EN: "Stuck on Gear Ratios? Let's turn the gears together!",
+    SI: "Gear Ratios අපහසුද? අපි එකට කරකවලා බලමු!",
+  },
+  fluffyTip2: {
+    EN: "Awesome 5-streak! You're crushing it!",
+    SI: "සුපිරි! Streak 5ක් සම්පූර්ණයි! දිගටම යමු!",
+  },
+  fluffyTip3: {
+    EN: "Ask me anything in English or සිංහල!",
+    SI: "ඕනෑම දෙයක් සිංහලෙන් හෝ English වලින් අහන්න!",
+  },
+
   gamificationHeading: {
     EN: "Built like the games you already love",
     SI: "ඔබ දැනටමත් ආදරය කරන ක්‍රීඩා මෙන්",

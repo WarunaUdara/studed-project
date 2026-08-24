@@ -30,6 +30,7 @@ import { CountUp } from "@/components/public/CountUp";
 import { InteractiveHeroCard } from "@/components/public/InteractiveHeroCard";
 import { LanguageToggle } from "@/components/public/LanguageToggle";
 import { LiveLeaderboard } from "@/components/public/LiveLeaderboard";
+import { MeetFluffy } from "@/components/public/MeetFluffy";
 import { PlayableWave } from "@/components/public/PlayableWave";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { ScrollXpMeter } from "@/components/public/ScrollXpMeter";
@@ -68,6 +69,7 @@ function IndexPage() {
       <StatsBar />
       <HowItWorks />
       <PlayableWaveSection />
+      <MeetFluffy authed={isAuthenticated} />
       <GamificationShowcase />
       <CatalogPreview />
       <AudienceSegments />
