@@ -43,7 +43,7 @@ for _ in {1..30}; do
   sleep 5
 done
 
-(cd "${TF_DIR}" && tofu init >/dev/null && tofu destroy -auto-approve | tail -20)
+(cd "${TF_DIR}" && tofu init >/dev/null && tofu destroy -exclude="google_project_iam_custom_role.idle_scout_role" -auto-approve | tail -20)
 
 # Clean any residual SSL certificates
 echo "Cleaning residual SSL certificates in ${PROJECT_ID}..."
