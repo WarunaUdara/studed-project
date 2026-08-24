@@ -458,10 +458,13 @@ export function demoLeaderboardSnapshot(youId = "you", youXp = 3120): DemoLeader
  */
 export interface FeaturedCourse {
   id: string;
+  slug: string;
   title: string;
   description: string;
   gradeLevel: string;
-  subjectIcon: "math" | "science" | "english" | "sinhala";
+  subjectBadge: string;
+  coverUrl: string;
+  subjectIcon: "math" | "science" | "english" | "sinhala" | "code";
   totalWaves: number;
   completedWaves: number;
   proficiency: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED" | "PROFICIENT" | "EXPERT";
@@ -469,43 +472,59 @@ export interface FeaturedCourse {
 
 export const FEATURED_COURSES: FeaturedCourse[] = [
   {
-    id: "demo-math-g7",
-    title: "Mathematics",
-    description: "Algebra, geometry and problem-solving with interactive worked examples.",
-    gradeLevel: "G7",
-    subjectIcon: "math",
-    totalWaves: 24,
-    completedWaves: 18,
+    id: "thinking-in-python",
+    slug: "thinking-in-python",
+    title: "Thinking in Python",
+    description:
+      "Build computational intuition with variables, functions, and algorithmic patterns.",
+    gradeLevel: "GR 6–8",
+    subjectBadge: "CS & CODING",
+    coverUrl: "/courses/python/thinking-in-python.png",
+    subjectIcon: "code",
+    totalWaves: 8,
+    completedWaves: 6,
     proficiency: "PROFICIENT",
   },
   {
-    id: "demo-sci-g9",
-    title: "Science",
-    description: "Biology, chemistry and physics units with visual experiments.",
-    gradeLevel: "G9",
-    subjectIcon: "science",
-    totalWaves: 30,
+    id: "coordinate-geometry",
+    slug: "coordinate-geometry",
+    title: "Coordinate Geometry",
+    description:
+      "Master 2D Cartesian planes, linear equations, and spatial distances through visual puzzles.",
+    gradeLevel: "GR 10",
+    subjectBadge: "MATHEMATICS",
+    coverUrl: "/covers/coordinate-geometry.jpg",
+    subjectIcon: "math",
+    totalWaves: 12,
     completedWaves: 9,
+    proficiency: "PROFICIENT",
+  },
+  {
+    id: "science-thinking",
+    slug: "science-thinking",
+    title: "Natural Science & Physics",
+    description:
+      "Explore gear ratios, force mechanics, velocity graphs, and cellular bioenergetics.",
+    gradeLevel: "GR 9–11",
+    subjectBadge: "SCIENCE & PHYSICS",
+    coverUrl: "/covers/g10-science.jpg",
+    subjectIcon: "science",
+    totalWaves: 16,
+    completedWaves: 5,
     proficiency: "IN_PROGRESS",
   },
   {
-    id: "demo-eng-ol",
-    title: "English",
-    description: "Grammar, comprehension and exam-style practice for O/L success.",
-    gradeLevel: "OL",
+    id: "ol-english",
+    slug: "ol-english",
+    title: "English for O/L",
+    description:
+      "Master grammatical precision, analytical reading comprehension, and structured writing.",
+    gradeLevel: "O/L",
+    subjectBadge: "LANGUAGES",
+    coverUrl: "/covers/ol-english.jpg",
     subjectIcon: "english",
-    totalWaves: 18,
-    completedWaves: 0,
-    proficiency: "NOT_STARTED",
-  },
-  {
-    id: "demo-sin-al",
-    title: "Sinhala",
-    description: "සාහිත්‍යය, ව්‍යාකරණ සහ රචනා අත්පොත: A/L සඳහා සම්පූර්ණ අධ්‍යයන ඒකක.",
-    gradeLevel: "AL",
-    subjectIcon: "sinhala",
-    totalWaves: 22,
-    completedWaves: 22,
+    totalWaves: 14,
+    completedWaves: 14,
     proficiency: "EXPERT",
   },
 ];

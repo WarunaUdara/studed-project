@@ -2,14 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   BookOpen,
-  Brain,
   CalendarClock,
   Check,
   Compass,
   Gamepad2,
-  Globe2,
   GraduationCap,
-  Languages,
   Layers,
   LineChart,
   type LucideIcon,
@@ -35,7 +32,6 @@ import { PlayableWave } from "@/components/public/PlayableWave";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { ScrollXpMeter } from "@/components/public/ScrollXpMeter";
 import { Button } from "@/components/ui/button";
-import { CardContent } from "@/components/ui/Card";
 import { CTASection } from "@/components/ui/hero-dithering-card";
 import { MagicBento, MagicBentoCard } from "@/components/ui/MagicBento";
 import { ProgressRing } from "@/components/ui/ProgressRing";
@@ -401,10 +397,10 @@ function HowItWorks() {
 function PlayableWaveSection() {
   const { t } = usePublicI18n();
   return (
-    <section className="border-y bg-gradient-intelligence px-4 py-24 sm:px-6">
+    <section className="relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("playHeading")} subhead={t("playSubhead")} />
-        <div className="mt-12">
+        <div className="mt-10">
           <PlayableWave />
         </div>
       </div>
@@ -641,38 +637,28 @@ function StreakWeek() {
 
 /* ---------------------------- Catalog preview ----------------------------- */
 
-const SUBJECT_ICON: Record<FeaturedCourse["subjectIcon"], LucideIcon> = {
-  math: Brain,
-  science: Globe2,
-  english: Languages,
-  sinhala: BookOpen,
-};
-
-const SUBJECT_COVER: Record<FeaturedCourse["subjectIcon"], string> = {
-  math: "from-primary/20 via-primary/8 to-transparent",
-  science: "from-success/20 via-success/8 to-transparent",
-  english: "from-purple/20 via-purple/8 to-transparent",
-  sinhala: "from-gold/20 via-gold/8 to-transparent",
-};
-
 function CatalogPreview() {
   const { t } = usePublicI18n();
 
   return (
-    <section className="border-y bg-card/30 px-4 py-24 sm:px-6">
+    <section className="relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-6xl">
         <SectionHeading title={t("catalogHeading")} subhead={t("catalogSubhead")} />
 
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURED_COURSES.map((course, i) => (
-            <FeaturedCourseCard key={course.id} course={course} delay={i * 0.08} />
+            <FeaturedCourseCard key={course.id} course={course} delay={i * 0.06} />
           ))}
         </div>
 
-        <div className="mt-10 flex justify-center">
-          <Button asChild variant="outline" className="gap-2 rounded-full">
+        <div className="mt-12 flex justify-center">
+          <Button
+            asChild
+            variant="outline"
+            className="gap-2 rounded-full border-border/80 bg-card px-6 text-sm font-bold shadow-xs hover:bg-muted transition-all"
+          >
             <Link to="/courses">
-              <Compass className="h-4 w-4" />
+              <Compass className="size-4" />
               {t("catalogViewAll")}
             </Link>
           </Button>
@@ -683,7 +669,6 @@ function CatalogPreview() {
 }
 
 function FeaturedCourseCard({ course, delay }: { course: FeaturedCourse; delay: number }) {
-  const Icon = SUBJECT_ICON[course.subjectIcon] ?? BookOpen;
   const completed = course.completedWaves;
   const total = course.totalWaves;
   const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
@@ -691,49 +676,64 @@ function FeaturedCourseCard({ course, delay }: { course: FeaturedCourse; delay: 
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.4, delay }}
-      whileHover={{ y: -4 }}
-      className="group flex min-h-[350px] sm:min-h-[380px] flex-col overflow-hidden rounded-[28px] border border-border/80 bg-card shadow-sm transition-all hover:shadow-lg"
+      transition={{ duration: 0.35, delay }}
+      className="group"
     >
-      <div
-        className={cn(
-          "relative h-36 sm:h-40 overflow-hidden bg-gradient-to-br",
-          SUBJECT_COVER[course.subjectIcon],
-        )}
+      <Link
+        to="/courses"
+        search={{ search: course.title }}
+        className="flex min-h-[360px] flex-col overflow-hidden rounded-[26px] border border-border/80 bg-card p-3.5 shadow-sm transition-all duration-200 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-xl backdrop-blur-sm"
       >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Icon className="h-14 w-14 text-foreground/20 transition-transform duration-300 group-hover:scale-110" />
-        </div>
-        <span className="absolute right-3.5 top-3.5 rounded-full bg-background/90 px-3 py-1 text-xs font-bold text-foreground shadow-xs backdrop-blur">
-          {course.gradeLevel}
-        </span>
-      </div>
-      <CardContent className="flex flex-1 flex-col justify-between gap-4 p-6 sm:p-7">
-        <div className="space-y-2">
-          <h3 className="text-lg font-bold leading-snug group-hover:text-primary transition-colors">
-            {course.title}
-          </h3>
-          <p className="line-clamp-3 text-xs sm:text-sm leading-relaxed text-muted-foreground">
-            {course.description}
-          </p>
-        </div>
-        <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-3">
-          <div className="flex items-center gap-2.5">
-            <ProgressRing value={percent} size={38} strokeWidth={4} className="text-primary">
-              <span className="text-[11px] font-bold">{percent}%</span>
-            </ProgressRing>
-            <span className="text-xs font-medium text-muted-foreground">
-              {completed}/{total} waves
-            </span>
-          </div>
-          <span className="text-xs" title={meta.label} role="img" aria-label={meta.label}>
-            <ProficiencyBadge level={course.proficiency} size="sm" showLabel={false} />
+        {/* Cover Artwork Container */}
+        <div className="relative h-44 w-full overflow-hidden rounded-[20px] bg-background/80 border border-border/50 flex items-center justify-center p-2 shadow-inner group-hover:scale-[1.02] transition-transform duration-300">
+          <img
+            src={course.coverUrl}
+            alt={course.title}
+            className={cn(
+              "rounded-[16px] transition-transform duration-300",
+              course.coverUrl.includes("/courses/python/")
+                ? "size-full object-contain p-2 drop-shadow-md"
+                : "size-full object-cover",
+            )}
+            loading="lazy"
+          />
+          <span className="absolute left-3 top-3 rounded-full bg-background/90 px-2.5 py-0.5 text-[10px] font-bold text-muted-foreground uppercase shadow-xs backdrop-blur border border-border/50">
+            {course.gradeLevel}
+          </span>
+          <span className="absolute right-3 top-3 rounded-full bg-background/90 px-2.5 py-0.5 text-[10px] font-black uppercase text-primary shadow-xs backdrop-blur border border-border/50">
+            {course.subjectBadge}
           </span>
         </div>
-      </CardContent>
+
+        {/* Card Content */}
+        <div className="flex flex-1 flex-col justify-between p-3 gap-3">
+          <div className="space-y-1.5">
+            <h3 className="text-base font-bold font-serif leading-snug group-hover:text-primary transition-colors text-foreground">
+              {course.title}
+            </h3>
+            <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+              {course.description}
+            </p>
+          </div>
+
+          <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-3">
+            <div className="flex items-center gap-2">
+              <ProgressRing value={percent} size={32} strokeWidth={3.5} className="text-primary">
+                <span className="text-[10px] font-bold">{percent}%</span>
+              </ProgressRing>
+              <span className="text-xs font-medium text-muted-foreground">
+                {completed}/{total} waves
+              </span>
+            </div>
+            <span className="text-xs" title={meta.label} role="img" aria-label={meta.label}>
+              <ProficiencyBadge level={course.proficiency} size="sm" showLabel={false} />
+            </span>
+          </div>
+        </div>
+      </Link>
     </motion.div>
   );
 }

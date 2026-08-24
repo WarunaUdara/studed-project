@@ -65,10 +65,10 @@ export function PlayableWave() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-15%" }}
         transition={{ duration: 0.55 }}
-        className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl border bg-card shadow-xl"
+        className="relative mx-auto max-w-5xl overflow-hidden rounded-[28px] border border-border/80 bg-card shadow-xl backdrop-blur-sm"
       >
         {/* Wave header: tag + segment progress + reward */}
-        <div className="flex flex-wrap items-center gap-3 border-b bg-muted/30 px-5 py-3.5 sm:px-7">
+        <div className="flex flex-wrap items-center gap-3 border-b border-border/70 bg-card/80 px-5 py-3.5 sm:px-7">
           <span className="text-xs font-semibold text-muted-foreground">{t("playWaveTag")}</span>
           <div className="flex items-center gap-1" role="img" aria-label={t("playWaveTag")}>
             {[0, 1, 2, 3, 4, 5].map((seg) => (
@@ -76,9 +76,9 @@ export function PlayableWave() {
                 key={`seg-${seg}`}
                 className={cn(
                   "h-1.5 w-6 rounded-full",
-                  seg < 3 && "bg-success",
+                  seg < 3 && "bg-emerald-500",
                   seg === 3 && "bg-primary",
-                  seg > 3 && "bg-border",
+                  seg > 3 && "bg-muted",
                 )}
               />
             ))}
@@ -91,8 +91,8 @@ export function PlayableWave() {
 
         <div className="grid lg:grid-cols-5">
           {/* Learn phase */}
-          <div className="border-b bg-muted/20 p-6 sm:p-8 lg:col-span-2 lg:border-b-0 lg:border-r">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">
+          <div className="border-b border-border/60 bg-muted/10 p-6 sm:p-8 lg:col-span-2 lg:border-b-0 lg:border-r">
+            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
               {t("playLearnLabel")}
             </p>
             <h3 className="mt-3 font-serif text-2xl leading-snug text-foreground">
@@ -192,7 +192,7 @@ export function PlayableWave() {
 
           {/* Evaluate phase */}
           <div className="p-6 sm:p-8 lg:col-span-3">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-purple">
+            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-purple">
               {t("playEvaluateLabel")}
             </p>
             <p className="mt-3 font-serif text-xl italic leading-snug text-foreground sm:text-2xl">
@@ -212,20 +212,20 @@ export function PlayableWave() {
                     animate={isWrong ? { x: [0, -7, 7, -5, 5, 0] } : { x: 0 }}
                     transition={{ duration: 0.45 }}
                     className={cn(
-                      "group flex items-center gap-3 rounded-2xl border px-4 py-3.5 text-left text-sm font-medium transition-all",
+                      "group flex items-center gap-3 rounded-2xl border border-border/80 bg-background/80 px-4 py-3.5 text-left text-sm font-medium transition-all",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                      !done && "lift-on-hover hover:border-primary/40 hover:bg-accent/60",
+                      !done && "hover:-translate-y-0.5 hover:border-primary/50 hover:bg-muted/40",
                       isCorrect &&
-                        "border-success bg-success/10 text-success shadow-md shadow-success/15 ring-2 ring-success/40",
+                        "border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold shadow-md shadow-emerald-500/10 ring-1 ring-emerald-500/40",
                       isWrong && "border-destructive/60 bg-destructive/5 text-destructive",
                       done && !isCorrect && "opacity-50",
                     )}
                   >
                     <span
                       className={cn(
-                        "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs font-bold transition-colors",
+                        "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border/80 text-xs font-bold transition-colors bg-muted/40",
                         !done && "group-hover:border-primary/50 group-hover:text-primary",
-                        isCorrect && "border-success bg-success text-success-foreground",
+                        isCorrect && "border-emerald-500 bg-emerald-500 text-black font-black",
                       )}
                     >
                       {isCorrect ? (
@@ -247,7 +247,7 @@ export function PlayableWave() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="mt-4 flex items-start gap-2 rounded-xl bg-purple/8 px-4 py-3 text-sm text-purple"
+                  className="mt-4 flex items-start gap-2 rounded-xl bg-purple/10 px-4 py-3 text-sm text-purple border border-purple/20"
                 >
                   <Sparkles className="mt-0.5 h-4 w-4 shrink-0" />
                   <span>
@@ -268,31 +268,35 @@ export function PlayableWave() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                  className="mt-6 rounded-2xl border border-success/30 bg-gradient-to-br from-success/12 via-card to-card p-5"
+                  className="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 dark:bg-emerald-950/20 p-5 backdrop-blur-sm"
                 >
-                  <div className="flex items-start gap-3">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-success text-success-foreground shadow-md shadow-success/30">
+                  <div className="flex items-start gap-3.5">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-black font-black shadow-md shadow-emerald-500/20">
                       <Check className="h-5 w-5" strokeWidth={3} />
                     </span>
-                    <div>
-                      <p className="font-serif text-lg text-foreground">{t("playCorrectTitle")}</p>
+                    <div className="flex-1">
+                      <p className="font-serif text-lg font-bold text-foreground">
+                        {t("playCorrectTitle")}
+                      </p>
                       <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                         {t("playCorrectCopy")}
                       </p>
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        <Button asChild size="sm" className="gap-2 rounded-full">
+                      <div className="mt-4 flex flex-wrap items-center gap-3">
+                        <Button
+                          asChild
+                          className="h-10 gap-2 rounded-full bg-primary px-6 text-sm font-bold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 hover:shadow-lg transition-all"
+                        >
                           <Link to="/register">
-                            <Zap className="h-4 w-4" />
+                            <Zap className="size-4" />
                             {t("playCta")}
                           </Link>
                         </Button>
                         <Button
-                          size="sm"
-                          variant="ghost"
-                          className="gap-2 rounded-full"
+                          variant="outline"
+                          className="h-10 gap-2 rounded-full border-border/80 bg-background/80 px-5 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
                           onClick={replay}
                         >
-                          <RotateCcw className="h-4 w-4" />
+                          <RotateCcw className="size-3.5" />
                           {t("playReplay")}
                         </Button>
                       </div>
