@@ -1,3 +1,5 @@
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { CourseMilestoneCard } from "./CourseMilestoneCard";
 import { LearningPathRibbon } from "./LearningPathRibbon";
@@ -59,5 +61,25 @@ describe("Learning Paths & Milestone Tracks Engine", () => {
     expect(totalWaves).toBe(10);
     expect(completedWaves).toBe(5);
     expect(percent).toBe(50);
+  });
+
+  it("renders course milestones as named keyboard controls", () => {
+    const markup = renderToStaticMarkup(
+      createElement(CourseMilestoneCard, {
+        course: {
+          id: "c1",
+          title: "Fractions",
+          description: "Fraction basics",
+          slug: "fractions",
+          gradeLevel: "GRADE_6",
+        },
+        index: 0,
+        onClick: () => undefined,
+      }),
+    );
+
+    expect(markup).toContain('<button type="button"');
+    expect(markup).toContain('aria-label="View Fractions course details"');
+    expect(markup).toContain("focus-visible:ring-2");
   });
 });

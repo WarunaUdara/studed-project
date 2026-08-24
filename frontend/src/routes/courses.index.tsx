@@ -4,6 +4,7 @@ import {
   BookOpen,
   CheckCircle,
   FlaskConical,
+  LoaderCircle,
   MonitorSmartphone,
   Play,
   Ruler,
@@ -296,13 +297,14 @@ function CoursesCatalogPage() {
               placeholder="What do you want to learn? (press /)"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-full border border-border bg-card/80 py-2.5 pl-9 pr-9 text-xs sm:text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/40 focus:border-primary h-11 backdrop-blur-sm transition-all"
+              className="h-11 w-full rounded-full border border-border bg-card/80 py-2.5 pl-9 pr-11 text-xs outline-none backdrop-blur-sm transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/40 sm:text-sm"
             />
             {search && (
               <button
                 type="button"
                 onClick={() => setSearch("")}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label="Clear course search"
+                className="absolute right-0 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-95"
               >
                 <X className="size-4" />
               </button>
@@ -320,7 +322,7 @@ function CoursesCatalogPage() {
                 key={tab.id}
                 onClick={() => setActiveCategory(tab.id)}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all shrink-0 border",
+                  "flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold outline-none transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98]",
                   isActive
                     ? "bg-primary text-primary-foreground border-primary shadow-sm scale-102"
                     : "bg-card text-muted-foreground border-border hover:bg-muted/70 hover:text-foreground",
@@ -438,6 +440,21 @@ function CourseDetailSheet({
     variables: { id: courseId },
   });
   const [enrollResult, enroll] = useMutation(ENROLL_IN_COURSE_MUTATION);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    closeButtonRef.current?.focus();
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      previouslyFocused?.focus();
+    };
+  }, [onClose]);
 
   // Manifest-backed courses fill the drawer when the catalog is serving them,
   // so the syllabus reads the same whether a course is seeded or shipped.
@@ -463,6 +480,7 @@ function CourseDetailSheet({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
+        aria-hidden="true"
         className="fixed inset-0 z-40 bg-background/50 backdrop-blur-sm"
       />
 
@@ -471,6 +489,9 @@ function CourseDetailSheet({
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Course details"
         className="fixed right-0 top-0 z-50 h-full w-full sm:w-[440px] bg-card/95 backdrop-blur-md border-l shadow-2xl overflow-y-auto p-6 flex flex-col justify-between"
       >
         <div>
@@ -479,9 +500,11 @@ function CourseDetailSheet({
               Learning Path Milestone
             </span>
             <button
+              ref={closeButtonRef}
               type="button"
               onClick={onClose}
-              className="p-1 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground"
+              aria-label="Close course details"
+              className="grid size-11 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-95"
             >
               <X className="size-5" />
             </button>
@@ -579,25 +602,30 @@ function CourseDetailSheet({
         {course && (
           <div className="border-t pt-6 mt-6 flex flex-col gap-3">
             {isEnrolled ? (
-              <Link to="/courses/$courseId" params={{ courseId: course.id }}>
-                <Button className="w-full rounded-full h-11 font-bold text-sm" onClick={onClose}>
+              <Button asChild className="h-11 w-full rounded-full text-sm font-bold">
+                <Link to="/courses/$courseId" params={{ courseId: course.id }} onClick={onClose}>
                   Continue Learning
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             ) : isAuthenticated ? (
               <Button
-                className="w-full rounded-full h-11 font-bold text-sm bg-primary hover:bg-primary/90"
+                className="h-11 w-full rounded-full bg-primary text-sm font-bold hover:bg-primary/90"
                 onClick={handleEnroll}
                 disabled={enrollResult.fetching}
               >
-                {enrollResult.fetching ? "Enrolling..." : "Enroll for Free"}
+                {enrollResult.fetching ? (
+                  <>
+                    <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+                    Enrolling
+                  </>
+                ) : (
+                  "Enroll for Free"
+                )}
               </Button>
             ) : (
-              <Link to="/login">
-                <Button className="w-full rounded-full h-11 font-bold text-sm">
-                  Sign in to Enroll
-                </Button>
-              </Link>
+              <Button asChild className="h-11 w-full rounded-full text-sm font-bold">
+                <Link to="/login">Sign in to Enroll</Link>
+              </Button>
             )}
           </div>
         )}

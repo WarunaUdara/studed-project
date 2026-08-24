@@ -75,8 +75,11 @@ export function LearningPathRibbon({ path, onSelectCourse }: LearningPathRibbonP
           <button
             type="button"
             onClick={() => setIsStarred(!isStarred)}
-            className="flex size-9 items-center justify-center rounded-full border border-border/60 bg-card/80 text-muted-foreground transition-all hover:scale-105 hover:text-amber-400"
-            aria-label="Star learning path"
+            className="flex size-11 items-center justify-center rounded-full border border-border/60 bg-card/80 text-muted-foreground outline-none transition-all hover:scale-105 hover:text-amber-400 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-95"
+            aria-label={
+              isStarred ? `Unstar ${path.title} learning path` : `Star ${path.title} learning path`
+            }
+            aria-pressed={isStarred}
           >
             <Star className={`size-4 ${isStarred ? "fill-amber-400 text-amber-400" : ""}`} />
           </button>
@@ -92,8 +95,8 @@ export function LearningPathRibbon({ path, onSelectCourse }: LearningPathRibbonP
         <button
           type="button"
           onClick={() => scroll("left")}
-          className="absolute -left-3.5 top-[80px] z-20 flex size-9 items-center justify-center rounded-full border border-border/80 bg-card text-foreground shadow-md backdrop-blur-sm transition-all hover:scale-110 active:scale-95"
-          aria-label="Scroll left"
+          className="absolute -left-5 top-[76px] z-20 hidden size-11 items-center justify-center rounded-full border border-border/80 bg-card text-foreground shadow-md outline-none backdrop-blur-sm transition-all hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-95 sm:flex"
+          aria-label={`Scroll ${path.title} courses left`}
         >
           <ChevronLeft className="size-5" />
         </button>
@@ -102,8 +105,8 @@ export function LearningPathRibbon({ path, onSelectCourse }: LearningPathRibbonP
         <button
           type="button"
           onClick={() => scroll("right")}
-          className="absolute -right-3.5 top-[80px] z-20 flex size-9 items-center justify-center rounded-full border border-border/80 bg-card text-foreground shadow-md backdrop-blur-sm transition-all hover:scale-110 active:scale-95"
-          aria-label="Scroll right"
+          className="absolute -right-5 top-[76px] z-20 hidden size-11 items-center justify-center rounded-full border border-border/80 bg-card text-foreground shadow-md outline-none backdrop-blur-sm transition-all hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-95 sm:flex"
+          aria-label={`Scroll ${path.title} courses right`}
         >
           <ChevronRight className="size-5" />
         </button>
@@ -111,7 +114,7 @@ export function LearningPathRibbon({ path, onSelectCourse }: LearningPathRibbonP
         {/* Milestone Cards Horizontal Carousel (no-scrollbar hides default scrollbar) */}
         <div
           ref={scrollRef}
-          className="flex items-start gap-5 overflow-x-auto pb-1 pt-1 no-scrollbar scroll-smooth"
+          className="no-scrollbar flex snap-x snap-mandatory items-start gap-5 overflow-x-auto pb-1 pt-1 scroll-smooth sm:snap-none"
         >
           {path.courses.map((course, idx) => (
             <CourseMilestoneCard

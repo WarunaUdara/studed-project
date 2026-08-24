@@ -33,13 +33,15 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
   const coverUrl = KNOWN_COVERS[course.slug];
 
   return (
-    <motion.div
+    <motion.button
+      type="button"
       data-testid="course-card"
+      aria-label={`View ${course.title} course details`}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, delay: index * 0.04 }}
       onClick={onClick}
-      className="group relative flex flex-col items-center cursor-pointer shrink-0 w-[165px] sm:w-[180px]"
+      className="group relative flex w-[165px] shrink-0 snap-start cursor-pointer flex-col items-center rounded-[22px] text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] sm:w-[180px]"
     >
       {/* Deep Dark Squircle Card Container */}
       <div
@@ -102,7 +104,7 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
       <h3 className="mt-2.5 w-full text-center text-xs font-semibold text-foreground/90 transition-colors group-hover:text-foreground line-clamp-2 px-1">
         {course.title}
       </h3>
-    </motion.div>
+    </motion.button>
   );
 }
 
@@ -126,11 +128,11 @@ function DefaultSubjectIcon({ title }: { title: string }) {
   const t = title.toLowerCase();
   if (t.includes("math") || t.includes("geometry") || t.includes("algebra")) {
     return (
-      <svg viewBox="0 0 64 64" className="size-full">
-        <rect x="12" y="12" width="40" height="40" rx="10" fill="#3b82f6" opacity="0.2" />
+      <svg viewBox="0 0 64 64" className="size-full text-primary" aria-hidden="true">
+        <rect x="12" y="12" width="40" height="40" rx="10" fill="currentColor" opacity="0.2" />
         <path
           d="M 22,44 L 42,20 M 24,24 L 28,24 M 36,40 L 40,40"
-          stroke="#3b82f6"
+          stroke="currentColor"
           strokeWidth="4"
           strokeLinecap="round"
         />
@@ -139,11 +141,11 @@ function DefaultSubjectIcon({ title }: { title: string }) {
   }
   if (t.includes("python") || t.includes("code") || t.includes("cs")) {
     return (
-      <svg viewBox="0 0 64 64" className="size-full">
-        <rect x="12" y="12" width="40" height="40" rx="10" fill="#a855f7" opacity="0.2" />
+      <svg viewBox="0 0 64 64" className="size-full text-secondary" aria-hidden="true">
+        <rect x="12" y="12" width="40" height="40" rx="10" fill="currentColor" opacity="0.2" />
         <path
           d="M 24,26 L 16,32 L 24,38 M 40,26 L 48,32 L 40,38"
-          stroke="#a855f7"
+          stroke="currentColor"
           strokeWidth="4"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -153,12 +155,12 @@ function DefaultSubjectIcon({ title }: { title: string }) {
   }
   if (t.includes("science") || t.includes("gear") || t.includes("physic")) {
     return (
-      <svg viewBox="0 0 64 64" className="size-full">
-        <rect x="12" y="12" width="40" height="40" rx="10" fill="#10b981" opacity="0.2" />
-        <circle cx="32" cy="32" r="12" stroke="#10b981" strokeWidth="4" fill="none" />
+      <svg viewBox="0 0 64 64" className="size-full text-success" aria-hidden="true">
+        <rect x="12" y="12" width="40" height="40" rx="10" fill="currentColor" opacity="0.2" />
+        <circle cx="32" cy="32" r="12" stroke="currentColor" strokeWidth="4" fill="none" />
         <path
           d="M 32,16 L 32,20 M 32,44 L 32,48 M 16,32 L 20,32 M 44,32 L 48,32"
-          stroke="#10b981"
+          stroke="currentColor"
           strokeWidth="4"
           strokeLinecap="round"
         />
@@ -166,11 +168,11 @@ function DefaultSubjectIcon({ title }: { title: string }) {
     );
   }
   return (
-    <svg viewBox="0 0 64 64" className="size-full">
-      <rect x="12" y="12" width="40" height="40" rx="10" fill="#f59e0b" opacity="0.2" />
+    <svg viewBox="0 0 64 64" className="size-full text-gold" aria-hidden="true">
+      <rect x="12" y="12" width="40" height="40" rx="10" fill="currentColor" opacity="0.2" />
       <path
         d="M 20,24 L 44,24 M 20,32 L 38,32 M 20,40 L 32,40"
-        stroke="#f59e0b"
+        stroke="currentColor"
         strokeWidth="4"
         strokeLinecap="round"
       />

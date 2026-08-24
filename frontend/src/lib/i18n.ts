@@ -55,8 +55,8 @@ export const PUBLIC_STRINGS = {
     SI: "මම ශිෂ්‍යයෙක්",
   },
   ctaParentTeacher: {
-    EN: "I'm a parent or teacher",
-    SI: "මම දෙමව්පියෙක් / ගුරුවරයෙක්",
+    EN: "I'm a teacher",
+    SI: "මම ගුරුවරයෙක්",
   },
   ctaGetStarted: {
     EN: "Get started free",

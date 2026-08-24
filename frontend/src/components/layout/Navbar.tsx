@@ -362,24 +362,35 @@ export function Navbar() {
 
                       {/* Navigation Links */}
                       <div className="py-1 space-y-0.5">
-                        {!isEducator && (
+                        {isEducator ? (
                           <Link
-                            to="/dashboard"
+                            to="/educator"
                             onClick={() => setUserDropdownOpen(false)}
                             className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
                           >
-                            <Home className="size-3.5 text-primary" />
-                            <span>Home</span>
+                            <GraduationCap className="size-3.5 text-emerald-500" />
+                            <span>Educator Portal</span>
                           </Link>
+                        ) : (
+                          <>
+                            <Link
+                              to="/dashboard"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
+                            >
+                              <Home className="size-3.5 text-primary" />
+                              <span>Home</span>
+                            </Link>
+                            <Link
+                              to="/achievements"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
+                            >
+                              <Award className="size-3.5 text-rose-500" />
+                              <span>Achievements</span>
+                            </Link>
+                          </>
                         )}
-                        <Link
-                          to="/achievements"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
-                        >
-                          <Award className="size-3.5 text-rose-500" />
-                          <span>Achievements</span>
-                        </Link>
                         <Link
                           to="/subscription"
                           onClick={() => setUserDropdownOpen(false)}
@@ -396,19 +407,6 @@ export function Navbar() {
                           <Settings className="size-3.5 text-neutral-400" />
                           <span>Settings &amp; Profile</span>
                         </Link>
-
-                        {(user?.role === "EDUCATOR" ||
-                          user?.role === "HEAD_EDUCATOR" ||
-                          user?.role === "ADMIN") && (
-                          <Link
-                            to="/educator"
-                            onClick={() => setUserDropdownOpen(false)}
-                            className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
-                          >
-                            <GraduationCap className="size-3.5 text-emerald-500" />
-                            <span>Educator Portal</span>
-                          </Link>
-                        )}
                       </div>
 
                       {/* Theme Toggle in Dropdown */}
