@@ -35,14 +35,13 @@ if [[ -n "${clusters}" ]]; then
   done
 fi
 
-echo "Cleaning lingering GKE firewall rules in ${PROJECT_ID}..."
-gcloud compute firewall-rules list --project="${PROJECT_ID}" --filter="name ~ ^k8s" --format="value(name)" 2>/dev/null | while read -r fw; do
-  if [[ -n "${fw}" ]]; then
-    echo "  deleting firewall rule ${fw}..."
-    gcloud compute firewall-rules delete "${fw}" --project="${PROJECT_ID}" --quiet 2>/dev/null || true
+echo "Cleaning lingering GKE network endpoint groups (NEGs) in ${PROJECT_ID}..."
+gcloud compute network-endpoint-groups list --project="${PROJECT_ID}" --format="value(name,zone)" 2>/dev/null | while read -r neg zone; do
+  if [[ -n "${neg}" && -n "${zone}" ]]; then
+    echo "  deleting NEG ${neg} in ${zone}..."
+    gcloud compute network-endpoint-groups delete "${neg}" --zone="${zone}" --project="${PROJECT_ID}" --quiet 2>/dev/null || true
   fi
 done
-
 
 (cd "${TF_DIR}" && tofu init >/dev/null && tofu destroy -exclude="google_project_iam_custom_role.idle_scout_role" -auto-approve | tail -20)
 
