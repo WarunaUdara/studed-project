@@ -1,8 +1,7 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
-import { BlobAvatar } from "@/components/ui/BlobAvatar";
+import { type LeaderboardEntry, LeaderboardRow } from "@/components/gamification/LeaderboardRow";
 import { usePublicI18n } from "@/lib/i18n";
-import { cn } from "@/lib/utils";
 
 /**
  * LiveLeaderboard — clean, smooth, gamified leaderboard widget.
@@ -88,92 +87,31 @@ export function LiveLeaderboard() {
     return () => clearTimeout(timer);
   }, [reduce, stepIndex, step.durationMs]);
 
-  // Sort rows by XP descending to determine positions
+  // Sort rows by XP descending to determine positions. The public card is an
+  // illustrative marketing example, but it still uses the canonical row so
+  // rank, identity, and XP presentation cannot drift from the product board.
   const sortedRows = useMemo(() => {
     return [...rows].sort((a, b) => b.xp - a.xp);
   }, [rows]);
 
+  const entries = useMemo<LeaderboardEntry[]>(
+    () =>
+      sortedRows.map((row, index) => ({
+        rank: index + 1,
+        userId: row.id,
+        displayName: row.you ? t("liveLbYou") : row.name,
+        totalXp: row.xp,
+        isMe: Boolean(row.you),
+      })),
+    [sortedRows, t],
+  );
+
   return (
     <div className="select-none">
       <ul className="space-y-2">
-        {sortedRows.map((row, i) => {
-          const rank = i + 1;
-          const isFirst = rank === 1;
-          const isYou = row.you;
-
-          return (
-            <motion.li
-              key={row.id}
-              layout={!reduce ? "position" : false}
-              transition={{
-                layout: {
-                  duration: 0.7,
-                  ease: [0.32, 0.72, 0, 1], // silky smooth replacement curve
-                },
-              }}
-              className={cn(
-                "flex items-center gap-3 rounded-2xl border px-3.5 py-2.5 transition-colors duration-300",
-                isYou
-                  ? "border-primary/40 bg-primary/10 shadow-xs ring-1 ring-primary/30"
-                  : isFirst
-                    ? "border-border/80 bg-muted/60"
-                    : "border-border/40 bg-muted/30 hover:bg-muted/50",
-              )}
-            >
-              {/* Clean Rank Number */}
-              <span
-                className={cn(
-                  "flex w-6 shrink-0 items-center justify-center text-xs font-bold tabular-nums",
-                  isFirst
-                    ? "text-amber-500 font-extrabold"
-                    : isYou
-                      ? "text-primary font-extrabold"
-                      : "text-muted-foreground",
-                )}
-              >
-                #{rank}
-              </span>
-
-              {/* Animated Blobatar */}
-              <BlobAvatar
-                name={row.seed}
-                size={30}
-                animate="always"
-                className={cn(
-                  "rounded-full ring-1 shrink-0 overflow-hidden shadow-xs",
-                  isYou ? "ring-primary" : "ring-border/60",
-                )}
-                title={`${row.name} avatar`}
-              />
-
-              {/* Student Name */}
-              <div className="min-w-0 flex-1 flex items-center gap-1.5">
-                <span
-                  className={cn(
-                    "truncate text-sm tracking-tight",
-                    isYou ? "font-bold text-foreground" : "font-medium text-foreground/90",
-                  )}
-                >
-                  {isYou ? t("liveLbYou") : row.name}
-                </span>
-
-                {isYou && (
-                  <span className="rounded-md bg-primary/20 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide text-primary">
-                    ME
-                  </span>
-                )}
-              </div>
-
-              {/* XP Score */}
-              <div className="flex shrink-0 items-center">
-                <span className="text-sm font-bold tabular-nums text-foreground">
-                  {row.xp.toLocaleString()}
-                  <span className="ml-1 text-[10px] font-medium text-muted-foreground">XP</span>
-                </span>
-              </div>
-            </motion.li>
-          );
-        })}
+        {entries.map((entry) => (
+          <LeaderboardRow key={entry.userId} entry={entry} total={entries.length} />
+        ))}
       </ul>
     </div>
   );
