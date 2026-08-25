@@ -102,7 +102,7 @@ export function FloatingCardNav({
               ) : (
                 <Link
                   to="/"
-                  className="flex items-center gap-1 font-serif text-2xl font-bold tracking-tight text-foreground"
+                  className="flex min-h-11 items-center gap-1 font-serif text-2xl font-bold tracking-tight text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   Stud<span className="italic text-primary">Ed</span>
                 </Link>
@@ -110,7 +110,7 @@ export function FloatingCardNav({
             </div>
 
             {/* Desktop Navigation Tabs with Hover Triggers */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav aria-label="Primary navigation" className="hidden md:flex items-center gap-1">
               {items.map((item) => {
                 const isActive = activeTabId === item.id;
                 const isCurrentRoute = item.href && activePath.startsWith(item.href);
@@ -124,7 +124,7 @@ export function FloatingCardNav({
                     {item.href ? (
                       <Link
                         to={item.href as any}
-                        className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
+                        className={`flex min-h-11 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
                           isActive || isCurrentRoute
                             ? "bg-primary/10 text-primary"
                             : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
@@ -142,7 +142,7 @@ export function FloatingCardNav({
                     ) : (
                       <button
                         type="button"
-                        className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
+                        className={`flex min-h-11 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
                           isActive
                             ? "bg-primary/10 text-primary"
                             : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
@@ -172,7 +172,7 @@ export function FloatingCardNav({
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="flex md:hidden size-9 items-center justify-center rounded-full border border-border bg-card text-foreground hover:bg-muted"
+              className="flex size-11 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:hidden"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <X className="size-4" /> : <Menu className="size-4" />}

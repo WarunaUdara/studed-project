@@ -175,13 +175,13 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.22 }}
-            className="flex flex-wrap items-center gap-3.5 pt-2"
+            className="grid w-full grid-cols-1 gap-3.5 pt-2 sm:flex sm:w-auto sm:flex-wrap sm:items-center"
           >
             {authed ? (
               <Button
                 asChild
                 size="lg"
-                className="rounded-full px-8 py-6 text-base font-bold shadow-md"
+                className="w-full rounded-full px-8 py-6 text-base font-bold shadow-md sm:w-auto"
               >
                 <Link to={ctaLink}>
                   <Zap className="h-5 w-5" />
@@ -190,19 +190,19 @@ function Hero({ authed, ctaLink }: { authed: boolean; ctaLink: string }) {
               </Button>
             ) : (
               <>
-                <Link to="/register">
+                <Link to="/register" className="w-full sm:w-auto">
                   <Button
                     size="lg"
-                    className="h-13 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-8 text-base shadow-sm hover:shadow-md transition-all active:scale-98"
+                    className="h-13 w-full rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-8 text-base shadow-sm hover:shadow-md transition-all active:scale-98 sm:w-auto"
                   >
                     {t("ctaLearner")}
                   </Button>
                 </Link>
-                <Link to="/educator">
+                <Link to="/educator" className="w-full sm:w-auto">
                   <Button
                     size="lg"
                     variant="outline"
-                    className="h-13 rounded-full border-border/80 bg-card hover:bg-muted text-foreground font-semibold px-8 text-base shadow-xs hover:shadow-sm transition-all"
+                    className="h-13 w-full rounded-full border-border/80 bg-card hover:bg-muted text-foreground font-semibold px-8 text-base shadow-xs hover:shadow-sm transition-all sm:w-auto"
                   >
                     {t("ctaParentTeacher")}
                   </Button>

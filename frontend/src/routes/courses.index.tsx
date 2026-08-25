@@ -271,6 +271,9 @@ function CoursesCatalogPage() {
   }, [learningPaths, activeCategory]);
 
   const totalEnrolled = allCourses.filter((c) => c.myProgress != null).length;
+  const hasCourseContent = allCourses.length > 0;
+  const isBlockingLoad = fetching && !hasCourseContent;
+  const isBlockingError = Boolean(error && !hasCourseContent);
 
   return (
     <StudentShell>
@@ -336,7 +339,7 @@ function CoursesCatalogPage() {
         </div>
 
         {/* Loading skeleton */}
-        {fetching && (
+        {isBlockingLoad && (
           <div className="space-y-6">
             {["s1", "s2"].map((s) => (
               <Skeleton key={s} className="h-72 w-full rounded-[28px]" />
@@ -345,7 +348,7 @@ function CoursesCatalogPage() {
         )}
 
         {/* Error state */}
-        {error && !fetching && (
+        {isBlockingError && !fetching && (
           <div className="flex flex-col items-center gap-4 rounded-[28px] border border-dashed p-12 text-center bg-card">
             <Search className="size-10 text-muted-foreground" />
             <div>
@@ -365,7 +368,7 @@ function CoursesCatalogPage() {
         )}
 
         {/* Empty state */}
-        {!fetching && !error && filteredPaths.length === 0 && (
+        {!fetching && !isBlockingError && filteredPaths.length === 0 && (
           <div className="flex flex-col items-center gap-4 rounded-[28px] border border-dashed p-12 text-center bg-card">
             <BookOpen className="size-10 text-muted-foreground" />
             <div>
@@ -391,7 +394,7 @@ function CoursesCatalogPage() {
         )}
 
         {/* Learning Paths List */}
-        {!fetching && !error && filteredPaths.length > 0 && (
+        {!isBlockingError && filteredPaths.length > 0 && (
           <div className="space-y-12">
             <div className="space-y-1">
               <h2 className="text-xl font-bold font-serif text-foreground">Your learning paths</h2>

@@ -25,10 +25,18 @@ export function App() {
   return (
     <div className="relative min-h-[100dvh] bg-background text-foreground">
       <ToastProvider>
+        {/* biome-ignore lint/a11y/useValidAnchor: this skip link targets the page's main landmark */}
+        <a
+          href="#main-content"
+          onClick={() => document.getElementById("main-content")?.focus()}
+          className="fixed left-4 top-4 z-[60] -translate-y-24 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-primary-foreground shadow-lg transition-transform focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+        >
+          Skip to main content
+        </a>
         <ThemePullCord />
         <OfflineBanner />
         {!hideChrome && <Navbar />}
-        <main>
+        <main id="main-content" tabIndex={-1} className="focus:outline-none">
           <Outlet />
         </main>
         <PomodoroInitializer />

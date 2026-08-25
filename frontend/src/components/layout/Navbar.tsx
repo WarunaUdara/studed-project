@@ -111,13 +111,26 @@ export function Navbar() {
             {/* Left: Text Logo */}
             <Link
               to="/"
-              className="flex items-center gap-1 font-serif text-2xl font-bold tracking-tight text-foreground hover:opacity-90 transition-opacity"
+              className="flex min-h-11 items-center gap-1 font-serif text-2xl font-bold tracking-tight text-foreground hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Stud<span className="italic text-primary">Ed</span>
             </Link>
 
             {/* Right: Sign in (always) + Get started (revealed on scroll) */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+                aria-pressed={theme === "dark"}
+                className="inline-flex size-11 items-center justify-center rounded-full border border-border/80 bg-card/70 text-muted-foreground shadow-2xs transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:hidden"
+              >
+                {theme === "dark" ? (
+                  <Sun className="size-4" aria-hidden="true" />
+                ) : (
+                  <Moon className="size-4" aria-hidden="true" />
+                )}
+              </button>
               <Button
                 asChild
                 variant="outline"
@@ -134,7 +147,7 @@ export function Navbar() {
                     animate={{ opacity: 1, scale: 1, width: "auto" }}
                     exit={{ opacity: 0, scale: 0.9, width: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="overflow-hidden"
+                    className="hidden overflow-hidden sm:block"
                   >
                     <Button
                       asChild
@@ -253,18 +266,31 @@ export function Navbar() {
         logoNode={
           <Link
             to={isAuthenticated ? (isEducator ? "/educator" : "/dashboard") : "/"}
-            className="flex items-center gap-1 font-serif text-2xl font-bold tracking-tight text-foreground hover:opacity-90 transition-opacity"
+            className="flex min-h-11 items-center gap-1 font-serif text-2xl font-bold tracking-tight text-foreground hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             Stud<span className="italic text-primary">Ed</span>
           </Link>
         }
         rightNode={
           <div className="flex items-center gap-2 sm:gap-2.5">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+              aria-pressed={theme === "dark"}
+              className="inline-flex size-11 items-center justify-center rounded-full border border-border/80 bg-card/60 text-muted-foreground shadow-2xs transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:hidden"
+            >
+              {theme === "dark" ? (
+                <Sun className="size-4" aria-hidden="true" />
+              ) : (
+                <Moon className="size-4" aria-hidden="true" />
+              )}
+            </button>
             {/* Search Trigger Icon Button */}
             <button
               type="button"
               onClick={() => setSearchModalOpen(true)}
-              className="flex size-9 items-center justify-center rounded-full border border-border/80 bg-card/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-all shadow-2xs"
+              className="flex size-11 items-center justify-center rounded-full border border-border/80 bg-card/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-all shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               title="Search topics & waves (⌘K)"
               aria-label="Search topics and lessons"
             >
@@ -317,7 +343,7 @@ export function Navbar() {
             <Link to="/subscription" className="hidden md:inline-flex">
               <button
                 type="button"
-                className="rounded-full border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 font-bold text-xs px-3 py-1.5 transition-all shadow-2xs"
+                className="h-11 rounded-full border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 font-bold text-xs px-3 transition-all shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 Go Premium
               </button>
@@ -329,7 +355,7 @@ export function Navbar() {
                 <button
                   type="button"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center justify-center rounded-full border border-primary/40 hover:scale-105 transition-transform"
+                  className="flex size-11 items-center justify-center rounded-full border border-primary/40 hover:scale-105 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   aria-label="User profile menu"
                 >
                   <BlobAvatar

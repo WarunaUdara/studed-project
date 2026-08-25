@@ -343,7 +343,7 @@ export function ThemePullCord() {
 
   return (
     <div
-      className="pointer-events-none fixed top-0 right-16 z-[9999] select-none"
+      className="pointer-events-none fixed top-0 right-16 z-[55] hidden select-none lg:block"
       style={{
         width: W,
         height: SVG_H,

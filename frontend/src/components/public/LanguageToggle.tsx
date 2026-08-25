@@ -30,7 +30,7 @@ export function LanguageToggle({
       aria-label={label}
       aria-pressed={isSinhala}
       className={cn(
-        "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
+        "inline-flex min-h-11 items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         variant === "default"
           ? "border border-border bg-card text-foreground hover:bg-accent"
           : "border border-white/20 bg-white/10 text-white backdrop-blur hover:bg-white/20",
