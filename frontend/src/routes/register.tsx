@@ -15,7 +15,7 @@ function RegisterPage() {
 
       {/* Right panel - form (independently scrollable on desktop) */}
       <div className="bg-login-panel-sky relative w-full lg:h-full lg:w-1/2 lg:overflow-y-auto">
-        <div className="relative flex min-h-full w-full items-start justify-center px-6 pt-20 pb-12">
+        <div className="relative isolate flex min-h-full w-full items-start justify-center px-6 pt-20 pb-12">
           {/* Two textures, swapped by theme */}
           <img
             src="/covers/mascot/bg-light.png"
@@ -23,7 +23,7 @@ function RegisterPage() {
             aria-hidden="true"
             width={864}
             height={1746}
-            className="pointer-events-none absolute inset-0 size-full object-cover select-none dark:hidden"
+            className="pointer-events-none absolute inset-0 h-full min-h-full w-full object-cover select-none dark:hidden"
           />
           <img
             src="/covers/mascot/bg-stars.png"
@@ -31,7 +31,7 @@ function RegisterPage() {
             aria-hidden="true"
             width={1024}
             height={1024}
-            className="pointer-events-none absolute inset-0 hidden size-full object-cover opacity-30 select-none dark:block"
+            className="pointer-events-none absolute inset-0 hidden h-full min-h-full w-full object-cover opacity-30 select-none dark:block"
           />
 
           <motion.div
