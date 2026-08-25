@@ -4,8 +4,20 @@ import { cn } from "@/lib/utils";
 import type { CourseNode } from "./types";
 
 const KNOWN_COVERS: Record<string, string> = {
-  "coordinate-geometry": "/covers/coordinate-geometry.jpg",
-  "g10-mathematics": "/covers/g10-mathematics.jpg",
+  // Non-Python course artwork from the course-cover illustration set.
+  "coordinate-geometry": "/covers/math-data-graphs.webp",
+  "g10-mathematics": "/covers/math-data-graphs.webp",
+  "math-foundation": "/covers/course-ideas.webp",
+  "physics-grade-4-5": "/covers/electricity-circuits.webp",
+  "physics-grade-6-8": "/covers/physics-forces-machines.webp",
+  "physics-grade-9-11": "/covers/electricity-circuits.webp",
+  "physics-ol": "/covers/exam-revision.webp",
+  "physics-al": "/covers/atomic-physics.webp",
+  "science-thinking": "/covers/robotics-engineering.webp",
+  "ict-grade-6-8": "/covers/course-ideas.webp",
+  "ict-grade-9-11": "/covers/robotics-engineering.webp",
+  "ict-ol": "/covers/exam-revision.webp",
+  "ict-al": "/covers/earth-and-space.webp",
   "thinking-in-python": "/courses/python/thinking-in-python.png",
   "functions-in-python": "/courses/python/functions-in-python.png",
   "recursion-in-python": "/courses/python/recursion-in-python.png",
@@ -14,10 +26,36 @@ const KNOWN_COVERS: Record<string, string> = {
   "object-oriented-programming-in-python": "/courses/python/oop-in-python.png",
   "data-structures-in-python": "/courses/python/data-structures-in-python.png",
   "python-10-challenges": "/courses/python/functions-in-python.png",
-  "al-physics": "/covers/al-physics.jpg",
-  "g10-science": "/covers/g10-science.jpg",
+  "al-physics": "/covers/atomic-physics.webp",
+  "g10-science": "/covers/science-atom.webp",
   "ol-english": "/covers/ol-english.jpg",
 };
+
+const TOPIC_COVERS: Array<{ keywords: string[]; cover: string }> = [
+  { keywords: ["sound", "wave"], cover: "/covers/sound-waves.webp" },
+  { keywords: ["light", "optic"], cover: "/covers/light-and-optics.webp" },
+  { keywords: ["heat", "temperature", "thermal"], cover: "/covers/heat-and-temperature.webp" },
+  { keywords: ["chem"], cover: "/covers/chemistry-lab.webp" },
+  { keywords: ["biology", "cell"], cover: "/covers/biology-microscope.webp" },
+  { keywords: ["earth", "space", "planet"], cover: "/covers/earth-and-space.webp" },
+  { keywords: ["recycl", "environment", "ecology"], cover: "/covers/environment-recycling.webp" },
+  { keywords: ["renewable"], cover: "/covers/renewable-energy.webp" },
+  { keywords: ["solar", "sustainable"], cover: "/covers/sustainable-energy.webp" },
+  { keywords: ["atom", "nuclear"], cover: "/covers/atomic-physics.webp" },
+  { keywords: ["exam", "revision"], cover: "/covers/exam-revision.webp" },
+  { keywords: ["graph", "statistic", "data"], cover: "/covers/math-data-graphs.webp" },
+  { keywords: ["robot", "engineering"], cover: "/covers/robotics-engineering.webp" },
+];
+
+function getCourseCover(course: CourseNode): string | undefined {
+  const knownCover = KNOWN_COVERS[course.slug];
+  if (knownCover) return knownCover;
+
+  const searchableTitle = `${course.title} ${course.description}`.toLowerCase();
+  return TOPIC_COVERS.find(({ keywords }) =>
+    keywords.some((keyword) => searchableTitle.includes(keyword)),
+  )?.cover;
+}
 
 interface CourseMilestoneCardProps {
   course: CourseNode;
@@ -30,7 +68,7 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
   const completed = course.myProgress?.completedWaves ?? 0;
   const total = course.myProgress?.totalWaves ?? 0;
   const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-  const coverUrl = KNOWN_COVERS[course.slug];
+  const coverUrl = getCourseCover(course);
 
   return (
     <motion.button
@@ -76,7 +114,7 @@ export function CourseMilestoneCard({ course, onClick, index }: CourseMilestoneC
               alt={course.title}
               className={cn(
                 "size-full rounded-2xl transition-transform duration-300",
-                coverUrl.includes("/courses/python/")
+                coverUrl.includes("/courses/python/") || coverUrl.endsWith(".webp")
                   ? "object-contain p-1.5 drop-shadow-md"
                   : "object-cover",
               )}
