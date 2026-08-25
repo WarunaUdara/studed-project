@@ -9,6 +9,8 @@ import {
   Save,
   Shield,
   User as UserIcon,
+  Volume2,
+  VolumeX,
   Zap,
 } from "lucide-react";
 import { useState } from "react";
@@ -27,6 +29,7 @@ import { MY_ENROLLMENTS_QUERY } from "@/graphql/courses";
 import { levelFromXp } from "@/lib/gamification";
 import { cn } from "@/lib/utils";
 import { type Grade, useAuthStore } from "@/stores/auth";
+import { useUiPrefs } from "@/stores/uiPrefs";
 
 const TIER_LABELS: Record<string, string> = {
   BASIC: "Basic",
@@ -79,6 +82,7 @@ export const Route = createFileRoute("/settings")({
 
 function SettingsPage() {
   const { user, setUser } = useAuthStore();
+  const { soundEnabled, setSoundEnabled } = useUiPrefs();
   const { toast } = useToast();
 
   const [fullName, setFullName] = useState(user?.fullName ?? "");
@@ -329,6 +333,45 @@ function SettingsPage() {
                       disabled
                       className="bg-muted/50 font-semibold text-primary cursor-not-allowed"
                     />
+                  </div>
+                  <div className="flex items-center justify-between gap-4 rounded-xl border bg-background/60 px-3 py-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                      {soundEnabled ? (
+                        <Volume2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                      ) : (
+                        <VolumeX
+                          className="h-4 w-4 shrink-0 text-muted-foreground"
+                          aria-hidden="true"
+                        />
+                      )}
+                      <div className="min-w-0">
+                        <Label htmlFor="sound-enabled" className="cursor-pointer text-sm">
+                          Application sounds
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          {soundEnabled ? "Sounds are enabled" : "Sounds are muted"}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      id="sound-enabled"
+                      type="button"
+                      role="switch"
+                      aria-checked={soundEnabled}
+                      aria-label="Application sounds"
+                      onClick={() => setSoundEnabled(!soundEnabled)}
+                      className={cn(
+                        "relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                        soundEnabled ? "bg-primary" : "bg-muted",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "pointer-events-none block size-5 rounded-full bg-background shadow-sm transition-transform",
+                          soundEnabled ? "translate-x-5" : "translate-x-0",
+                        )}
+                      />
+                    </button>
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-muted-foreground">Subscription</Label>

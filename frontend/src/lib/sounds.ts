@@ -1,8 +1,10 @@
 /**
  * Sound utility — subtle UI click sounds via Web Audio API.
  * No audio files needed; tones are synthesized at runtime.
- * Respects prefers-reduced-motion (no sound when reduced motion is preferred).
+ * Respects user sound preferences and prefers-reduced-motion.
  */
+
+import { useUiPrefs } from "@/stores/uiPrefs";
 
 let audioCtx: AudioContext | null = null;
 
@@ -27,6 +29,7 @@ function playTone(
   type: OscillatorType = "sine",
   volume = 0.08,
 ) {
+  if (!useUiPrefs.getState().soundEnabled) return;
   const ctx = getCtx();
   if (!ctx) return;
   if (ctx.state === "suspended") ctx.resume();
@@ -93,6 +96,10 @@ let leftOsc: OscillatorNode | null = null;
 let rightOsc: OscillatorNode | null = null;
 
 export function playAmbientNoise(type: "brown" | "pink" | "white" | "adhd" | "none") {
+  if (!useUiPrefs.getState().soundEnabled) {
+    stopAmbientNoise();
+    return;
+  }
   if (
     typeof window !== "undefined" &&
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
